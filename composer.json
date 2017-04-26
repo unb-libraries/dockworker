@@ -1,0 +1,29 @@
+{
+  "name": "unblibraries/dockworker",
+  "description": "Services for wiring up docker containers for development",
+  "type": "library",
+  "require": {
+    "asm89/twig-lint": "^1.0.2",
+    "boedah/robo-drush": "~3",
+    "cheppers/robo-phpcs": "0.0.11",
+    "consolidation/robo": "^1.0",
+    "droath/robo-docker-compose": "~0.0.1",
+    "drupal/coder": "^8.2.12",
+    "leafo/scssphp": "^0.6.7"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "UNB Libraries",
+      "email": "libsupport@unb.ca"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "UnbLibraries\\DockWorker\\": "src"
+    }
+  },
+  "bin": [
+    "bin/dockworker"
+  ]
+}

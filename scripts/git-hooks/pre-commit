@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+ROOT_DIR="$(pwd)/"
+LIST=$( git diff --name-only --cached --diff-filter=ACM )
+PHPCS_BIN=vendor/bin/phpcs
+
+if [[ "$LIST" == "" ]];
+then
+  echo "No files staged for commit!"
+  exit 1
+fi
+
+if [ ! -f $PHPCS_BIN ];
+then
+  echo "DockWorker was not found in this project's bin directory. Please run composer install. "
+  exit 1
+fi
+
+echo "Sniffing staged files via PHP Code Sniffer..."
+${ROOT_DIR}/vendor/bin/dockworker validate:phpcs:files "$LIST" || exit 1;
+
+if [[ $LIST == *".twig"* ]];
+then
+  echo "Linting custom twig files..."
+  ${ROOT_DIR}/vendor/bin/dockworker validate:twig:files "$LIST" || exit 1;
+fi
+
+if [[ $LIST == *"composer."* ]];
+then
+  printf "\nValidating /build/composer.json..."
+  cd build
+  composer validate || exit 1;
+  cd ..
+fi
+echo "/build/composer.json Ok!"
+
+if [[ $LIST == *"composer."* ]];
+then
+  printf "\nValidating /composer.json..."
+  composer validate || exit 1;
+fi
+echo "/composer.json Ok!"
+
+# Return the status of the last run command.
+exit $?
