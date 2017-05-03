@@ -146,6 +146,7 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
    * @command container:start
    */
   public function start($opts = ['no-cache' => FALSE]) {
+    $this->pullUpstreamImage();
     $this->build($opts);
 
     $collection = $this->collectionBuilder();
