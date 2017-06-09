@@ -210,7 +210,11 @@ class DrupalRemoteSyncCommand extends DockWorkerCommand {
       $this->localTmpDir
     );
 
-    $this->setCopyInLocalContainerFiles();
+    $this->setCopyInLocalContainerFiles(
+      $this->getInstanceName(),
+      $this->localTmpDir,
+      self::CONFIG_CONTAINER_APP_FILE_PATH
+    );
 
     // Remove tmp directories.
     $this->setRemoveLocalTmpDir();
