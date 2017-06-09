@@ -46,8 +46,8 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
    * @command container:theme:build
    */
   public function buildTheme($path) {
+    // CSS.
     $this->say("Compiling SCSS in $path");
-
     $compiler = $this->repoRoot . '/vendor/bin/pscss';
     $input = "src/scss/style.scss";
     $output = "$path/dist/css/style.css";
@@ -56,6 +56,22 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
       ->stopOnFail()
       ->dir($path)
       ->exec("$compiler lint -f crunched $input > $output")
+      ->run();
+
+    // Images.
+    $this->say("Deploying Image Assets in $path");
+    $this->taskExecStack()
+      ->stopOnFail()
+      ->dir($path)
+      ->exec("cp -r src/img dist/")
+      ->run();
+
+    // Javascript.
+    $this->say("Deploying Javascript Assets in $path");
+    $this->taskExecStack()
+      ->stopOnFail()
+      ->dir($path)
+      ->exec("cp -r src/img dist/")
       ->run();
 
     $this->say("Done!");
@@ -75,11 +91,10 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
         ->files()
         ->name('/^style\.scss$/');
       foreach ($finder as $file) {
-        $this->buildTheme(
-          realpath(
-            $file->getPath() . '/../../'
-          )
+        $theme_path = realpath(
+          $file->getPath() . '/../../'
         );
+        $this->buildTheme($theme_path);
       }
     }
   }
