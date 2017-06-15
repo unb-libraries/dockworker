@@ -29,7 +29,7 @@ if [[ $LIST == *"composer."* ]];
 then
   printf "\nValidating /build/composer.json..."
   cd build
-  composer validate || exit 1;
+  composer validate --no-check-all || exit 1;
   cd ..
 fi
 echo "/build/composer.json Ok!"
