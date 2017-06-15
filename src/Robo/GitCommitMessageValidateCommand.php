@@ -18,6 +18,8 @@ class GitCommitMessageValidateCommand extends DockWorkerCommand {
 
   use \Cheppers\Robo\Phpcs\PhpcsTaskLoader;
 
+  const MAX_GIT_COMMIT_LENGTH = 70;
+
   const ERROR_BODY_SEPARATION = 'Separate subject from body with a blank line';
   const ERROR_BODY_TOO_WIDE = 'Wrap the body at 72 characters, current max: %d';
   const ERROR_EMPTY_SUBJECT = "Subject line cannot be empty";
@@ -26,7 +28,7 @@ class GitCommitMessageValidateCommand extends DockWorkerCommand {
   const ERROR_MISSING_PROJECT_PREFIX = "Commit messages must begin with the project prefix, followed by a hyphen,the JIRA issue number and a space";
   const ERROR_NOT_CAPITALIZED = "Capitalize subject line";
   const ERROR_PERIOD_END = 'Do not end the subject line with period';
-  const ERROR_TOO_LONG = "Limit the subject line to 50 characters, %d present";
+  const ERROR_TOO_LONG = "Limit the subject line to " . self::MAX_GIT_COMMIT_LENGTH . "50 characters, %d present";
   const SAMPLE_VALID_COMMIT_MESSAGE = 'Valid example: HERB-135 Add the new picture field to the article feature';
   const WARN_MISSING_JIRA_INFO = 'You have not specified a JIRA project and issue in your subject line. Continue Anyway?';
 
@@ -80,7 +82,7 @@ class GitCommitMessageValidateCommand extends DockWorkerCommand {
    */
   private function getValidateSubjectLength() {
     $length = strlen($this->subjectLine);
-    if ($length > 50) {
+    if ($length > self::MAX_GIT_COMMIT_LENGTH) {
       $this->errors[] = sprintf(static::ERROR_TOO_LONG, $length);
     }
     return NULL;
