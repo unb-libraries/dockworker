@@ -121,7 +121,9 @@ class GitCommitMessageValidateCommand extends DockWorkerCommand {
    */
   private function getValidateProjectPrefix() {
     $prefix = $this->getProjectPrefix();
-    return preg_match("/^$prefix-[0-9]+ {1}[a-zA-Z0-9]{1}.*/", $this->subjectLine);
+    return
+      preg_match("/^$prefix-[0-9]+ {1}[a-zA-Z0-9]{1}.*/", $this->subjectLine) ||
+      preg_match("/^IN-[0-9]+ {1}[a-zA-Z0-9]{1}.*/", $this->subjectLine);
   }
 
   /**
