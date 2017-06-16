@@ -52,6 +52,14 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
     $input = "src/scss/style.scss";
     $output = "$path/dist/css/style.css";
 
+    // Ensure dist dir exists.
+    $this->taskExecStack()
+      ->stopOnFail()
+      ->dir($path)
+      ->exec("mkdir -p dist")
+      ->run();
+
+    // Compile sass.
     $this->taskExecStack()
       ->stopOnFail()
       ->dir($path)
