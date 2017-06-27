@@ -82,6 +82,14 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
       ->exec("cp -r src/img dist/")
       ->run();
 
+    // Permissions.
+    $this->say("Setting Permissions of dist in $path");
+    $this->taskExecStack()
+      ->stopOnFail()
+      ->dir($path)
+      ->exec("chmod -R g+w dist")
+      ->run();
+
     $this->say("Done!");
   }
 
