@@ -16,7 +16,7 @@ use UnbLibraries\DockWorker\Robo\DockWorkerCommand;
  */
 class GitCommitMessageValidateCommand extends DockWorkerCommand {
 
-  use \Cheppers\Robo\Phpcs\PhpcsTaskLoader;
+  use \Sweetchuck\Robo\Phpcs\PhpcsTaskLoader;
 
   const MAX_GIT_COMMIT_LENGTH = 70;
 

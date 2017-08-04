@@ -11,7 +11,7 @@ use UnbLibraries\DockWorker\Robo\DockWorkerCommand;
  */
 class ValidateCommand extends DockWorkerCommand {
 
-  use \Cheppers\Robo\Phpcs\PhpcsTaskLoader;
+  use \Sweetchuck\Robo\Phpcs\PhpcsTaskLoader;
 
   const ERROR_FAILED_TWIG_LINTING = '%s failed Twig linting';
   const INFO_CREATE_PHPCS_SYMLINK = 'Created symlink for Drupal coding standard to phpcs directory';
