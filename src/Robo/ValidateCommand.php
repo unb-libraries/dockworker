@@ -42,7 +42,7 @@ class ValidateCommand extends DockWorkerCommand {
 
     $files_array = explode("\n", $files);
     return $this->taskPhpcsLintFiles()
-      ->setStandard('Drupal')
+      ->setStandards('Drupal')
       ->setReport('full')
       ->setFiles($files_array)
       ->setColors(TRUE)
