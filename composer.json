@@ -6,7 +6,7 @@
     "asm89/twig-lint": "^1.0.2",
     "boedah/robo-drush": "~3",
     "sweetchuck/robo-phpcs": "^0.0.15",
-    "consolidation/robo": "^1.0",
+    "consolidation/robo": "1.0.8",
     "droath/robo-docker-compose": "~0.0.1",
     "drupal/coder": "^8.2.12",
     "leafo/scssphp": "^0.6.7"
