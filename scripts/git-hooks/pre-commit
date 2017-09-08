@@ -17,7 +17,17 @@ then
 fi
 
 echo "Sniffing staged files via PHP Code Sniffer..."
-${ROOT_DIR}/vendor/bin/dockworker validate:phpcs:files "$LIST" || exit 1;
+${ROOT_DIR}/vendor/bin/dockworker validate:phpcs:files "$LIST"
+SNIFF_STATUS=$?
+if [ $SNIFF_STATUS -ne 0 ]; then
+  exec < /dev/tty
+  read -p "The PHPCS lint reported errors. Would you still like to continue anyhow? " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Nn]$ ]]; then
+    echo "Aborting due to failed PHPCS lint."
+    exit $SNIFF_STATUS
+  fi
+fi
 
 if [[ $LIST == *".twig"* ]];
 then
