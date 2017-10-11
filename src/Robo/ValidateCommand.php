@@ -71,6 +71,39 @@ class ValidateCommand extends DockWorkerCommand {
   }
 
   /**
+   * Validate files using yaml-lint.
+   *
+   * @command validate:yaml:files
+   */
+  public function validateYamlFiles($files) {
+    $files_array = explode("\n", $files);
+
+    // Only validate PHP files with PHPCS.
+    $lint_extensions = [
+      'yml',
+      'yaml',
+    ];
+
+    foreach ($files_array as $file_key => $filename) {
+      $fileExt = pathinfo($filename, PATHINFO_EXTENSION);
+      if (!in_array($fileExt, $lint_extensions)) {
+        unset($files_array[$file_key]);
+      }
+    }
+
+    if (!empty($files_array)) {
+      // Lint files.
+      $linter_bin = $this->repoRoot . '/vendor/bin/yaml-lint';
+      return $this->taskExec($linter_bin)
+        ->arg(implode(' ', $files_array))
+        ->run();
+    }
+    else {
+      print "No YAML files found to lint!\n";
+    }
+  }
+
+  /**
    * Validates twig files.
    *
    * @command validate:twig:files

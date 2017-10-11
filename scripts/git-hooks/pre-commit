@@ -29,6 +29,19 @@ if [ $SNIFF_STATUS -ne 0 ]; then
   fi
 fi
 
+echo "Linting YML files..."
+${ROOT_DIR}/vendor/bin/dockworker validate:yaml:files "$LIST"
+SNIFF_STATUS=$?
+if [ $SNIFF_STATUS -ne 0 ]; then
+  exec < /dev/tty
+  read -p "The YAML lint reported errors. Would you still like to continue anyhow? " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Nn]$ ]]; then
+    echo "Aborting due to failed YAML lint."
+    exit $SNIFF_STATUS
+  fi
+fi
+
 if [[ $LIST == *".twig"* ]];
 then
   echo "Linting custom twig files..."
