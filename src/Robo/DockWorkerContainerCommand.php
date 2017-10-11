@@ -56,7 +56,7 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
     $this->taskExecStack()
       ->stopOnFail()
       ->dir($path)
-      ->exec("mkdir -p dist")
+      ->exec("mkdir -p dist/css")
       ->run();
 
     // Compile sass.
