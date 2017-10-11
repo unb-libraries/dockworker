@@ -39,14 +39,35 @@ class ValidateCommand extends DockWorkerCommand {
    */
   public function validatePhpCs($files) {
     $this->setPhpCsCoderSymlink();
-
     $files_array = explode("\n", $files);
-    return $this->taskPhpcsLintFiles()
-      ->setStandards(['Drupal'])
-      ->setReport('full')
-      ->setFiles($files_array)
-      ->setColors(TRUE)
-      ->run();
+
+    // Only validate PHP files with PHPCS.
+    $lint_extensions = [
+      'php',
+      'inc',
+      'lib',
+      'module',
+    ];
+
+    foreach ($files_array as $file_key => $filename) {
+      $fileExt = pathinfo($filename, PATHINFO_EXTENSION);
+      if (!in_array($fileExt, $lint_extensions)) {
+        unset($files_array[$file_key]);
+      }
+    }
+
+    if (!empty($files_array)) {
+      // Lint files.
+      return $this->taskPhpcsLintFiles()
+        ->setStandards(['Drupal'])
+        ->setReport('full')
+        ->setFiles($files_array)
+        ->setColors(TRUE)
+        ->run();
+    }
+    else {
+      print "No PHP files found to lint!\n";
+    }
   }
 
   /**
