@@ -71,7 +71,7 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
     $this->taskExecStack()
       ->stopOnFail()
       ->dir($path)
-      ->exec("cp -r src/img dist/")
+      ->exec("cp -r src/img dist/ || true")
       ->run();
 
     // Javascript.
@@ -79,7 +79,7 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
     $this->taskExecStack()
       ->stopOnFail()
       ->dir($path)
-      ->exec("cp -r src/js dist/")
+      ->exec("cp -r src/js dist/ || true")
       ->run();
 
     // Permissions.
