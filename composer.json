@@ -9,6 +9,7 @@
     "consolidation/robo": "1.0.8",
     "droath/robo-docker-compose": "~0.0.1",
     "drupal/coder": "^8.2.12",
+    "j13k/yaml-lint": "^1.1.1",
     "leafo/scssphp": "^0.6.7"
   },
   "license": "MIT",
