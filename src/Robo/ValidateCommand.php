@@ -86,7 +86,7 @@ class ValidateCommand extends DockWorkerCommand {
 
     foreach ($files_array as $file_key => $filename) {
       $fileExt = pathinfo($filename, PATHINFO_EXTENSION);
-      if (!in_array($fileExt, $lint_extensions)) {
+      if (!in_array($fileExt, $lint_extensions) || substr($filename, 0, strlen('config-yml')) === 'config-yml') {
         unset($files_array[$file_key]);
       }
     }
