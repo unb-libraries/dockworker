@@ -92,11 +92,19 @@ class ValidateCommand extends DockWorkerCommand {
     }
 
     if (!empty($files_array)) {
-      // Lint files.
       $linter_bin = $this->repoRoot . '/vendor/bin/yaml-lint';
-      return $this->taskExec($linter_bin)
-        ->arg(implode(' ', $files_array))
-        ->run();
+      // Lint files.
+      $return_code = 0;
+
+      foreach ($files_array as $lint_file) {
+        $return_code_local = $this->taskExec($linter_bin)
+          ->arg(implode(' ', $lint_file))
+          ->run();
+        if ($return_code_local != "0") {
+          $return_code = 1;
+        }
+      }
+      return $return_code;
     }
     else {
       print "No YAML files found to lint!\n";
