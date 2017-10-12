@@ -6,8 +6,8 @@ PHPCS_BIN=vendor/bin/phpcs
 
 if [[ "$LIST" == "" ]];
 then
-  echo "No files staged for commit!"
-  exit 1
+  echo "No added or modified files in this commit set. Skipping Linting!"
+  exit 0
 fi
 
 if [ ! -f $PHPCS_BIN ];
