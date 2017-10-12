@@ -98,7 +98,7 @@ class ValidateCommand extends DockWorkerCommand {
 
       foreach ($files_array as $lint_file) {
         $return_code_local = $this->taskExec($linter_bin)
-          ->arg(implode(' ', $lint_file))
+          ->arg($lint_file)
           ->run();
         if ($return_code_local != "0") {
           $return_code = 1;
