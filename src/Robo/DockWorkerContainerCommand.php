@@ -12,6 +12,8 @@ use UnbLibraries\DockWorker\Robo\DockWorkerCommand;
  */
 class DockWorkerContainerCommand extends DockWorkerCommand {
 
+  const ERROR_FAILED_THEME_BUILD = '%s failed theme building';
+
   use \Droath\RoboDockerCompose\Task\loadTasks;
 
   /**
@@ -51,46 +53,63 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
     $compiler = $this->repoRoot . '/vendor/bin/pscss';
     $input = "src/scss/style.scss";
     $output = "$path/dist/css/style.css";
+    $return_code = 0;
 
     // Ensure dist dir exists.
-    $this->taskExecStack()
+    $return = $this->taskExecStack()
       ->stopOnFail()
       ->dir($path)
       ->exec("mkdir -p dist/css")
       ->run();
+    if ($return->getExitCode() != "0") {
+      $return_code = 1;
+    }
 
     // Compile sass.
-    $this->taskExecStack()
+    $return = $this->taskExecStack()
       ->stopOnFail()
       ->dir($path)
       ->exec("$compiler lint -f crunched $input > $output")
       ->run();
+    if ($return->getExitCode() != "0") {
+      $return_code = 1;
+    }
 
     // Images.
     $this->say("Deploying Image Assets in $path");
-    $this->taskExecStack()
+    $return = $this->taskExecStack()
       ->stopOnFail()
       ->dir($path)
       ->exec("cp -r src/img dist/ || true")
       ->run();
+    if ($return->getExitCode() != "0") {
+      $return_code = 1;
+    }
 
     // Javascript.
     $this->say("Deploying Javascript Assets in $path");
-    $this->taskExecStack()
+    $return = $this->taskExecStack()
       ->stopOnFail()
       ->dir($path)
       ->exec("cp -r src/js dist/ || true")
       ->run();
+    if ($return->getExitCode() != "0") {
+      $return_code = 1;
+    }
 
     // Permissions.
     $this->say("Setting Permissions of dist in $path");
-    $this->taskExecStack()
+    $return = $this->taskExecStack()
       ->stopOnFail()
       ->dir($path)
       ->exec("chmod -R g+w dist")
       ->run();
+    if ($return->getExitCode() != "0") {
+      $return_code = 1;
+    }
 
     $this->say("Done!");
+    return $return_code;
   }
 
   /**
@@ -110,7 +129,12 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
         $theme_path = realpath(
           $file->getPath() . '/../../'
         );
-        $this->buildTheme($theme_path);
+        $return_code = $this->buildTheme($theme_path);
+        if ($return_code != "0") {
+          throw new \Exception(
+            sprintf(self::ERROR_FAILED_THEME_BUILD, $theme_path)
+          );
+        }
       }
     }
   }
