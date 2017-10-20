@@ -36,7 +36,7 @@ class GitCommand extends DockWorkerCommand {
    * @command git:setup-hooks
    */
   public function setupHooks() {
-    $source_dir = $this->repoRoot . "/vendor/unblibraries/dockworker/scripts/git-hooks";
+    $source_dir = $this->repoRoot . "/vendor/unb-libraries/dockworker/scripts/git-hooks";
     $target_dir = $this->repoRoot . "/.git/hooks";
     $this->_copy("$source_dir/commit-msg", "$target_dir/commit-msg");
     $this->_copy("$source_dir/pre-commit", "$target_dir/pre-commit");
