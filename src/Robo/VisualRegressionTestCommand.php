@@ -42,12 +42,12 @@ class VisualRegressionTestCommand extends DockWorkerCommand {
    * @command visualreg:test
    */
   public function visualRegressionTest($branch = NULL) {
-    $this->setBackstopFile($branch);
+    $test_branch = $this->setBackstopFile($branch, FALSE, TRUE);
     $test_results = $this->getExecuteBackstop('test');
 
     if ($test_results != 0) {
       if ('y' === $this->ask('Tests have failed. Approve the changes? (y/n)')) {
-        $approve_results = $this->visualRegressionApprove($branch);
+        $approve_results = $this->visualRegressionApprove($test_branch);
         if ($approve_results == 0) {
           if ('y' === $this->ask('Approval successful, commit changes? (y/n)')) {
             // Unstage any files currently staged.
@@ -59,7 +59,7 @@ class VisualRegressionTestCommand extends DockWorkerCommand {
             // Commit the changes.
             $this->taskExec('git')
               ->arg('add')
-              ->arg("{$this->backstopDir}/$branch")
+              ->arg("{$this->backstopDir}")
               ->run();
             $this->taskExec('git')
               ->arg('commit')
@@ -68,7 +68,7 @@ class VisualRegressionTestCommand extends DockWorkerCommand {
               ->arg(
                 sprintf(
                   self::APPROVE_CHANGES_GIT_COMMIT_MESSAGE,
-                  $branch
+                  $test_branch
                 )
               )
               ->run();
@@ -153,7 +153,7 @@ class VisualRegressionTestCommand extends DockWorkerCommand {
         // Commit the changes.
         $this->taskExec('git')
           ->arg('add')
-          ->arg("{$this->backstopDir}/$branch")
+          ->arg("{$this->backstopDir}")
           ->run();
         $this->taskExec('git')
           ->arg('commit')
@@ -168,12 +168,13 @@ class VisualRegressionTestCommand extends DockWorkerCommand {
           ->run();
       }
     }
+
   }
 
   /**
    * Check backstop status and set up Backstop file properties in object.
    */
-  public function setBackstopFile($branch = NULL, $return_branch_on_exists = FALSE) {
+  public function setBackstopFile($branch = NULL, $return_new_branch_on_missing = FALSE, $return_branch_on_exists = FALSE) {
     if (empty($branch)) {
       $cur_branch = $this->getGitBranch();
       $branch = $this->askDefault("Branch to target? (dev/live)", $cur_branch);
@@ -184,7 +185,7 @@ class VisualRegressionTestCommand extends DockWorkerCommand {
     $this->backstopDir = dirname($backstop_file);
 
     if (!file_exists($backstop_file)) {
-      if (!$return_branch_on_exists) {
+      if (!$return_new_branch_on_missing) {
         throw new \Exception(
           sprintf(
             self::ERROR_BACKSTOP_FILES_NOT_FOUND,
@@ -196,8 +197,12 @@ class VisualRegressionTestCommand extends DockWorkerCommand {
         return $branch;
       }
     }
-
-    return FALSE;
+    if (!$return_branch_on_exists) {
+      return FALSE;
+    }
+    else {
+      return $branch;
+    }
   }
 
   public function getExecuteBackstop($command = NULL) {
