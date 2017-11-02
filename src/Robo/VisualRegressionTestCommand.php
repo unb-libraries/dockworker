@@ -211,6 +211,7 @@ class VisualRegressionTestCommand extends DockWorkerCommand {
     return $this->taskExec($docker_bin)
       ->arg('run')
       ->arg('--rm')
+      ->arg('--network=host')
       ->arg('-v')->arg("{$this->backstopDir}:/src")
       ->arg('docksal/backstopjs')
       ->arg($command)
