@@ -1,5 +1,5 @@
 {
-  "name": "unb-libraries/dockworker",
+  "name": "unblibraries/dockworker",
   "description": "Services for wiring up docker containers for development",
   "type": "library",
   "require": {
