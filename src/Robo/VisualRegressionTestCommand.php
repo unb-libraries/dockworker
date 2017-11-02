@@ -206,12 +206,17 @@ class VisualRegressionTestCommand extends DockWorkerCommand {
   }
 
   public function getExecuteBackstop($command = NULL) {
+    $hostname = Robo::Config()->get('dockworker.instance.name');
+    $host_ip = gethostbyname($hostname);
+    $host_dev_ip = gethostbyname("dev-$hostname");
+
     $docker_bin = 'docker';
     print $this->backstopDir;
     return $this->taskExec($docker_bin)
       ->arg('run')
       ->arg('--rm')
-      ->arg('--network=host')
+      ->arg('--add-host')->arg("$hostname:$host_ip")
+      ->arg('--add-host')->arg("dev-$hostname:$host_dev_ip")
       ->arg('-v')->arg("{$this->backstopDir}:/src")
       ->arg('docksal/backstopjs')
       ->arg($command)
