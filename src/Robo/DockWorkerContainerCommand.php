@@ -12,7 +12,9 @@ use UnbLibraries\DockWorker\Robo\DockWorkerCommand;
  */
 class DockWorkerContainerCommand extends DockWorkerCommand {
 
+  const ERROR_BUILDING_IMAGE = 'Error reported building image!';
   const ERROR_FAILED_THEME_BUILD = '%s failed theme building';
+  const ERROR_PULLING_UPSTREAM_IMAGE = 'Error pulling upstream image %s';
 
   use \Droath\RoboDockerCompose\Task\loadTasks;
 
@@ -201,8 +203,20 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
    * @command container:start
    */
   public function start($opts = ['no-cache' => FALSE]) {
-    $this->pullUpstreamImage();
-    $this->build($opts);
+    if ($this->pullUpstreamImage()->getExitCode() > 0) {
+      throw new \Exception(
+        sprintf(
+        self::ERROR_PULLING_UPSTREAM_IMAGE,
+        Robo::Config()->get('dockworker.instance.upstream_image')
+        )
+      );
+    }
+
+    if ($this->build($opts)->getExitCode() > 0) {
+      throw new \Exception(
+        sprintf(self::ERROR_BUILDING_IMAGE)
+      );
+    }
 
     $collection = $this->collectionBuilder();
     $collection->addCode(
