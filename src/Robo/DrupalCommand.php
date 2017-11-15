@@ -61,10 +61,7 @@ class DrupalCommand extends DockWorkerCommand {
     return $this->taskDockerExec($this->getInstanceName())
       ->interactive()
       ->exec(
-        $this->taskDrushStack()
-          ->drupalRootDirectory('/app/html')
-          ->uri('default')
-          ->drush('uli')
+        '/scripts/pre-init.d/99_z_notify_user_URI.sh'
       )
       ->run();
   }
