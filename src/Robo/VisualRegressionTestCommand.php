@@ -110,7 +110,15 @@ class VisualRegressionTestCommand extends DockWorkerCommand {
     $project_name = $this->askDefault('Project name (i.e. unbherbarium.lib.unb.ca)?', Robo::Config()->get('dockworker.instance.name'));
     $project_slug = str_replace('.', '_', $project_name);
     $project_slug = $this->askDefault('Project slug (i.e. unbherbarium_lib_unb_ca)?', $project_slug);
-    $test_uri = $this->askDefault('Initial URI to test for this branch?', "https://$project_name");
+
+    if ($new_branch != 'prod') {
+      $test_uri_guess = "https://$new_branch-$project_name";
+    }
+    else {
+      $test_uri_guess = "https://$project_name";
+    }
+
+    $test_uri = $this->askDefault('Initial URI to test for this branch?', $test_uri_guess);
 
     // Make the directory.
     $this->taskExec('mkdir')
