@@ -191,10 +191,14 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
    * @command container:rm
    */
   public function removeData() {
-    return $this->taskDockerComposeDown()
+    // Make sure the instance is down first.
+    $this->taskDockerComposeDown()
       ->volumes()
       ->removeOrphans()
       ->run();
+
+    // Remove the data.
+    return $this->_exec('docker-compose rm -f -v');
   }
 
   /**
