@@ -142,6 +142,18 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
   }
 
   /**
+   * Clean up any leftover docker assets not being used.
+   *
+   * @command container:cleanup
+   */
+  public function containerCleanup() {
+    $this->say("Cleaning up dangling images and volumes:");
+    $this->_exec('docker images -qf dangling=true | xargs docker rmi -f');
+    $this->_exec('docker volume ls -qf dangling=true | xargs docker volume rm');
+    return TRUE;
+  }
+
+  /**
    * Halt the instance without removing any data.
    *
    * @command container:halt
@@ -197,7 +209,7 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
       ->removeOrphans()
       ->run();
 
-    // Remove the data.
+    // Remove the docker-compose stored data.
     return $this->_exec('docker-compose rm -f -v');
   }
 
@@ -239,6 +251,7 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
    */
   public function startOver($opts = ['no-cache' => FALSE]) {
     $this->removeData();
+    $this->containerCleanup();
     return $this->start($opts);
   }
 
