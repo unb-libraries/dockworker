@@ -17,7 +17,7 @@ class VisualRegressionTestCommand extends DockWorkerCommand {
   const ADD_BRANCH_GIT_COMMIT_MESSAGE = 'Add visual regression reference images for %s';
   const APPROVE_CHANGES_GIT_COMMIT_MESSAGE = 'Update visual regression reference images for %s';
 
-  const BACKSTOP_JSON_BOILERPLATE_FILE_URI = 'https://raw.githubusercontent.com/unb-libraries/unbherbarium.lib.unb.ca/dev/tests/backstop/dev/backstop.json';
+  const BACKSTOP_JSON_BOILERPLATE_FILE_URI = 'https://raw.githubusercontent.com/unb-libraries/dockworker/drupal-8.x-1.x/data/backstop/backstop.json';
   const BACKSTOP_JSON_BOILERPLATE_URL_STRING = 'https://dev-unbherbarium.lib.unb.ca/';
   const BACKSTOP_JSON_BOILERPLATE_PROJECT_SLUG = 'unbherbarium_lib_unb_ca';
   const BACKSTOP_JSON_BOILERPLATE_PROJECT_NAME = 'unbherbarium.lib.unb.ca';
