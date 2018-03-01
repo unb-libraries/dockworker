@@ -56,7 +56,7 @@ class DrupalRemoteSyncCommand extends DockWorkerCommand {
    * @command drupal:remote-sync:files
    */
   public function getRemoteServer() {
-    $server = $this->askDefault("What server to sync from? (dev/live)", 'dev');
+    $server = $this->askDefault("What server to sync from? (dev/prod)", 'dev');
 
     $server_config_key = "dockworker.upstream.$server";
     $server_hostname = Robo::Config()->get($server_config_key);

@@ -185,7 +185,7 @@ class VisualRegressionTestCommand extends DockWorkerCommand {
   public function setBackstopFile($branch = NULL, $return_new_branch_on_missing = FALSE, $return_branch_on_exists = FALSE) {
     if (empty($branch)) {
       $cur_branch = $this->getGitBranch();
-      $branch = $this->askDefault("Branch to target? (dev/live)", $cur_branch);
+      $branch = $this->askDefault("Branch to target? (dev/prod)", $cur_branch);
     }
 
     $backstop_file = $this->repoRoot . "/tests/backstop/$branch/backstop.json";
