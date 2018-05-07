@@ -8,9 +8,9 @@ use Symfony\Component\Finder\Finder;
 use UnbLibraries\DockWorker\Robo\DockWorkerCommand;
 
 /**
- * Defines commands for a DockWorker container.
+ * Defines commands for a DockWorker application.
  */
-class DockWorkerContainerCommand extends DockWorkerCommand {
+class DockWorkerApplicationCommand extends DockWorkerCommand {
 
   const ERROR_BUILDING_IMAGE = 'Error reported building image!';
   const ERROR_FAILED_THEME_BUILD = '%s failed theme building';
@@ -30,7 +30,8 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
   /**
    * Build the instance images from the Dockerfiles.
    *
-   * @command container:build
+   * @command application:build
+   * @aliases build
    */
   public function build($opts = ['no-cache' => FALSE]) {
     $this->buildThemes();
@@ -47,7 +48,7 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
   /**
    * SCSS compile a theme's assets.
    *
-   * @command container:theme:build
+   * @command application:theme:build
    */
   public function buildTheme($path) {
     // CSS.
@@ -117,7 +118,7 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
   /**
    * SCSS compile all themes in the repository.
    *
-   * @command container:theme:build-all
+   * @command application:theme:build-all
    */
   public function buildThemes() {
     $custom_theme_dir = $this->repoRoot . '/custom/themes';
@@ -144,9 +145,9 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
   /**
    * Clean up any leftover docker assets not being used.
    *
-   * @command container:cleanup
+   * @command application:cleanup
    */
-  public function containerCleanup() {
+  public function applicationCleanup() {
     $this->say("Cleaning up dangling images and volumes:");
     $this->_exec('docker images -qf dangling=true | xargs docker rmi -f');
     $this->_exec('docker volume ls -qf dangling=true | xargs docker volume rm');
@@ -156,9 +157,9 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
   /**
    * Halt the instance without removing any data.
    *
-   * @command container:halt
+   * @command application:halt
    */
-  public function containerHalt() {
+  public function applicationHalt() {
     return $this->taskDockerComposeDown()
       ->run();
   }
@@ -166,19 +167,21 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
   /**
    * Display the instance logs.
    *
-   * @command container:logs
+   * @command application:logs
+   * @aliases logs
    */
-  public function containerLogs() {
-    $this->getContainerRunning();
+  public function applicationLogs() {
+    $this->getapplicationRunning();
     return $this->_exec('docker-compose logs -f');
   }
 
   /**
-   * Open the container's shell.
+   * Open the application's shell.
    *
-   * @command container:shell
+   * @command application:shell
+   * @aliases shell
    */
-  public function openContainerShell() {
+  public function openApplicationShell() {
     return $this->taskDockerExec($this->getInstanceName())
       ->interactive()
       ->option('-t')
@@ -189,7 +192,7 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
   /**
    * Git-pull the upstream image(s) for this instance.
    *
-   * @command container:pull-upstream-images
+   * @command application:pull-upstream-images
    */
   public function pullUpstreamImages() {
     $upstream_images = $this->getUpstreamImages();
@@ -209,7 +212,8 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
   /**
    * Bring down the instance and remove all persistent data.
    *
-   * @command container:rm
+   * @command application:rm
+   * @aliases rm
    */
   public function removeData() {
     // Make sure the instance is down first.
@@ -225,7 +229,8 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
   /**
    * Bring up the instance and display the logs.
    *
-   * @command container:start
+   * @command application:start
+   * @aliases start
    */
   public function start($opts = ['no-cache' => FALSE]) {
     $this->pullUpstreamImages();
@@ -241,7 +246,7 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
       [$this, 'up']
     );
     $collection->addCode(
-      [$this, 'containerLogs']
+      [$this, 'applicationLogs']
     );
     return $collection->run();
   }
@@ -249,18 +254,19 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
   /**
    * Bring down the instance, remove all persistent data and start it again.
    *
-   * @command container:start-over
+   * @command application:start-over
+   * @aliases start-over
    */
   public function startOver($opts = ['no-cache' => FALSE]) {
     $this->removeData();
-    $this->containerCleanup();
+    $this->applicationCleanup();
     return $this->start($opts);
   }
 
   /**
    * Bring up the instance.
    *
-   * @command container:up
+   * @command application:up
    */
   public function up() {
     return $this->taskDockerComposeUp()

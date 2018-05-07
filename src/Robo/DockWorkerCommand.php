@@ -23,8 +23,8 @@ class DockWorkerCommand extends Tasks implements ContainerAwareInterface, Logger
   use ContainerAwareTrait;
   use LoggerAwareTrait;
 
-  const ERROR_CONTAINER_MISSING = 'The %s container does not appear to exist.';
-  const ERROR_CONTAINER_STOPPED = 'The %s container appears to be stopped.';
+  const ERROR_CONTAINER_MISSING = 'The %s application does not appear to exist.';
+  const ERROR_CONTAINER_STOPPED = 'The %s application appears to be stopped.';
   const ERROR_INSTANCE_NAME_UNSET = 'The instance.name value has not been set in %s';
   const ERROR_PROJECT_PREFIX_UNSET = 'The project_prefix variable has not been set in %s';
   const ERROR_UPSTREAM_IMAGE_UNSET = 'The upstream_image variable has not been set in %s';
@@ -68,7 +68,7 @@ class DockWorkerCommand extends Tasks implements ContainerAwareInterface, Logger
   /**
    * Check if the container is running.
    */
-  public function getContainerRunning() {
+  public function getApplicationRunning() {
     $container_name = $this->getInstanceName();
 
     exec(
