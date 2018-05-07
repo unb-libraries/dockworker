@@ -187,14 +187,23 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
   }
 
   /**
-   * Git-pull the upstream image for this instance.
+   * Git-pull the upstream image(s) for this instance.
    *
-   * @command container:pull-upstream
+   * @command container:pull-upstream-images
    */
-  public function pullUpstreamImage() {
-    $upstream_image = $this->getUpstreamImage();
-    return $this->taskDockerPull($upstream_image)
-      ->run();
+  public function pullUpstreamImages() {
+    $upstream_images = $this->getUpstreamImages();
+    foreach ($upstream_images as $upstream_image) {
+      $result= $this->taskDockerPull($upstream_image)->run();
+      if ($result->getExitCode() > 0) {
+        throw new \Exception(
+          sprintf(
+            self::ERROR_PULLING_UPSTREAM_IMAGE,
+            $upstream_image
+          )
+        );
+      }
+    }
   }
 
   /**
@@ -219,14 +228,7 @@ class DockWorkerContainerCommand extends DockWorkerCommand {
    * @command container:start
    */
   public function start($opts = ['no-cache' => FALSE]) {
-    if ($this->pullUpstreamImage()->getExitCode() > 0) {
-      throw new \Exception(
-        sprintf(
-        self::ERROR_PULLING_UPSTREAM_IMAGE,
-        Robo::Config()->get('dockworker.instance.upstream_image')
-        )
-      );
-    }
+    $this->pullUpstreamImages();
 
     if ($this->build($opts)->getExitCode() > 0) {
       throw new \Exception(

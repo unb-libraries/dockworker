@@ -102,12 +102,18 @@ class DockWorkerCommand extends Tasks implements ContainerAwareInterface, Logger
   /**
    * Get the upstream image.
    */
-  public function getUpstreamImage() {
-    $upstream_image = Robo::Config()->get('dockworker.instance.upstream_image');
-    if (empty($upstream_image)) {
+  public function getUpstreamImages() {
+    $upstream_images = Robo::Config()->get('dockworker.instance.upstream_image');
+    if (empty($upstream_images)) {
       throw new \Exception(sprintf(self::ERROR_UPSTREAM_IMAGE_UNSET, $this->configFile));
     }
-    return $upstream_image;
+
+    // Handle migration from scalar.
+    if (!is_array($upstream_images)) {
+      $upstream_images = [$upstream_images];
+    }
+
+    return $upstream_images;
   }
 
   /**
