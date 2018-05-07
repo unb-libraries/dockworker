@@ -46,100 +46,21 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
   }
 
   /**
-   * SCSS compile a theme's assets.
+   * Build or complile any assets needed to deploy a theme.
    *
    * @command application:theme:build
    */
   public function buildTheme($path) {
-    // CSS.
-    $this->say("Compiling SCSS in $path");
-    $compiler = $this->repoRoot . '/vendor/bin/pscss';
-    $input = "src/scss/style.scss";
-    $output = "$path/dist/css/style.css";
-    $return_code = 0;
-
-    // Ensure dist dir exists.
-    $return = $this->taskExecStack()
-      ->stopOnFail()
-      ->dir($path)
-      ->exec("mkdir -p dist/css")
-      ->run();
-    if ($return->getExitCode() != "0") {
-      $return_code = 1;
-    }
-
-    // Compile sass.
-    $return = $this->taskExecStack()
-      ->stopOnFail()
-      ->dir($path)
-      ->exec("$compiler lint -f crunched $input > $output")
-      ->run();
-    if ($return->getExitCode() != "0") {
-      $return_code = 1;
-    }
-
-    // Images.
-    $this->say("Deploying Image Assets in $path");
-    $return = $this->taskExecStack()
-      ->stopOnFail()
-      ->dir($path)
-      ->exec("cp -r src/img dist/ || true")
-      ->run();
-    if ($return->getExitCode() != "0") {
-      $return_code = 1;
-    }
-
-    // Javascript.
-    $this->say("Deploying Javascript Assets in $path");
-    $return = $this->taskExecStack()
-      ->stopOnFail()
-      ->dir($path)
-      ->exec("cp -r src/js dist/ || true")
-      ->run();
-    if ($return->getExitCode() != "0") {
-      $return_code = 1;
-    }
-
-    // Permissions.
-    $this->say("Setting Permissions of dist in $path");
-    $return = $this->taskExecStack()
-      ->stopOnFail()
-      ->dir($path)
-      ->exec("chmod -R g+w dist")
-      ->run();
-    if ($return->getExitCode() != "0") {
-      $return_code = 1;
-    }
-
-    $this->say("Done!");
-    return $return_code;
+    // Placeholder for hooking in specific applications. See DrupalCommand.
   }
 
   /**
-   * SCSS compile all themes in the repository.
+   * Build or complile all themes.
    *
    * @command application:theme:build-all
    */
   public function buildThemes() {
-    $custom_theme_dir = $this->repoRoot . '/custom/themes';
-
-    if (file_exists($custom_theme_dir)) {
-      $finder = new Finder();
-      $finder->in($custom_theme_dir)
-        ->files()
-        ->name('/^style\.scss$/');
-      foreach ($finder as $file) {
-        $theme_path = realpath(
-          $file->getPath() . '/../../'
-        );
-        $return_code = $this->buildTheme($theme_path);
-        if ($return_code != "0") {
-          throw new \Exception(
-            sprintf(self::ERROR_FAILED_THEME_BUILD, $theme_path)
-          );
-        }
-      }
-    }
+    // Placeholder for hooking in specific applications. See DrupalCommand.
   }
 
   /**
