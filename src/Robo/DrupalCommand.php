@@ -118,7 +118,7 @@ class DrupalCommand extends DockWorkerCommand {
    */
   public function initialize() {
     $this->getInstanceName();
-    $this->getContainerRunning();
+    $this->getApplicationRunning();
   }
 
   /**

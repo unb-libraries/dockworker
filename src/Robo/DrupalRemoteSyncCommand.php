@@ -47,7 +47,7 @@ class DrupalRemoteSyncCommand extends DockWorkerCommand {
    */
   public function initialize() {
     $this->getInstanceName();
-    $this->getContainerRunning();
+    $this->getApplicationRunning();
   }
 
   /**
