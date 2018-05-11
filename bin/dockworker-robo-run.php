@@ -10,7 +10,7 @@ use Robo\Robo;
 // Discover all commands in Robo Directory.
 $discovery = new \Consolidation\AnnotatedCommand\CommandFileDiscovery();
 $discovery->setSearchPattern('*Command.php');
-$coreClasses = $discovery->discover("$repo_root/vendor/unblibraries/dockworker/src/Robo", 'UnbLibraries\DockWorker\Robo');
+$coreClasses = $discovery->discover("$repo_root/vendor/unb-libraries/dockworker/src/Robo", 'UnbLibraries\DockWorker\Robo');
 
 $statusCode = Robo::run(
   $_SERVER['argv'],
