@@ -120,21 +120,12 @@ class DrupalCommand extends DockWorkerApplicationCommand {
   }
 
   /**
-   * This hook will fire for all commands in this command file.
-   *
-   * @hook init
-   */
-  public function initialize() {
-    $this->getInstanceName();
-    $this->getApplicationRunning();
-  }
-
-  /**
    * Rebuild the cache in the Drupal container.
    *
    * @command drupal:cr
    */
   public function resetCache() {
+    $this->getApplicationRunning();
     return $this->taskDockerExec($this->getInstanceName())
       ->interactive()
       ->exec(
@@ -152,6 +143,7 @@ class DrupalCommand extends DockWorkerApplicationCommand {
    * @command drupal:tests:behat
    */
   public function runBehatTests() {
+    $this->getApplicationRunning();
     return $this->taskDockerExec($this->getInstanceName())
       ->interactive()
       ->exec('/scripts/runTests.sh')
@@ -164,6 +156,7 @@ class DrupalCommand extends DockWorkerApplicationCommand {
    * @command drupal:uli
    */
   public function uli() {
+    $this->getApplicationRunning();
     return $this->taskDockerExec($this->getInstanceName())
       ->interactive()
       ->exec(
@@ -178,6 +171,7 @@ class DrupalCommand extends DockWorkerApplicationCommand {
    * @command drupal:write-config
    */
   public function writeConfig() {
+    $this->getApplicationRunning();
     return $this->taskDockerExec($this->getInstanceName())
       ->interactive()
       ->exec('/scripts/configExport.sh')
