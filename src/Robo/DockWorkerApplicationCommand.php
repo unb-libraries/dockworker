@@ -28,21 +28,6 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
   }
 
   /**
-   * Build the instance images from the Dockerfiles.
-   *
-   * @command application:build
-   * @aliases build
-   */
-  public function build($opts = ['no-cache' => FALSE]) {
-    if ($opts['no-cache']) {
-      return $this->_exec('docker-compose build --no-cache');
-    }
-    else {
-      return $this->_exec('docker-compose build');
-    }
-  }
-
-  /**
    * Clean up any leftover docker assets not being used.
    *
    * @command application:cleanup
@@ -57,6 +42,9 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
    * Halt the instance without removing any data.
    *
    * @command application:halt
+   *
+   * @return \Robo\Result
+   *   The result of the command.
    */
   public function applicationHalt() {
     return $this->taskDockerComposeDown()->run();
@@ -67,6 +55,10 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
    *
    * @command application:logs
    * @aliases logs
+   * @throws \Exception
+   *
+   * @return \Robo\Result
+   *   The result of the command.
    */
   public function applicationLogs() {
     $this->getapplicationRunning();
@@ -74,10 +66,51 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
   }
 
   /**
+   * Build the application docker images.
+   *
+   * @param array $opts
+   *   An array of options to pass to the builder.
+   *
+   * @command application:build
+   * @aliases build
+   */
+  public function build(array $opts = ['no-cache' => FALSE]) {
+    if ($opts['no-cache']) {
+      $this->_exec('docker-compose build --no-cache');
+    }
+    else {
+      $this->_exec('docker-compose build');
+    }
+  }
+
+  /**
+   * Compile a theme's assets.
+   *
+   * @param string $path
+   *   The relative path of the theme to build.
+   *
+   * @command application:theme:build
+   */
+  public function buildTheme($path) {
+  }
+
+  /**
+   * Compile all themes in the application.
+   *
+   * @command application:theme:build-all
+   */
+  public function buildThemes() {
+  }
+
+  /**
    * Open the application's shell.
    *
    * @command application:shell
    * @aliases shell
+   * @throws \Exception
+   *
+   * @return \Robo\Result
+   *   The result of the command.
    */
   public function openApplicationShell() {
     return $this->taskDockerExec($this->getInstanceName())
@@ -91,6 +124,7 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
    * Git-pull the upstream image(s) for this instance.
    *
    * @command application:pull-upstream-images
+   * @throws \Exception
    */
   public function pullUpstreamImages() {
     $upstream_images = $this->getUpstreamImages();
@@ -112,6 +146,9 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
    *
    * @command application:rm
    * @aliases rm
+   *
+   * @return \Robo\Result
+   *   The result of the removal command.
    */
   public function removeData() {
     // Make sure the instance is down first.
@@ -127,10 +164,14 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
   /**
    * Bring up the instance and display the logs.
    *
+   * @param array $opts
+   *   An array of options to pass to the builder.
+   *
    * @command application:start
    * @aliases start
+   * @throws \Exception
    */
-  public function start($opts = ['no-cache' => FALSE]) {
+  public function start(array $opts = ['no-cache' => FALSE]) {
     $this->setRunOtherCommand('application:pull-upstream-images');
 
     $this->setRunOtherCommand(
@@ -145,8 +186,12 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
   /**
    * Bring down the instance, remove all persistent data and start it again.
    *
+   * @param array $opts
+   *   An array of options to pass to the builder.
+   *
    * @command application:start-over
    * @aliases start-over
+   * @throws \Exception
    */
   public function startOver($opts = ['no-cache' => FALSE]) {
     $this->setRunOtherCommand('application:rm');

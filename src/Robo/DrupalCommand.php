@@ -15,18 +15,28 @@ class DrupalCommand extends DockWorkerApplicationCommand {
   use \Boedah\Robo\Task\Drush\loadTasks;
 
   /**
-   * Build the themes before building the parent image.
+   * Compile Drupal themes before building the application containers.
    *
+   * @param array $opts
+   *   An array of options to pass to the builder.
    * @hook pre-command application:build
+   * @throws \Exception
    */
-  public function build($opts = ['no-cache' => FALSE]) {
-    $this->buildThemes();
+  public function build(array $opts = ['no-cache' => FALSE]) {
+    $this->setRunOtherCommand('application:theme:build-all');
   }
 
   /**
-   * SCSS compile a theme's assets.
+   * Compile a Drupal theme's assets.
+   *
+   * @param string $path
+   *   The relative path of the theme to build.
    *
    * @hook post-command application:theme:build
+   * @throws \Robo\Exception\TaskException
+   *
+   * @return integer
+   *   The return code of all commands : if one is nonzero, return nonzero.
    */
   public function buildTheme($path) {
     // CSS.
@@ -62,6 +72,7 @@ class DrupalCommand extends DockWorkerApplicationCommand {
       "Javascript" => 'js',
     ];
 
+    // Copy assets.
     foreach ($asset_types as $asset_type => $asset_path) {
       $theme_path = "$path/src/$asset_path";
       if (file_exists($theme_path)) {
@@ -93,9 +104,10 @@ class DrupalCommand extends DockWorkerApplicationCommand {
   }
 
   /**
-   * SCSS compile all themes in the repository.
+   * Compile Drupal themes in the application.
    *
    * @hook post-command application:theme:build-all
+   * @throws \Exception
    */
   public function buildThemes() {
     $custom_theme_dir = $this->repoRoot . '/custom/themes';

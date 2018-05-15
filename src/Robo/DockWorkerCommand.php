@@ -56,6 +56,8 @@ class DockWorkerCommand extends Tasks implements ContainerAwareInterface, Logger
 
   /**
    * Get the instance name from config.
+   *
+   * @throws \Exception
    */
   public function getInstanceName() {
     $container_name = Robo::Config()->get('dockworker.instance.name');
@@ -67,6 +69,8 @@ class DockWorkerCommand extends Tasks implements ContainerAwareInterface, Logger
 
   /**
    * Check if the container is running.
+   *
+   * @throws \Exception
    */
   public function getApplicationRunning() {
     $container_name = $this->getInstanceName();
@@ -90,6 +94,8 @@ class DockWorkerCommand extends Tasks implements ContainerAwareInterface, Logger
 
   /**
    * Get the project prefix.
+   *
+   * @throws \Exception
    */
   public function getProjectPrefix() {
     $project_prefix = Robo::Config()->get('dockworker.instance.project_prefix');
@@ -101,6 +107,8 @@ class DockWorkerCommand extends Tasks implements ContainerAwareInterface, Logger
 
   /**
    * Get the upstream image.
+   *
+   * @throws \Exception
    */
   public function getUpstreamImages() {
     $upstream_images = Robo::Config()->get('dockworker.instance.upstream_image');
@@ -128,11 +136,20 @@ class DockWorkerCommand extends Tasks implements ContainerAwareInterface, Logger
   }
 
   /**
-   * Run another dockworker command.
+   * Run another Dockworker command.
    *
    * This is necessary until the annontated-command feature request:
    * https://github.com/consolidation/annotated-command/issues/64 is merged
    * or solved. Otherwise hooks do not fire as expected.
+   *
+   * @param string $command_string
+   *   The Dockworker command to run.
+   * @param string $exception_message
+   *   The message to display if a non-zero code is returned.
+   * @throws \Exception
+   *
+   * @return int
+   *   The return code of the command.
    */
   public function setRunOtherCommand($command_string, $exception_message = NULL) {
     $bin = $_SERVER['argv'][0];
