@@ -10,9 +10,18 @@ use UnbLibraries\DockWorker\Robo\DockWorkerCommand;
 /**
  * Defines commands in the GitCommand namespace.
  */
-class DrupalCommand extends DockWorkerCommand {
+class DrupalCommand extends DockWorkerApplicationCommand {
 
   use \Boedah\Robo\Task\Drush\loadTasks;
+
+  /**
+   * Build the themes before building the parent image.
+   *
+   * @hook pre-command application:build
+   */
+  public function build($opts = ['no-cache' => FALSE]) {
+    $this->buildThemes();
+  }
 
   /**
    * SCSS compile a theme's assets.

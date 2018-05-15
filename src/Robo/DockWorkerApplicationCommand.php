@@ -34,33 +34,12 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
    * @aliases build
    */
   public function build($opts = ['no-cache' => FALSE]) {
-    $this->buildThemes();
-
-    // Build docker image.
     if ($opts['no-cache']) {
       return $this->_exec('docker-compose build --no-cache');
     }
     else {
       return $this->_exec('docker-compose build');
     }
-  }
-
-  /**
-   * Build or complile any assets needed to deploy a theme.
-   *
-   * @command application:theme:build
-   */
-  public function buildTheme($path) {
-    // Placeholder for hooking in specific applications. See DrupalCommand.
-  }
-
-  /**
-   * Build or complile all themes.
-   *
-   * @command application:theme:build-all
-   */
-  public function buildThemes() {
-    // Placeholder for hooking in specific applications. See DrupalCommand.
   }
 
   /**
