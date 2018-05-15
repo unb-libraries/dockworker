@@ -2,28 +2,30 @@
 
 namespace UnbLibraries\DockWorker\Robo;
 
-use Robo\Robo;
-use Robo\Tasks;
+use Consolidation\AnnotatedCommand\CommandData;
 use Symfony\Component\Finder\Finder;
-use UnbLibraries\DockWorker\Robo\DockWorkerCommand;
+use UnbLibraries\DockWorker\Robo\DockWorkerApplicationCommand;
 
 /**
  * Defines commands in the GitCommand namespace.
  */
 class DrupalCommand extends DockWorkerApplicationCommand {
 
+  const ERROR_FAILED_THEME_BUILD = '%s failed theme building';
+
   use \Boedah\Robo\Task\Drush\loadTasks;
 
   /**
    * Compile Drupal themes before building the application containers.
    *
-   * @param array $opts
-   *   An array of options to pass to the builder.
+   * @param \Consolidation\AnnotatedCommand\CommandData $command_data
+   *   The input interfaced passed to the original command.
+   *
    * @hook pre-command application:build
    * @throws \Exception
    */
-  public function build(array $opts = ['no-cache' => FALSE]) {
-    $this->setRunOtherCommand('application:theme:build-all');
+  public function buildDrupalThemes(CommandData $command_data) {
+    $this->setBuildDrupalThemes();
   }
 
   /**
@@ -32,13 +34,12 @@ class DrupalCommand extends DockWorkerApplicationCommand {
    * @param string $path
    *   The relative path of the theme to build.
    *
-   * @hook post-command application:theme:build
    * @throws \Robo\Exception\TaskException
    *
    * @return integer
    *   The return code of all commands : if one is nonzero, return nonzero.
    */
-  public function buildTheme($path) {
+  public function setBuildDrupalTheme($path) {
     // CSS.
     $this->say("Compiling SCSS in $path");
     $compiler = $this->repoRoot . '/vendor/bin/pscss';
@@ -106,10 +107,9 @@ class DrupalCommand extends DockWorkerApplicationCommand {
   /**
    * Compile Drupal themes in the application.
    *
-   * @hook post-command application:theme:build-all
    * @throws \Exception
    */
-  public function buildThemes() {
+  public function setBuildDrupalThemes() {
     $custom_theme_dir = $this->repoRoot . '/custom/themes';
 
     if (file_exists($custom_theme_dir)) {
@@ -121,7 +121,7 @@ class DrupalCommand extends DockWorkerApplicationCommand {
         $theme_path = realpath(
           $file->getPath() . '/../../'
         );
-        $return_code = $this->buildTheme($theme_path);
+        $return_code = $this->setBuildDrupalTheme($theme_path);
         if ($return_code != "0") {
           throw new \Exception(
             sprintf(self::ERROR_FAILED_THEME_BUILD, $theme_path)

@@ -2,9 +2,6 @@
 
 namespace UnbLibraries\DockWorker\Robo;
 
-use Robo\Result;
-use Robo\Robo;
-use Symfony\Component\Finder\Finder;
 use UnbLibraries\DockWorker\Robo\DockWorkerCommand;
 
 /**
@@ -13,7 +10,6 @@ use UnbLibraries\DockWorker\Robo\DockWorkerCommand;
 class DockWorkerApplicationCommand extends DockWorkerCommand {
 
   const ERROR_BUILDING_IMAGE = 'Error reported building image!';
-  const ERROR_FAILED_THEME_BUILD = '%s failed theme building';
   const ERROR_PULLING_UPSTREAM_IMAGE = 'Error pulling upstream image %s';
 
   use \Droath\RoboDockerCompose\Task\loadTasks;
