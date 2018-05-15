@@ -56,26 +56,25 @@ class DrupalCommand extends DockWorkerApplicationCommand {
       $return_code = 1;
     }
 
-    // Images.
-    $this->say("Deploying Image Assets in $path");
-    $return = $this->taskExecStack()
-      ->stopOnFail()
-      ->dir($path)
-      ->exec("cp -r src/img dist/ || true")
-      ->run();
-    if ($return->getExitCode() != "0") {
-      $return_code = 1;
-    }
+    // Theme Assets.
+    $asset_types = [
+      'Images' => 'img',
+      "Javascript" => 'js',
+    ];
 
-    // Javascript.
-    $this->say("Deploying Javascript Assets in $path");
-    $return = $this->taskExecStack()
-      ->stopOnFail()
-      ->dir($path)
-      ->exec("cp -r src/js dist/ || true")
-      ->run();
-    if ($return->getExitCode() != "0") {
-      $return_code = 1;
+    foreach ($asset_types as $asset_type => $asset_path) {
+      $theme_path = "$path/src/$asset_path";
+      if (file_exists($theme_path)) {
+        $this->say("Deploying $asset_type Assets in src/$asset_path");
+        $return = $this->taskExecStack()
+          ->stopOnFail()
+          ->dir($path)
+          ->exec("cp -r src/img dist/ || true")
+          ->run();
+        if ($return->getExitCode() != "0") {
+          $return_code = 1;
+        }
+      }
     }
 
     // Permissions.
