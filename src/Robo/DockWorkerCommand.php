@@ -126,4 +126,23 @@ class DockWorkerCommand extends Tasks implements ContainerAwareInterface, Logger
     }
     return (bool) $allow_prefixless_commits;
   }
+
+  /**
+   * Run another dockworker command.
+   *
+   * This is necessary until the annontated-command feature request:
+   * https://github.com/consolidation/annotated-command/issues/64 is merged
+   * or solved. Otherwise hooks do not fire as expected.
+   */
+  public function setRunOtherCommand($command_string, $exception_message = NULL) {
+    $bin = $_SERVER['argv'][0];
+    $command = "$bin $command_string";
+    $return = 0;
+    passthru($command, $return);
+    if ($return > 0) {
+      throw new \Exception($exception_message);
+    };
+    return $return;
+  }
+
 }

@@ -133,22 +133,15 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
    * @aliases start
    */
   public function start($opts = ['no-cache' => FALSE]) {
-    $this->pullUpstreamImages();
+    $this->setRunOtherCommand('application:pull-upstream-images');
 
-    if ($this->build($opts)->getExitCode() > 0) {
-      throw new \Exception(
-        sprintf(self::ERROR_BUILDING_IMAGE)
-      );
-    }
+    $this->setRunOtherCommand(
+      'application:build',
+      self::ERROR_BUILDING_IMAGE
+    );
 
-    $collection = $this->collectionBuilder();
-    $collection->addCode(
-      [$this, 'up']
-    );
-    $collection->addCode(
-      [$this, 'applicationLogs']
-    );
-    return $collection->run();
+    $this->setRunOtherCommand('application:up');
+    $this->setRunOtherCommand('application:logs');
   }
 
   /**
@@ -158,9 +151,9 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
    * @aliases start-over
    */
   public function startOver($opts = ['no-cache' => FALSE]) {
-    $this->removeData();
-    $this->applicationCleanup();
-    return $this->start($opts);
+    $this->setRunOtherCommand('application:rm');
+    $this->setRunOtherCommand('application:cleanup');
+    $this->setRunOtherCommand('application:start');
   }
 
   /**
