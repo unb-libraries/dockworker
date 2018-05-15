@@ -51,7 +51,6 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
     $this->say("Cleaning up dangling images and volumes:");
     $this->_exec('docker images -qf dangling=true | xargs docker rmi -f');
     $this->_exec('docker volume ls -qf dangling=true | xargs docker volume rm');
-    return TRUE;
   }
 
   /**
@@ -60,8 +59,7 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
    * @command application:halt
    */
   public function applicationHalt() {
-    return $this->taskDockerComposeDown()
-      ->run();
+    return $this->taskDockerComposeDown()->run();
   }
 
   /**
