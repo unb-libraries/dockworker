@@ -135,6 +135,7 @@ class DrupalCommand extends DockWorkerApplicationCommand {
    * Rebuild the cache in the Drupal container.
    *
    * @command drupal:cr
+   * @aliases cr
    */
   public function resetCache() {
     $this->getApplicationRunning();
