@@ -156,7 +156,7 @@ class DrupalCommand extends DockWorkerApplicationCommand {
    * @command drupal:entup
    * @aliases entup
    */
-  public function resetCache() {
+  public function updateEntities() {
     $this->getApplicationRunning();
     return $this->taskDockerExec($this->getInstanceName())
       ->interactive()
