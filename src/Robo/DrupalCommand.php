@@ -151,6 +151,25 @@ class DrupalCommand extends DockWorkerApplicationCommand {
   }
 
   /**
+   * Update entities.
+   *
+   * @command drupal:entup
+   * @aliases entup
+   */
+  public function resetCache() {
+    $this->getApplicationRunning();
+    return $this->taskDockerExec($this->getInstanceName())
+      ->interactive()
+      ->exec(
+        $this->taskDrushStack()
+          ->drupalRootDirectory('/app/html')
+          ->uri('default')
+          ->drush('entup')
+      )
+      ->run();
+  }
+
+  /**
    * Run the behat tests located in tests/.
    *
    * @command drupal:tests:behat
