@@ -192,6 +192,7 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
   public function startOver($opts = ['no-cache' => FALSE]) {
     $this->setRunOtherCommand('application:rm');
     $this->setRunOtherCommand('application:cleanup');
+    $this->setRunOtherCommand('application:theme:build-all');
     $this->setRunOtherCommand('application:start');
   }
 

@@ -21,7 +21,7 @@ class DrupalCommand extends DockWorkerApplicationCommand {
    * @param \Consolidation\AnnotatedCommand\CommandData $command_data
    *   The input interfaced passed to the original command.
    *
-   * @hook pre-command application:build
+   * @hook pre-command application:theme:build-all
    * @throws \Exception
    */
   public function buildDrupalThemes(CommandData $command_data) {
