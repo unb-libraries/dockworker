@@ -16,6 +16,20 @@ then
   exit 1
 fi
 
+# Check for enabled development modules.
+ if [[ -f ${ROOT_DIR}/config-yml/core.extension.yml ]] && [[ $LIST =~ "config-yml/core.extension.yml" ]]; then
+  echo "Checking for enabled development extensions..."
+  if grep -q 'devel\|kint' "${ROOT_DIR}/config-yml/core.extension.yml"; then
+    printf "The ./config-yml/core.extension.yml file enables modules typically only used for development.\n"
+    exec < /dev/tty
+    read -p "Would you still like to continue? " -n 1 -r
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+      printf "\nAborting due to enabled development modules."
+      exit 1
+    fi
+  fi
+fi
+
 echo "Sniffing staged files via PHP Code Sniffer..."
 ${ROOT_DIR}/vendor/bin/dockworker validate:phpcs:files "$LIST"
 SNIFF_STATUS=$?
