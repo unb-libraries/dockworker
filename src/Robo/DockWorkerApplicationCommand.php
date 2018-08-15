@@ -70,14 +70,19 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
    * @command application:build
    * @aliases build
    */
-  public function build(array $opts = ['no-cache' => FALSE]) {
-    if ($opts['no-cache']) {
-      $this->_exec('docker-compose build --no-cache');
-    }
-    else {
-      $this->_exec('docker-compose build');
-    }
-  }
+   public function build(array $opts = ['no-cache' => FALSE]) {
+     if ($opts['no-cache']) {
+       $command = 'docker-compose build --no-cache';
+     }
+     else {
+       $command = 'docker-compose build';
+     }
+     if (!$this->_exec($command)->wasSuccessful()) {
+       throw new \Exception(
+         self::ERROR_BUILDING_IMAGE
+       );
+     }
+   }
 
   /**
    * Compile a theme's assets.
