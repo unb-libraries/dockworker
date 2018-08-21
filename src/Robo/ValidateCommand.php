@@ -33,6 +33,24 @@ class ValidateCommand extends DockWorkerCommand {
   }
 
   /**
+   * Validate all files in the 'custom' directory.
+   *
+   * @command validate:custom:audit
+   */
+  public function validateAllCustom() {
+    $directory = new \RecursiveDirectoryIterator($this->repoRoot . '/custom');
+    $iterator = new \RecursiveIteratorIterator($directory);
+    $files = [];
+    foreach ($iterator as $info) {
+      $files[] = $info->getPathname();
+    }
+
+    $this->validateYamlFiles(implode("\n", $files));
+    $this->validateTwig(implode("\n", $files));
+    $this->validatePhpCs(implode("\n", $files));
+  }
+
+  /**
    * Validate files using phpcs.
    *
    * @command validate:phpcs:files
