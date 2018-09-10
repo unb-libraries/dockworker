@@ -1,5 +1,5 @@
 {
-  "id": "unbherbarium_lib_unb_ca",
+  "id": "BACKSTOP_TEST_ID",
   "viewports": [
     {
       "label": "phone",
@@ -21,13 +21,13 @@
   "onReadyScript": "chromy/onReady.js",
   "scenarios": [
     {
-      "label": "unbherbarium.lib.unb.ca Homepage",
+      "label": "BACKSTOP_SCENARIO_PAGE_NAME",
       "cookiePath": "backstop_data/engine_scripts/cookies.json",
-      "url": "https://dev-unbherbarium.lib.unb.ca/",
+      "url": "BACKSTOP_SCENARIO_PAGE_URL",
       "referenceUrl": "",
       "readyEvent": "",
       "readySelector": "",
-      "delay": 0,
+      "delay": 500,
       "hideSelectors": [],
       "removeSelectors": [],
       "hoverSelector": "",
@@ -46,7 +46,7 @@
     "html_report": "backstop_data/html_report",
     "ci_report": "backstop_data/ci_report"
   },
-  "report": ["browser"],
+  "report": ["browser", "CI"],
   "engine": "chrome",
   "engineFlags": [],
   "asyncCaptureLimit": 5,

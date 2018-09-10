@@ -2,25 +2,22 @@
 
 namespace UnbLibraries\DockWorker\Robo;
 
-use Robo\Robo;
-use Robo\Tasks;
-use UnbLibraries\DockWorker\Robo\DockWorkerCommand;
-
 /**
  * Defines commands in the VisualRegressionTestCommand namespace.
  */
 class VisualRegressionTestCommand extends DockWorkerCommand {
 
-  const WARNING_GENERATE_BACKSTOP_FILES_EXIST = 'Visual regression files already exist for %s. Please use visualreg:test or visualreg:approve to add changes.';
-  const ERROR_BACKSTOP_FILES_NOT_FOUND = 'No visual regression tests found for branch %s.';
+  const APPROVE_CHANGES_GIT_COMMIT_MESSAGE = 'Update visual regression reference images';
+  const ERROR_BACKSTOP_FILES_NOT_FOUND = 'No visual regression tests found.';
+  const INITIAL_GENERATE_GIT_COMMIT_MESSAGE = 'Initialize visual regression testing';
+  const WARNING_GENERATE_BACKSTOP_FILES_EXIST = 'Visual regression has already been initialized for %s. Use visualreg:add to add new tests or visualreg:test to update existing ones.';
 
-  const ADD_BRANCH_GIT_COMMIT_MESSAGE = 'Add visual regression reference images for %s';
-  const APPROVE_CHANGES_GIT_COMMIT_MESSAGE = 'Update visual regression reference images for %s';
-
-  const BACKSTOP_JSON_BOILERPLATE_FILE_URI = 'https://raw.githubusercontent.com/unb-libraries/dockworker/drupal-8.x-1.x/data/backstop/backstop.json';
-  const BACKSTOP_JSON_BOILERPLATE_URL_STRING = 'https://dev-unbherbarium.lib.unb.ca/';
-  const BACKSTOP_JSON_BOILERPLATE_PROJECT_SLUG = 'unbherbarium_lib_unb_ca';
-  const BACKSTOP_JSON_BOILERPLATE_PROJECT_NAME = 'unbherbarium.lib.unb.ca';
+  /**
+   * The base URL of the project.
+   *
+   * @var string
+   */
+  protected $backstopBaseUrl;
 
   /**
    * The path to the backstop test directory.
@@ -30,6 +27,13 @@ class VisualRegressionTestCommand extends DockWorkerCommand {
   protected $backstopDir;
 
   /**
+   * The path to the backstop boilerplate file.
+   *
+   * @var string
+   */
+  protected $backstopBoilerPlateFile;
+
+  /**
    * The path to the backstop test file.
    *
    * @var string
@@ -37,88 +41,215 @@ class VisualRegressionTestCommand extends DockWorkerCommand {
   protected $backstopFile;
 
   /**
-   * Run the visual regression tests for a branch.
+   * Add a new URI to already initialized visual regression tests.
+   *
+   * @command visualreg:add
+   */
+  public function addVisualRegressionTests() {
+    if (!$this->getBackStopFilesExist()) {
+      $this->say('Backstop has not been set up. Use visualreg:init instead.');
+      return 1;
+    }
+
+    $this->say('Checking if other tests are clean.');
+
+    $initial_test = $this->visualRegressionTest();
+    if ($initial_test != 0) {
+      $this->say('Existing tests are failing, visualreg:update them first to proceed.');
+      return 1;
+    }
+
+    $this->say('Other tests clean, adding new.');
+    $backstop = $this->getBackstop();
+    $num_old_scenarios = count($backstop->scenarios);
+
+    // Add scenarios
+    $this->setAddScenarios($backstop);
+
+    // Write out new json.
+    $this->setBackstop($backstop);
+
+    // Test and approve new.
+    $this->visualRegressionTest();
+    $this->getVisualRegressionApprove();
+
+    // Get list of added tests.
+    $added_scenarios = array_slice($backstop->scenarios, $num_old_scenarios);
+    $new_scenario_names = [];
+    foreach ($added_scenarios as $new_scenario) {
+      $new_scenario_names[] = $new_scenario->label;
+    }
+
+    $added_scenarios = implode(', ', $new_scenario_names);
+    $this->setCommitTestDir("Add $added_scenarios to visual regression tests");
+  }
+
+  /**
+   * Check if backstop configuration files exist.
+   */
+  private function getBackStopFilesExist() {
+    if (file_exists($this->backstopFile)) {
+      return TRUE;
+    }
+    return FALSE;
+  }
+
+  /**
+   * Run the visual regression tests.
    *
    * @command visualreg:test
    */
-  public function visualRegressionTest($branch = NULL) {
-    $test_branch = $this->setBackstopFile($branch, FALSE, TRUE);
-    $test_results = $this->getExecuteBackstop('test');
+  public function visualRegressionTest() {
+    return $this->getExecuteBackstop('test');
+  }
 
-    if ($test_results != 0) {
-      if ('y' === $this->ask('Tests have failed. Approve the changes? (y/n)')) {
-        $approve_results = $this->visualRegressionApprove($test_branch);
-        if ($approve_results == 0) {
-          if ('y' === $this->ask('Approval successful, commit changes? (y/n)')) {
-            // Unstage any files currently staged.
-            $this->taskExec('git')
-              ->arg('reset')
-              ->arg('HEAD')
-              ->run();
+  /**
+   * Execute a backstop command.
+   */
+  private function getExecuteBackstop($command = NULL) {
+    $docker_bin = 'docker';
+    print $this->backstopDir;
+    return $this->taskExec($docker_bin)
+      ->arg('run')
+      ->arg('--rm')
+      ->arg("--network={$this->instanceName}")
+      ->arg('-v')->arg("{$this->backstopDir}:/src")
+      ->arg('docksal/backstopjs')
+      ->arg($command)
+      ->run()
+      ->getExitCode();
+  }
 
-            // Commit the changes.
-            $this->taskExec('git')
-              ->arg('add')
-              ->arg("{$this->backstopDir}")
-              ->run();
-            $this->taskExec('git')
-              ->arg('commit')
-              ->arg('--no-verify')
-              ->arg('-m')
-              ->arg(
-                sprintf(
-                  self::APPROVE_CHANGES_GIT_COMMIT_MESSAGE,
-                  $test_branch
-                )
-              )
-              ->run();
-          }
-        }
-      }
+  /**
+   * Get the current backstop configuration.
+   */
+  private function getBackstop() {
+    return json_decode(
+      file_get_contents($this->backstopFile)
+    );
+  }
+
+  /**
+   * Add new scenarios to the backstop object.
+   */
+  private function setAddScenarios(&$backstop) {
+    $continue = TRUE;
+    while ($continue == TRUE) {
+      $this->setAddScenario($backstop);
+      $last_scenario = array_values(array_slice($backstop->scenarios, -1))[0];
+      $continue = $this->confirm("{$last_scenario->label} added to tests. Add another (y/n)?");
     }
   }
 
   /**
-   * Approve the previously failed visual regression tests for a branch.
-   *
-   * @command visualreg:approve
+   * Add a new scenario to the backstop object.
    */
-  public function visualRegressionApprove($branch = NULL) {
-    $this->setBackstopFile($branch);
+  private function setAddScenario(&$backstop) {
+    $this->say('Adding a new page to test...');
+    $test_uri = $this->askDefault('Relative URI of page (i.e. /search - include leading slash)', '/');
+    $test_name = $this->askDefault('Label for the test', 'Homepage');
+    $boilerplate_scenario = $this->getBackstopScenarioExemplarJson();
+
+    $boilerplate_scenario->label = $test_name;
+    $boilerplate_scenario->url = "{$this->backstopBaseUrl}{$test_uri}";
+    $backstop->scenarios[] = $boilerplate_scenario;
+  }
+
+  /**
+   * Get the backstop boilerplate for a scenario.
+   */
+  private function getBackstopScenarioExemplarJson() {
+    $exemplar = $this->getBackstopExemplarJson();
+    return $exemplar->scenarios[0];
+  }
+
+  /**
+   * Get the backstop boilerplate for the entire backstop.json.
+   */
+  private function getBackstopExemplarJson() {
+    return json_decode(
+      file_get_contents($this->backstopBoilerPlateFile)
+    );
+  }
+
+  /**
+   * Write the backstop configuration.
+   */
+  private function setBackstop($backstop) {
+    file_put_contents($this->backstopFile, json_encode($backstop, JSON_PRETTY_PRINT));
+  }
+
+  /**
+   * Approve the previously failed visual regression tests.
+   */
+  public function getVisualRegressionApprove() {
     return $this->getExecuteBackstop('approve');
+  }
+
+  /**
+   * Commit any changes in the backstop dir to git.
+   */
+  private function setCommitTestDir($message = 'Update backstop files.') {
+    // Unstage any files currently staged.
+    $this->taskExec('git')
+      ->arg('reset')
+      ->arg('HEAD')
+      ->run();
+
+    // Commit the changes.
+    $this->taskExec('git')
+      ->arg('add')
+      ->arg("{$this->backstopDir}")
+      ->run();
+    $this->taskExec('git')
+      ->arg('commit')
+      ->arg('--no-verify')
+      ->arg('-m')
+      ->arg($message)
+      ->run();
+  }
+
+  /**
+   * Update all visual regression tests to match the current content snapshot.
+   *
+   * @command visualreg:update
+   */
+  public function updateVisualRegressionTests() {
+    if (!$this->getBackStopFilesExist()) {
+      $this->say('Backstop has not been set up. Use visualreg:init instead.');
+      return 1;
+    }
+
+    $this->say('Checking tests are clean.');
+    $initial_test = $this->visualRegressionTest();
+    if ($initial_test == 0) {
+      $this->say('Existing tests are not failing, nothing to update.');
+      return 1;
+    }
+
+    // Approve new.
+    $this->getVisualRegressionApprove();
+    $this->setCommitTestDir("Update visual regression tests to match current state.");
   }
 
   /**
    * Initially generate the assets for visual regression testing.
    *
-   * @command visualreg:generate
+   * @command visualreg:init
    */
-  public function visualRegressionGenerate($branch = NULL) {
-    $new_branch = $this->setBackstopFile($branch, TRUE);
-    if (!$new_branch) {
+  public function visualRegressionInit() {
+    if ($this->getBackStopFilesExist()) {
       $this->say(
         sprintf(
           self::WARNING_GENERATE_BACKSTOP_FILES_EXIST,
-          $branch
+          $this->instanceName
         )
       );
       return 0;
     }
 
-    $this->say("No visual regression tests found, generating them for $new_branch.");
-
-    $project_name = $this->askDefault('Project name (i.e. unbherbarium.lib.unb.ca)?', Robo::Config()->get('dockworker.instance.name'));
-    $project_slug = str_replace('.', '_', $project_name);
-    $project_slug = $this->askDefault('Project slug (i.e. unbherbarium_lib_unb_ca)?', $project_slug);
-
-    if ($new_branch != 'prod') {
-      $test_uri_guess = "https://$new_branch-$project_name";
-    }
-    else {
-      $test_uri_guess = "https://$project_name";
-    }
-
-    $test_uri = $this->askDefault('Initial URI to test for this branch?', $test_uri_guess);
+    $this->say("Generating backstop files for instance...");
+    $this->backstopBaseUrl = "http://{$this->instanceName}";
 
     // Make the directory.
     $this->taskExec('mkdir')
@@ -128,119 +259,99 @@ class VisualRegressionTestCommand extends DockWorkerCommand {
 
     // Init the files.
     $this->getExecuteBackstop('init');
+    $this->setBackStopFilePermissions();
+    $backstop = $this->getInitialBackstopJson();
 
+    // Set up ID
+    $backstop->id = $this->instanceName;
+
+    // Add scenarios
+    $this->setAddScenarios($backstop);
+
+    // Write out new json.
+    $this->setBackstop($backstop);
+
+    // Run reference generation.
+    $reference_results = $this->setVisualRegressionReference();
+
+    if ($reference_results == 0) {
+      if ('y' === $this->ask('Reference generation successful, commit changes? (y/n)')) {
+        $this->setCommitTestDir(self::INITIAL_GENERATE_GIT_COMMIT_MESSAGE);
+      }
+    }
+  }
+
+  /**
+   * Set the permissions of the backstop file so the user can write it.
+   */
+  private function setBackStopFilePermissions() {
     // Change the permissions on the file.
-    $this->say("Changing permissions for $new_branch as root, if prompted enter your local user password.");
+    $gid = posix_getgid();
+    $this->say("Changing permissions for test files as root, if prompted enter your local user password.");
+    $this->taskExec('sudo chgrp')
+      ->arg($gid)
+      ->arg('-R')
+      ->arg($this->backstopDir)
+      ->run();
     $this->taskExec('sudo')
       ->arg('chmod')
       ->arg('-R')
       ->arg('g+w')
       ->arg($this->backstopDir)
       ->run();
-
-    // Pull in exemplar and boilerplate.
-    $exemplar_json = file_get_contents(SELF::BACKSTOP_JSON_BOILERPLATE_FILE_URI);
-    $exemplar_json = str_replace(SELF::BACKSTOP_JSON_BOILERPLATE_URL_STRING, $test_uri, $exemplar_json);
-    $exemplar_json = str_replace(SELF::BACKSTOP_JSON_BOILERPLATE_PROJECT_SLUG, $project_slug, $exemplar_json);
-    $exemplar_json = str_replace(SELF::BACKSTOP_JSON_BOILERPLATE_PROJECT_NAME, $project_name, $exemplar_json);
-
-    // Write out new json.
-    file_put_contents($this->backstopFile, $exemplar_json);
-
-    // Run reference generation.
-    $reference_results = $this->getExecuteBackstop('reference');
-
-    if ($reference_results == 0) {
-      if ('y' === $this->ask('Reference generation successful, commit changes? (y/n)')) {
-        // Unstage any files currently staged.
-        $this->taskExec('git')
-          ->arg('reset')
-          ->arg('HEAD')
-          ->run();
-
-        // Commit the changes.
-        $this->taskExec('git')
-          ->arg('add')
-          ->arg("{$this->backstopDir}")
-          ->run();
-        $this->taskExec('git')
-          ->arg('commit')
-          ->arg('--no-verify')
-          ->arg('-m')
-          ->arg(
-            sprintf(
-              self::ADD_BRANCH_GIT_COMMIT_MESSAGE,
-              $new_branch
-            )
-          )
-          ->run();
-      }
-    }
-
   }
 
   /**
-   * Check backstop status and set up Backstop file properties in object.
+   * Get the inital backstop JSON from boilerplate.
    */
-  public function setBackstopFile($branch = NULL, $return_new_branch_on_missing = FALSE, $return_branch_on_exists = FALSE) {
-    if (empty($branch)) {
-      $cur_branch = $this->getGitBranch();
-      $branch = $this->askDefault("Branch to target? (dev/prod)", $cur_branch);
-    }
+  private function getInitialBackstopJson() {
+    $exemplar = $this->getBackstopExemplarJson();
+    $exemplar->scenarios = [];
+    return $exemplar;
+  }
 
-    $backstop_file = $this->repoRoot . "/tests/backstop/$branch/backstop.json";
+  /**
+   * Generate reference files for initially deployed tests.
+   */
+  private function setVisualRegressionReference() {
+    // Run reference generation.
+    $reference_results = $this->getExecuteBackstop('reference');
+  }
+
+  /**
+   * Setup the backstop file.
+   *
+   * @hook init
+   */
+  public function setBackstopFile() {
+    $backstop_file = $this->repoRoot . "/tests/backstop/backstop.json";
     $this->backstopFile = $backstop_file;
     $this->backstopDir = dirname($backstop_file);
-
-    if (!file_exists($backstop_file)) {
-      if (!$return_new_branch_on_missing) {
-        throw new \Exception(
-          sprintf(
-            self::ERROR_BACKSTOP_FILES_NOT_FOUND,
-            $branch
-          )
-        );
-      }
-      else {
-        return $branch;
-      }
-    }
-    if (!$return_branch_on_exists) {
-      return FALSE;
-    }
-    else {
-      return $branch;
-    }
+    $this->setUpBackstopDir();
   }
 
-  public function getExecuteBackstop($command = NULL) {
-    $hostname = Robo::Config()->get('dockworker.instance.name');
-    $host_ip = gethostbyname($hostname);
-    $host_dev_ip = gethostbyname("dev-$hostname");
+  /**
+   * Setup the backstop file.
+   */
+  private function setUpBackstopDir() {
+    $backstop_dir = $this->repoRoot . "/tests/backstop";
+    if (!file_exists($backstop_dir)) {
+      $this->say("Backstop directory [$backstop_dir] missing, creating it");
+      mkdir($backstop_dir);
+    }
 
-    $docker_bin = 'docker';
-    print $this->backstopDir;
-    return $this->taskExec($docker_bin)
-      ->arg('run')
-      ->arg('--rm')
-      ->arg('--add-host')->arg("$hostname:$host_ip")
-      ->arg('--add-host')->arg("dev-$hostname:$host_dev_ip")
-      ->arg('-v')->arg("{$this->backstopDir}:/src")
-      ->arg('docksal/backstopjs')
-      ->arg($command)
-      ->run()
-      ->getExitCode();
+    $gitignore_file = $this->repoRoot . "/vendor/unb-libraries/dockworker/data/backstop/.gitignore";
+    $this->say("Updating gitignore file");
+    copy($gitignore_file, $this->backstopDir . "/.gitignore");
   }
 
-  protected function getGitBranch() {
-    $shellOutput = [];
-    exec("cd {$this->repoRoot}; git branch | grep '\*'", $shellOutput);
-    foreach ($shellOutput as $line) {
-      if (strpos($line, '* ') !== FALSE) {
-        return trim(strtolower(str_replace('* ', '', $line)));
-      }
-    }
-    return NULL;
+  /**
+   * Setup the backstop boilerplate file.
+   *
+   * @hook init
+   */
+  public function setBackstopBoilerplateFile() {
+    $this->backstopBoilerPlateFile = $this->repoRoot . "/vendor/unb-libraries/dockworker/data/backstop/backstop.json";
   }
 
 }
