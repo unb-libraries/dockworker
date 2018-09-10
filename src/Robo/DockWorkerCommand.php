@@ -37,6 +37,13 @@ class DockWorkerCommand extends Tasks implements ContainerAwareInterface, Logger
   protected $configFile;
 
   /**
+   * The instance name of the application.
+   *
+   * @var string
+   */
+  protected $instanceName;
+
+  /**
    * The path to the DockWorker repo.
    *
    * @var string
@@ -58,13 +65,15 @@ class DockWorkerCommand extends Tasks implements ContainerAwareInterface, Logger
    * Get the instance name from config.
    *
    * @throws \Exception
+   *
+   * @hook init
    */
-  public function getInstanceName() {
+  public function setInstanceName() {
     $container_name = Robo::Config()->get('dockworker.instance.name');
     if (empty($container_name)) {
       throw new \Exception(sprintf(self::ERROR_INSTANCE_NAME_UNSET, $this->configFile));
     }
-    return $container_name;
+    $this->instanceName = $container_name;
   }
 
   /**
@@ -73,7 +82,7 @@ class DockWorkerCommand extends Tasks implements ContainerAwareInterface, Logger
    * @throws \Exception
    */
   public function getApplicationRunning() {
-    $container_name = $this->getInstanceName();
+    $container_name = $this->instanceName;
 
     exec(
       "docker inspect -f {{.State.Running}} $container_name 2>&1",

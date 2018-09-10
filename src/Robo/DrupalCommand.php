@@ -139,7 +139,7 @@ class DrupalCommand extends DockWorkerApplicationCommand {
    */
   public function resetCache() {
     $this->getApplicationRunning();
-    return $this->taskDockerExec($this->getInstanceName())
+    return $this->taskDockerExec($this->instanceName)
       ->interactive()
       ->exec(
         $this->taskDrushStack()
@@ -158,7 +158,7 @@ class DrupalCommand extends DockWorkerApplicationCommand {
    */
   public function updateEntities() {
     $this->getApplicationRunning();
-    return $this->taskDockerExec($this->getInstanceName())
+    return $this->taskDockerExec($this->instanceName)
       ->interactive()
       ->exec(
         $this->taskDrushStack()
@@ -176,7 +176,7 @@ class DrupalCommand extends DockWorkerApplicationCommand {
    */
   public function runBehatTests() {
     $this->getApplicationRunning();
-    return $this->taskDockerExec($this->getInstanceName())
+    return $this->taskDockerExec($this->instanceName)
       ->interactive()
       ->exec('/scripts/runTests.sh')
       ->run();
@@ -189,7 +189,7 @@ class DrupalCommand extends DockWorkerApplicationCommand {
    */
   public function uli() {
     $this->getApplicationRunning();
-    return $this->taskDockerExec($this->getInstanceName())
+    return $this->taskDockerExec($this->instanceName)
       ->interactive()
       ->exec(
         '/scripts/pre-init.d/99_z_notify_user_URI.sh'
@@ -204,7 +204,7 @@ class DrupalCommand extends DockWorkerApplicationCommand {
    */
   public function writeConfig() {
     $this->getApplicationRunning();
-    return $this->taskDockerExec($this->getInstanceName())
+    return $this->taskDockerExec($this->instanceName)
       ->interactive()
       ->exec('/scripts/configExport.sh')
       ->run();

@@ -15,15 +15,6 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
   use \Droath\RoboDockerCompose\Task\loadTasks;
 
   /**
-   * This hook will fire for all commands in this command file.
-   *
-   * @hook init
-   */
-  public function initialize() {
-    $this->getInstanceName();
-  }
-
-  /**
    * Clean up any leftover docker assets not being used.
    *
    * @command application:cleanup
@@ -114,7 +105,7 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
    *   The result of the command.
    */
   public function openApplicationShell() {
-    return $this->taskDockerExec($this->getInstanceName())
+    return $this->taskDockerExec($this->instanceName)
       ->interactive()
       ->option('-t')
       ->exec('sh')

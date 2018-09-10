@@ -46,7 +46,6 @@ class DrupalRemoteSyncCommand extends DockWorkerCommand {
    * @hook init
    */
   public function initialize() {
-    $this->getInstanceName();
     $this->getApplicationRunning();
   }
 
@@ -143,7 +142,7 @@ class DrupalRemoteSyncCommand extends DockWorkerCommand {
     $this->taskExec('docker')
       ->arg('cp')
       ->arg('-i')
-      ->arg($this->getInstanceName())
+      ->arg($this->instanceName)
       ->arg('drush')
       ->arg('--root=/app/html')
       ->arg($command)
@@ -157,7 +156,7 @@ class DrupalRemoteSyncCommand extends DockWorkerCommand {
     if ($remote) {
       // Remote container.
       $this->taskSshExec($this->serverHostname)
-        ->exec("docker exec -i '{$this->getInstanceName()}' drush --root=/app/html $command")
+        ->exec("docker exec -i '{$this->instanceName}' drush --root=/app/html $command")
         ->run();
     }
     else {
@@ -165,7 +164,7 @@ class DrupalRemoteSyncCommand extends DockWorkerCommand {
       $this->taskExec('docker')
         ->arg('exec')
         ->arg('-i')
-        ->arg($this->getInstanceName())
+        ->arg($this->instanceName)
         ->arg('drush')
         ->arg('--root=/app/html')
         ->arg($command)
@@ -199,7 +198,7 @@ class DrupalRemoteSyncCommand extends DockWorkerCommand {
 
     $this->setCopyOutRemoteContainerFiles(
       $this->serverHostname,
-        $this->getInstanceName(),
+        $this->instanceName,
         self::CONFIG_CONTAINER_APP_FILE_PATH,
         $this->remoteTmpDir
     );
@@ -211,7 +210,7 @@ class DrupalRemoteSyncCommand extends DockWorkerCommand {
     );
 
     $this->setCopyInLocalContainerFiles(
-      $this->getInstanceName(),
+      $this->instanceName,
       $this->localTmpDir,
       self::CONFIG_CONTAINER_APP_FILE_PATH
     );
