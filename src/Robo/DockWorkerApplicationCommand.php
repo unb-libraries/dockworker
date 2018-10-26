@@ -21,8 +21,7 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
    */
   public function applicationCleanup() {
     $this->say("Cleaning up dangling images and volumes:");
-    $this->_exec('docker images -qf dangling=true | xargs docker rmi -f');
-    $this->_exec('docker volume ls -qf dangling=true | xargs docker volume rm');
+    $this->_exec('docker system prune -af');
   }
 
   /**
