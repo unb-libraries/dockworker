@@ -28,7 +28,7 @@ class GitCommitMessageValidateCommand extends DockWorkerCommand {
   const ERROR_MISSING_PROJECT_PREFIX = "Commit messages must begin with the project prefix, followed by a hyphen,the JIRA issue number and a space";
   const ERROR_NOT_CAPITALIZED = "Capitalize subject line";
   const ERROR_PERIOD_END = 'Do not end the subject line with period';
-  const ERROR_TOO_LONG = "Limit the subject line to " . self::MAX_GIT_COMMIT_LENGTH . "50 characters, %d present";
+  const ERROR_TOO_LONG = "Limit the subject line to " . self::MAX_GIT_COMMIT_LENGTH . " characters, %d present";
   const SAMPLE_VALID_COMMIT_MESSAGE = 'Valid example: HERB-135 Add the new picture field to the article feature';
   const WARN_MISSING_JIRA_INFO = 'You have not specified a JIRA project and issue in your subject line. Continue Anyway?';
 
