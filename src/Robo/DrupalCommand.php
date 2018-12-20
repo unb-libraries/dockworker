@@ -81,7 +81,7 @@ class DrupalCommand extends DockWorkerApplicationCommand {
         $return = $this->taskExecStack()
           ->stopOnFail()
           ->dir($path)
-          ->exec("cp -r src/img dist/ || true")
+          ->exec("cp -r src/$asset_path dist/ || true")
           ->run();
         if ($return->getExitCode() != "0") {
           $return_code = 1;
