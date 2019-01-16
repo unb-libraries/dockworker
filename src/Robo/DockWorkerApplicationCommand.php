@@ -216,6 +216,7 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
     $delete_command = "sudo sh -c 'sed -i \"/$hostname/d\" /etc/hosts'";
     $add_command = "sudo sh -c 'echo \"127.0.0.1       $hostname\" >> /etc/hosts'";
 
+    $this->say("Updating hostfile with entry for $hostname. If you are asked for a password, you should enable passwordless sudo for your user.");
     exec($delete_command, $delete_output, $delete_return);
     exec($add_command, $add_output, $add_return);
 
