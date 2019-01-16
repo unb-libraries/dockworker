@@ -164,6 +164,7 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
    * @throws \Exception
    */
   public function start(array $opts = ['no-cache' => FALSE]) {
+    $this->setRunOtherCommand('application:update-hostfile');
     $this->setRunOtherCommand('application:pull-upstream-images');
 
     $this->setRunOtherCommand(
@@ -188,7 +189,6 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
   public function startOver($opts = ['no-cache' => FALSE]) {
     $this->setRunOtherCommand('application:rm');
     $this->setRunOtherCommand('application:cleanup');
-    $this->setRunOtherCommand('application:update-hostfile');
     $this->setRunOtherCommand('application:theme:build-all');
     $this->setRunOtherCommand('application:start');
   }
