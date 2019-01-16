@@ -11,6 +11,7 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
 
   const ERROR_BUILDING_IMAGE = 'Error reported building image!';
   const ERROR_PULLING_UPSTREAM_IMAGE = 'Error pulling upstream image %s';
+  const ERROR_UPDATING_HOSTFILE = 'Error updating hostfile!';
 
   use \Droath\RoboDockerCompose\Task\loadTasks;
 
@@ -187,6 +188,7 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
   public function startOver($opts = ['no-cache' => FALSE]) {
     $this->setRunOtherCommand('application:rm');
     $this->setRunOtherCommand('application:cleanup');
+    $this->setRunOtherCommand('application:update-hostfile');
     $this->setRunOtherCommand('application:theme:build-all');
     $this->setRunOtherCommand('application:start');
   }
@@ -201,6 +203,25 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
       ->detachedMode()
       ->removeOrphans()
       ->run();
+  }
+
+  /**
+   * Update the system hostfile with a local URL for the application.
+   *
+   * @command application:update-hostfile
+   */
+  public function setHostFileEntry() {
+    $hostname = escapeshellarg('local-' . $this->instanceName);
+
+    $delete_command = "sudo sh -c 'sed -i \"/$hostname/d\" /etc/hosts'";
+    $add_command = "sudo sh -c 'echo \"$hostname      127.0.0.1\" >> /etc/hosts'";
+
+    exec($delete_command, $delete_output, $delete_return);
+    exec($add_command, $add_output, $add_return);
+
+    if ($delete_return > 0 || $add_command > 0) {
+      throw new \Exception(sprintf(self::ERROR_UPDATING_HOSTFILE));
+    }
   }
 
 }
