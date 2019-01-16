@@ -213,7 +213,7 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
   public function setHostFileEntry() {
     $hostname = escapeshellarg('local-' . $this->instanceName);
 
-    $delete_command = "sudo sh -c 'sed -i '' \"/$hostname/d\" /etc/hosts'";
+    $delete_command = "sudo sh -c 'sed -i '' -e \"/$hostname/d\" /etc/hosts'";
     $add_command = "sudo sh -c 'echo \"127.0.0.1       $hostname\" >> /etc/hosts'";
 
     $this->say("Updating hostfile with entry for $hostname. If you are asked for a password, you should enable passwordless sudo for your user.");
