@@ -214,7 +214,7 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
     $hostname = escapeshellarg('local-' . $this->instanceName);
 
     $delete_command = "sudo sh -c 'sed -i \"/$hostname/d\" /etc/hosts'";
-    $add_command = "sudo sh -c 'echo \"$hostname      127.0.0.1\" >> /etc/hosts'";
+    $add_command = "sudo sh -c 'echo \"127.0.0.1       $hostname\" >> /etc/hosts'";
 
     exec($delete_command, $delete_output, $delete_return);
     exec($add_command, $add_output, $add_return);
