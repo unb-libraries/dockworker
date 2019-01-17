@@ -17,29 +17,32 @@ class PermissionsCommand extends DockWorkerCommand {
    * @command permissions:fix
    */
   public function fixPermissions() {
+    $paths = [
+      'custom',
+      'config-yml',
+      'tests',
+    ];
+    foreach ($paths as $path) {
+      $this->setPermissions($path);
+    }
+  }
+
+  /**
+   * Set file permissions for a path to the current user. Requires sudo.
+   */
+  public function setPermissions($path) {
     $uid = posix_getuid();
     $gid = posix_getgid();
 
     $this->taskExec('sudo chgrp')
       ->arg($gid)
       ->arg('-R')
-      ->arg($this->repoRoot . '/custom')
+      ->arg($this->repoRoot . "/$path")
       ->run();
     $this->taskExec('sudo chmod')
       ->arg('g+w')
       ->arg('-R')
-      ->arg($this->repoRoot . '/custom')
-      ->run();
-
-    $this->taskExec('sudo chgrp')
-      ->arg($gid)
-      ->arg('-R')
-      ->arg($this->repoRoot . '/tests')
-      ->run();
-    $this->taskExec('sudo chmod')
-      ->arg('g+w')
-      ->arg('-R')
-      ->arg($this->repoRoot . '/tests')
+      ->arg($this->repoRoot . "/$path")
       ->run();
   }
 
