@@ -36,7 +36,7 @@ class DrupalCustomEntityCommand extends DockWorkerDrupalCodeCommand {
           ->files()
           ->name('*.php')
           ->contains('public static function baseFieldDefinitions');
-        $this->setSelectedCustomEntity($custom_entities);
+        $this->setSelectedCustomEntities($custom_entities);
       }
     }
   }

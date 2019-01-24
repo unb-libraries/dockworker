@@ -123,6 +123,13 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_MACHINE_NAME'] =
       $this->askDefault('Field Machine Name / Key', 'user_name');
 
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_REQUIRED'] =
+      $this->askDefault('Required Field', 'FALSE');
+
+    $cardinality = $this->askDefault('Cardinality (0 for unlimited)', '1');
+    $cardinality = $cardinality == 0 ? 'BaseFieldDefinition::CARDINALITY_UNLIMITED' : $cardinality;
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CARDINALITY'] = $cardinality;
+
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_LABEL'] =
       $this->askDefault('Field Label', 'User Name');
 
@@ -137,7 +144,6 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
 
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_NAMEDSPACED_CLASS'] =
       $this->askDefault('NameSpaced Parent Class Entity', '\Drupal\yabrm\Entity\BibliographicRecord');
-
   }
 
   /**

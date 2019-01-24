@@ -6,7 +6,8 @@
         'text_processing' => 0,
       ])
       ->setDefaultValue('')
-      ->setRequired(TRUE)
+      ->setCardinality(DOCKWORKER_FIELD_CARDINALITY)
+      ->setRequired(DOCKWORKER_FIELD_REQUIRED)
       ->setDisplayOptions('view', [
         'label' => 'above',
         'type' => 'string',
