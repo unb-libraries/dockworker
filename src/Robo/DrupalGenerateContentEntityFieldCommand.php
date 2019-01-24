@@ -134,7 +134,7 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
       $this->askDefault('Field Label', 'User Name');
 
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CAPSCASE'] =
-      $this->askDefault('Field Label', 'UserName');
+      $this->askDefault('Field ClassName', 'UserName');
 
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_DESCRIPTION'] =
       $this->askDefault('Field Description', 'Enter the user name');
