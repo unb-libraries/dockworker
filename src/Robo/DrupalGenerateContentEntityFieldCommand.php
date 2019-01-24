@@ -152,6 +152,8 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
   private function setStringEntityTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_MAX_LENGTH'] =
       $this->askDefault('Field Maximum Length', 512);
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_DEFAULT_VALUE'] =
+      $this->askDefault('Default Value (Empty for None)', '');
   }
 
 }

@@ -5,7 +5,7 @@
         'max_length' => DOCKWORKER_FIELD_MAX_LENGTH,
         'text_processing' => 0,
       ])
-      ->setDefaultValue('')
+      ->setDefaultValue('DOCKWORKER_FIELD_DEFAULT_VALUE')
       ->setCardinality(DOCKWORKER_FIELD_CARDINALITY)
       ->setRequired(DOCKWORKER_FIELD_REQUIRED)
       ->setDisplayOptions('view', [
