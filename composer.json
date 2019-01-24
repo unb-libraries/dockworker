@@ -5,12 +5,13 @@
   "require": {
     "asm89/twig-lint": "^1.0.2",
     "boedah/robo-drush": "^3.1.1",
-    "sweetchuck/robo-phpcs": "^0.0.19",
     "consolidation/robo": "1.2.3",
     "droath/robo-docker-compose": "~0.0.8",
     "drupal/coder": "^8.2.12",
     "j13k/yaml-lint": "^1.1.3",
-    "leafo/scssphp": "^0.7.5"
+    "leafo/scssphp": "^0.7.5",
+    "nikic/php-parser": "^4.2.0",
+    "sweetchuck/robo-phpcs": "^0.0.19"
   },
   "license": "MIT",
   "authors": [

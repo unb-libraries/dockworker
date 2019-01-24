@@ -1,0 +1,14 @@
+  /**
+   * {@inheritdoc}
+   */
+  public function getDOCKWORKER_FIELD_CAPSCASE() {
+    return $this->get('DOCKWORKER_FIELD_MACHINE_NAME')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setDOCKWORKER_FIELD_CAPSCASE($DOCKWORKER_FIELD_MACHINE_NAME) {
+    $this->set('DOCKWORKER_FIELD_MACHINE_NAME', $DOCKWORKER_FIELD_MACHINE_NAME);
+    return $this;
+  }
