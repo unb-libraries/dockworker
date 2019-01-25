@@ -160,7 +160,15 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
     $file_name = $template_path . "/$template_file";
     $this->io->newLine();
     $this->say($template_file);
+    $multiple_file_name = str_replace('.txt', '-multiple.txt', $file_name);
     if (file_exists($file_name)) {
+      $multiple_file_name = str_replace('.txt', '-multiple.txt', $file_name);
+      if (
+        $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CARDINALITY'] == 'BaseFieldDefinition::CARDINALITY_UNLIMITED' &&
+        file_exists($multiple_file_name)
+        ) {
+        $file_name = $multiple_file_name;
+      }
       $contents = file_get_contents($file_name);
       foreach ($this->drupalEntityTemplateTokens as $token => $output_value) {
         $contents = str_replace($token, $output_value, $contents);
@@ -177,7 +185,6 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
    */
   private function setEntityTemplateTokens() {
     $chosen_template = $this->drupalEntityChosenTemplate;
-    $this->setStandardEntityTemplateTokens();
     if (
       $chosen_template == 'string' ||
       $chosen_template == 'text' ||
@@ -192,6 +199,13 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
     if ($chosen_template == 'string_long' || $chosen_template == 'text_long') {
       $this->setLongFieldTemplateTokens();
     }
+    if ($chosen_template == 'taxonomy_reference_select' || $chosen_template == 'taxonomy_reference_autocomplete') {
+      $this->setTaxonomyTermTemplateTokens();
+    }
+    if ($chosen_template == 'taxonomy_reference_autocomplete') {
+      $this->setTaxonomyTermAutocompleteTemplateTokens();
+    }
+    $this->setStandardEntityTemplateTokens();
   }
 
   /**
@@ -203,6 +217,12 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
 
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_REQUIRED'] =
       $this->confirm('Is this field required?') ? 'TRUE' : 'FALSE';
+
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_REVISIONABLE'] =
+      $this->confirm('Is this field revisionable?') ? 'TRUE' : 'FALSE';
+
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_TRANSLATABLE'] =
+      $this->confirm('Is this field translatable?') ? 'TRUE' : 'FALSE';
 
     $cardinality = $this->askDefault('Enter the field\'s cardinality (0 for unlimited):', '1');
     $cardinality = $cardinality == 0 ? 'BaseFieldDefinition::CARDINALITY_UNLIMITED' : $cardinality;
@@ -255,7 +275,26 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
    */
   private function setLongFieldTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_LONG_TEXT_FIELD_ROWS'] =
-      $this->askDefault('Enter the field\'s number of input rows:', 4);
+      $this->askDefault('Enter the number of input rows to display on forms:', 4);
+  }
+
+  /**
+   * Set the tokens necessary for taxonomy term reference templates.
+   */
+  private function setTaxonomyTermTemplateTokens() {
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_TAXONOMY_VID'] =
+      $this->askDefault('Enter the target taxonomy VID:', '');
+  }
+
+  /**
+   * Set the tokens necessary for taxonomy term reference templates.
+   */
+  private function setTaxonomyTermAutocompleteTemplateTokens() {
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_TAXONOMY_AUTO_CREATE'] =
+      $this->confirm('Should new terms entered in this field be auto-created?') ? 'TRUE' : 'FALSE';
+
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_TAXONOMY_AUTOCOMPLETE_SIZE'] =
+      $this->askDefault('Enter the field\'s autocomplete widget width:', 60);
   }
 
 }

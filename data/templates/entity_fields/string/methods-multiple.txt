@@ -1,0 +1,22 @@
+  /**
+   * {@inheritdoc}
+   */
+  public function getDOCKWORKER_FIELD_CAPSCASEs() {
+    return $this->get('DOCKWORKER_FIELD_MACHINE_NAME')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setDOCKWORKER_FIELD_CAPSCASEs(array $DOCKWORKER_FIELD_MACHINE_NAME) {
+    $this->set('DOCKWORKER_FIELD_MACHINE_NAME', $DOCKWORKER_FIELD_MACHINE_NAME);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addDOCKWORKER_FIELD_CAPSCASE($DOCKWORKER_FIELD_MACHINE_NAME) {
+    $this->get('DOCKWORKER_FIELD_MACHINE_NAME')->appendItem($DOCKWORKER_FIELD_MACHINE_NAME);
+    return $this;
+  }

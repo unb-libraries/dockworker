@@ -4,9 +4,11 @@
       ->setSettings([
         'max_length' => DOCKWORKER_FIELD_MAX_LENGTH,
       ])
-      ->setDefaultValue('DOCKWORKER_FIELD_DEFAULT_VALUE')
       ->setCardinality(DOCKWORKER_FIELD_CARDINALITY)
       ->setRequired(DOCKWORKER_FIELD_REQUIRED)
+      ->setRevisionable(DOCKWORKER_FIELD_REVISIONABLE)
+      ->setTranslatable(DOCKWORKER_FIELD_TRANSLATABLE)
+      ->setDefaultValue('DOCKWORKER_FIELD_DEFAULT_VALUE')
       ->setDisplayOptions('view', [
         'label' => 'above',
         'type' => 'string',
