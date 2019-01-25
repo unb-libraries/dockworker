@@ -1,1 +1,1 @@
-Text (plain). A field containing a plain string value.
+Text (plain).

@@ -158,7 +158,8 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
   private function getOutputTemplateFile($template_file) {
     $template_path = $this->getTemplatePath($this->drupalEntityChosenTemplate);
     $file_name = $template_path . "/$template_file";
-    $this->say($file_name);
+    $this->io->newLine();
+    $this->say($template_file);
     if (file_exists($file_name)) {
       $contents = file_get_contents($file_name);
       foreach ($this->drupalEntityTemplateTokens as $token => $output_value) {
@@ -177,8 +178,19 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
   private function setEntityTemplateTokens() {
     $chosen_template = $this->drupalEntityChosenTemplate;
     $this->setStandardEntityTemplateTokens();
-    if ($chosen_template == 'string') {
-      $this->setStringEntityTemplateTokens();
+    if (
+      $chosen_template == 'string' ||
+      $chosen_template == 'text' ||
+      $chosen_template == 'string_long' ||
+      $chosen_template == 'text_long'
+    ) {
+      $this->setTextTypeFieldTemplateTokens();
+    }
+    if ($chosen_template == 'string' || $chosen_template == 'text') {
+      $this->setShortTextTypeFieldTemplateTokens();
+    }
+    if ($chosen_template == 'string_long' || $chosen_template == 'text_long') {
+      $this->setLongFieldTemplateTokens();
     }
   }
 
@@ -198,6 +210,9 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
 
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_LABEL'] =
       $this->askDefault('Enter the field\'s form label:', 'User Name');
+
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_WEIGHT'] =
+      $this->askDefault('Enter the field\'s weight:', '0');
 
     $field_class_guess = preg_replace(
       "/[^A-Za-z0-9]/",
@@ -220,13 +235,27 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
   }
 
   /**
-   * Set the tokens necessary for the string template.
+   * Set the tokens necessary for the string_long and text_long templates.
    */
-  private function setStringEntityTemplateTokens() {
-    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_MAX_LENGTH'] =
-      $this->askDefault('Enter the field\'s maximum length:', 512);
+  private function setTextTypeFieldTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_DEFAULT_VALUE'] =
       $this->askDefault('Enter the field\'s default value (empty for no default):', '');
+  }
+
+  /**
+   * Set the tokens necessary for the string_long and text_long templates.
+   */
+  private function setShortTextTypeFieldTemplateTokens() {
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_MAX_LENGTH'] =
+      $this->askDefault('Enter the field\'s maximum length:', 512);
+  }
+
+  /**
+   * Set the tokens necessary for the string_long and text_long templates.
+   */
+  private function setLongFieldTemplateTokens() {
+    $this->drupalEntityTemplateTokens['DOCKWORKER_LONG_TEXT_FIELD_ROWS'] =
+      $this->askDefault('Enter the field\'s number of input rows:', 4);
   }
 
 }

@@ -1,9 +1,7 @@
-    $fields['DOCKWORKER_FIELD_MACHINE_NAME'] = BaseFieldDefinition::create('string')
+    $fields['DOCKWORKER_FIELD_MACHINE_NAME'] = BaseFieldDefinition::create('string_long')
       ->setLabel(t('DOCKWORKER_FIELD_LABEL'))
       ->setDescription(t('DOCKWORKER_FIELD_DESCRIPTION'))
-      ->setSettings([
-        'max_length' => DOCKWORKER_FIELD_MAX_LENGTH,
-      ])
+      ->setSettings([])
       ->setDefaultValue('DOCKWORKER_FIELD_DEFAULT_VALUE')
       ->setCardinality(DOCKWORKER_FIELD_CARDINALITY)
       ->setRequired(DOCKWORKER_FIELD_REQUIRED)
@@ -13,8 +11,11 @@
         'weight' => DOCKWORKER_FIELD_WEIGHT,
       ])
       ->setDisplayOptions('form', [
-        'type' => 'string_textfield',
+        'type' => 'string_textarea',
         'weight' => DOCKWORKER_FIELD_WEIGHT,
+        'settings' => [
+          'rows' => DOCKWORKER_LONG_TEXT_FIELD_ROWS,
+        ],
       ])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
