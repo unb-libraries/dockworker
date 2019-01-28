@@ -23,7 +23,7 @@
   /**
    * Sets the DOCKWORKER_FIELD_ENTITY_TYPE DOCKWORKER_FIELD_LABELs.
    *
-   * @param \Drupal\taxonomy\TermInterface[] $DOCKWORKER_FIELD_MACHINE_NAME
+   * @param \Drupal\taxonomy\TermInterface[] $DOCKWORKER_FIELD_MACHINE_NAMEs
    *   An array of DOCKWORKER_FIELD_LABEL term entities.
    *
    * @return DOCKWORKER_FIELD_NAMEDSPACED_CLASS
