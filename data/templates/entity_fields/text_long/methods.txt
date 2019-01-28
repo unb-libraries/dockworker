@@ -12,3 +12,11 @@
     $this->set('DOCKWORKER_FIELD_MACHINE_NAME', $DOCKWORKER_FIELD_MACHINE_NAME);
     return $this;
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function clearDOCKWORKER_FIELD_CAPSCASE() {
+    $this->set('DOCKWORKER_FIELD_MACHINE_NAME', NULL);
+    return $this;
+  }
