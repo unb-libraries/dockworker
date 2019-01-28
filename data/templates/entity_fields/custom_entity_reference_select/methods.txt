@@ -1,0 +1,25 @@
+  /**
+   * {@inheritdoc}
+   */
+  public function getDOCKWORKER_FIELD_CAPSCASE() {
+    return $this->get('DOCKWORKER_FIELD_MACHINE_NAME')->entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDOCKWORKER_FIELD_CAPSCASEId() {
+    $entity = $this->get('DOCKWORKER_FIELD_MACHINE_NAME')->entity;
+    if (!empty($entity)) {
+      return $entity->id();
+    }
+    return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setDOCKWORKER_FIELD_CAPSCASE(DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE $DOCKWORKER_FIELD_MACHINE_NAME) {
+    $this->set('DOCKWORKER_FIELD_MACHINE_NAME', $DOCKWORKER_FIELD_MACHINE_NAME->id());
+    return $this;
+  }

@@ -111,6 +111,7 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
     foreach ($all_templates as $template) {
       $this->drupalEntityTemplates[$template->getBasename()] = $this->getTemplateDescription($template->getBasename());
     }
+    ksort($this->drupalEntityTemplates);
   }
 
   /**
@@ -121,7 +122,6 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
    */
   private function getTemplateDescription($template) {
     $template_description_path = $this->getTemplatePath($template) . '/description.txt';
-    var_dump($template_description_path);
     $template_description = NULL;
     if (file_exists($template_description_path)) {
       $template_description = trim(file_get_contents($template_description_path));
@@ -185,6 +185,7 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
    */
   private function setEntityTemplateTokens() {
     $chosen_template = $this->drupalEntityChosenTemplate;
+    $this->setStandardEntityTemplateTokens();
     if (
       $chosen_template == 'string' ||
       $chosen_template == 'text' ||
@@ -202,10 +203,12 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
     if ($chosen_template == 'taxonomy_reference_select' || $chosen_template == 'taxonomy_reference_autocomplete') {
       $this->setTaxonomyTermTemplateTokens();
     }
-    if ($chosen_template == 'taxonomy_reference_autocomplete') {
-      $this->setTaxonomyTermAutocompleteTemplateTokens();
+    if ($chosen_template == 'custom_entity_reference_select' || $chosen_template == 'custom_entity_reference_autocomplete') {
+      $this->setEntityReferenceTemplateTokens();
     }
-    $this->setStandardEntityTemplateTokens();
+    if ($chosen_template == 'taxonomy_reference_autocomplete' || $chosen_template == 'custom_entity_reference_autocomplete') {
+      $this->setEntityRefAutocompleteTemplateTokens();
+    }
   }
 
   /**
@@ -213,26 +216,26 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
    */
   private function setStandardEntityTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_MACHINE_NAME'] =
-      $this->askDefault('Enter the field\'s machine_name/key: ', 'user_name');
+      $this->askDefault('Enter the *new field* key for the $fields array: ', 'user_name');
 
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_REQUIRED'] =
-      $this->confirm('Is this field required?') ? 'TRUE' : 'FALSE';
+      $this->confirm('Is this *new field* required?') ? 'TRUE' : 'FALSE';
 
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_REVISIONABLE'] =
-      $this->confirm('Is this field revisionable?') ? 'TRUE' : 'FALSE';
+      $this->confirm('Is this *new field* revisionable?') ? 'TRUE' : 'FALSE';
 
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_TRANSLATABLE'] =
-      $this->confirm('Is this field translatable?') ? 'TRUE' : 'FALSE';
+      $this->confirm('Is this *new field* translatable?') ? 'TRUE' : 'FALSE';
 
-    $cardinality = $this->askDefault('Enter the field\'s cardinality (0 for unlimited):', '1');
+    $cardinality = $this->askDefault('Enter the *new field* cardinality (0 for unlimited):', '1');
     $cardinality = $cardinality == 0 ? 'BaseFieldDefinition::CARDINALITY_UNLIMITED' : $cardinality;
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CARDINALITY'] = $cardinality;
 
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_LABEL'] =
-      $this->askDefault('Enter the field\'s form label:', 'User Name');
+      $this->askDefault('Enter the *new field* label for forms:', 'User Name');
 
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_WEIGHT'] =
-      $this->askDefault('Enter the field\'s weight:', '0');
+      $this->askDefault('Enter the *new field* weight for forms:', '0');
 
     $field_class_guess = preg_replace(
       "/[^A-Za-z0-9]/",
@@ -242,16 +245,18 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
       )
     );
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CAPSCASE'] =
-      $this->askDefault('Enter the pseudo-ClassName to use for the field:', $field_class_guess);
+      $this->askDefault('Enter the *new field* pseudo-ClassName:', $field_class_guess);
 
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_DESCRIPTION'] =
-      $this->askDefault('Enter the description (form call to action) for the field:', 'Enter the user name');
+      $this->askDefault('Enter the *new field* description (form call to action):', 'Enter the user name');
 
+    $parent_entity_type_guess = preg_replace('/(?<! )(?<!^)[A-Z]/', ' $0', $this->drupalChosenEntityClass);
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_ENTITY_TYPE'] =
-      $this->askDefault('Enter the parent entity label:', 'Bibliographic Record');
+      $this->askDefault('Enter a label for the *parent entity* this field is being added to:', $parent_entity_type_guess);
 
+    $full_parent_entity_namespace_guess = "\Drupal\\$this->drupalChosenModule\Entity\\$this->drupalChosenEntityClass";
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_NAMEDSPACED_CLASS'] =
-      $this->askDefault('Enter the parent entity\'s fully namespaced class:', '\Drupal\yabrm\Entity\BibliographicRecord');
+      $this->askDefault('Enter the fully namespaced class for the *parent entity* this field is being added to:', $full_parent_entity_namespace_guess);
   }
 
   /**
@@ -259,7 +264,7 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
    */
   private function setTextTypeFieldTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_DEFAULT_VALUE'] =
-      $this->askDefault('Enter the field\'s default value (empty for no default):', '');
+      $this->askDefault('Enter the *new field* default value (empty for no default):', '');
   }
 
   /**
@@ -267,7 +272,7 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
    */
   private function setShortTextTypeFieldTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_MAX_LENGTH'] =
-      $this->askDefault('Enter the field\'s maximum length:', 512);
+      $this->askDefault('Enter the *new field* maximum length for storage:', 512);
   }
 
   /**
@@ -275,7 +280,7 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
    */
   private function setLongFieldTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_LONG_TEXT_FIELD_ROWS'] =
-      $this->askDefault('Enter the number of input rows to display on forms:', 4);
+      $this->askDefault('Enter the *new field* number of input rows to display on forms:', 4);
   }
 
   /**
@@ -283,18 +288,38 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
    */
   private function setTaxonomyTermTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_TAXONOMY_VID'] =
-      $this->askDefault('Enter the target taxonomy VID:', '');
+      $this->askDefault('Enter the *new field* target taxonomy VID:', '');
   }
 
   /**
    * Set the tokens necessary for taxonomy term reference templates.
    */
-  private function setTaxonomyTermAutocompleteTemplateTokens() {
+  private function setEntityRefAutocompleteTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_TAXONOMY_AUTO_CREATE'] =
-      $this->confirm('Should new terms entered in this field be auto-created?') ? 'TRUE' : 'FALSE';
+      $this->confirm('Should new entities entered in this field be auto-created?') ? 'TRUE' : 'FALSE';
 
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_TAXONOMY_AUTOCOMPLETE_SIZE'] =
-      $this->askDefault('Enter the field\'s autocomplete widget width:', 60);
+      $this->askDefault('Enter the *new field* autocomplete widget width for forms:', 60);
+  }
+
+  /**
+   * Set the tokens necessary for taxonomy term reference templates.
+   */
+  private function setEntityReferenceTemplateTokens() {
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_NAME'] =
+      $this->askDefault('Enter the *target entity* machine name:', 'reference_contributor');
+
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE_NAMESPACE'] =
+      $this->askDefault('Enter the *target entity* full interface namespace:', '\Drupal\yabrm\Entity\JournalArticleReferenceInterface');
+
+    $interface_namespace = explode('\\', $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE_NAMESPACE']);
+    $interface_short_guess = array_pop($interface_namespace);
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE'] =
+      $this->askDefault('Enter the *target entity* unnamespaced interface name:', $interface_short_guess);
+
+    $entity_short_guess = str_replace('Interface', '', $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE']);
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_CLASS'] =
+      $this->askDefault('Enter the *target entity* unnamespaced class name:', $entity_short_guess);
   }
 
 }

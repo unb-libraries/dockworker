@@ -20,6 +20,9 @@ class DrupalCustomEntityCommand extends DockWorkerDrupalCodeCommand {
    */
   protected $drupalCustomEntities = [];
 
+  protected $drupalChosenEntityClass = NULL;
+  protected $drupalChosenModule = NULL;
+
   /**
    * Set the custom entities defined within the the current repository.
    *
@@ -54,7 +57,11 @@ class DrupalCustomEntityCommand extends DockWorkerDrupalCodeCommand {
       $entity_key = $this->io()->choice("Which entity to modify?", array_keys($choices));
       $entity = $choices[$entity_key];
 
+      preg_match('|.*/(.*)/src/Entity|', $entity->getPath(), $matches);
+      $this->drupalChosenModule = $matches[1];
+      $this->drupalChosenEntityClass = str_replace('.php', '', $entity_key);
       $real_path = $custom_entity->getRealPath();
+
       $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
       try {
         $ast = $parser->parse(
