@@ -4,8 +4,9 @@ namespace UnbLibraries\DockWorker\Robo;
 
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Yaml\Exception\ParseException;
+use Symfony\Component\Yaml\Yaml;
 use UnbLibraries\DockWorker\Robo\DrupalCustomEntityCommand;
-
 
 /**
  * Defines commands in the DrupalGenerateContentEntityFieldCommand namespace.
@@ -20,11 +21,11 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
   protected $drupalEntityTemplates = [];
 
   /**
-   * The chosen template.
+   * The chosen widget.
    *
-   * @var string
+   * @var array
    */
-  protected $drupalEntityChosenTemplate = NULL;
+  protected $drupalEntityChosenWidget = [];
 
   /**
    * The tokens to replace from the templates.
@@ -33,12 +34,10 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
    */
   protected $drupalEntityTemplateTokens = [];
 
-  const ENTITY_TEMPLATE_PATH = '/vendor/unb-libraries/dockworker/data/templates/entity_fields';
-  const ENTITY_TEMPLATE_FILES = [
-    'field.txt',
-    'interface.txt',
-    'methods.txt',
-  ];
+  /**
+   * The path to the data directory.
+   */
+  const ENTITY_TEMPLATE_PATH = '/vendor/unb-libraries/dockworker/data/entity_fields';
 
   /**
    * Generate the boilerplate necessary to add a field to an entity.
@@ -63,17 +62,21 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
     $this->listTemplates();
     $value_chosen = FALSE;
     while ($value_chosen == FALSE) {
-      $template = $this->ask('Enter the template name to use');
-      if (!empty($template)) {
-        if (!empty(($this->drupalEntityTemplates[$template]))) {
-          $this->drupalEntityChosenTemplate = $template;
-          $value_chosen == TRUE;
-          break;
+      $widget_chosen = $this->ask('Enter the template ID to use');
+      if (!empty($widget_chosen)) {
+        foreach ($this->drupalEntityTemplates as $type) {
+          foreach ($type['widgets'] as $widget) {
+            if ($widget['id'] == $widget_chosen) {
+              $this->drupalEntityChosenWidget = $widget;
+              $value_chosen == TRUE;
+              break 3;
+            }
+          }
         }
-        $this->say('Invalid template name.');
+        $this->say('Error: Invalid template ID.');
       }
       else {
-        $this->say('No template entered.');
+        $this->say('Error: No template ID entered.');
       }
     }
   }
@@ -82,17 +85,18 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
    * Output a formatted list of templates available.
    */
   protected function listTemplates() {
-    $wrapped_rows = array_map(
-      function ($template_id, $description) {
-        return [
-          $template_id,
-          $description,
+    $wrapped_rows = [];
+    foreach($this->drupalEntityTemplates as $type_label => $type) {
+      foreach ($type['widgets'] as $widget) {
+        $wrapped_rows[] = [
+          $widget['id'],
+          $type['name'],
+          $widget['name'],
         ];
-      },
-      array_keys($this->drupalEntityTemplates), $this->drupalEntityTemplates
-    );
+      }
+    }
     $table = new Table($this->output());
-    $table->setHeaders(['Template Name', 'Description'])
+    $table->setHeaders(['ID', 'Field Type', 'Widget'])
       ->setRows($wrapped_rows);
     $table->setStyle('borderless');
     $table->render();
@@ -104,36 +108,15 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
    * @hook post-init
    */
   private function setTemplates() {
-    $templates = [];
-    $all_templates = new Finder();
-    $all_templates->files()->in($this->repoRoot . self::ENTITY_TEMPLATE_PATH)->directories();
-
-    foreach ($all_templates as $template) {
-      $this->drupalEntityTemplates[$template->getBasename()] = $this->getTemplateDescription($template->getBasename());
+    try {
+      $field_definitions = $this->repoRoot . self::ENTITY_TEMPLATE_PATH . '/entity_fields.yml';
+      $field_definitions = Yaml::parse(
+        file_get_contents($field_definitions)
+      );
+      $this->drupalEntityTemplates = $field_definitions['entity_fields'];
+    } catch (ParseException $exception) {
+      printf('Unable to parse the YAML string: %s', $exception->getMessage());
     }
-    ksort($this->drupalEntityTemplates);
-  }
-
-  /**
-   * Get a template's description.
-   *
-   * @param string $template
-   *   The template to use
-   */
-  private function getTemplateDescription($template) {
-    $template_description_path = $this->getTemplatePath($template) . '/description.txt';
-    $template_description = NULL;
-    if (file_exists($template_description_path)) {
-      $template_description = trim(file_get_contents($template_description_path));
-    }
-    if (empty($template_description)) {
-      $template_description = 'No description found.';
-    }
-    return $template_description;
-  }
-
-  private function getTemplatePath($template) {
-    return $this->repoRoot . '/' . self::ENTITY_TEMPLATE_PATH . "/$template";
   }
 
   /**
@@ -144,69 +127,69 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
    */
   private function getTokenizedTemplateOutputs() {
     $this->setEntityTemplateTokens();
-    foreach (self::ENTITY_TEMPLATE_FILES as $template_file) {
-      $this->getOutputTemplateFile($template_file);
+    foreach ($this->drupalEntityChosenWidget['templates'] as $template) {
+      $this->getOutputTemplateFile($template);
     }
   }
 
   /**
-   * Output the tokenized version of a template file.
+   * Get the absolute filepath to a template.
    *
-   * @param string $template_file
-   *   The template file to output.
+   * @param array $template
+   *   The template to build the filepath for.
    */
-  private function getOutputTemplateFile($template_file) {
-    $template_path = $this->getTemplatePath($this->drupalEntityChosenTemplate);
-    $file_name = $template_path . "/$template_file";
+  private function getAbsoluteTemplateFile(array $template) {
+    $file_index = $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CARDINALITY'] == 'BaseFieldDefinition::CARDINALITY_UNLIMITED'
+      ? 'multiple'
+      : 'single';
+    return $this->repoRoot . self::ENTITY_TEMPLATE_PATH . '/' . $template['template_files'][$file_index];
+  }
+
+  /**
+   * Output the tokenized version of a template.
+   *
+   * @param array $template
+   *   The template to output.
+   */
+  private function getOutputTemplateFile(array $template) {
+    $contents = file_get_contents(
+      $this->getAbsoluteTemplateFile($template)
+    );
     $this->io->newLine();
-    $this->say($template_file);
-    $multiple_file_name = str_replace('.txt', '-multiple.txt', $file_name);
-    if (file_exists($file_name)) {
-      $multiple_file_name = str_replace('.txt', '-multiple.txt', $file_name);
-      if (
-        $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CARDINALITY'] == 'BaseFieldDefinition::CARDINALITY_UNLIMITED' &&
-        file_exists($multiple_file_name)
-        ) {
-        $file_name = $multiple_file_name;
-      }
-      $contents = file_get_contents($file_name);
-      foreach ($this->drupalEntityTemplateTokens as $token => $output_value) {
-        $contents = str_replace($token, $output_value, $contents);
-      }
-      $this->io->text($contents);
+    $this->say($template['name']);
+    foreach ($this->drupalEntityTemplateTokens as $token => $output_value) {
+      $contents = str_replace($token, $output_value, $contents);
     }
+    $this->io->text($contents);
   }
 
   /**
    * Set the tokens necessary for generating the templates.
-   *
-   * @param string $template
-   *   The template to use
    */
   private function setEntityTemplateTokens() {
-    $chosen_template = $this->drupalEntityChosenTemplate;
+    $widget= $this->drupalEntityChosenWidget['id'];
     $this->setStandardEntityTemplateTokens();
     if (
-      $chosen_template == 'string' ||
-      $chosen_template == 'text' ||
-      $chosen_template == 'string_long' ||
-      $chosen_template == 'text_long'
+      $widget == 'string' ||
+      $widget == 'text' ||
+      $widget == 'string_long' ||
+      $widget == 'text_long'
     ) {
       $this->setTextTypeFieldTemplateTokens();
     }
-    if ($chosen_template == 'string' || $chosen_template == 'text') {
+    if ($widget == 'string' || $widget == 'text') {
       $this->setShortTextTypeFieldTemplateTokens();
     }
-    if ($chosen_template == 'string_long' || $chosen_template == 'text_long') {
+    if ($widget == 'string_long' || $widget == 'text_long') {
       $this->setLongFieldTemplateTokens();
     }
-    if ($chosen_template == 'taxonomy_reference_select' || $chosen_template == 'taxonomy_reference_autocomplete') {
+    if ($widget == 'taxonomy_reference_select' || $widget == 'taxonomy_reference_autocomplete') {
       $this->setTaxonomyTermTemplateTokens();
     }
-    if ($chosen_template == 'custom_entity_reference_select' || $chosen_template == 'custom_entity_reference_autocomplete') {
+    if ($widget == 'custom_entity_reference_select' || $widget == 'custom_entity_reference_autocomplete') {
       $this->setEntityReferenceTemplateTokens();
     }
-    if ($chosen_template == 'taxonomy_reference_autocomplete' || $chosen_template == 'custom_entity_reference_autocomplete') {
+    if ($widget == 'taxonomy_reference_autocomplete' || $widget == 'custom_entity_reference_autocomplete') {
       $this->setEntityRefAutocompleteTemplateTokens();
     }
   }

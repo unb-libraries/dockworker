@@ -1,0 +1,34 @@
+  /**
+   * Gets the DOCKWORKER_FIELD_ENTITY_TYPE DOCKWORKER_FIELD_LABEL entity.
+   *
+   * @return \Drupal\taxonomy\TermInterface
+   *   The DOCKWORKER_FIELD_LABEL Term entity.
+   */
+  public function getDOCKWORKER_FIELD_CAPSCASE();
+
+  /**
+   * Gets the DOCKWORKER_FIELD_ENTITY_TYPE DOCKWORKER_FIELD_LABEL entity ID.
+   *
+   * @return int
+   *   The DOCKWORKER_FIELD_LABEL term entity ID.
+   */
+    public function getDOCKWORKER_FIELD_CAPSCASEId();
+
+  /**
+   * Sets the DOCKWORKER_FIELD_ENTITY_TYPE DOCKWORKER_FIELD_LABEL.
+   *
+   * @param \Drupal\taxonomy\TermInterface $DOCKWORKER_FIELD_MACHINE_NAME
+   *   A DOCKWORKER_FIELD_LABEL taxonomy term entity.
+   *
+   * @return DOCKWORKER_FIELD_NAMEDSPACED_CLASS
+   *   The called DOCKWORKER_FIELD_ENTITY_TYPE entity.
+   */
+  public function setDOCKWORKER_FIELD_CAPSCASE(TermInterface $DOCKWORKER_FIELD_MACHINE_NAME);
+
+  /**
+   * Clears the DOCKWORKER_FIELD_ENTITY_TYPE DOCKWORKER_FIELD_LABEL value.
+   *
+   * @return DOCKWORKER_FIELD_NAMEDSPACED_CLASS
+   *   The called DOCKWORKER_FIELD_ENTITY_TYPE entity.
+   */
+  public function clearDOCKWORKER_FIELD_CAPSCASE();

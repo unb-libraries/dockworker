@@ -1,0 +1,41 @@
+    $fields['DOCKWORKER_FIELD_MACHINE_NAME'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('DOCKWORKER_FIELD_LABEL'))
+      ->setDescription(t('DOCKWORKER_FIELD_DESCRIPTION'))
+      ->setSettings(
+        [
+          'target_type' => 'taxonomy_term',
+          'handler' => 'default:taxonomy_term',
+          'handler_settings' => [
+            'target_bundles' => [
+              'DOCKWORKER_FIELD_TAXONOMY_VID' => 'DOCKWORKER_FIELD_TAXONOMY_VID',
+            ],
+            'auto_create' => DOCKWORKER_FIELD_TAXONOMY_AUTO_CREATE,
+          ],
+        ]
+      )
+      ->setCardinality(DOCKWORKER_FIELD_CARDINALITY)
+      ->setRequired(DOCKWORKER_FIELD_REQUIRED)
+      ->setRevisionable(DOCKWORKER_FIELD_REVISIONABLE)
+      ->setTranslatable(DOCKWORKER_FIELD_TRANSLATABLE)
+      ->setDisplayOptions(
+        'view',
+        [
+          'label' => 'above',
+          'weight' => DOCKWORKER_FIELD_WEIGHT,
+        ]
+      )
+      ->setDisplayOptions(
+        'form',
+        [
+          'type' => 'entity_reference_autocomplete',
+          'weight' => DOCKWORKER_FIELD_WEIGHT,
+          'settings' => array(
+            'match_operator' => 'CONTAINS',
+            'size' => 'DOCKWORKER_FIELD_TAXONOMY_AUTOCOMPLETE_SIZE',
+            'autocomplete_type' => 'tags',
+            'placeholder' => '',
+          ),
+        ]
+      )
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);

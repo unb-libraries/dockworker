@@ -1,0 +1,166 @@
+entity_fields:
+  string:
+    name: Text (Plain)
+    widgets:
+      -
+        id: string
+        name: Text Field
+        templates:
+          field:
+            name: Field Definition
+            template_files:
+              single: fields/string.txt
+              multiple: fields/string.txt
+          method:
+            name: Methods
+            template_files:
+              single: methods/string.txt
+              multiple: methods/string-multiple.txt
+          interface:
+            name: Interface
+            template_files:
+              single: interfaces/string.txt
+              multiple: interfaces/string-multiple.txt
+      -
+        id: string_long
+        name: Text Area
+        templates:
+          field:
+            name: Field Definition
+            template_files:
+              single: fields/string_long.txt
+              multiple: fields/string_long.txt
+          method:
+            name: Methods
+            template_files:
+              single: methods/string.txt
+              multiple: methods/string-multiple.txt
+          interface:
+            name: Interface
+            template_files:
+              single: interfaces/string.txt
+              multiple: interfaces/string-multiple.txt
+  text:
+    name: Text (Formatted)
+    widgets:
+      -
+        id: text
+        name: Text Field
+        templates:
+          field:
+            name: Field Definition
+            template_files:
+              single: fields/text.txt
+              multiple: fields/text.txt
+          method:
+            name: Methods
+            template_files:
+              single: methods/string.txt
+              multiple: methods/string-multiple.txt
+          interface:
+            name: Interface
+            template_files:
+              single: interfaces/string.txt
+              multiple: interfaces/string-multiple.txt
+      -
+        id: text_long
+        name: Text Area
+        templates:
+          field:
+            name: Field Definition
+            template_files:
+              single: fields/text_long.txt
+              multiple: fields/text_long.txt
+          method:
+            name: Methods
+            template_files:
+              single: methods/string.txt
+              multiple: methods/string-multiple.txt
+          interface:
+            name: Interface
+            template_files:
+              single: interfaces/string.txt
+              multiple: interfaces/string-multiple.txt
+
+  taxonomy:
+    name: Taxonomy Term Entity Reference
+    widgets:
+      -
+        id: taxonomy_reference_select
+        name: Select List
+        templates:
+          field:
+            name: Field Definition
+            template_files:
+              single: fields/taxonomy_reference_select.txt
+              multiple: fields/taxonomy_reference_select.txt
+          method:
+            name: Methods
+            template_files:
+              single: methods/taxonomy-ref.txt
+              multiple: methods/taxonomy-ref-multiple.txt
+          interface:
+            name: Interface
+            template_files:
+              single: interfaces/taxonomy-ref.txt
+              multiple: interfaces/taxonomy-ref-multiple.txt
+      -
+        id: taxonomy_reference_autocomplete
+        name: Autocomplete Widget
+        templates:
+          field:
+            name: Field Definition
+            template_files:
+              single: fields/taxonomy_reference_autocomplete.txt
+              multiple: fields/taxonomy_reference_autocomplete.txt
+          method:
+            name: Methods
+            template_files:
+              single: methods/taxonomy-ref.txt
+              multiple: methods/taxonomy-ref-multiple.txt
+          interface:
+            name: Interface
+            template_files:
+              single: interfaces/taxonomy-ref.txt
+              multiple: interfaces/taxonomy-ref-multiple.txt
+  custom_entity:
+    name: Custom Entity Reference
+    widgets:
+      -
+        id: custom_entity_reference_select
+        name: Select List
+        templates:
+          field:
+            name: Field Definition
+            template_files:
+              single: fields/custom_entity_reference_select.txt
+              multiple: fields/custom_entity_reference_select.txt
+          method:
+            name: Methods
+            template_files:
+              single: methods/custom-entity-ref.txt
+              multiple: methods/custom-entity-ref-multiple.txt
+          interface:
+            name: Interface
+            template_files:
+              single: interfaces/custom-entity-ref.txt
+              multiple: interfaces/custom-entity-ref-multiple.txt
+      -
+        id: custom_entity_reference_autocomplete
+        name: Autocomplete Widget
+        templates:
+          field:
+            name: Field Definition
+            template_files:
+              single: fields/custom_entity_reference_autocomplete.txt
+              multiple: fields/custom_entity_reference_autocomplete.txt
+          method:
+            name: Methods
+            template_files:
+              single: methods/custom-entity-ref.txt
+              multiple: methods/custom-entity-ref-multiple.txt
+          interface:
+            name: Interface
+            template_files:
+              single: interfaces/custom-entity-ref.txt
+              multiple: interfaces/custom-entity-ref-multiple.txt
