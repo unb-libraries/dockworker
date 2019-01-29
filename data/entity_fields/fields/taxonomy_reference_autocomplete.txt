@@ -29,12 +29,12 @@
         [
           'type' => 'entity_reference_autocomplete',
           'weight' => DOCKWORKER_FIELD_WEIGHT,
-          'settings' => array(
+          'settings' => [
             'match_operator' => 'CONTAINS',
             'size' => 'DOCKWORKER_FIELD_TAXONOMY_AUTOCOMPLETE_SIZE',
             'autocomplete_type' => 'tags',
             'placeholder' => '',
-          ),
+          ],
         ]
       )
       ->setDisplayConfigurable('form', TRUE)
