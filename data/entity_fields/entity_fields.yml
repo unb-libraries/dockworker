@@ -97,13 +97,13 @@ entity_fields:
           method:
             name: Methods
             template_files:
-              single: methods/taxonomy-ref.txt
-              multiple: methods/taxonomy-ref-multiple.txt
+              single: methods/entity-ref.txt
+              multiple: methods/entity-ref-multiple.txt
           interface:
             name: Interface
             template_files:
-              single: interfaces/taxonomy-ref.txt
-              multiple: interfaces/taxonomy-ref-multiple.txt
+              single: interfaces/entity-ref.txt
+              multiple: interfaces/entity-ref-multiple.txt
       -
         id: taxonomy_reference_autocomplete
         name: Autocomplete Widget
@@ -116,13 +116,13 @@ entity_fields:
           method:
             name: Methods
             template_files:
-              single: methods/taxonomy-ref.txt
-              multiple: methods/taxonomy-ref-multiple.txt
+              single: methods/entity-ref.txt
+              multiple: methods/entity-ref-multiple.txt
           interface:
             name: Interface
             template_files:
-              single: interfaces/taxonomy-ref.txt
-              multiple: interfaces/taxonomy-ref-multiple.txt
+              single: interfaces/entity-ref.txt
+              multiple: interfaces/entity-ref-multiple.txt
   custom_entity:
     name: Custom Entity Reference
     widgets:
@@ -138,13 +138,13 @@ entity_fields:
           method:
             name: Methods
             template_files:
-              single: methods/custom-entity-ref.txt
-              multiple: methods/custom-entity-ref-multiple.txt
+              single: methods/entity-ref.txt
+              multiple: methods/entity-ref-multiple.txt
           interface:
             name: Interface
             template_files:
-              single: interfaces/custom-entity-ref.txt
-              multiple: interfaces/custom-entity-ref-multiple.txt
+              single: interfaces/entity-ref.txt
+              multiple: interfaces/entity-ref-multiple.txt
       -
         id: custom_entity_reference_autocomplete
         name: Autocomplete Widget
@@ -157,10 +157,32 @@ entity_fields:
           method:
             name: Methods
             template_files:
-              single: methods/custom-entity-ref.txt
-              multiple: methods/custom-entity-ref-multiple.txt
+              single: methods/entity-ref.txt
+              multiple: methods/entity-ref-multiple.txt
           interface:
             name: Interface
             template_files:
-              single: interfaces/custom-entity-ref.txt
-              multiple: interfaces/custom-entity-ref-multiple.txt
+              single: interfaces/entity-ref.txt
+              multiple: interfaces/entity-ref-multiple.txt
+  file:
+    name: File Reference
+    widgets:
+      -
+        id: file_reference_upload
+        name: File Upload Widget
+        templates:
+          field:
+            name: Field Definition
+            template_files:
+              single: fields/file.txt
+              multiple: fields/file.txt
+          method:
+            name: Methods
+            template_files:
+              single: methods/entity-ref.txt
+              multiple: methods/entity-ref-multiple.txt
+          interface:
+            name: Interface
+            template_files:
+              single: interfaces/entity-ref.txt
+              multiple: interfaces/entity-ref-multiple.txt

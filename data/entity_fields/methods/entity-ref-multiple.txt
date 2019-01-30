@@ -1,3 +1,5 @@
+use DOCKWORKER_FIELD_CUSTOM_ENTITY_LEADINGLESS_INTERFACE_NAMESPACE;
+
   /**
    * {@inheritdoc}
    */
@@ -43,18 +45,18 @@
   /**
    * {@inheritdoc}
    */
-  public function removeDOCKWORKER_FIELD_CAPSCASE(DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE $DOCKWORKER_FIELD_MACHINE_NAME) {
-    $key = array_search($DOCKWORKER_FIELD_MACHINE_NAME, $this->getDOCKWORKER_FIELD_CAPSCASEs());
-    if (!empty($key)) {
-      $this->get('DOCKWORKER_FIELD_MACHINE_NAME')->removeItem($key);
-    }
+  public function clearDOCKWORKER_FIELD_CAPSCASEs() {
+    $this->setDOCKWORKER_FIELD_CAPSCASEs([]);
     return $this;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function clearDOCKWORKER_FIELD_CAPSCASEs() {
-    $this->setDOCKWORKER_FIELD_CAPSCASEs([]);
+  public function removeDOCKWORKER_FIELD_CAPSCASE(DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE $DOCKWORKER_FIELD_MACHINE_NAME) {
+    $key = array_search($DOCKWORKER_FIELD_MACHINE_NAME, $this->getDOCKWORKER_FIELD_CAPSCASEs());
+    if (!empty($key)) {
+      $this->get('DOCKWORKER_FIELD_MACHINE_NAME')->removeItem($key);
+    }
     return $this;
   }

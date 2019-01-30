@@ -192,6 +192,15 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
     if ($widget == 'taxonomy_reference_autocomplete' || $widget == 'custom_entity_reference_autocomplete') {
       $this->setEntityRefAutocompleteTemplateTokens();
     }
+    if ($widget == 'file_reference_upload') {
+      $this->setFileTemplateTokens();
+    }
+    if (!empty($this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE_NAMESPACE'])) {
+      $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_LEADINGLESS_INTERFACE_NAMESPACE'] = ltrim(
+        $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE_NAMESPACE'],
+        '\\'
+      );
+    }
   }
 
   /**
@@ -270,6 +279,9 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
    * Set the tokens necessary for taxonomy term reference templates.
    */
   private function setTaxonomyTermTemplateTokens() {
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_CLASS'] = 'Term';
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE_NAMESPACE'] = '\Drupal\taxonomy\TermInterface';
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE'] = 'TermInterface';
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_TAXONOMY_VID'] =
       $this->askDefault('Enter the *new field* target taxonomy VID:', '');
   }
@@ -303,6 +315,17 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
     $entity_short_guess = str_replace('Interface', '', $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE']);
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_CLASS'] =
       $this->askDefault('Enter the *target entity* unnamespaced class name:', $entity_short_guess);
+  }
+
+  /**
+   * Set the tokens necessary for taxonomy term reference templates.
+   */
+  private function setFileTemplateTokens() {
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_CLASS'] = 'File';
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE_NAMESPACE'] = '\Drupal\file\FileInterface';
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE'] = 'FileInterface';
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FILE_FIELD_EXTENSIONS'] =
+      $this->askDefault('Enter the *new field* file extensions permitted (space separated):', 'pdf doc docx');
   }
 
 }
