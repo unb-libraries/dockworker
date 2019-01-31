@@ -208,3 +208,23 @@ entity_fields:
             template_files:
               single: interfaces/entity-ref.txt
               multiple: interfaces/entity-ref-multiple.txt
+  boolean:
+    name: Boolean
+    widgets:
+      -
+        id: boolean_checkbox
+        name: Boolean Checkbox
+        templates:
+          field:
+            name: Field Definition
+            template_files:
+              single: fields/boolean.txt
+              multiple: fields/boolean.txt
+          method:
+            name: Methods
+            template_files:
+              single: methods/boolean.txt
+          interface:
+            name: Interface
+            template_files:
+              single: interfaces/boolean.txt

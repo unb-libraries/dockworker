@@ -171,48 +171,76 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
 
     switch ($this->drupalEntityChosenWidget['id']) {
       case 'string':
+        $this->setCardinalityTokens();
+        $this->setRequiredFieldTokens();
+        $this->setTranslatableFieldTokens();
         $this->setTextTypeFieldTemplateTokens();
         $this->setShortTextTypeFieldTemplateTokens();
         break;
       case 'text':
+        $this->setCardinalityTokens();
+        $this->setRequiredFieldTokens();
+        $this->setTranslatableFieldTokens();
         $this->setTextTypeFieldTemplateTokens();
         $this->setShortTextTypeFieldTemplateTokens();
         break;
       case 'string_long':
+        $this->setCardinalityTokens();
+        $this->setRequiredFieldTokens();
+        $this->setTranslatableFieldTokens();
         $this->setTextTypeFieldTemplateTokens();
         $this->setLongFieldTemplateTokens();
         break;
       case 'text_long':
+        $this->setCardinalityTokens();
+        $this->setRequiredFieldTokens();
+        $this->setTranslatableFieldTokens();
         $this->setTextTypeFieldTemplateTokens();
         $this->setLongFieldTemplateTokens();
         break;
       case 'taxonomy_reference_select':
+        $this->setCardinalityTokens();
+        $this->setRequiredFieldTokens();
         $this->setTaxonomyTermTemplateTokens();
         $this->setLeadinglessNamespaceToken();
         break;
       case 'taxonomy_reference_autocomplete':
+        $this->setCardinalityTokens();
+        $this->setRequiredFieldTokens();
         $this->setTaxonomyTermTemplateTokens();
         $this->setEntityRefAutocompleteTemplateTokens();
         $this->setLeadinglessNamespaceToken();
         break;
       case 'custom_entity_reference_select':
+        $this->setCardinalityTokens();
+        $this->setRequiredFieldTokens();
         $this->setEntityReferenceTemplateTokens();
         $this->setLeadinglessNamespaceToken();
         break;
       case 'custom_entity_reference_autocomplete':
+        $this->setCardinalityTokens();
+        $this->setRequiredFieldTokens();
         $this->setEntityReferenceTemplateTokens();
         $this->setEntityRefAutocompleteTemplateTokens();
         $this->setLeadinglessNamespaceToken();
         break;
       case 'file_upload':
+        $this->setCardinalityTokens();
+        $this->setRequiredFieldTokens();
         $this->setFileTemplateTokens('pdf doc docx');
         $this->setFileUploadTemplateTokens();
         $this->setLeadinglessNamespaceToken();
         break;
       case 'image_upload':
+        $this->setCardinalityTokens();
+        $this->setRequiredFieldTokens();
         $this->setFileTemplateTokens('jpg gif png');
         $this->setImageTemplateTokens();
         $this->setLeadinglessNamespaceToken();
+        break;
+      case 'boolean_checkbox':
+        $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CARDINALITY'] = 1;
+        $this->setBooleanTemplateTokens();
         break;
     }
   }
@@ -236,18 +264,8 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_MACHINE_NAME'] =
       $this->askDefault('Enter the *new field* key for the $fields array: ', 'user_name');
 
-    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_REQUIRED'] =
-      $this->confirm('Is this *new field* required?') ? 'TRUE' : 'FALSE';
-
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_REVISIONABLE'] =
       $this->confirm('Is this *new field* revisionable?') ? 'TRUE' : 'FALSE';
-
-    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_TRANSLATABLE'] =
-      $this->confirm('Is this *new field* translatable?') ? 'TRUE' : 'FALSE';
-
-    $cardinality = $this->askDefault('Enter the *new field* cardinality (0 for unlimited):', '1');
-    $cardinality = $cardinality == 0 ? 'BaseFieldDefinition::CARDINALITY_UNLIMITED' : $cardinality;
-    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CARDINALITY'] = $cardinality;
 
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_LABEL'] =
       $this->askDefault('Enter the *new field* label for forms:', 'User Name');
@@ -371,6 +389,38 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE'] = 'ImageInterface';
     $this->drupalEntityTemplateTokens['DOCKWORKER_FILE_FIELD_ALT_REQUIRED'] =
       $this->confirm('Should the ALT field for the image(s) be required?') ? 'TRUE' : 'FALSE';
+  }
+
+  /**
+   * Set the tokens necessary for cardinality configurable field templates.
+   */
+  private function setCardinalityTokens() {
+    $cardinality = $this->askDefault('Enter the *new field* cardinality (0 for unlimited):', '1');
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CARDINALITY'] = $cardinality == 0 ? 'BaseFieldDefinition::CARDINALITY_UNLIMITED' : $cardinality;
+  }
+
+  /**
+   * Set the tokens necessary for boolean type field templates.
+   */
+  private function setBooleanTemplateTokens() {
+    $this->drupalEntityTemplateTokens['DOCKWORKER_BOOLEAN_FIELD_DEFAULT_VALUE'] =
+      $this->confirm('Should the checkbox be checked by default?') ? 1 : 0;
+  }
+
+  /**
+   * Set the tokens necessary for required field templates.
+   */
+  private function setRequiredFieldTokens() {
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_REQUIRED'] =
+      $this->confirm('Is this *new field* required?') ? 'TRUE' : 'FALSE';
+  }
+
+  /**
+   * Set the tokens necessary for translatable field templates.
+   */
+  private function setTranslatableFieldTokens() {
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_TRANSLATABLE'] =
+      $this->confirm('Is this *new field* translatable?') ? 'TRUE' : 'FALSE';
   }
 
 }

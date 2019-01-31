@@ -16,7 +16,6 @@
       ->setCardinality(DOCKWORKER_FIELD_CARDINALITY)
       ->setRequired(DOCKWORKER_FIELD_REQUIRED)
       ->setRevisionable(DOCKWORKER_FIELD_REVISIONABLE)
-      ->setTranslatable(DOCKWORKER_FIELD_TRANSLATABLE)
       ->setDisplayOptions(
         'view',
         [

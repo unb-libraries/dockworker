@@ -1,0 +1,22 @@
+    $fields['DOCKWORKER_FIELD_MACHINE_NAME'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(t('DOCKWORKER_FIELD_LABEL'))
+      ->setDescription(t('DOCKWORKER_FIELD_DESCRIPTION'))
+      ->setRevisionable(DOCKWORKER_FIELD_REVISIONABLE)
+      ->setDefaultValue('DOCKWORKER_BOOLEAN_FIELD_DEFAULT_VALUE')
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'weight' => DOCKWORKER_FIELD_WEIGHT,
+      ])
+      ->setDisplayOptions(
+        'form',
+        [
+          'type' => 'boolean_checkbox',
+          'weight' => DOCKWORKER_FIELD_WEIGHT,
+          'settings' => [
+            'default_value' => DOCKWORKER_BOOLEAN_FIELD_DEFAULT_VALUE,
+            'display_label' => TRUE,
+          ],
+        ]
+      )
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
