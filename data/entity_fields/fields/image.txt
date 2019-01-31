@@ -1,9 +1,10 @@
-    $fields['DOCKWORKER_FIELD_MACHINE_NAME'] = BaseFieldDefinition::create('file')
+    $fields['DOCKWORKER_FIELD_MACHINE_NAME'] = BaseFieldDefinition::create('image')
       ->setLabel(t('DOCKWORKER_FIELD_LABEL'))
       ->setDescription(t('DOCKWORKER_FIELD_DESCRIPTION'))
       ->setSettings([
         'file_directory' => 'DOCKWORKER_FILE_FIELD_DIRECTORY',
         'file_extensions' => 'DOCKWORKER_FILE_FIELD_EXTENSIONS',
+        'alt_field_required' => DOCKWORKER_FILE_FIELD_ALT_REQUIRED,
       ])
       ->setCardinality(DOCKWORKER_FIELD_CARDINALITY)
       ->setRequired(DOCKWORKER_FIELD_REQUIRED)

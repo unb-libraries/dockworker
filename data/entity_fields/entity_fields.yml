@@ -168,7 +168,7 @@ entity_fields:
     name: File Reference
     widgets:
       -
-        id: file_reference_upload
+        id: file_upload
         name: File Upload Widget
         templates:
           field:
@@ -176,6 +176,28 @@ entity_fields:
             template_files:
               single: fields/file.txt
               multiple: fields/file.txt
+          method:
+            name: Methods
+            template_files:
+              single: methods/entity-ref.txt
+              multiple: methods/entity-ref-multiple.txt
+          interface:
+            name: Interface
+            template_files:
+              single: interfaces/entity-ref.txt
+              multiple: interfaces/entity-ref-multiple.txt
+  image:
+    name: Image Reference
+    widgets:
+      -
+        id: image_upload
+        name: Image Upload Widget
+        templates:
+          field:
+            name: Field Definition
+            template_files:
+              single: fields/image.txt
+              multiple: fields/image.txt
           method:
             name: Methods
             template_files:

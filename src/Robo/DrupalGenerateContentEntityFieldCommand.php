@@ -167,34 +167,60 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
    * Set the tokens necessary for generating the templates.
    */
   private function setEntityTemplateTokens() {
-    $widget= $this->drupalEntityChosenWidget['id'];
     $this->setStandardEntityTemplateTokens();
-    if (
-      $widget == 'string' ||
-      $widget == 'text' ||
-      $widget == 'string_long' ||
-      $widget == 'text_long'
-    ) {
-      $this->setTextTypeFieldTemplateTokens();
+
+    switch ($this->drupalEntityChosenWidget['id']) {
+      case 'string':
+        $this->setTextTypeFieldTemplateTokens();
+        $this->setShortTextTypeFieldTemplateTokens();
+        break;
+      case 'text':
+        $this->setTextTypeFieldTemplateTokens();
+        $this->setShortTextTypeFieldTemplateTokens();
+        break;
+      case 'string_long':
+        $this->setTextTypeFieldTemplateTokens();
+        $this->setLongFieldTemplateTokens();
+        break;
+      case 'text_long':
+        $this->setTextTypeFieldTemplateTokens();
+        $this->setLongFieldTemplateTokens();
+        break;
+      case 'taxonomy_reference_select':
+        $this->setTaxonomyTermTemplateTokens();
+        $this->setLeadinglessNamespaceToken();
+        break;
+      case 'taxonomy_reference_autocomplete':
+        $this->setTaxonomyTermTemplateTokens();
+        $this->setEntityRefAutocompleteTemplateTokens();
+        $this->setLeadinglessNamespaceToken();
+        break;
+      case 'custom_entity_reference_select':
+        $this->setEntityReferenceTemplateTokens();
+        $this->setLeadinglessNamespaceToken();
+        break;
+      case 'custom_entity_reference_autocomplete':
+        $this->setEntityReferenceTemplateTokens();
+        $this->setEntityRefAutocompleteTemplateTokens();
+        $this->setLeadinglessNamespaceToken();
+        break;
+      case 'file_upload':
+        $this->setFileTemplateTokens('pdf doc docx');
+        $this->setFileUploadTemplateTokens();
+        $this->setLeadinglessNamespaceToken();
+        break;
+      case 'image_upload':
+        $this->setFileTemplateTokens('jpg gif png');
+        $this->setImageTemplateTokens();
+        $this->setLeadinglessNamespaceToken();
+        break;
     }
-    if ($widget == 'string' || $widget == 'text') {
-      $this->setShortTextTypeFieldTemplateTokens();
-    }
-    if ($widget == 'string_long' || $widget == 'text_long') {
-      $this->setLongFieldTemplateTokens();
-    }
-    if ($widget == 'taxonomy_reference_select' || $widget == 'taxonomy_reference_autocomplete') {
-      $this->setTaxonomyTermTemplateTokens();
-    }
-    if ($widget == 'custom_entity_reference_select' || $widget == 'custom_entity_reference_autocomplete') {
-      $this->setEntityReferenceTemplateTokens();
-    }
-    if ($widget == 'taxonomy_reference_autocomplete' || $widget == 'custom_entity_reference_autocomplete') {
-      $this->setEntityRefAutocompleteTemplateTokens();
-    }
-    if ($widget == 'file_reference_upload') {
-      $this->setFileTemplateTokens();
-    }
+  }
+
+  /**
+   * Transform the interface namespace for an entity into a leadingless one.
+   */
+  private function setLeadinglessNamespaceToken() {
     if (!empty($this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE_NAMESPACE'])) {
       $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_LEADINGLESS_INTERFACE_NAMESPACE'] = ltrim(
         $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE_NAMESPACE'],
@@ -292,7 +318,6 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
   private function setEntityRefAutocompleteTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_TAXONOMY_AUTO_CREATE'] =
       $this->confirm('Should new entities entered in this field be auto-created?') ? 'TRUE' : 'FALSE';
-
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_TAXONOMY_AUTOCOMPLETE_SIZE'] =
       $this->askDefault('Enter the *new field* autocomplete widget width for forms:', 60);
   }
@@ -320,12 +345,32 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
   /**
    * Set the tokens necessary for taxonomy term reference templates.
    */
-  private function setFileTemplateTokens() {
+  private function setFileUploadTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_CLASS'] = 'File';
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE_NAMESPACE'] = '\Drupal\file\FileInterface';
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE'] = 'FileInterface';
+  }
+
+  /**
+   * Set the tokens necessary for file reference templates.
+   */
+  private function setFileTemplateTokens($permitted_extensions) {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FILE_FIELD_EXTENSIONS'] =
-      $this->askDefault('Enter the *new field* file extensions permitted (space separated):', 'pdf doc docx');
+      $this->askDefault('Enter the *new field* file extensions permitted (space separated):', $permitted_extensions);
+    $storage_path_guess = $this->drupalChosenModule . '/' . $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_MACHINE_NAME'];
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FILE_FIELD_DIRECTORY'] =
+      $this->askDefault('Enter the *new field* storage directory name (Leave empty for default):', $storage_path_guess);
+  }
+
+  /**
+   * Set the tokens necessary for image reference templates.
+   */
+  private function setImageTemplateTokens() {
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_CLASS'] = 'Image';
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE_NAMESPACE'] = '\Drupal\Core\Image\ImageInterface';
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE'] = 'ImageInterface';
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FILE_FIELD_ALT_REQUIRED'] =
+      $this->confirm('Should the ALT field for the image(s) be required?') ? 'TRUE' : 'FALSE';
   }
 
 }
