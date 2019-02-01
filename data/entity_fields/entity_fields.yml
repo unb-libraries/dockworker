@@ -228,3 +228,25 @@ entity_fields:
             name: Interface
             template_files:
               single: interfaces/boolean.txt
+  paragraph:
+    name: Paragraph Reference
+    widgets:
+      -
+        id: paragraph
+        name: Paragraphs Default Widget
+        templates:
+          field:
+            name: Field Definition
+            template_files:
+              single: fields/paragraph.txt
+              multiple: fields/paragraph.txt
+          method:
+            name: Methods
+            template_files:
+              single: methods/entity-ref.txt
+              multiple: methods/entity-ref-multiple.txt
+          interface:
+            name: Interface
+            template_files:
+              single: interfaces/entity-ref.txt
+              multiple: interfaces/entity-ref-multiple.txt

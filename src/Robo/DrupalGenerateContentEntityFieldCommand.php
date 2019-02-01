@@ -242,6 +242,12 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
         $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CARDINALITY'] = 1;
         $this->setBooleanTemplateTokens();
         break;
+      case 'paragraph':
+        $this->setCardinalityTokens();
+        $this->setRequiredFieldTokens();
+        $this->setParagraphsFieldTokens();
+        $this->setLeadinglessNamespaceToken();
+        break;
     }
   }
 
@@ -422,5 +428,15 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_TRANSLATABLE'] =
       $this->confirm('Is this *new field* translatable?') ? 'TRUE' : 'FALSE';
   }
+
+  /**
+   * Set the tokens necessary for taxonomy term reference templates.
+   */
+  private function setParagraphsFieldTokens() {
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_TARGET_PARAGRAPH_NAME'] =
+      $this->askDefault('Enter the *target paragraph* machine name:', 'reference_contributor');
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_CLASS'] = 'Paragraph';
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE_NAMESPACE'] = '\Drupal\paragraphs\Entity\ParagraphInterface';
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE'] = 'ParagraphInterface';  }
 
 }

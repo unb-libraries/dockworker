@@ -26,11 +26,7 @@ use DOCKWORKER_FIELD_CUSTOM_ENTITY_LEADINGLESS_INTERFACE_NAMESPACE;
    * {@inheritdoc}
    */
   public function setDOCKWORKER_FIELD_CAPSCASEs(array $DOCKWORKER_FIELD_MACHINE_NAMEs) {
-    $ids = [];
-    foreach ($DOCKWORKER_FIELD_MACHINE_NAMEs as $entity) {
-      $ids[] = $entity->id();
-    }
-    $this->set('DOCKWORKER_FIELD_MACHINE_NAME', $ids);
+    $this->set('DOCKWORKER_FIELD_MACHINE_NAME', $DOCKWORKER_FIELD_MACHINE_NAMEs);
     return $this;
   }
 

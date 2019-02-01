@@ -1,0 +1,40 @@
+    $fields['DOCKWORKER_FIELD_MACHINE_NAME'] = BaseFieldDefinition::create('entity_reference_revisions')
+      ->setLabel(t('DOCKWORKER_FIELD_LABEL'))
+      ->setDescription(t('DOCKWORKER_FIELD_DESCRIPTION'))
+      ->setSettings(
+        [
+          'target_type' => 'paragraph',
+          'handler' => 'default:paragraph',
+          'handler_settings' => [
+            'negate' => 0,
+            'target_bundles' => [
+              'DOCKWORKER_FIELD_CUSTOM_TARGET_PARAGRAPH_NAME' => 'DOCKWORKER_FIELD_CUSTOM_TARGET_PARAGRAPH_NAME',
+            ],
+            'target_bundles_drag_drop' => [
+              'DOCKWORKER_FIELD_CUSTOM_TARGET_PARAGRAPH_NAME' => [
+                'enabled' => TRUE,
+                'weight' => DOCKWORKER_FIELD_WEIGHT,
+              ]
+            ]
+          ],
+        ]
+      )
+      ->setCardinality(DOCKWORKER_FIELD_CARDINALITY)
+      ->setRequired(DOCKWORKER_FIELD_REQUIRED)
+      ->setRevisionable(DOCKWORKER_FIELD_REVISIONABLE)
+      ->setDisplayOptions(
+        'view',
+        [
+          'label' => 'above',
+          'weight' => DOCKWORKER_FIELD_WEIGHT,
+        ]
+      )
+      ->setDisplayOptions(
+        'form',
+        [
+          'type' => 'paragraphs',
+          'weight' => DOCKWORKER_FIELD_WEIGHT,
+        ]
+      )
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
