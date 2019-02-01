@@ -1,3 +1,5 @@
+use Drupal\Core\TypedData\Type\DateTimeInterface;
+
   /**
    * {@inheritdoc}
    */
@@ -20,7 +22,7 @@
   /**
    * {@inheritdoc}
    */
-  public function addDOCKWORKER_FIELD_CAPSCASE($DOCKWORKER_FIELD_MACHINE_NAME) {
+  public function addDOCKWORKER_FIELD_CAPSCASE(DateTimeInterface $DOCKWORKER_FIELD_MACHINE_NAME) {
     $this->get('DOCKWORKER_FIELD_MACHINE_NAME')->appendItem($DOCKWORKER_FIELD_MACHINE_NAME);
     return $this;
   }
@@ -28,7 +30,7 @@
   /**
    * {@inheritdoc}
    */
-  public function removeDOCKWORKER_FIELD_CAPSCASE($DOCKWORKER_FIELD_MACHINE_NAME) {
+  public function removeDOCKWORKER_FIELD_CAPSCASE(DateTimeInterface $DOCKWORKER_FIELD_MACHINE_NAME) {
     $key = array_search($DOCKWORKER_FIELD_MACHINE_NAME, $this->getDOCKWORKER_FIELD_CAPSCASEs());
     if (!empty($key)) {
       $this->get('DOCKWORKER_FIELD_MACHINE_NAME')->removeItem($key);

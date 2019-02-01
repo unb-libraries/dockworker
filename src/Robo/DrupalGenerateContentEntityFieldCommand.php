@@ -43,6 +43,7 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
    * Generate the boilerplate necessary to add a field to an entity.
    *
    * @command drupal:generate:entity-field
+   * @aliases gef
    */
   public function generateContentEntityField() {
     if (!empty($this->drupalCustomEntities)) {
@@ -248,6 +249,11 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
         $this->setParagraphsFieldTokens();
         $this->setLeadinglessNamespaceToken();
         break;
+      case 'date_picker':
+        $this->setCardinalityTokens();
+        $this->setRequiredFieldTokens();
+        $this->setDateFieldTokens();
+        break;
     }
   }
 
@@ -437,6 +443,15 @@ class DrupalGenerateContentEntityFieldCommand extends DrupalCustomEntityCommand 
       $this->askDefault('Enter the *target paragraph* machine name:', 'reference_contributor');
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_CLASS'] = 'Paragraph';
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE_NAMESPACE'] = '\Drupal\paragraphs\Entity\ParagraphInterface';
-    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE'] = 'ParagraphInterface';  }
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE'] = 'ParagraphInterface';
+  }
+
+  /**
+   * Set the tokens necessary for date field templates.
+   */
+  private function setDateFieldTokens() {
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_DATETIME_TYPE'] =
+      $this->confirm('Should the *new field* also store a time (Date is default)?') ? 'DateTimeItem::DATETIME_TYPE_DATETIME' : 'DateTimeItem::DATETIME_TYPE_DATE';
+  }
 
 }

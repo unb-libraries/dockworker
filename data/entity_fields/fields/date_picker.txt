@@ -1,0 +1,25 @@
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItem;
+
+    $fields['DOCKWORKER_FIELD_MACHINE_NAME'] = BaseFieldDefinition::create('datetime')
+      ->setLabel(t('DOCKWORKER_FIELD_LABEL'))
+      ->setDescription(t('DOCKWORKER_FIELD_DESCRIPTION'))
+      ->setSettings([
+        'datetime_type' => DOCKWORKER_FIELD_DATETIME_TYPE,
+      ])
+      ->setCardinality(DOCKWORKER_FIELD_CARDINALITY)
+      ->setRequired(DOCKWORKER_FIELD_REQUIRED)
+      ->setRevisionable(DOCKWORKER_FIELD_REVISIONABLE)
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'datetime_default',
+        'settings' => [
+          'format_type' => 'html_date',
+        ],
+        'weight' => DOCKWORKER_FIELD_WEIGHT,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'datetime_default',
+        'weight' => DOCKWORKER_FIELD_WEIGHT,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);

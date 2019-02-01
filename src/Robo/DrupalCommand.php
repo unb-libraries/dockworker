@@ -186,6 +186,7 @@ class DrupalCommand extends DockWorkerApplicationCommand {
    * Get a ULI from the Drupal container.
    *
    * @command drupal:uli
+   * @aliases uli
    */
   public function uli() {
     $this->getApplicationRunning();

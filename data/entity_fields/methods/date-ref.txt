@@ -1,0 +1,24 @@
+use Drupal\Core\TypedData\Type\DateTimeInterface;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDOCKWORKER_FIELD_CAPSCASE() {
+    return $this->get('DOCKWORKER_FIELD_MACHINE_NAME')->date;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setDOCKWORKER_FIELD_CAPSCASE(DateTimeInterface $DOCKWORKER_FIELD_MACHINE_NAME) {
+    $this->set('DOCKWORKER_FIELD_MACHINE_NAME', $DOCKWORKER_FIELD_MACHINE_NAME);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function clearDOCKWORKER_FIELD_CAPSCASE() {
+    $this->set('DOCKWORKER_FIELD_MACHINE_NAME', NULL);
+    return $this;
+  }

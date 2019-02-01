@@ -250,3 +250,25 @@ entity_fields:
             template_files:
               single: interfaces/entity-ref.txt
               multiple: interfaces/entity-ref-multiple.txt
+  date:
+    name: Date
+    widgets:
+      -
+        id: date_picker
+        name: Date Picker
+        templates:
+          field:
+            name: Field Definition
+            template_files:
+              single: fields/date_picker.txt
+              multiple: fields/date_picker.txt
+          method:
+            name: Methods
+            template_files:
+              single: methods/date-ref.txt
+              multiple: methods/date-ref-multiple.txt
+          interface:
+            name: Interface
+            template_files:
+              single: interfaces/date-ref.txt
+              multiple: interfaces/date-ref-multiple.txt
