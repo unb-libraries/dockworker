@@ -205,10 +205,11 @@ class DrupalCommand extends DockWorkerApplicationCommand {
    */
   public function writeConfig() {
     $this->getApplicationRunning();
-    return $this->taskDockerExec($this->instanceName)
+    $this->taskDockerExec($this->instanceName)
       ->interactive()
       ->exec('/scripts/configExport.sh')
       ->run();
+    $this->setRunOtherCommand('permissions:fix');
   }
 
 }
