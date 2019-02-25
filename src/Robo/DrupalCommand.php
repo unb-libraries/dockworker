@@ -185,17 +185,30 @@ class DrupalCommand extends DockWorkerApplicationCommand {
   /**
    * Get a ULI from the Drupal container.
    *
+   * @param string $user_name
+   *   The user account name to generate the ULI for. Defaults to user 0.
+   *
    * @command drupal:uli
    * @aliases uli
    */
-  public function uli() {
+  public function uli($user_name = NULL) {
     $this->getApplicationRunning();
-    return $this->taskDockerExec($this->instanceName)
-      ->interactive()
-      ->exec(
-        '/scripts/pre-init.d/99_z_notify_user_URI.sh'
-      )
-      ->run();
+    if (empty($user_name)) {
+      return $this->taskDockerExec($this->instanceName)
+        ->interactive()
+        ->exec(
+          '/scripts/drupalUli.sh'
+        )
+        ->run();
+    }
+    else {
+      return $this->taskDockerExec($this->instanceName)
+        ->interactive()
+        ->exec(
+          "/scripts/drupalUli.sh '$user_name'"
+        )
+        ->run();
+    }
   }
 
   /**
