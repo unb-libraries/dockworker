@@ -62,6 +62,20 @@ class DockWorkerCommand extends Tasks implements ContainerAwareInterface, Logger
   }
 
   /**
+   * Self-update.
+   *
+   * @hook init
+   */
+  public function getDockworkerUpdates() {
+    $this->say('Checking for dockworker updates...');
+    $this->taskExec('composer')
+      ->dir($this->repoRoot)
+      ->arg('update')
+      ->arg('unb-libraries/dockworker')
+      ->run();
+  }
+
+  /**
    * Get the instance name from config.
    *
    * @throws \Exception
