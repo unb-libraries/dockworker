@@ -63,8 +63,6 @@ class DockWorkerCommand extends Tasks implements ContainerAwareInterface, Logger
 
   /**
    * Self-update.
-   *
-   * @hook init
    */
   public function getDockworkerUpdates() {
     $this->say('Checking for dockworker updates...');

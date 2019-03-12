@@ -164,6 +164,7 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
    * @throws \Exception
    */
   public function start(array $opts = ['no-cache' => FALSE]) {
+    $this->getDockworkerUpdates();
     $this->setRunOtherCommand('application:update-hostfile');
     $this->setRunOtherCommand('application:pull-upstream-images');
 
