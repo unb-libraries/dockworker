@@ -3,7 +3,6 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
-use Droath\RoboDockerCompose\Task\loadTasks;
 
 /**
  * Defines commands for a Dockworker application.
@@ -13,6 +12,8 @@ class DockworkerApplicationCommands extends DockworkerCommands {
   const ERROR_BUILDING_IMAGE = 'Error reported building image!';
   const ERROR_PULLING_UPSTREAM_IMAGE = 'Error pulling upstream image %s';
   const ERROR_UPDATING_HOSTFILE = 'Error updating hostfile!';
+
+  use \Droath\RoboDockerCompose\Task\loadTasks;
 
   /**
    * Clean up any leftover docker assets not being used.
