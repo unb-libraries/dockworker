@@ -67,7 +67,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    * @aliases update
    */
   public function getDockworkerUpdates() {
-    $this->say('Checking for dockworker updates...');
+    $this->say('Checking for updates to unb-libraries/dockworker...');
     $this->taskExec('composer')
       ->dir($this->repoRoot)
       ->arg('update')
