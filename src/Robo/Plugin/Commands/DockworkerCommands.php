@@ -1,6 +1,6 @@
 <?php
 
-namespace DockWorker\Robo\Plugin\Commands;
+namespace Dockworker\Robo\Plugin\Commands;
 
 use League\Container\ContainerAwareInterface;
 use League\Container\ContainerAwareTrait;
@@ -8,7 +8,6 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Robo\Common\BuilderAwareTrait;
 use Robo\Common\ConfigAwareTrait;
-use Robo\Config\Config;
 use Robo\Contract\BuilderAwareInterface;
 use Robo\Robo;
 use Robo\Tasks;
@@ -16,7 +15,7 @@ use Robo\Tasks;
 /**
  * Base class for DockWorker Robo commands.
  */
-class DockWorkerCommands extends Tasks implements ContainerAwareInterface, LoggerAwareInterface, BuilderAwareInterface {
+class DockworkerCommands extends Tasks implements ContainerAwareInterface, LoggerAwareInterface, BuilderAwareInterface {
 
   use BuilderAwareTrait;
   use ConfigAwareTrait;
@@ -54,11 +53,26 @@ class DockWorkerCommands extends Tasks implements ContainerAwareInterface, Logge
    * Get the container name from config.
    */
   public function __construct() {
-    $this->repoRoot = realpath(__DIR__ . "/../../../../../");
+    $this->repoRoot = realpath(__DIR__ . "/../../../../../../");
     $this->configFile = 'dockworker.yml';
     $this->config = Robo::loadConfiguration(
       [$this->repoRoot . '/' . $this->configFile]
     );
+  }
+
+  /**
+   * Self-update.
+   *
+   * @command dockworker:update
+   * @aliases update
+   */
+  public function getDockworkerUpdates() {
+    $this->say('Checking for dockworker updates...');
+    $this->taskExec('composer')
+      ->dir($this->repoRoot)
+      ->arg('update')
+      ->arg('unb-libraries/dockworker')
+      ->run();
   }
 
   /**

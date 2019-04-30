@@ -1,19 +1,18 @@
 <?php
 
-namespace DockWorker\Robo;
+namespace Dockworker\Robo\Plugin\Commands;
 
-use UnbLibraries\DockWorker\Robo\DockWorkerCommand;
+use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
+use Droath\RoboDockerCompose\Task\loadTasks;
 
 /**
  * Defines commands for a DockWorker application.
  */
-class DockWorkerApplicationCommand extends DockWorkerCommand {
+class DockworkerApplicationCommands extends DockworkerCommands {
 
   const ERROR_BUILDING_IMAGE = 'Error reported building image!';
   const ERROR_PULLING_UPSTREAM_IMAGE = 'Error pulling upstream image %s';
   const ERROR_UPDATING_HOSTFILE = 'Error updating hostfile!';
-
-  use \Droath\RoboDockerCompose\Task\loadTasks;
 
   /**
    * Clean up any leftover docker assets not being used.
@@ -76,20 +75,10 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
    }
 
   /**
-   * Compile a theme's assets.
-   *
-   * @param string $path
-   *   The relative path of the theme to build.
-   *
-   * @command application:theme:build
-   */
-  public function buildTheme($path) {
-  }
-
-  /**
    * Compile all themes in the application.
    *
    * @command application:theme:build-all
+   * @aliases build-themes
    */
   public function buildThemes() {
   }
@@ -113,7 +102,7 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
   }
 
   /**
-   * Git-pull the upstream image(s) for this instance.
+   * Docker pull all upstream image(s) for this instance.
    *
    * @command application:pull-upstream-images
    * @throws \Exception
@@ -164,6 +153,7 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
    * @throws \Exception
    */
   public function start(array $opts = ['no-cache' => FALSE]) {
+    $this->getDockworkerUpdates();
     $this->setRunOtherCommand('application:update-hostfile');
     $this->setRunOtherCommand('application:pull-upstream-images');
 
@@ -197,6 +187,7 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
    * Bring up the instance.
    *
    * @command application:up
+   * @aliases up
    */
   public function up() {
     return $this->taskDockerComposeUp()
