@@ -18,7 +18,7 @@ class DockworkerApplicationCommands extends DockworkerCommands {
   /**
    * Clean up any leftover docker assets not being used.
    *
-   * @command application:cleanup
+   * @command docker:cleanup
    */
   public function applicationCleanup() {
     $this->say("Cleaning up dangling images and volumes:");
@@ -179,7 +179,6 @@ class DockworkerApplicationCommands extends DockworkerCommands {
    */
   public function startOver($opts = ['no-cache' => FALSE]) {
     $this->setRunOtherCommand('application:rm');
-    $this->setRunOtherCommand('application:cleanup');
     $this->setRunOtherCommand('application:theme:build-all');
     $this->setRunOtherCommand('application:start');
   }
