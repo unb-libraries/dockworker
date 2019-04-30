@@ -1,22 +1,12 @@
 <?php
 
-/**
- * @file
- * Execute commands via Robo.
- */
-
+use League\Container\Container;
 use Robo\Robo;
+use Dockworker\Dockworker;
 
-// Discover all commands in Robo Directory.
-$discovery = new \Consolidation\AnnotatedCommand\CommandFileDiscovery();
-$discovery->setSearchPattern('*Command.php');
-$coreClasses = $discovery->discover("$repo_root/vendor/unb-libraries/dockworker/src/Robo", 'UnbLibraries\DockWorker\Robo');
-
-$statusCode = Robo::run(
-  $_SERVER['argv'],
-  $coreClasses,
-  'DockWorker',
-  '1.0.0'
-);
-
-exit($statusCode);
+$input = new \Symfony\Component\Console\Input\ArgvInput($argv);
+$output = new \Symfony\Component\Console\Output\ConsoleOutput();
+$config = Robo::createConfiguration(['dockworker.yml']);
+$app = new Dockworker($config, $input, $output);
+$status_code = $app->run($input, $output);
+exit($status_code);

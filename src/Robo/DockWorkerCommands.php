@@ -1,6 +1,6 @@
 <?php
 
-namespace UnbLibraries\DockWorker\Robo;
+namespace DockWorker\Robo\Plugin\Commands;
 
 use League\Container\ContainerAwareInterface;
 use League\Container\ContainerAwareTrait;
@@ -16,7 +16,7 @@ use Robo\Tasks;
 /**
  * Base class for DockWorker Robo commands.
  */
-class DockWorkerCommand extends Tasks implements ContainerAwareInterface, LoggerAwareInterface, BuilderAwareInterface {
+class DockWorkerCommands extends Tasks implements ContainerAwareInterface, LoggerAwareInterface, BuilderAwareInterface {
 
   use BuilderAwareTrait;
   use ConfigAwareTrait;
@@ -59,18 +59,6 @@ class DockWorkerCommand extends Tasks implements ContainerAwareInterface, Logger
     $this->config = Robo::loadConfiguration(
       [$this->repoRoot . '/' . $this->configFile]
     );
-  }
-
-  /**
-   * Self-update.
-   */
-  public function getDockworkerUpdates() {
-    $this->say('Checking for dockworker updates...');
-    $this->taskExec('composer')
-      ->dir($this->repoRoot)
-      ->arg('update')
-      ->arg('unb-libraries/dockworker')
-      ->run();
   }
 
   /**

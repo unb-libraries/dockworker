@@ -22,7 +22,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "UnbLibraries\\DockWorker\\": "src"
+      "DockWorker\\": "src"
     }
   },
   "bin": [

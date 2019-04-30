@@ -1,6 +1,6 @@
 <?php
 
-namespace UnbLibraries\DockWorker\Robo;
+namespace DockWorker\Robo;
 
 use UnbLibraries\DockWorker\Robo\DockWorkerCommand;
 
@@ -164,7 +164,6 @@ class DockWorkerApplicationCommand extends DockWorkerCommand {
    * @throws \Exception
    */
   public function start(array $opts = ['no-cache' => FALSE]) {
-    $this->getDockworkerUpdates();
     $this->setRunOtherCommand('application:update-hostfile');
     $this->setRunOtherCommand('application:pull-upstream-images');
 
