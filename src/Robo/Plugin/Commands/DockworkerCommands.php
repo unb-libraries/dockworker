@@ -13,7 +13,7 @@ use Robo\Robo;
 use Robo\Tasks;
 
 /**
- * Base class for DockWorker Robo commands.
+ * Base class for Dockworker Robo commands.
  */
 class DockworkerCommands extends Tasks implements ContainerAwareInterface, LoggerAwareInterface, BuilderAwareInterface {
 
@@ -43,7 +43,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   protected $instanceName;
 
   /**
-   * The path to the DockWorker repo.
+   * The path to the Dockworker repo.
    *
    * @var string
    */

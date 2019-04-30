@@ -14,7 +14,7 @@ use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
  * Ref : acquia/blt.
  * Ref : mleko/validate-commit.
  */
-class CommitMessageValidateCommands extends DockWorkerCommands {
+class CommitMessageValidateCommands extends DockworkerCommands {
 
   const ERROR_BODY_SEPARATION = 'Separate subject from body with a blank line';
   const ERROR_BODY_TOO_WIDE = 'Wrap the body at 72 characters, current max: %d';

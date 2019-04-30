@@ -6,7 +6,7 @@ use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 use Droath\RoboDockerCompose\Task\loadTasks;
 
 /**
- * Defines commands for a DockWorker application.
+ * Defines commands for a Dockworker application.
  */
 class DockworkerApplicationCommands extends DockworkerCommands {
 

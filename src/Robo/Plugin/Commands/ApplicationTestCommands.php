@@ -7,7 +7,7 @@ use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 /**
  * Defines commands for testing an application.
  */
-class ApplicationTestCommands extends DockWorkerCommands {
+class ApplicationTestCommands extends DockworkerCommands {
 
   /**
    * Test the application using all testing frameworks.

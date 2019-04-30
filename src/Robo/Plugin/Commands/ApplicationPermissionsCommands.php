@@ -7,7 +7,7 @@ use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 /**
  * Defines commands for fixing permissions for an application.
  */
-class ApplicationPermissionsCommands extends DockWorkerCommands {
+class ApplicationPermissionsCommands extends DockworkerCommands {
 
   /**
    * Fix repository file permissions. Requires sudo.
