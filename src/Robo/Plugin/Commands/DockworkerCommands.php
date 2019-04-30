@@ -72,6 +72,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
       ->dir($this->repoRoot)
       ->arg('update')
       ->arg('unb-libraries/dockworker')
+      ->silent(TRUE)
       ->run();
   }
 
