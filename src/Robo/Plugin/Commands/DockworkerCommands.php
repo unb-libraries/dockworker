@@ -170,6 +170,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    *   The Dockworker command to run.
    * @param string $exception_message
    *   The message to display if a non-zero code is returned.
+   *
    * @throws \Exception
    *
    * @return int
