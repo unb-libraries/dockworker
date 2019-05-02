@@ -26,10 +26,5 @@
   },
   "bin": [
     "bin/dockworker"
-  ],
-  "scripts": {
-    "post-update-cmd": [
-      "vendor/bin/dockworker git:setup-hooks"
-    ]
-  }
+  ]
 }
