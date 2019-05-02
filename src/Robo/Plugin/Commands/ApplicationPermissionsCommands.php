@@ -12,8 +12,8 @@ class ApplicationPermissionsCommands extends DockworkerCommands {
   /**
    * Fix repository file permissions. Requires sudo.
    *
-   * @command application:permissions:fix
-   * @aliases permissions:fix, pfix
+   * @command permissions:fix
+   * @aliases pfix
    */
   public function fixPermissions() {
   }

@@ -53,7 +53,7 @@ class DockworkerApplicationCommands extends DockworkerCommands {
   }
 
   /**
-   * Build the application docker images.
+   * Build the application.
    *
    * @param array $opts
    *   An array of options to pass to the builder.
@@ -61,24 +61,44 @@ class DockworkerApplicationCommands extends DockworkerCommands {
    * @command application:build
    * @aliases build
    */
-   public function build(array $opts = ['no-cache' => FALSE]) {
-     if ($opts['no-cache']) {
-       $command = 'docker-compose build --no-cache';
-     }
-     else {
-       $command = 'docker-compose build';
-     }
-     if (!$this->_exec($command)->wasSuccessful()) {
-       throw new \Exception(
-         self::ERROR_BUILDING_IMAGE
-       );
-     }
-   }
+  public function build(array $opts = ['no-cache' => FALSE]) {
+    // Build the theme.
+    $this->setRunOtherCommand('theme:build-all');
+
+    if ($opts['no-cache']) {
+      $this->setRunOtherCommand('docker:build --no-cache');
+    }
+    else {
+      $this->setRunOtherCommand('docker:build');
+    }
+  }
 
   /**
-   * Compile all themes in the application.
+   * Build the docker images.
    *
-   * @command application:theme:build-all
+   * @param array $opts
+   *   An array of options to pass to the builder.
+   *
+   * @command docker:build
+   */
+  public function buildDockerImages(array $opts = ['no-cache' => FALSE]) {
+    if ($opts['no-cache']) {
+      $command = 'docker-compose build --no-cache';
+    }
+    else {
+      $command = 'docker-compose build';
+    }
+    if (!$this->_exec($command)->wasSuccessful()) {
+      throw new \Exception(
+        self::ERROR_BUILDING_IMAGE
+      );
+    }
+  }
+
+  /**
+   * Build all themes for the application.
+   *
+   * @command theme:build-all
    * @aliases build-themes
    */
   public function buildThemes() {
@@ -103,9 +123,9 @@ class DockworkerApplicationCommands extends DockworkerCommands {
   }
 
   /**
-   * Docker pull all upstream image(s) for this instance.
+   * Pull upstream images for this instance.
    *
-   * @command application:pull-upstream-images
+   * @command docker:pull-upstream
    * @throws \Exception
    */
   public function pullUpstreamImages() {
@@ -156,7 +176,7 @@ class DockworkerApplicationCommands extends DockworkerCommands {
   public function start(array $opts = ['no-cache' => FALSE]) {
     $this->setRunOtherCommand('dockworker:update');
     $this->setRunOtherCommand('application:update-hostfile');
-    $this->setRunOtherCommand('application:pull-upstream-images');
+    $this->setRunOtherCommand('docker:pull-upstream');
 
     $this->setRunOtherCommand(
       'application:build',
@@ -179,7 +199,6 @@ class DockworkerApplicationCommands extends DockworkerCommands {
    */
   public function startOver($opts = ['no-cache' => FALSE]) {
     $this->setRunOtherCommand('application:rm');
-    $this->setRunOtherCommand('application:theme:build-all');
     $this->setRunOtherCommand('application:start');
   }
 

@@ -187,4 +187,15 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
     return $return;
   }
 
+  /**
+   * Setup git hooks.
+   *
+   * @command git:setup-hooks
+   */
+  public function setupHooks() {
+    $source_dir = $this->repoRoot . "/vendor/unb-libraries/dockworker/scripts/git-hooks";
+    $target_dir = $this->repoRoot . "/.git/hooks";
+    $this->_copy("$source_dir/commit-msg", "$target_dir/commit-msg");
+  }
+
 }
