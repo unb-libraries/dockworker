@@ -154,10 +154,7 @@ class DockworkerApplicationCommands extends DockworkerCommands {
    */
   public function removeData() {
     // Make sure the instance is down first.
-    $this->taskDockerComposeDown()
-      ->volumes()
-      ->removeOrphans()
-      ->run();
+    return $this->_exec('docker-compose kill');
 
     // Remove the docker-compose stored data.
     return $this->_exec('docker-compose rm -f -v');
