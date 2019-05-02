@@ -5,12 +5,12 @@
   "minimum-stability": "stable",
   "require": {
     "asm89/twig-lint": "^1.0.2",
-    "consolidation/robo": "^1.2.3",
-    "droath/robo-docker-compose": "~0.0.8",
+    "consolidation/robo": "^1.4.9",
+    "droath/robo-docker-compose": "^0.0.8",
     "j13k/yaml-lint": "^1.1.3",
-    "leafo/scssphp": "^0.7.5",
-    "nikic/php-parser": "^4.2.0",
-    "sweetchuck/robo-phpcs": "^0.0.19"
+    "leafo/scssphp": "^0.7.7",
+    "nikic/php-parser": "^4.2.1",
+    "sweetchuck/robo-phpcs": "^0.0.20"
   },
   "license": "MIT",
   "authors": [
