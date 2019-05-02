@@ -40,6 +40,9 @@ class DockworkerApplicationCommands extends DockworkerCommands {
   /**
    * Display the instance logs.
    *
+   * @param array $opts
+   *   An array of options to pass to the builder.
+   *
    * @command application:logs
    * @aliases logs
    * @throws \Exception
@@ -47,9 +50,14 @@ class DockworkerApplicationCommands extends DockworkerCommands {
    * @return \Robo\Result
    *   The result of the command.
    */
-  public function applicationLogs() {
+  public function applicationLogs(array $opts = ['all' => FALSE]) {
     $this->getapplicationRunning();
-    return $this->_exec('docker-compose logs -f');
+    if ($opts['all']) {
+      return $this->_exec('docker-compose logs -f');
+    }
+    else {
+      return $this->_exec("docker-compose logs -f {$this->instanceName}");
+    }
   }
 
   /**
