@@ -22,7 +22,7 @@ trait ScssCompileTrait {
     return $return_code;
   }
 
-  protected function setCompiler($path) {
+  protected function setScssCompiler($path) {
     $this->scssCompiler = $path;
   }
 
