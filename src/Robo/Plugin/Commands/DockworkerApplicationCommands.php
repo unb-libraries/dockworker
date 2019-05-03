@@ -161,10 +161,6 @@ class DockworkerApplicationCommands extends DockworkerCommands {
    *   The result of the removal command.
    */
   public function removeData() {
-    // Make sure the instance is down first.
-    return $this->_exec('docker-compose kill');
-
-    // Remove the docker-compose stored data.
     return $this->_exec('docker-compose rm -f -v');
   }
 
@@ -183,8 +179,13 @@ class DockworkerApplicationCommands extends DockworkerCommands {
     $this->setRunOtherCommand('application:update-hostfile');
     $this->setRunOtherCommand('docker:pull-upstream');
 
+    $build_command = 'application:build';
+    if ($opts['no-cache']) {
+      $build_command = $build_command . ' --no-cache';
+    }
+
     $this->setRunOtherCommand(
-      'application:build',
+        $build_command,
       self::ERROR_BUILDING_IMAGE
     );
 
@@ -203,9 +204,34 @@ class DockworkerApplicationCommands extends DockworkerCommands {
    * @throws \Exception
    */
   public function startOver($opts = ['no-cache' => FALSE]) {
-    $this->setRunOtherCommand('application:rm');
-    $this->setRunOtherCommand('application:start');
+      $this->_exec('docker-compose kill');
+      $this->setRunOtherCommand('application:rm');
+      $start_command = 'application:start';
+      if ($opts['no-cache']) {
+          $start_command = $start_command . ' --no-cache';
+      }
+      $this->setRunOtherCommand($start_command);
   }
+
+    /**
+     * Bring down the instance and start it again, preserving persistent data.
+     *
+     * @param array $opts
+     *   An array of options to pass to the builder.
+     *
+     * @command application:rebuild
+     * @aliases rebuild
+     *
+     * @throws \Exception
+     */
+    public function rebuild($opts = ['no-cache' => FALSE]) {
+        $this->_exec('docker-compose kill');
+        $start_command = 'application:start';
+        if ($opts['no-cache']) {
+            $start_command = $start_command . ' --no-cache';
+        }
+        $this->setRunOtherCommand($start_command);
+    }
 
   /**
    * Bring up the instance.
