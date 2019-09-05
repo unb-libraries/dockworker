@@ -175,7 +175,7 @@ class DockworkerApplicationCommands extends DockworkerCommands {
    * @throws \Exception
    */
   public function start(array $opts = ['no-cache' => FALSE]) {
-    $this->setRunOtherCommand('dockworker:update');
+    // $this->setRunOtherCommand('dockworker:update');
     $this->setRunOtherCommand('application:update-hostfile');
     $this->setRunOtherCommand('docker:pull-upstream');
 
