@@ -200,7 +200,7 @@ class DockworkerApplicationCommands extends DockworkerCommands {
    *   An array of options to pass to the builder.
    *
    * @command application:start-over
-   * @aliases start-over
+   * @aliases start-over, deploy
    * @throws \Exception
    */
   public function startOver($opts = ['no-cache' => FALSE]) {
