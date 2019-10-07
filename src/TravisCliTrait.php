@@ -3,11 +3,14 @@
 namespace Dockworker;
 
 use Robo\Robo;
+use Dockworker\GitHubTrait;
 
 /**
  * Class for TravisCliTrait.
  */
 trait TravisCliTrait {
+
+  use GitHubTrait;
 
   /**
    * The path to the travis binary.
@@ -15,6 +18,13 @@ trait TravisCliTrait {
    * @var string
    */
   protected $travisBin;
+
+  /**
+   * The GitHub Repository corresponding to this instance.
+   *
+   * @var string
+   */
+  protected $travisGitHubRepo;
 
   /**
    * The current repositories to exec commands in.
@@ -35,6 +45,17 @@ trait TravisCliTrait {
     if (empty($this->travisBin)) {
       $this->travisBin = '/usr/local/bin/travis';
     }
+  }
+
+  /**
+   * Set the travis GitHub repo string.
+   *
+   * @throws \Exception
+   *
+   * @hook init
+   */
+  public function setTravisGitHubRepo() {
+    $this->travisGitHubRepo = $this->gitHubOwner . '/' . $this->gitHubRepo;
   }
 
   /**
@@ -66,133 +87,6 @@ trait TravisCliTrait {
     if ($travis->getExitCode() > 0) {
       throw new \Exception(sprintf('The travis client is unauthorized. Run "travis login" AND "travis login --pro"'));
     }
-  }
-
-  /**
-   * Restart the latest travis build job in a branch of a repository.
-   *
-   * @param string $repository
-   *   The fully namespaced Github repository (i.e. unb-libraries/pmportal.org)
-   * @param string $branch
-   *   The branch
-   *
-   * @throws \Exception
-   *
-   * @command travis:build:restart-latest
-   *
-   * @return \Robo\ResultData
-   */
-  public function restartLatestTravisBuild($repository, $branch) {
-    $latest_build_id = $this->getLatestTravisJobId($repository, $branch);
-    return $this->restartTravisBuild($repository, $latest_build_id);
-  }
-
-  /**
-   * Get the latest travis build job ID for a repository.
-   *
-   * @param string $repository
-   *   The fully namespaced Github repository (i.e. unb-libraries/pmportal.org)
-   * @param string $branch
-   *   The branch of the repository
-   *
-   * @throws \Exception
-   *
-   * @command travis:build:get-latest-id
-   *
-   * @return string
-   *   The job ID, if it exists.
-   */
-  public function getLatestTravisJobId($repository, $branch) {
-    $build_info = $this-> getLatestTravisBuild($repository, $branch);
-    preg_match('/Job #([0-9]+)\.[0-9]+\:/', $build_info, $matches);
-    if (!empty($matches[1])) {
-      return $matches[1];
-    }
-    return NULL;
-  }
-
-  /**
-   * Get the latest travis build job details for a repository.
-   *
-   * @param string $repository
-   *   The fully namespaced Github repository (i.e. unb-libraries/pmportal.org)
-   * @param string $branch
-   *   The branch of the repository
-   *
-   * @throws \Exception
-   *
-   * @command travis:build:get-latest
-   *
-   * @return string
-   *   The build job details, if it exists.
-   */
-  public function getLatestTravisBuild($repository, $branch) {
-    return $this->travisExec($repository, 'show', [$branch], FALSE)->getMessage();
-  }
-
-  /**
-   * Execute a travis command via the CLI.
-   *
-   * @param string $repository
-   *   The fully namespaced Github repository (i.e. unb-libraries/pmportal.org)
-   * @param string $command
-   *   The command to execute (i.e. ls)
-   * @param string[] $args
-   *   A list of arguments to pass to the command.
-   * @param bool $print_output
-   *   TRUE if the command should output results. False otherwise.
-   *
-   * @return \Robo\ResultData
-   *   The result of the execution.
-   * @throws \Exception
-   */
-  private function travisExec($repository, $command, $args = [], $print_output = TRUE) {
-    $this->getValidTravisRepository($repository);
-    $travis = $this->taskExec($this->travisBin)
-      ->printOutput($print_output)
-      ->arg($command)
-      ->arg("--repo=$repository");
-
-    if (!empty($args)) {
-      foreach ($args as $arg) {
-        $travis->arg($arg);
-      }
-    }
-    $this->say(sprintf('Executing travis %s in %s...', $command, $repository));
-    return $travis->run();
-  }
-
-  /**
-   * Get rudimentary validation on the repository.
-   *
-   * @param string $repository_name
-   *   The repository namespace to test (i.e. unb-libraries/pmportal.org)
-   *
-   * @throws \Exception
-   */
-  public function getValidTravisRepository($repository_name) {
-    $repository_parts = explode('/', $repository_name);
-    if (count($repository_parts) != 2) {
-      throw new \Exception(sprintf('The repository name, %s, does not appear to include the namespace. Please enter the full repository namespace (i.e. unb-libraries/pmportal.org).', $repository_name));
-    }
-  }
-
-  /**
-   * Restart a travis build job.
-   *
-   * @param string $repository
-   *   The fully namespaced Github repository (i.e. unb-libraries/pmportal.org)
-   * @param string $build_id
-   *   The build job ID
-   *
-   * @throws \Exception
-   *
-   * @command travis:build:restart
-   *
-   * @return \Robo\ResultData
-   */
-  public function restartTravisBuild($repository, $build_id) {
-    return $this->travisExec($repository, 'restart', [$build_id]);
   }
 
 }
