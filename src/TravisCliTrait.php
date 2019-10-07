@@ -43,7 +43,7 @@ trait TravisCliTrait {
   public function setTravisBin() {
     $this->travisBin = Robo::Config()->get('dockworker.travis.bin');
     if (empty($this->travisBin)) {
-      $this->travisBin = '/usr/local/bin/travis';
+      $this->travisBin = '/snap/bin/travis';
     }
   }
 
@@ -87,6 +87,37 @@ trait TravisCliTrait {
     if ($travis->getExitCode() > 0) {
       throw new \Exception(sprintf('The travis client is unauthorized. Run "travis login" AND "travis login --pro"'));
     }
+  }
+
+  /**
+   * Execute a travis command via the CLI.
+   *
+   * @param string $command
+   *   The command to execute (i.e. ls)
+   * @param string[] $args
+   *   A list of arguments to pass to the command.
+   * @param bool $print_output
+   *   TRUE if the command should output results. False otherwise.
+   *
+   * @return \Robo\ResultData
+   *   The result of the execution.
+   * @throws \Exception
+   */
+  private function travisExec($command, $args = [], $print_output = TRUE) {
+    $this->getValidTravisRepository($this->travisGitHubRepo);
+    $travis = $this->taskExec($this->travisBin)
+      ->printOutput($print_output)
+      ->arg($command)
+      ->arg('--pro')
+      ->arg("--repo={$this->travisGitHubRepo}");
+
+    if (!empty($args)) {
+      foreach ($args as $arg) {
+        $travis->arg($arg);
+      }
+    }
+    $this->say(sprintf('Executing travis %s in %s...', $command, $this->travisGitHubRepo));
+    return $travis->run();
   }
 
 }

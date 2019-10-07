@@ -20,7 +20,7 @@ class TravisCliCommands extends DockworkerCommands {
    *
    * @throws \Exception
    *
-   * @command travis:build:restart-latest
+   * @command travis:build:restart:latest
    *
    * @return \Robo\ResultData
    */
@@ -37,7 +37,7 @@ class TravisCliCommands extends DockworkerCommands {
    *
    * @throws \Exception
    *
-   * @command travis:build:get-latest-id
+   * @command travis:build:id:latest
    *
    * @return string
    *   The job ID, if it exists.
@@ -59,43 +59,13 @@ class TravisCliCommands extends DockworkerCommands {
    *
    * @throws \Exception
    *
-   * @command travis:build:get-latest
+   * @command travis:build:info:latest
    *
    * @return string
    *   The build details, if it exists.
    */
   public function getLatestTravisBuild($branch) {
     return $this->travisExec('show', [$branch], FALSE)->getMessage();
-  }
-
-  /**
-   * Execute a travis command via the CLI.
-   *
-   * @param string $command
-   *   The command to execute (i.e. ls)
-   * @param string[] $args
-   *   A list of arguments to pass to the command.
-   * @param bool $print_output
-   *   TRUE if the command should output results. False otherwise.
-   *
-   * @return \Robo\ResultData
-   *   The result of the execution.
-   * @throws \Exception
-   */
-  private function travisExec($command, $args = [], $print_output = TRUE) {
-    $this->getValidTravisRepository($this->travisGitHubRepo);
-    $travis = $this->taskExec($this->travisBin)
-      ->printOutput($print_output)
-      ->arg($command)
-      ->arg("--repo={$this->travisGitHubRepo}");
-
-    if (!empty($args)) {
-      foreach ($args as $arg) {
-        $travis->arg($arg);
-      }
-    }
-    $this->say(sprintf('Executing travis %s in %s...', $command, $this->travisGitHubRepo));
-    return $travis->run();
   }
 
   /**
@@ -127,6 +97,41 @@ class TravisCliCommands extends DockworkerCommands {
    */
   public function restartTravisBuild($build_id) {
     return $this->travisExec('restart', [$build_id]);
+  }
+
+  /**
+   * Get logs for a travis build.
+   *
+   * @param string $build_id
+   *   The build ID
+   *
+   * @throws \Exception
+   *
+   * @command travis:build:logs
+   *
+   * @return \Robo\ResultData
+   */
+  public function getTravisBuildLogs($build_id) {
+    return $this->travisExec('logs', [$build_id]);
+  }
+
+  /**
+   * Get logs for the latest travis build.
+   *
+   * @param string $branch
+   *   The branch of the repository
+   *
+   * @throws \Exception
+   *
+   * @command travis:build:logs:latest
+   *
+   * @return \Robo\ResultData
+   */
+  public function getLatestTravisBuildLogs($branch) {
+    $build_id = $this->getLatestTravisBuild($branch);
+    $logs = $this->travisExec('logs', [$build_id])->getMessage();
+    $this->say($logs);
+    return TRUE;
   }
 
 }

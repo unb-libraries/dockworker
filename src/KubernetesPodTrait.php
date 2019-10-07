@@ -2,39 +2,18 @@
 
 namespace Dockworker;
 
+use Dockworker\KubectlTrait;
+
 /**
- * Defines trait for building SCSS files
+ * Defines trait for executing commands inside Kubernetes Pods.
  */
 trait KubernetesPodTrait {
 
-  protected $kubeCtlBin = NULL;
+  use KubectlTrait;
+
   protected $kubernetesPodInstanceName = NULL;
   protected $kubernetesPodNamespace = NULL;
   protected $kubernetesCurPods = [];
-
-  /**
-   * Test kubectl is installed/executable.
-   *
-   * @hook pre-init
-   */
-  public function checkKubeCtlBinExists() {
-    $this->kubeCtlBin = trim(shell_exec(sprintf("which %s", 'kubectl')));
-    if (empty($this->kubeCtlBin)) {
-      throw new \Exception("kubectl binary not found.");
-    }
-  }
-
-  /**
-   * Test kubectl is installed/executable.
-   *
-   * @hook post-init
-   */
-  public function checkKubeCtlConnection() {
-    exec($this->kubeCtlBin . ' api-resources', $output, $return_code);
-    if ($return_code != 0) {
-      throw new \Exception("kubectl connection to the server failed.");
-    }
-  }
 
   /**
    * Setup the pod details for the remote Kubernetes pods.
