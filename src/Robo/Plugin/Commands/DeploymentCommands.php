@@ -72,30 +72,61 @@ class DeploymentCommands extends DockworkerApplicationCommands {
    * @param string $env
    *   The deploy environment to check.
    *
-   * @command deployment:logs
-   *
    * @throws \Exception
+   *
+   * @return string[]
+   *   An array of logs, keyed by pod IDs.
    */
-  public function getDeploymentLogs($env) {
+  private function getDeploymentLogs($env) {
     $this->kubernetesPodNamespace = $env;
     $this->kubernetesSetupPods($this->instanceName, "Logs");
 
+    $logs = [];
     if (!empty($this->kubernetesCurPods)) {
       foreach ($this->kubernetesCurPods as $pod_id) {
-        $this->say("Logs for $pod_id:");
-        $this->kubectlExec(
+        $result = $this->kubectlExec(
           'logs',
           [
             $pod_id,
             '--namespace',
             $env,
           ],
-          TRUE
+          FALSE
         );
+        $logs[$pod_id] = $result->getMessage();
       }
     }
     else {
-      $this->say('No pods found for deployment...');
+      $this->io()->title('No pods found for deployment!');
+    }
+    return $logs;
+  }
+
+  /**
+   * Print the deployment logs.
+   *
+   * @param string $env
+   *   The deploy environment to print.
+   *
+   * @command deployment:logs
+   *
+   * @throws \Exception
+   */
+  public function printDeploymentLogs($env) {
+    $logs = $this->getDeploymentLogs($env);
+    $pod_counter = 0;
+
+    if (!empty($logs)) {
+      $num_pods = count($logs);
+      $this->io()->title("$num_pods pods found in $env environment.");
+      foreach ($logs as $pod_id => $log) {
+        $pod_counter++;
+        $this->io()->title("Logs for pod #$pod_counter [$env.$pod_id]");
+        $this->io()->writeln($log);
+      }
+    }
+    else {
+      $this->io()->title("No pods found. No logs!");
     }
   }
 
