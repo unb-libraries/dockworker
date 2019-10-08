@@ -2,9 +2,6 @@
 
 namespace Dockworker;
 
-use Symfony\Component\Finder\Finder;
-use Dockworker\Robo\Plugin\Commands\DockworkerApplicationCommands;
-
 /**
  * Defines trait for building SCSS files
  */
@@ -14,6 +11,11 @@ trait ScssCompileTrait {
 
   /**
    * Compile SCSS to CSS.
+   *
+   * @param $source_path
+   * @param $target_path
+   *
+   * @return int
    */
   protected function compileScss($source_path, $target_path) {
     $cmd = "$this->scssCompiler lint -f crunched $source_path > $target_path";

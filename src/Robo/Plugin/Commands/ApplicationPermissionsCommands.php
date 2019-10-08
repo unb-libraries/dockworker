@@ -19,10 +19,12 @@ class ApplicationPermissionsCommands extends DockworkerCommands {
   }
 
   /**
-   * Set file permissions for a path to the current user. Requires sudo.
+   * Set file permissions for a path to the current group. Requires sudo.
+   *
+   * @param string $path
+   *   The path to change the group for.
    */
   protected function setPermissions($path) {
-    $uid = posix_getuid();
     $gid = posix_getgid();
 
     $this->taskExec('sudo chgrp')

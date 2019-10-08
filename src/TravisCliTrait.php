@@ -2,8 +2,8 @@
 
 namespace Dockworker;
 
-use Robo\Robo;
 use Dockworker\GitHubTrait;
+use Robo\Robo;
 
 /**
  * Class for TravisCliTrait.

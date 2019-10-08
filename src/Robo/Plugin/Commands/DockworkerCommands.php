@@ -2,6 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Dockworker\DockworkerException;
 use League\Container\ContainerAwareInterface;
 use League\Container\ContainerAwareTrait;
 use Psr\Log\LoggerAwareInterface;
@@ -22,8 +23,6 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   use ContainerAwareTrait;
   use LoggerAwareTrait;
 
-  const ERROR_CONTAINER_MISSING = 'The %s application does not appear to exist.';
-  const ERROR_CONTAINER_STOPPED = 'The %s application appears to be stopped.';
   const ERROR_INSTANCE_NAME_UNSET = 'The instance.name value has not been set in %s';
   const ERROR_PROJECT_PREFIX_UNSET = 'The project_prefix variable has not been set in %s';
   const ERROR_UPSTREAM_IMAGE_UNSET = 'The upstream_image variable has not been set in %s';
@@ -79,52 +78,27 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   /**
    * Get the instance name from config.
    *
-   * @throws \Exception
-   *
    * @hook init
+   * @throws \Dockworker\DockworkerException
    */
   public function setInstanceName() {
     $container_name = Robo::Config()->get('dockworker.instance.name');
+
     if (empty($container_name)) {
-      throw new \Exception(sprintf(self::ERROR_INSTANCE_NAME_UNSET, $this->configFile));
+      throw new DockworkerException(sprintf(self::ERROR_INSTANCE_NAME_UNSET, $this->configFile));
     }
     $this->instanceName = $container_name;
   }
 
   /**
-   * Check if the container is running.
-   *
-   * @throws \Exception
-   */
-  public function getApplicationRunning() {
-    $container_name = $this->instanceName;
-
-    exec(
-      "docker inspect -f {{.State.Running}} $container_name 2>&1",
-      $output,
-      $return_code
-    );
-
-    // Check if container exists.
-    if ($return_code > 0) {
-      throw new \Exception(sprintf(self::ERROR_CONTAINER_MISSING, $container_name));
-    }
-
-    // Check if container stopped.
-    if ($output[0] == "false") {
-      throw new \Exception(sprintf(self::ERROR_CONTAINER_STOPPED, $container_name));
-    }
-  }
-
-  /**
    * Get the project prefix.
    *
-   * @throws \Exception
+   * @throws \Dockworker\DockworkerException
    */
   public function getProjectPrefix() {
     $project_prefix = Robo::Config()->get('dockworker.instance.project_prefix');
     if (empty($project_prefix)) {
-      throw new \Exception(sprintf(self::ERROR_PROJECT_PREFIX_UNSET, $this->configFile));
+      throw new DockworkerException(sprintf(self::ERROR_PROJECT_PREFIX_UNSET, $this->configFile));
     }
     return $project_prefix;
   }
@@ -132,12 +106,12 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   /**
    * Get the upstream image.
    *
-   * @throws \Exception
+   * @throws \Dockworker\DockworkerException
    */
   public function getUpstreamImages() {
     $upstream_images = Robo::Config()->get('dockworker.instance.upstream_image');
     if (empty($upstream_images)) {
-      throw new \Exception(sprintf(self::ERROR_UPSTREAM_IMAGE_UNSET, $this->configFile));
+      throw new DockworkerException(sprintf(self::ERROR_UPSTREAM_IMAGE_UNSET, $this->configFile));
     }
 
     // Handle migration from scalar.
@@ -162,7 +136,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   /**
    * Run another Dockworker command.
    *
-   * This is necessary until the annontated-command feature request:
+   * This is necessary until the annotated-command feature request:
    * https://github.com/consolidation/annotated-command/issues/64 is merged
    * or solved. Otherwise hooks do not fire as expected.
    *
@@ -171,7 +145,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    * @param string $exception_message
    *   The message to display if a non-zero code is returned.
    *
-   * @throws \Exception
+   * @throws \Dockworker\DockworkerException
    *
    * @return int
    *   The return code of the command.
@@ -182,7 +156,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
     $return = 0;
     passthru($command, $return);
     if ($return > 0) {
-      throw new \Exception($exception_message);
+      throw new DockworkerException($exception_message);
     };
     return $return;
   }

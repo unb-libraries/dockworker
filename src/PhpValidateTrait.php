@@ -2,9 +2,6 @@
 
 namespace Dockworker;
 
-use Symfony\Component\Finder\Finder;
-use Dockworker\Robo\Plugin\Commands\DockworkerApplicationCommands;
-
 /**
  * Defines trait for validate
  */
@@ -14,6 +11,11 @@ trait PhpValidateTrait {
 
   /**
    * Validate files using phpcs.
+   *
+   * @param $files
+   * @param array $lint_standards
+   *
+   * @return \Robo\Result
    */
   protected function validatePhp($files, array $lint_standards = ['PSR2']) {
     if (!empty($files)) {
@@ -28,4 +30,5 @@ trait PhpValidateTrait {
       print "No PHP files found to lint!\n";
     }
   }
+
 }

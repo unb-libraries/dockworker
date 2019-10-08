@@ -2,14 +2,17 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\Robo\Plugin\Commands\DockworkerApplicationCommands;
+
 use Dockworker\KubernetesPodTrait;
+use Dockworker\DockworkerLogCheckerTrait;
+use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 
 /**
  * Commands to interact with Kubernetes deployments.
  */
-class DeploymentCommands extends DockworkerApplicationCommands {
+class DockworkerDeploymentCommands extends DockworkerLocalCommands {
 
+  use DockworkerLogCheckerTrait;
   use KubernetesPodTrait;
 
   /**
@@ -18,8 +21,7 @@ class DeploymentCommands extends DockworkerApplicationCommands {
    * @param string $env
    *   The deploy environment to check.
    *
-   * @command deployment:rollout:status
-   *
+   * @command deployment:status
    * @throws \Exception
    */
   public function getDeploymentRolloutStatus($env) {
@@ -47,7 +49,6 @@ class DeploymentCommands extends DockworkerApplicationCommands {
    *   The deploy environment to check.
    *
    * @command deployment:image:update
-   *
    * @throws \Exception
    */
   public function setDeploymentImage($image, $tag, $env) {
@@ -128,6 +129,31 @@ class DeploymentCommands extends DockworkerApplicationCommands {
     else {
       $this->io()->title("No pods found. No logs!");
     }
+  }
+
+  /**
+   * Check the deployment logs for errors.
+   *
+   * @param string $env
+   *   The deploy environment to print.
+   *
+   * @command deployment:logs:check
+   *
+   * @throws \Exception
+   */
+  public function checkDeploymentLogs($env) {
+    $logs = $this->getDeploymentLogs($env);
+
+    if (!empty($logs)) {
+      foreach ($logs as $pod_id => $log) {
+        $this->checklogForErrors($pod_id, $log);
+      }
+    }
+    else {
+      $this->io()->title("No pods found. No logs!");
+    }
+    $this->auditProcessedLogs();
+    $this->say(sprintf("No errors found, %s pods deployed.", count($logs)));
   }
 
   /**

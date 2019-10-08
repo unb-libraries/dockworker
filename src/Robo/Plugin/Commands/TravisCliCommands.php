@@ -18,9 +18,8 @@ class TravisCliCommands extends DockworkerCommands {
    * @param string $branch
    *   The branch
    *
-   * @throws \Exception
-   *
    * @command travis:build:restart:latest
+   * @throws \Exception
    *
    * @return \Robo\ResultData
    */
@@ -35,9 +34,8 @@ class TravisCliCommands extends DockworkerCommands {
    * @param string $branch
    *   The branch of the repository
    *
-   * @throws \Exception
-   *
    * @command travis:build:id:latest
+   * @throws \Exception
    *
    * @return string
    *   The job ID, if it exists.
@@ -57,9 +55,8 @@ class TravisCliCommands extends DockworkerCommands {
    * @param string $branch
    *   The branch of the repository
    *
-   * @throws \Exception
-   *
    * @command travis:build:info:latest
+   * @throws \Exception
    *
    * @return string
    *   The build details, if it exists.
@@ -89,9 +86,8 @@ class TravisCliCommands extends DockworkerCommands {
    * @param string $build_id
    *   The build ID
    *
-   * @throws \Exception
-   *
    * @command travis:build:restart
+   * @throws \Exception
    *
    * @return \Robo\ResultData
    */
@@ -105,9 +101,8 @@ class TravisCliCommands extends DockworkerCommands {
    * @param string $build_id
    *   The build ID
    *
-   * @throws \Exception
-   *
    * @command travis:build:logs
+   * @throws \Exception
    *
    * @return \Robo\ResultData
    */
@@ -121,11 +116,10 @@ class TravisCliCommands extends DockworkerCommands {
    * @param string $branch
    *   The branch of the repository
    *
+   * @command travis:build:logs:latest
    * @throws \Exception
    *
-   * @command travis:build:logs:latest
-   *
-   * @return \Robo\ResultData
+   * @return bool
    */
   public function getLatestTravisBuildLogs($branch) {
     $build_id = $this->getLatestTravisBuild($branch);

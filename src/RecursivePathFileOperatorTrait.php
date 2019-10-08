@@ -2,9 +2,6 @@
 
 namespace Dockworker;
 
-use Symfony\Component\Finder\Finder;
-use Dockworker\Robo\Plugin\Commands\DockworkerApplicationCommands;
-
 /**
  * Defines trait for building SCSS files
  */
@@ -14,6 +11,9 @@ trait RecursivePathFileOperatorTrait {
 
   /**
    * Add files recursively to the to-operate list.
+   *
+   * @param array $paths
+   * @param array $extension_filter
    */
   protected function addRecursivePathFilesFromPath(array $paths, array $extension_filter = []) {
     foreach ($paths as $path) {
@@ -46,6 +46,11 @@ trait RecursivePathFileOperatorTrait {
 
   /**
    * Return the list of current files as a string.
+   *
+   * @param string $separator
+   * @param string $quote
+   *
+   * @return string|null
    */
   protected function getRecursivePathStringFileList($separator = ' ', $quote = '\'') {
     if (!empty($this->recursivePathOperatorFiles)) {
