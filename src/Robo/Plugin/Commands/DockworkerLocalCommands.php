@@ -5,10 +5,11 @@ namespace Dockworker\Robo\Plugin\Commands;
 use Dockworker\DockworkerException;
 use Dockworker\DockworkerLogCheckerTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
+use Droath\RoboDockerCompose\Task\loadTasks;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 /**
- * Defines commands for a Dockworker local application.
+ * Defines the commands used to interact with a Dockworker local application.
  */
 class DockworkerLocalCommands extends DockworkerCommands {
 
@@ -18,11 +19,11 @@ class DockworkerLocalCommands extends DockworkerCommands {
   const ERROR_CONTAINER_MISSING = 'The %s local deployment does not appear to exist.';
   const ERROR_CONTAINER_STOPPED = 'The %s local deployment appears to be stopped.';
 
-  use \Droath\RoboDockerCompose\Task\loadTasks;
   use DockworkerLogCheckerTrait;
+  use loadTasks;
 
   /**
-   * Clean up any leftover docker assets not being used.
+   * Cleans up any leftover docker assets not being used.
    *
    * @command docker:cleanup
    */
@@ -32,7 +33,7 @@ class DockworkerLocalCommands extends DockworkerCommands {
   }
 
   /**
-   * Halt the instance without removing any data.
+   * Halts the local application without removing any data.
    *
    * @command local:halt
    *
@@ -44,9 +45,9 @@ class DockworkerLocalCommands extends DockworkerCommands {
   }
 
   /**
-   * Display the local instance logs.
+   * Displays the local application logs.
    *
-   * @param array $opts
+   * @param string[] $opts
    *   An array of options to pass to the builder.
    *
    * @command local:logs
@@ -65,32 +66,33 @@ class DockworkerLocalCommands extends DockworkerCommands {
   }
 
   /**
-   * Tail the local instance logs.
+   * Checks if the local application is running.
    *
-   * @param array $opts
-   *   An array of options to pass to the builder.
-   *
-   * @command local:logs:tail
-   * @aliases logs
-   * @throws \Exception
-   *
-   * @return \Robo\Result
-   *   The result of the command.
+   * @throws \Dockworker\DockworkerException
    */
-  public function tailLocalLogs(array $opts = ['all' => FALSE]) {
-    $this->getLocalRunning();
-    if ($opts['all']) {
-      return $this->_exec('docker-compose logs -f');
+  public function getLocalRunning() {
+    $container_name = $this->instanceName;
+    exec(
+      "docker inspect -f {{.State.Running}} $container_name 2>&1",
+      $output,
+      $return_code
+    );
+
+    // Check if container exists.
+    if ($return_code > 0) {
+      throw new DockworkerException(sprintf(self::ERROR_CONTAINER_MISSING, $container_name));
     }
-    else {
-      return $this->_exec("docker-compose logs -f {$this->instanceName}");
+
+    // Check if container stopped.
+    if ($output[0] == "false") {
+      throw new DockworkerException(sprintf(self::ERROR_CONTAINER_STOPPED, $container_name));
     }
   }
 
   /**
-   * Get logs from the local container.
+   * Gets logs from the local application.
    *
-   * @param array $opts
+   * @param string[] $opts
    *   An array of options to pass to the builder.
    *
    * @return \Robo\Result
@@ -111,13 +113,37 @@ class DockworkerLocalCommands extends DockworkerCommands {
   }
 
   /**
-   * Check the local logs for errors.
+   * Tails the local application's logs.
    *
-   * @param array $opts
+   * @param string[] $opts
+   *   An array of options to pass to the builder.
+   *
+   * @command local:logs:tail
+   * @aliases logs
+   * @throws \Exception
+   *
+   * @return \Robo\Result
+   *   The result of the command.
+   */
+  public function tailLocalLogs(array $opts = ['all' => FALSE]) {
+    $this->getLocalRunning();
+    if ($opts['all']) {
+      return $this->_exec('docker-compose logs -f');
+    }
+    else {
+      return $this->_exec("docker-compose logs -f {$this->instanceName}");
+    }
+  }
+
+  /**
+   * Checks the local application logs for errors.
+   *
+   * @param string[] $opts
    *   An array of options to pass to the builder.
    *
    * @command local:logs:check
    * @throws \Dockworker\DockworkerException
+   *
    * @return \Robo\Result
    *   The result of the command.
    */
@@ -126,7 +152,7 @@ class DockworkerLocalCommands extends DockworkerCommands {
     $result = $this->getLocalLogs($opts);
     $local_logs = $result->getMessage();
     if (!empty($local_logs)) {
-      $this->checklogForErrors('local', $local_logs);
+      $this->checkLogForErrors('local', $local_logs);
     }
     else {
       $this->io()->title("No logs for local instance!");
@@ -136,9 +162,9 @@ class DockworkerLocalCommands extends DockworkerCommands {
   }
 
   /**
-   * Build the local application.
+   * Builds the local application.
    *
-   * @param array $opts
+   * @param string[] $opts
    *   An array of options to pass to the builder.
    *
    * @command local:build
@@ -158,13 +184,12 @@ class DockworkerLocalCommands extends DockworkerCommands {
   }
 
   /**
-   * Build the docker images.
+   * Builds the local application docker images.
    *
-   * @param array $opts
+   * @param string[] $opts
    *   An array of options to pass to the builder.
    *
    * @command docker:build
-   *
    * @throws \Dockworker\DockworkerException
    */
   public function buildDockerImages(array $opts = ['no-cache' => FALSE]) {
@@ -182,7 +207,7 @@ class DockworkerLocalCommands extends DockworkerCommands {
   }
 
   /**
-   * Build all themes for the local.
+   * Builds the local application theme files.
    *
    * @command theme:build-all
    * @aliases build-themes
@@ -191,7 +216,7 @@ class DockworkerLocalCommands extends DockworkerCommands {
   }
 
   /**
-   * Open the local's shell.
+   * Opens the local application shell.
    *
    * @command local:shell
    * @aliases shell
@@ -209,7 +234,7 @@ class DockworkerLocalCommands extends DockworkerCommands {
   }
 
   /**
-   * Pull upstream images for this instance.
+   * Pulls upstream images for the local application.
    *
    * @command docker:pull-upstream
    * @throws \Dockworker\DockworkerException
@@ -230,7 +255,7 @@ class DockworkerLocalCommands extends DockworkerCommands {
   }
 
   /**
-   * Bring down the instance and remove all persistent data.
+   * Brings down the local application and removes all persistent data.
    *
    * @command local:rm
    * @aliases rm
@@ -243,9 +268,9 @@ class DockworkerLocalCommands extends DockworkerCommands {
   }
 
   /**
-   * Bring up the instance and display the logs.
+   * Brings up the local application and displays the logs.
    *
-   * @param array $opts
+   * @param string[] $opts
    *   An array of options to pass to the builder.
    *
    * @command local:start
@@ -278,157 +303,7 @@ class DockworkerLocalCommands extends DockworkerCommands {
   }
 
   /**
-   * Build the instance from scratch and run tests.
-   *
-   * @command local:build-test
-   * @throws \Exception
-   */
-  public function buildAndTest() {
-    $this->_exec('docker-compose kill');
-    $this->setRunOtherCommand('local:rm');
-    $this->setRunOtherCommand('local:start --no-cache --no-tail-logs');
-    $this->setRunOtherCommand('test:all');
-  }
-
-  /**
-   * Bring down the instance, remove all persistent data and start it again.
-   *
-   * @param array $opts
-   *   An array of options to pass to the builder.
-   *
-   * @command local:start-over
-   * @aliases start-over, deploy
-   * @throws \Exception
-   */
-  public function startOver($opts = ['no-cache' => FALSE]) {
-      $this->_exec('docker-compose kill');
-      $this->setRunOtherCommand('local:rm');
-      $start_command = 'local:start';
-      if ($opts['no-cache']) {
-          $start_command = $start_command . ' --no-cache';
-      }
-      $this->setRunOtherCommand($start_command);
-  }
-
-    /**
-     * Bring down the instance and start it again, preserving persistent data.
-     *
-     * @param array $opts
-     *   An array of options to pass to the builder.
-     *
-     * @command local:rebuild
-     * @aliases rebuild
-     *
-     * @throws \Exception
-     */
-    public function rebuild($opts = ['no-cache' => FALSE]) {
-        $this->_exec('docker-compose kill');
-        $start_command = 'local:start';
-        if ($opts['no-cache']) {
-            $start_command = $start_command . ' --no-cache';
-        }
-        $this->setRunOtherCommand($start_command);
-    }
-
-  /**
-   * Bring up the instance.
-   *
-   * @command local:up
-   * @aliases up
-   */
-  public function up() {
-    return $this->taskDockerComposeUp()
-      ->detachedMode()
-      ->removeOrphans()
-      ->run();
-  }
-
-  /**
-   * Update the system hostfile with a local URL for the local application. Requires sudo.
-   *
-   * @command local:update-hostfile
-   * @throws \Dockworker\DockworkerException
-   */
-  public function setHostFileEntry() {
-    $hostname = escapeshellarg('local-' . $this->instanceName);
-
-    $delete_command = "sudo sh -c 'sed -i '' -e \"/$hostname/d\" /etc/hosts'";
-    $add_command = "sudo sh -c 'echo \"127.0.0.1       $hostname\" >> /etc/hosts'";
-
-    $this->say("Updating hostfile with entry for $hostname. If you are asked for a password, you should enable passwordless sudo for your user.");
-    exec($delete_command, $delete_output, $delete_return);
-    exec($add_command, $add_output, $add_return);
-
-    if ($delete_return > 0 || $add_command > 0) {
-      throw new DockworkerException(sprintf(self::ERROR_UPDATING_HOSTFILE));
-    }
-  }
-
-  /**
-   * Check if the container is running.
-   *
-   * @throws \Dockworker\DockworkerException
-   */
-  public function getLocalRunning() {
-    $container_name = $this->instanceName;
-    exec(
-      "docker inspect -f {{.State.Running}} $container_name 2>&1",
-      $output,
-      $return_code
-    );
-
-    // Check if container exists.
-    if ($return_code > 0) {
-      throw new DockworkerException(sprintf(self::ERROR_CONTAINER_MISSING, $container_name));
-    }
-
-    // Check if container stopped.
-    if ($output[0] == "false") {
-      throw new DockworkerException(sprintf(self::ERROR_CONTAINER_STOPPED, $container_name));
-    }
-  }
-
-  /**
-   * Get the deployment status.
-   *
-   * @throws \Dockworker\DockworkerException
-   */
-  protected function getLocalDeploymentStatus() {
-    $this->getlocalRunning();
-    $result = $this->getLocalLogs([]);
-    $logs = $result->getMessage();
-    return $this->parseLocalLogForStatus($logs);
-  }
-
-  /**
-   * Parse a log to determine the current status of the local deployment.
-   *
-   * @param $log
-   *
-   * @return array
-   */
-  protected function parseLocalLogForStatus($log) {
-    if (strpos($log, '99_z_notify_user_URI') !== FALSE) {
-      return [
-        '100',
-        'Complete',
-      ];
-    }
-    preg_match_all('/pre-init\.d - processing \/scripts\/pre-init.d\/([0-9]{1,2})_(.*)/', $log, $matches);
-    if (!empty($matches[1])) {
-      return [
-        end($matches[1]),
-        end($matches[2]),
-      ];
-    }
-    return [
-      '0',
-      'Starting',
-    ];
-  }
-
-  /**
-   * Wait for the local deployment to finish and report status to the user.
+   * Waits for local application deployment to finish and reports its status.
    *
    * @throws \Dockworker\DockworkerException
    */
@@ -464,6 +339,153 @@ class DockworkerLocalCommands extends DockworkerCommands {
     $progressBar->setMessage('Finished');
     $progressBar->finish();
     $this->io()->newLine(1);
+  }
+
+  /**
+   * Gets the local application deployment status.
+   *
+   * This approximates the local application deployment status by checking the
+   * logs to determine the step in pre-init.d that the application is executing.
+   *
+   * @throws \Dockworker\DockworkerException
+   *
+   * @return array
+   *   An array containing two items. The first item is a percentage deployment
+   *   value, the second the current pre-init.d step that is running.
+   */
+  protected function getLocalDeploymentStatus() {
+    $this->getlocalRunning();
+    $result = $this->getLocalLogs([]);
+    $logs = $result->getMessage();
+    return $this->parseLocalLogForStatus($logs);
+  }
+
+  /**
+   * Parses a log to determine the deployment status of the local application.
+   *
+   * @param string $log
+   *   The raw log from the local application.
+   *
+   * @return string[]
+   *   An array containing two items. The first item is a percentage deployment
+   *   value, the second the current pre-init.d step that is running.
+   */
+  protected function parseLocalLogForStatus($log) {
+    if (strpos($log, '99_z_notify_user_URI') !== FALSE) {
+      return [
+        '100',
+        'Complete',
+      ];
+    }
+    preg_match_all('/pre-init\.d - processing \/scripts\/pre-init.d\/([0-9]{1,2})_(.*)/', $log, $matches);
+    if (!empty($matches[1])) {
+      return [
+        end($matches[1]),
+        end($matches[2]),
+      ];
+    }
+    return [
+      '0',
+      'Starting',
+    ];
+  }
+
+  /**
+   * Builds the local application from scratch and runs its tests.
+   *
+   * @command local:build-test
+   * @throws \Exception
+   */
+  public function buildAndTest() {
+    $this->_exec('docker-compose kill');
+    $this->setRunOtherCommand('local:rm');
+    $this->setRunOtherCommand('local:start --no-cache --no-tail-logs');
+    $this->setRunOtherCommand('test:all');
+  }
+
+  /**
+   * Kills the local application, removes all persistent data, and restarts it.
+   *
+   * @param string[] $opts
+   *   An array of options to pass to the builder.
+   *
+   * @command local:start-over
+   * @aliases start-over, deploy
+   * @throws \Exception
+   */
+  public function startOver($opts = ['no-cache' => FALSE]) {
+      $this->_exec('docker-compose kill');
+      $this->setRunOtherCommand('local:rm');
+      $start_command = 'local:start';
+      if ($opts['no-cache']) {
+          $start_command = $start_command . ' --no-cache';
+      }
+      $this->setRunOtherCommand($start_command);
+  }
+
+    /**
+     * Stops the local application, re-starts it, preserving persistent data.
+     *
+     * @param string[] $opts
+     *   An array of options to pass to the builder.
+     *
+     * @command local:rebuild
+     * @aliases rebuild
+     *
+     * @throws \Exception
+     */
+    public function rebuild($opts = ['no-cache' => FALSE]) {
+        $this->_exec('docker-compose kill');
+        $start_command = 'local:start';
+        if ($opts['no-cache']) {
+            $start_command = $start_command . ' --no-cache';
+        }
+        $this->setRunOtherCommand($start_command);
+    }
+
+  /**
+   * Brings up the local application.
+   *
+   * @command local:up
+   * @aliases up
+   */
+  public function up() {
+    return $this->taskDockerComposeUp()
+      ->detachedMode()
+      ->removeOrphans()
+      ->run();
+  }
+
+  /**
+   * Updates the local system hostfile for the local application. Requires sudo.
+   *
+   * @command local:update-hostfile
+   * @throws \Dockworker\DockworkerException
+   */
+  public function setHostFileEntry() {
+    $hostname = escapeshellarg('local-' . $this->instanceName);
+
+    $delete_command = "sudo sh -c 'sed -i '' -e \"/$hostname/d\" /etc/hosts'";
+    $add_command = "sudo sh -c 'echo \"127.0.0.1       $hostname\" >> /etc/hosts'";
+
+    $this->say("Updating hostfile with entry for $hostname. If you are asked for a password, you should enable passwordless sudo for your user.");
+    exec($delete_command, $delete_output, $delete_return);
+    exec($add_command, $add_output, $add_return);
+
+    if ($delete_return > 0 || $add_command > 0) {
+      throw new DockworkerException(sprintf(self::ERROR_UPDATING_HOSTFILE));
+    }
+  }
+
+  /**
+   * Sets up git hooks for the local application.
+   *
+   * @command git:setup-hooks
+   */
+  public function setupHooks() {
+    $source_dir = $this->repoRoot . "/vendor/unb-libraries/dockworker/scripts/git-hooks";
+    $target_dir = $this->repoRoot . "/.git/hooks";
+    $this->_copy("$source_dir/commit-msg", "$target_dir/commit-msg");
   }
 
 }

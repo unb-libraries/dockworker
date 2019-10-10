@@ -2,21 +2,22 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Dockworker\DockworkerException;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 use Dockworker\TravisCliTrait;
 
 /**
- * Git commands.
+ * Defines the commands used to interact with travis.com for the application.
  */
 class TravisCliCommands extends DockworkerCommands {
 
   use TravisCliTrait;
 
   /**
-   * Restart the latest travis build for this instance.
+   * Restarts the latest travis build of this application.
    *
    * @param string $branch
-   *   The branch
+   *   The branch of the repository to restart.
    *
    * @command travis:build:restart:latest
    * @throws \Exception
@@ -29,10 +30,10 @@ class TravisCliCommands extends DockworkerCommands {
   }
 
   /**
-   * Get the latest travis build ID for this instance.
+   * Retrieves the latest travis build ID of this application.
    *
    * @param string $branch
-   *   The branch of the repository
+   *   The branch of the repository to retrieve the ID for.
    *
    * @command travis:build:id:latest
    * @throws \Exception
@@ -50,10 +51,10 @@ class TravisCliCommands extends DockworkerCommands {
   }
 
   /**
-   * Get the latest travis build details for this instance..
+   * Retrieves the latest travis build details of this application.
    *
    * @param string $branch
-   *   The branch of the repository
+   *   The branch of the repository to retrieve details from.
    *
    * @command travis:build:info:latest
    * @throws \Exception
@@ -66,25 +67,10 @@ class TravisCliCommands extends DockworkerCommands {
   }
 
   /**
-   * Get rudimentary validation on the repository name.
-   *
-   * @param string $repository_name
-   *   The repository namespace to test (i.e. unb-libraries/pmportal.org)
-   *
-   * @throws \Exception
-   */
-  public function getValidTravisRepository($repository_name) {
-    $repository_parts = explode('/', $repository_name);
-    if (count($repository_parts) != 2) {
-      throw new \Exception(sprintf('The repository name, %s, does not appear to include the namespace. Please enter the full repository namespace (i.e. unb-libraries/pmportal.org).', $repository_name));
-    }
-  }
-
-  /**
-   * Restart a travis build.
+   * Restarts a travis build of this application.
    *
    * @param string $build_id
-   *   The build ID
+   *   The build ID to restart.
    *
    * @command travis:build:restart
    * @throws \Exception
@@ -96,10 +82,25 @@ class TravisCliCommands extends DockworkerCommands {
   }
 
   /**
-   * Get logs for a travis build.
+   * Performs rudimentary validation on the repository name.
+   *
+   * @param string $repository_name
+   *   The repository namespace to test (i.e. unb-libraries/pmportal.org)
+   *
+   * @throws \Exception
+   */
+  public function getValidTravisRepository($repository_name) {
+    $repository_parts = explode('/', $repository_name);
+    if (count($repository_parts) != 2) {
+      throw new DockworkerException(sprintf('The repository name, %s, does not appear to include the namespace. Please enter the full repository namespace (i.e. unb-libraries/pmportal.org).', $repository_name));
+    }
+  }
+
+  /**
+   * Retrieves logs for a travis build of this application.
    *
    * @param string $build_id
-   *   The build ID
+   *   The build ID to retrieve the logs from.
    *
    * @command travis:build:logs
    * @throws \Exception
@@ -111,10 +112,10 @@ class TravisCliCommands extends DockworkerCommands {
   }
 
   /**
-   * Get logs for the latest travis build.
+   * Retrieves logs for the latest travis build of this application.
    *
    * @param string $branch
-   *   The branch of the repository
+   *   The branch of the repository to retrieve the logs from.
    *
    * @command travis:build:logs:latest
    * @throws \Exception

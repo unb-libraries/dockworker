@@ -3,10 +3,11 @@
 namespace Dockworker;
 
 use Dockworker\ConsoleOutputFormattingTrait;
+use Dockworker\DockworkerException;
 use Dockworker\LogCheckerTrait;
 
 /**
- * Class for LogCheckerTrait.
+ * Provides methods to check Dockworker application logs for errors.
  */
 trait DockworkerLogCheckerTrait {
 
@@ -14,9 +15,11 @@ trait DockworkerLogCheckerTrait {
   use LogCheckerTrait;
 
   /**
-   * @throws \Exception
+   * Audit the local application's startup logs for errors.
+   *
+   * @throws \Dockworker\DockworkerException
    */
-  protected function auditProcessedLogs() {
+  protected function auditLocalStartupLogs() {
     if ($this->logsHaveErrorExceptions()) {
       $this->printConsoleTable(
         "Ignored Errors",
@@ -31,7 +34,7 @@ trait DockworkerLogCheckerTrait {
         ['Pod ID', 'Line', 'Error', 'Info'],
         $this->logErrors
       );
-      throw new \Exception(sprintf("%s errors found in deployment logs!", count($this->logErrors)));
+      throw new DockworkerException(sprintf("%s errors found in deployment logs!", count($this->logErrors)));
     }
   }
 

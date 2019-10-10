@@ -2,10 +2,11 @@
 
 namespace Dockworker;
 
+use Dockworker\DockworkerException;
 use Robo\Robo;
 
 /**
- * Defines trait for interacting with KubeCtl.
+ * Provides methods to interact with kubectl.
  */
 trait KubectlTrait {
 
@@ -17,38 +18,40 @@ trait KubectlTrait {
   protected $kubeCtlBin = NULL;
 
   /**
-   * Test kubectl is installed/executable.
+   * Tests if kubectl is installed/executable.
    *
    * @hook pre-init
+   * @throws \Dockworker\DockworkerException
    */
   public function checkKubeCtlBinExists() {
     $this->kubeCtlBin = trim(shell_exec(sprintf("which %s", 'kubectl')));
     if (empty($this->kubeCtlBin)) {
-      throw new \Exception("kubectl binary not found.");
+      throw new DockworkerException("kubectl binary not found.");
     }
   }
 
   /**
-   * Test kubectl is installed/executable.
+   * Tests if kubectl can make a connection to the API server.
    *
    * @hook post-init
+   * @throws \Dockworker\DockworkerException
    */
   public function checkKubeCtlConnection() {
     exec($this->kubeCtlBin . ' api-resources', $output, $return_code);
     if ($return_code != 0) {
-      throw new \Exception("kubectl connection to the server failed.");
+      throw new DockworkerException("kubectl connection to the server failed.");
     }
   }
 
   /**
-   * Execute a kubectl Command.
+   * Executes a kubectl command.
    *
    * @param string $command
-   *   The kubectl command to execute (i.e. ls)
+   *   The kubectl command to execute.
    * @param string[] $args
-   *   A list of arguments to pass to kubectl.
+   *   A list of arguments to pass to the kubectl command.
    * @param bool $print_output
-   *   TRUE if the command should output results. False otherwise.
+   *   TRUE if the kubectl command should output results. False otherwise.
    *
    * @return \Robo\ResultData
    *   The result of the execution.

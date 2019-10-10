@@ -3,19 +3,22 @@
 namespace Dockworker;
 
 /**
- * Defines trait for building SCSS files
+ * Provides methods to compile SCSS files into CSS.
  */
 trait ScssCompileTrait {
 
   private $scssCompiler = NULL;
 
   /**
-   * Compile SCSS to CSS.
+   * Compiles a SCSS file to CSS.
    *
-   * @param $source_path
-   * @param $target_path
+   * @param string $source_path
+   *   The SCSS source file.
+   * @param string $target_path
+   *   The CSS target path.
    *
    * @return int
+   *   The return code of the compile command.
    */
   protected function compileScss($source_path, $target_path) {
     $cmd = "$this->scssCompiler lint -f crunched $source_path > $target_path";
@@ -24,6 +27,12 @@ trait ScssCompileTrait {
     return $return_code;
   }
 
+  /**
+   * Sets the binary to the SCSS compiler.
+   *
+   * @param string $path
+   *   The path to the compiler.
+   */
   protected function setScssCompiler($path) {
     $this->scssCompiler = $path;
   }

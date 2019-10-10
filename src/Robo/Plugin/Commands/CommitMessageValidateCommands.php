@@ -7,7 +7,7 @@ use Dockworker\DockworkerException;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 
 /**
- * Defines commands to test a commit message.
+ * Defines the commands used to validate a git commit message.
  *
  * Ref : acquia/blt.
  * Ref : mleko/validate-commit.
@@ -24,8 +24,8 @@ class CommitMessageValidateCommands extends DockworkerCommands {
   /**
    * Validates a git commit message.
    *
-   * @param $message_file
-   *   The file containing the git commit message.
+   * @param string $message_file
+   *   The path to the file containing the git commit message.
    *
    * @command validate:git:commit-msg
    * @throws \Dockworker\DockworkerException

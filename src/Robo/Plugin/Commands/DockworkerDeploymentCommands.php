@@ -2,13 +2,12 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-
-use Dockworker\KubernetesPodTrait;
 use Dockworker\DockworkerLogCheckerTrait;
+use Dockworker\KubernetesPodTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 
 /**
- * Commands to interact with Kubernetes deployments.
+ * Defines the commands used to interact with Kubernetes deployments.
  */
 class DockworkerDeploymentCommands extends DockworkerLocalCommands {
 
@@ -16,13 +15,12 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   use KubernetesPodTrait;
 
   /**
-   * Check the deployment rollout status.
+   * Checks the application's k8s deployment rollout status.
    *
    * @param string $env
-   *   The deploy environment to check.
+   *   The environment to check.
    *
    * @command deployment:status
-   * @throws \Exception
    */
   public function getDeploymentRolloutStatus($env) {
     $this->kubectlExec(
@@ -39,17 +37,16 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Update the deployment image.
+   * Updates the application's k8s deployment docker image.
    *
    * @param string $image
-   *   The image to set.
+   *   The docker image to use in the deployment.
    * @param string $tag
-   *   The image tag to set.
+   *   The docker image tag to use in the deployment.
    * @param string $env
-   *   The deploy environment to check.
+   *   The environment to update.
    *
    * @command deployment:image:update
-   * @throws \Exception
    */
   public function setDeploymentImage($image, $tag, $env) {
     $deployment_name = $this->getKubernetesDeploymentNameFromUri($this->instanceName);
@@ -68,10 +65,10 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Get the deployment logs.
+   * Gets the application's k8s deployment logs.
    *
    * @param string $env
-   *   The deploy environment to check.
+   *   The environment to check.
    *
    * @throws \Exception
    *
@@ -104,13 +101,12 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Print the deployment logs.
+   * Prints the application's k8s deployment logs.
    *
    * @param string $env
-   *   The deploy environment to print.
+   *   The environment to obtain the logs from.
    *
    * @command deployment:logs
-   *
    * @throws \Exception
    */
   public function printDeploymentLogs($env) {
@@ -132,13 +128,12 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Check the deployment logs for errors.
+   * Checks the application's k8s deployment logs for errors.
    *
    * @param string $env
-   *   The deploy environment to print.
+   *   The environment to check the logs in.
    *
    * @command deployment:logs:check
-   *
    * @throws \Exception
    */
   public function checkDeploymentLogs($env) {
@@ -146,7 +141,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
 
     if (!empty($logs)) {
       foreach ($logs as $pod_id => $log) {
-        $this->checklogForErrors($pod_id, $log);
+        $this->checkLogForErrors($pod_id, $log);
       }
     }
     else {
@@ -157,7 +152,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Get the kubernetes deployment name from the site URI.
+   * Gets the application's k8s deployment name from the site URI.
    *
    * @param string $uri
    *   The uri to convert to deployment name.

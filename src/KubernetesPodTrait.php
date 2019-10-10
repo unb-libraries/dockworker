@@ -2,26 +2,44 @@
 
 namespace Dockworker;
 
+use Dockworker\DockworkerException;
 use Dockworker\KubectlTrait;
 
 /**
- * Defines trait for executing commands inside Kubernetes Pods.
+ * Provides methods to execute commands inside Kubernetes Pods.
  */
 trait KubernetesPodTrait {
 
   use KubectlTrait;
 
-  protected $kubernetesPodInstanceName = NULL;
-  protected $kubernetesPodNamespace = NULL;
+  /**
+   * The pod queue to execute commands in.
+   *
+   * @var string
+   */
   protected $kubernetesCurPods = [];
 
   /**
-   * Setup the pod details for the remote Kubernetes pods.
+   * The instance name to use when populating the pod queue.
+   *
+   * @var string
+   */
+  protected $kubernetesPodInstanceName = NULL;
+
+  /**
+   * The namespace to filter when populating the pod queue.
+   *
+   * @var string
+   */
+  protected $kubernetesPodNamespace = NULL;
+
+  /**
+   * Sets up the pod details for the remote Kubernetes pods.
    *
    * @param string $instance_name
-   *   The instance name of the dockworker project.
+   *   The application URI.
    * @param string $action
-   *   A description of the actions to take for output purposes.
+   *   A description of the actions intended to take (Used for labels).
    *
    * @throws \Exception
    */
@@ -36,8 +54,9 @@ trait KubernetesPodTrait {
   }
 
   /**
-   * Setup pods that match the current configuration.
+   * Populates the pod queue.
    *
+   * @throws \Dockworker\DockworkerException
    * @throws \Exception
    */
   private function kubernetesSetMatchingPods() {
@@ -58,12 +77,12 @@ trait KubernetesPodTrait {
     }
 
     if (empty($this->kubernetesCurPods)) {
-      throw new \Exception("Could not find any pods for {$this->kubernetesPodInstanceName}:{$this->kubernetesPodNamespace}.");
+      throw new DockworkerException("Could not find any pods for {$this->kubernetesPodInstanceName}:{$this->kubernetesPodNamespace}.");
     }
   }
 
   /**
-   * Check to see if a Kubernetes pod has shell access.
+   * Checks to see if a Kubernetes pod has shell access.
    *
    * @param string $pod
    *   The pod name to check.
@@ -79,19 +98,21 @@ trait KubernetesPodTrait {
   }
 
   /**
-   * Execute a command on a remote Kubernetes pod.
+   * Executes a command on a remote Kubernetes pod.
    *
    * @param string $pod
    *   The pod name to check.
-   * @param $namespace
+   * @param string $namespace
    *   The namespace to target the pod in.
-   * @param $command
+   * @param string $command
    *   The command to execute.
    * @param bool $except_on_error
    *   TRUE to throw an exception on error. FALSE otherwise.
    *
-   * @return mixed
-   * @throws \Exception
+   * @throws \Dockworker\DockworkerException
+   *
+   * @return string
+   *   The STDOUT output from the command.
    */
   protected function kubernetesPodExecCommand($pod, $namespace, $command, $except_on_error = TRUE) {
     exec(
@@ -104,25 +125,27 @@ trait KubernetesPodTrait {
       $return_code
     );
     if ($return_code != 0 && $except_on_error) {
-      throw new \Exception("Pod command [$command] returned error code $return_code : $cmd_output.");
+      throw new DockworkerException("Pod command [$command] returned error code $return_code : $cmd_output.");
     }
     return $cmd_output;
   }
 
   /**
-   * Copy a file between a Kubernetes pod and the local filesystem.
+   * Copies a file between a Kubernetes pod and the local filesystem.
    *
-   * @param $namespace
+   * @param string $namespace
    *   The namespace to target the pod in.
    * @param string $source_path
    *   The source path of the file to copy.
-   * @param $target_path
+   * @param string $target_path
    *   The target path of the file to copy.
    * @param bool $except_on_error
    *   TRUE to throw an exception on error. FALSE otherwise.
    *
-   * @return mixed
-   * @throws \Exception
+   * @throws \Dockworker\DockworkerException
+   *
+   * @return string
+   *   The STDOUT output from the command.
    */
   protected function kubernetesPodFileCopyCommand($namespace, $source_path, $target_path, $except_on_error = TRUE) {
     exec(
@@ -135,7 +158,7 @@ trait KubernetesPodTrait {
       $return_code
     );
     if ($return_code != 0 && $except_on_error) {
-      throw new \Exception("Pod copy [$source_path -> $target_path] returned error code $return_code : $cmd_output.");
+      throw new DockworkerException("Pod copy [$source_path -> $target_path] returned error code $return_code : $cmd_output.");
     }
     return $cmd_output;
   }

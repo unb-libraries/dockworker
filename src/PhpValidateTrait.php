@@ -2,18 +2,22 @@
 
 namespace Dockworker;
 
+use Sweetchuck\Robo\Phpcs\PhpcsTaskLoader;
+
 /**
- * Defines trait for validate
+ * Provides methods to validate PHP code for standards and errors.
  */
 trait PhpValidateTrait {
 
-  use \Sweetchuck\Robo\Phpcs\PhpcsTaskLoader;
+  use PhpcsTaskLoader;
 
   /**
-   * Validate files using phpcs.
+   * Validates files using phpcs.
    *
-   * @param $files
-   * @param array $lint_standards
+   * @param string $files
+   *   The files to validate.
+   * @param string[] $lint_standards
+   *   An array of linting standards to enforce.
    *
    * @return \Robo\Result
    */

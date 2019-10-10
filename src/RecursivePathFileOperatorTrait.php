@@ -3,17 +3,24 @@
 namespace Dockworker;
 
 /**
- * Defines trait for building SCSS files
+ * Provides methods to operate on a series of files recursively in a path.
  */
 trait RecursivePathFileOperatorTrait {
 
+  /**
+   * Filepaths to operate on.
+   *
+   * @var string[]
+   */
   private $recursivePathOperatorFiles = [];
 
   /**
-   * Add files recursively to the to-operate list.
+   * Adds files recursively to the operation queue.
    *
-   * @param array $paths
-   * @param array $extension_filter
+   * @param string[] $paths
+   *   An array of file paths to traverse recursively.
+   * @param string[] $extension_filter
+   *   The extensions to include when populating to queue.
    */
   protected function addRecursivePathFilesFromPath(array $paths, array $extension_filter = []) {
     foreach ($paths as $path) {
@@ -31,26 +38,32 @@ trait RecursivePathFileOperatorTrait {
   }
 
   /**
-   * Return the list of current files as a string.
+   * Clears the list of files in the operation queue.
    */
   protected function clearRecursivePathFiles() {
     $this->recursivePathOperatorFiles = [];
   }
 
   /**
-   * Return the list of current files as a string.
+   * Returns the list of current files in the operation queue.
+   *
+   * @return string[]
+   *   The list of currently queued files.
    */
   protected function getRecursivePathFiles() {
     return $this->recursivePathOperatorFiles;
   }
 
   /**
-   * Return the list of current files as a string.
+   * Returns the list of current files as a string.
    *
    * @param string $separator
+   *   The separator to use when formatting the output list.
    * @param string $quote
+   *   The string/character used when formatting the output list.
    *
-   * @return string|null
+   * @return string
+   *   The formatted list of current files.
    */
   protected function getRecursivePathStringFileList($separator = ' ', $quote = '\'') {
     if (!empty($this->recursivePathOperatorFiles)) {
@@ -60,7 +73,7 @@ trait RecursivePathFileOperatorTrait {
   }
 
   /**
-   * Filter an array of files, removing any that do not match given extensions.
+   * Filters an array of files, removing any that do not match given extensions.
    *
    * @param string[] $files
    *   The array of files to filter.
@@ -68,7 +81,7 @@ trait RecursivePathFileOperatorTrait {
    *   An array of extensions to keep in the file list.
    *
    * @return string[]
-   *    The filtered array of files.
+   *   The filtered array of files.
    */
   protected static function filterArrayFilesByExtension(array $files, $extension_filter = []) {
     foreach ($files as $file_key => $filename) {

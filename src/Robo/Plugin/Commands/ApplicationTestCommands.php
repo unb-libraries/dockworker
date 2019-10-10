@@ -5,17 +5,18 @@ namespace Dockworker\Robo\Plugin\Commands;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 
 /**
- * Defines commands for testing an application.
+ * Defines the commands used to test an application.
  */
 class ApplicationTestCommands extends DockworkerCommands {
 
   /**
-   * Test the application using all testing frameworks.
+   * Tests the application using all testing frameworks.
    *
    * @command test:all
    * @aliases test
    */
   public function testApplication() {
+    // No-op here. Specific frameworks implement this in post-command hook.
   }
 
 }

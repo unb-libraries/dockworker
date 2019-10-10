@@ -2,15 +2,22 @@
 
 namespace Dockworker;
 
+use Dockworker\DockworkerException;
+
 /**
- * Defines trait for validate
+ * Provides methods to validate Twig templates.
  */
 trait TwigValidateTrait {
 
   /**
-   * Validate files using phpcs.
+   * Validates twig files using twig-lint.
+   *
+   * @param string[] $files
+   *   The files to validate.
+   *
+   * @throws \Dockworker\DockworkerException
    */
-  protected function validateTwig($files) {
+  protected function validateTwig(array $files) {
     if (!empty($files)) {
       foreach ($files as $file) {
         $twig = '.html.twig';
@@ -20,7 +27,7 @@ trait TwigValidateTrait {
             "vendor/bin/twig-lint lint $file"
           );
           if ($result->getExitCode() > 0) {
-            throw new \Exception(
+            throw new DockworkerException(
               sprintf('%s failed Twig linting', $file)
             );
           }

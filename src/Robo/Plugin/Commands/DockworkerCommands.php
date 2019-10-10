@@ -14,7 +14,7 @@ use Robo\Robo;
 use Robo\Tasks;
 
 /**
- * Base class for Dockworker Robo commands.
+ * Defines a base class for all Dockworker Robo commands.
  */
 class DockworkerCommands extends Tasks implements ContainerAwareInterface, LoggerAwareInterface, BuilderAwareInterface {
 
@@ -49,7 +49,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   protected $repoRoot;
 
   /**
-   * Get the container name from config.
+   * DockworkerCommands constructor.
    */
   public function __construct() {
     $this->repoRoot = realpath(__DIR__ . "/../../../../../../../");
@@ -60,7 +60,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   }
 
   /**
-   * Self-update.
+   * Performs a Self-update.
    *
    * @command dockworker:update
    * @aliases update
@@ -91,9 +91,12 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   }
 
   /**
-   * Get the project prefix.
+   * Gets the project prefix.
    *
    * @throws \Dockworker\DockworkerException
+   *
+   * @return string
+   *   The project prefix.
    */
   public function getProjectPrefix() {
     $project_prefix = Robo::Config()->get('dockworker.instance.project_prefix');
@@ -104,9 +107,12 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   }
 
   /**
-   * Get the upstream image.
+   * Gets the upstream image.
    *
    * @throws \Dockworker\DockworkerException
+   *
+   * @return string[]
+   *   An array of upstream images configured for the repository.
    */
   public function getUpstreamImages() {
     $upstream_images = Robo::Config()->get('dockworker.instance.upstream_image');
@@ -123,7 +129,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   }
 
   /**
-   * Get the upstream image.
+   * Gets if the project allows prefix-less commit messages.
    */
   public function getAllowsPrefixLessCommit() {
     $allow_prefixless_commits = Robo::Config()->get('dockworker.options.allow_prefixless_commits');
@@ -134,7 +140,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   }
 
   /**
-   * Run another Dockworker command.
+   * Runs another Dockworker command.
    *
    * This is necessary until the annotated-command feature request:
    * https://github.com/consolidation/annotated-command/issues/64 is merged

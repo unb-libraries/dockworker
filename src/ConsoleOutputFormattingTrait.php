@@ -5,23 +5,26 @@ namespace Dockworker;
 use Symfony\Component\Console\Helper\Table;
 
 /**
- * Defines trait for formatting console output.
+ * Provides methods to format Symfony console output.
  */
 trait ConsoleOutputFormattingTrait {
 
   /**
-   * Print a table of values to the console.
+   * Prints a table of values to the console.
    *
-   * @param $title
-   * @param $headers
-   * @param $values
+   * @param string $title
+   *   The title to print above the table.
+   * @param string[] $headers
+   *   The headers to use for the table.
+   * @param string[] $rows
+   *   The row values.
    */
-  private function printConsoleTable($title, $headers, $values) {
+  private function printConsoleTable($title, $headers, $rows) {
     $this->io()->title($title);
     $table = new Table($this->output());
     $table
       ->setHeaders($headers)
-      ->setRows($values);
+      ->setRows($rows);
     $table->render();
   }
 

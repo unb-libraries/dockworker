@@ -5,12 +5,12 @@ namespace Dockworker\Robo\Plugin\Commands;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 
 /**
- * Defines commands for fixing permissions for an application.
+ * Defines the commands used to correct permissions in the repository tree.
  */
 class ApplicationPermissionsCommands extends DockworkerCommands {
 
   /**
-   * Fix repository file permissions. Requires sudo.
+   * Sets the repository file permissions to expected. Requires sudo.
    *
    * @command permissions:fix
    * @aliases pfix
@@ -19,7 +19,7 @@ class ApplicationPermissionsCommands extends DockworkerCommands {
   }
 
   /**
-   * Set file permissions for a path to the current group. Requires sudo.
+   * Sets file permissions for a path to the current group. Requires sudo.
    *
    * @param string $path
    *   The path to change the group for.

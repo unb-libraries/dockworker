@@ -2,17 +2,25 @@
 
 namespace Dockworker;
 
+use Sweetchuck\Robo\Phpcs\PhpcsTaskLoader;
+
 /**
- * Defines trait for validate
+ * Provides methods to validate YAML templates.
  */
 trait YamlValidateTrait {
 
-  use \Sweetchuck\Robo\Phpcs\PhpcsTaskLoader;
+  use PhpcsTaskLoader;
 
   /**
-   * Validate files using phpcs.
+   * Validates YAML files using yaml-lint.
+   *
+   * @param string[] $files
+   *   The files to validate.
+   *
+   * @return int
+   *   The return code of the compile command.
    */
-  protected function validateYaml($files) {
+  protected function validateYaml(array $files) {
     if (!empty($files)) {
       $linter_bin = $this->repoRoot . '/vendor/bin/yaml-lint';
       // Lint files.

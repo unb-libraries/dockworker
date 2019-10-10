@@ -2,11 +2,12 @@
 
 namespace Dockworker;
 
+use Dockworker\DockworkerException;
 use Dockworker\GitHubTrait;
 use Robo\Robo;
 
 /**
- * Class for TravisCliTrait.
+ * Provides methods to interact with travis via the CLI client.
  */
 trait TravisCliTrait {
 
@@ -34,11 +35,10 @@ trait TravisCliTrait {
   protected $travisCurRepos = [];
 
   /**
-   * Get travis CLI binary path from config.
-   *
-   * @throws \Exception
+   * Determines the travis CLI binary path from config.
    *
    * @hook pre-init
+   * @throws \Exception
    */
   public function setTravisBin() {
     $this->travisBin = Robo::Config()->get('dockworker.travis.bin');
@@ -48,35 +48,32 @@ trait TravisCliTrait {
   }
 
   /**
-   * Set the travis GitHub repo string.
-   *
-   * @throws \Exception
+   * Sets the travis/GitHub repo string.
    *
    * @hook init
+   * @throws \Exception
    */
   public function setTravisGitHubRepo() {
     $this->travisGitHubRepo = $this->gitHubOwner . '/' . $this->gitHubRepo;
   }
 
   /**
-   * Get if the travis binary defined in the config file can be executed.
-   *
-   * @throws \Exception
+   * Determines if the travis binary can be executed.
    *
    * @hook init
+   * @throws \Exception
    */
   public function setTravisBinExists() {
     if (!is_executable($this->travisBin)) {
-      throw new \Exception(sprintf('The travis binary, %s, cannot be executed.', $this->travisBin));
+      throw new DockworkerException(sprintf('The travis binary, %s, cannot be executed.', $this->travisBin));
     }
   }
 
   /**
-   * Get travis CLI binary path from config.
-   *
-   * @throws \Exception
+   * Determines the travis CLI binary path.
    *
    * @hook post-init
+   * @throws \Exception
    */
   public function setTravisLogin() {
     $this->say(sprintf('Testing authentication to travis...'));
@@ -85,12 +82,12 @@ trait TravisCliTrait {
       ->arg('accounts')
       ->run();
     if ($travis->getExitCode() > 0) {
-      throw new \Exception(sprintf('The travis client is unauthorized. Run "travis login" AND "travis login --pro"'));
+      throw new DockworkerException(sprintf('The travis client is unauthorized. Run "travis login" AND "travis login --pro"'));
     }
   }
 
   /**
-   * Execute a travis command via the CLI.
+   * Executes a travis command via the CLI.
    *
    * @param string $command
    *   The command to execute (i.e. ls)
@@ -99,9 +96,10 @@ trait TravisCliTrait {
    * @param bool $print_output
    *   TRUE if the command should output results. False otherwise.
    *
+   * @throws \Exception
+   *
    * @return \Robo\ResultData
    *   The result of the execution.
-   * @throws \Exception
    */
   private function travisExec($command, $args = [], $print_output = TRUE) {
     $this->getValidTravisRepository($this->travisGitHubRepo);
