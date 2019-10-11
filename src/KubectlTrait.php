@@ -3,7 +3,6 @@
 namespace Dockworker;
 
 use Dockworker\DockworkerException;
-use Robo\Robo;
 
 /**
  * Provides methods to interact with kubectl.

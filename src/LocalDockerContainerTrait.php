@@ -3,7 +3,6 @@
 namespace Dockworker;
 
 use Dockworker\DockworkerException;
-use Dockworker\KubernetesPodTrait;
 
 /**
  * Provides methods to interact with local docker containers.

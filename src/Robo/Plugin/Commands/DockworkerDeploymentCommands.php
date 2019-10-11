@@ -147,7 +147,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
     else {
       $this->io()->title("No pods found. No logs!");
     }
-    $this->auditProcessedLogs();
+    $this->auditStartupLogs();
     $this->say(sprintf("No errors found, %s pods deployed.", count($logs)));
   }
 

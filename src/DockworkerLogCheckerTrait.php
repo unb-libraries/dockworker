@@ -15,11 +15,11 @@ trait DockworkerLogCheckerTrait {
   use LogCheckerTrait;
 
   /**
-   * Audit the local application's startup logs for errors.
+   * Audit a dockworker application's startup logs for errors.
    *
    * @throws \Dockworker\DockworkerException
    */
-  protected function auditLocalStartupLogs() {
+  protected function auditStartupLogs() {
     if ($this->logsHaveErrorExceptions()) {
       $this->printConsoleTable(
         "Ignored Errors",

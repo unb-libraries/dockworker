@@ -2,6 +2,9 @@
 
 namespace Dockworker;
 
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+
 /**
  * Provides methods to operate on a series of files recursively in a path.
  */
@@ -24,8 +27,8 @@ trait RecursivePathFileOperatorTrait {
    */
   protected function addRecursivePathFilesFromPath(array $paths, array $extension_filter = []) {
     foreach ($paths as $path) {
-      $directory = new \RecursiveDirectoryIterator($path);
-      $iterator = new \RecursiveIteratorIterator($directory);
+      $directory = new RecursiveDirectoryIterator($path);
+      $iterator = new RecursiveIteratorIterator($directory);
       $files = [];
       foreach ($iterator as $info) {
         $files[] = $info->getPathname();

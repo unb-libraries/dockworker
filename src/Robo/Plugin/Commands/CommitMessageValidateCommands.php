@@ -9,8 +9,8 @@ use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 /**
  * Defines the commands used to validate a git commit message.
  *
- * Ref : acquia/blt.
- * Ref : mleko/validate-commit.
+ * @link https://github.com/acquia/blt Acquia BLT
+ * @link https://github.com/mleko/validate-commit Commit Validation
  */
 class CommitMessageValidateCommands extends DockworkerCommands {
 

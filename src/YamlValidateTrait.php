@@ -37,6 +37,7 @@ trait YamlValidateTrait {
     }
     else {
       print "No YAML files found to lint!\n";
+      return 0;
     }
   }
 

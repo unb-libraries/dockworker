@@ -143,9 +143,6 @@ class DockworkerLocalCommands extends DockworkerCommands {
    *
    * @command local:logs:check
    * @throws \Dockworker\DockworkerException
-   *
-   * @return \Robo\Result
-   *   The result of the command.
    */
   public function localLogsCheck(array $opts = ['all' => FALSE]) {
     $this->getlocalRunning();
@@ -157,7 +154,7 @@ class DockworkerLocalCommands extends DockworkerCommands {
     else {
       $this->io()->title("No logs for local instance!");
     }
-    $this->auditProcessedLogs();
+    $this->auditStartupLogs();
     $this->say("No errors found in logs.");
   }
 

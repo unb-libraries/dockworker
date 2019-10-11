@@ -76,9 +76,9 @@ trait TravisCliTrait {
    * @throws \Exception
    */
   public function setTravisLogin() {
-    $this->say(sprintf('Testing authentication to travis...'));
     $travis = $this->taskExec($this->travisBin)
       ->printOutput(FALSE)
+      ->silent(TRUE)
       ->arg('accounts')
       ->run();
     if ($travis->getExitCode() > 0) {

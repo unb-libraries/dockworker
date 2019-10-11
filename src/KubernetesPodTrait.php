@@ -15,7 +15,7 @@ trait KubernetesPodTrait {
   /**
    * The pod queue to execute commands in.
    *
-   * @var string
+   * @var string[]
    */
   protected $kubernetesCurPods = [];
 
