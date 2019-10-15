@@ -275,7 +275,7 @@ class DockworkerLocalCommands extends DockworkerCommands {
    * @throws \Exception
    */
   public function start(array $opts = ['no-cache' => FALSE, 'no-tail-logs' => FALSE]) {
-    // $this->setRunOtherCommand('dockworker:update');
+    $this->setRunOtherCommand('dockworker:update');
     $this->setRunOtherCommand('local:update-hostfile');
     $this->setRunOtherCommand('docker:pull-upstream');
 
