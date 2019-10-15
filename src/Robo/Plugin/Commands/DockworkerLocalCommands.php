@@ -23,9 +23,9 @@ class DockworkerLocalCommands extends DockworkerCommands {
   use loadTasks;
 
   /**
-   * Cleans up any leftover docker assets not being used.
+   * Removes unused (orphaned) docker images, volumes and networks.
    *
-   * @command docker:cleanup
+   * @command dockworker:docker:cleanup
    */
   public function localCleanup() {
     $this->say("Cleaning up dangling images and volumes:");
@@ -49,6 +49,9 @@ class DockworkerLocalCommands extends DockworkerCommands {
    *
    * @param string[] $opts
    *   An array of options to pass to the builder.
+   *
+   * @option bool $all
+   *   Display logs from all local services, not only the web endpoint.
    *
    * @command local:logs
    * @throws \Exception
@@ -95,6 +98,9 @@ class DockworkerLocalCommands extends DockworkerCommands {
    * @param string[] $opts
    *   An array of options to pass to the builder.
    *
+   * @option bool $all
+   *   Return logs from all local services, not only the web endpoint.
+   *
    * @return \Robo\Result
    *   The result of the command.
    */
@@ -117,6 +123,9 @@ class DockworkerLocalCommands extends DockworkerCommands {
    *
    * @param string[] $opts
    *   An array of options to pass to the builder.
+   *
+   * @option bool $all
+   *   Display logs from all local services, not only the web endpoint.
    *
    * @command local:logs:tail
    * @aliases logs
@@ -141,6 +150,9 @@ class DockworkerLocalCommands extends DockworkerCommands {
    * @param string[] $opts
    *   An array of options to pass to the builder.
    *
+   * @option bool $all
+   *   Check logs from all local services, not only the web endpoint.
+   *
    * @command local:logs:check
    * @throws \Dockworker\DockworkerException
    */
@@ -164,6 +176,9 @@ class DockworkerLocalCommands extends DockworkerCommands {
    * @param string[] $opts
    *   An array of options to pass to the builder.
    *
+   * @option bool $no-cache
+   *   Do not use any cached steps in the build.
+   *
    * @command local:build
    * @aliases build
    * @throws \Dockworker\DockworkerException
@@ -172,24 +187,6 @@ class DockworkerLocalCommands extends DockworkerCommands {
     // Build the theme.
     $this->setRunOtherCommand('theme:build-all');
 
-    if ($opts['no-cache']) {
-      $this->setRunOtherCommand('docker:build --no-cache');
-    }
-    else {
-      $this->setRunOtherCommand('docker:build');
-    }
-  }
-
-  /**
-   * Builds the local application docker images.
-   *
-   * @param string[] $opts
-   *   An array of options to pass to the builder.
-   *
-   * @command docker:build
-   * @throws \Dockworker\DockworkerException
-   */
-  public function buildDockerImages(array $opts = ['no-cache' => FALSE]) {
     if ($opts['no-cache']) {
       $command = 'docker-compose build --no-cache';
     }
@@ -233,7 +230,7 @@ class DockworkerLocalCommands extends DockworkerCommands {
   /**
    * Pulls upstream images for the local application.
    *
-   * @command docker:pull-upstream
+   * @command local:pull-upstream
    * @throws \Dockworker\DockworkerException
    */
   public function pullUpstreamImages() {
@@ -270,14 +267,19 @@ class DockworkerLocalCommands extends DockworkerCommands {
    * @param string[] $opts
    *   An array of options to pass to the builder.
    *
+   * @option bool $no-cache
+   *   Do not use any cached steps in the build.
+   * @option bool $no-tail-logs
+   *   Do not tail the application logs after starting.
+   *
    * @command local:start
    * @aliases start
    * @throws \Exception
    */
   public function start(array $opts = ['no-cache' => FALSE, 'no-tail-logs' => FALSE]) {
-    $this->setRunOtherCommand('dockworker:update');
+    // $this->setRunOtherCommand('dockworker:update');
     $this->setRunOtherCommand('local:update-hostfile');
-    $this->setRunOtherCommand('docker:pull-upstream');
+    $this->setRunOtherCommand('local:pull-upstream');
 
     $build_command = 'local:build';
     if ($opts['no-cache']) {
@@ -406,6 +408,9 @@ class DockworkerLocalCommands extends DockworkerCommands {
    * @param string[] $opts
    *   An array of options to pass to the builder.
    *
+   * @option bool $no-cache
+   *   Do not use any cached steps in the build.
+   *
    * @command local:start-over
    * @aliases start-over, deploy
    * @throws \Exception
@@ -425,6 +430,9 @@ class DockworkerLocalCommands extends DockworkerCommands {
      *
      * @param string[] $opts
      *   An array of options to pass to the builder.
+     *
+     * @option bool $no-cache
+     *   Do not use any cached steps in the build.
      *
      * @command local:rebuild
      * @aliases rebuild
@@ -472,17 +480,6 @@ class DockworkerLocalCommands extends DockworkerCommands {
     if ($delete_return > 0 || $add_command > 0) {
       throw new DockworkerException(sprintf(self::ERROR_UPDATING_HOSTFILE));
     }
-  }
-
-  /**
-   * Sets up git hooks for the local application.
-   *
-   * @command git:setup-hooks
-   */
-  public function setupHooks() {
-    $source_dir = $this->repoRoot . "/vendor/unb-libraries/dockworker/scripts/git-hooks";
-    $target_dir = $this->repoRoot . "/.git/hooks";
-    $this->_copy("$source_dir/commit-msg", "$target_dir/commit-msg");
   }
 
 }

@@ -19,7 +19,7 @@ class TravisCliCommands extends DockworkerCommands {
    * @param string $branch
    *   The branch of the repository to restart.
    *
-   * @command travis:build:restart:latest
+   * @command travis:restart:latest
    * @throws \Exception
    *
    * @return \Robo\ResultData
@@ -35,7 +35,7 @@ class TravisCliCommands extends DockworkerCommands {
    * @param string $branch
    *   The branch of the repository to retrieve the ID for.
    *
-   * @command travis:build:id:latest
+   * @command travis:id:latest
    * @throws \Exception
    *
    * @return string
@@ -56,7 +56,7 @@ class TravisCliCommands extends DockworkerCommands {
    * @param string $branch
    *   The branch of the repository to retrieve details from.
    *
-   * @command travis:build:info:latest
+   * @command travis:info:latest
    * @throws \Exception
    *
    * @return string
@@ -72,7 +72,7 @@ class TravisCliCommands extends DockworkerCommands {
    * @param string $build_id
    *   The build ID to restart.
    *
-   * @command travis:build:restart
+   * @command travis:restart
    * @throws \Exception
    *
    * @return \Robo\ResultData
@@ -102,7 +102,7 @@ class TravisCliCommands extends DockworkerCommands {
    * @param string $build_id
    *   The build ID to retrieve the logs from.
    *
-   * @command travis:build:logs
+   * @command travis:logs
    * @throws \Exception
    *
    * @return \Robo\ResultData
@@ -117,7 +117,7 @@ class TravisCliCommands extends DockworkerCommands {
    * @param string $branch
    *   The branch of the repository to retrieve the logs from.
    *
-   * @command travis:build:logs:latest
+   * @command travis:logs:latest
    * @throws \Exception
    *
    * @return bool

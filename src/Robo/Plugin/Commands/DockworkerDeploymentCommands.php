@@ -15,7 +15,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   use KubernetesPodTrait;
 
   /**
-   * Checks the application's k8s deployment rollout status.
+   * Checks the k8s deployment rollout status.
    *
    * @param string $env
    *   The environment to check.
@@ -37,7 +37,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Updates the application's k8s deployment docker image.
+   * Updates the k8s deployment docker image.
    *
    * @param string $image
    *   The docker image to use in the deployment.
@@ -65,7 +65,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Gets the application's k8s deployment logs.
+   * Gets the k8s deployment logs.
    *
    * @param string $env
    *   The environment to check.
@@ -101,7 +101,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Prints the application's k8s deployment logs.
+   * Displays the k8s deployment logs.
    *
    * @param string $env
    *   The environment to obtain the logs from.
@@ -128,7 +128,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Checks the application's k8s deployment logs for errors.
+   * Checks the k8s deployment logs for errors.
    *
    * @param string $env
    *   The environment to check the logs in.
@@ -152,7 +152,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Gets the application's k8s deployment name from the site URI.
+   * Gets the k8s deployment name from the site URI.
    *
    * @param string $uri
    *   The uri to convert to deployment name.

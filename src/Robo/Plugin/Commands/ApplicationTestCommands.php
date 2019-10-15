@@ -12,7 +12,7 @@ class ApplicationTestCommands extends DockworkerCommands {
   /**
    * Tests the application using all testing frameworks.
    *
-   * @command test:all
+   * @command tests:all
    * @aliases test
    */
   public function testApplication() {

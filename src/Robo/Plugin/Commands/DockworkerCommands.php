@@ -60,10 +60,9 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   }
 
   /**
-   * Performs a Self-update.
+   * Self-updates dockworker.
    *
-   * @command dockworker:update
-   * @aliases update
+   * @command update
    */
   public function getDockworkerUpdates() {
     $this->say('Checking for updates to unb-libraries/dockworker...');
@@ -170,7 +169,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   /**
    * Setup git hooks.
    *
-   * @command git:setup-hooks
+   * @command dockworker:git:setup-hooks
    */
   public function setupHooks() {
     $source_dir = $this->repoRoot . "/vendor/unb-libraries/dockworker/scripts/git-hooks";

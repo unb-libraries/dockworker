@@ -10,9 +10,9 @@ use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 class ApplicationPermissionsCommands extends DockworkerCommands {
 
   /**
-   * Sets the repository file permissions to expected. Requires sudo.
+   * Sets the correct repository file permissions. Requires sudo.
    *
-   * @command permissions:fix
+   * @command dockworker:permissions:fix
    * @aliases pfix
    */
   public function fixPermissions() {
