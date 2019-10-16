@@ -24,20 +24,4 @@ trait GitRepoTrait {
     return TRUE;
   }
 
-  private function getCurrentGitBranch($path) {
-    $result = $this->taskExec('git')
-      ->dir($path)
-      ->arg('symbolic-ref')
-      ->arg('HEAD')
-      ->run();
-    if ($result->wasSuccessful()) {
-      $output = $result->getMessage();
-      $branch = end(explode('/', $output));
-      if (!empty($branch)) {
-        return $branch;
-      }
-    }
-
-    return NULL;
-  }
 }

@@ -27,7 +27,7 @@ trait GitHubTrait {
   /**
    * Retrieves the github repository name from config.
    *
-   * @hook pre-init
+   * @hook pre-init @github
    * @throws \Dockworker\DockworkerException
    */
   public function setGitHubRepo() {
@@ -40,7 +40,7 @@ trait GitHubTrait {
   /**
    * Retrieves the github owner from config.
    *
-   * @hook pre-init
+   * @hook pre-init @github
    * @throws \Dockworker\DockworkerException
    */
   public function setGitHubOwner() {

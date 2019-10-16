@@ -23,6 +23,9 @@ class TravisCliCommands extends DockworkerCommands {
    * @throws \Exception
    *
    * @return \Robo\ResultData
+   *
+   * @github
+   * @travis
    */
   public function restartLatestTravisBuild($branch) {
     $latest_build_id = $this->getLatestTravisJobId($branch);
@@ -40,6 +43,9 @@ class TravisCliCommands extends DockworkerCommands {
    *
    * @return string
    *   The job ID, if it exists.
+   *
+   * @github
+   * @travis
    */
   public function getLatestTravisJobId($branch) {
     $build_info = $this->getLatestTravisBuild($branch);
@@ -61,6 +67,9 @@ class TravisCliCommands extends DockworkerCommands {
    *
    * @return string
    *   The build details, if it exists.
+   *
+   * @github
+   * @travis
    */
   public function getLatestTravisBuild($branch) {
     return $this->travisExec('show', [$branch], FALSE)->getMessage();
@@ -76,6 +85,9 @@ class TravisCliCommands extends DockworkerCommands {
    * @throws \Exception
    *
    * @return \Robo\ResultData
+   *
+   * @github
+   * @travis
    */
   public function restartTravisBuild($build_id) {
     return $this->travisExec('restart', [$build_id]);
@@ -106,6 +118,9 @@ class TravisCliCommands extends DockworkerCommands {
    * @throws \Exception
    *
    * @return \Robo\ResultData
+   *
+   * @github
+   * @travis
    */
   public function getTravisBuildLogs($build_id) {
     return $this->travisExec('logs', [$build_id]);
@@ -121,6 +136,9 @@ class TravisCliCommands extends DockworkerCommands {
    * @throws \Exception
    *
    * @return bool
+   *
+   * @github
+   * @travis
    */
   public function getLatestTravisBuildLogs($branch) {
     $build_id = $this->getLatestTravisBuild($branch);

@@ -19,7 +19,7 @@ trait KubectlTrait {
   /**
    * Tests if kubectl is installed/executable.
    *
-   * @hook pre-init
+   * @hook pre-init @kubectl
    * @throws \Dockworker\DockworkerException
    */
   public function checkKubeCtlBinExists() {
@@ -32,7 +32,7 @@ trait KubectlTrait {
   /**
    * Tests if kubectl can make a connection to the API server.
    *
-   * @hook post-init
+   * @hook post-init @kubectl
    * @throws \Dockworker\DockworkerException
    */
   public function checkKubeCtlConnection() {

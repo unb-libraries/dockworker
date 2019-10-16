@@ -21,6 +21,8 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *   The environment to check.
    *
    * @command deployment:status
+   *
+   * @kubectl
    */
   public function getDeploymentRolloutStatus($env) {
     $this->kubectlExec(
@@ -47,6 +49,8 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *   The environment to update.
    *
    * @command deployment:image:update
+   *
+   * @kubectl
    */
   public function setDeploymentImage($image, $tag, $env) {
     $deployment_name = $this->getKubernetesDeploymentNameFromUri($this->instanceName);
@@ -108,6 +112,8 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *
    * @command deployment:logs
    * @throws \Exception
+   *
+   * @kubectl
    */
   public function printDeploymentLogs($env) {
     $logs = $this->getDeploymentLogs($env);
@@ -135,6 +141,8 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *
    * @command deployment:logs:check
    * @throws \Exception
+   *
+   * @kubectl
    */
   public function checkDeploymentLogs($env) {
     $logs = $this->getDeploymentLogs($env);

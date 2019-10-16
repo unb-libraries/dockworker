@@ -37,7 +37,7 @@ trait TravisCliTrait {
   /**
    * Determines the travis CLI binary path from config.
    *
-   * @hook pre-init
+   * @hook pre-init @travis
    * @throws \Exception
    */
   public function setTravisBin() {
@@ -50,7 +50,7 @@ trait TravisCliTrait {
   /**
    * Sets the travis/GitHub repo string.
    *
-   * @hook init
+   * @hook init @travis
    * @throws \Exception
    */
   public function setTravisGitHubRepo() {
@@ -60,7 +60,7 @@ trait TravisCliTrait {
   /**
    * Determines if the travis binary can be executed.
    *
-   * @hook init
+   * @hook init @travis
    * @throws \Exception
    */
   public function setTravisBinExists() {
@@ -72,7 +72,7 @@ trait TravisCliTrait {
   /**
    * Determines the travis CLI binary path.
    *
-   * @hook post-init
+   * @hook post-init @travis
    * @throws \Exception
    */
   public function setTravisLogin() {

@@ -15,7 +15,7 @@ trait PhpValidateTrait {
    * Validates files using phpcs.
    *
    * @param string $files
-   *   The files to validate.
+   *   The files to validate.@
    * @param string[] $lint_standards
    *   An array of linting standards to enforce.
    *
