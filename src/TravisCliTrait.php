@@ -80,9 +80,10 @@ trait TravisCliTrait {
       ->printOutput(FALSE)
       ->silent(TRUE)
       ->arg('accounts')
+      ->arg('--pro')
       ->run();
     if ($travis->getExitCode() > 0) {
-      throw new DockworkerException(sprintf('The travis client is unauthorized. Run "travis login" AND "travis login --pro"'));
+      throw new DockworkerException(sprintf('The travis client is unauthorized. Run "travis login --pro"'));
     }
   }
 
