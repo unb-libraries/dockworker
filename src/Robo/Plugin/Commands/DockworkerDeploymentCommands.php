@@ -147,6 +147,12 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   public function checkDeploymentLogs($env) {
     $logs = $this->getDeploymentLogs($env);
 
+    // Allow modules to implement custom handlers to add exceptions.
+    $handlers = $this->getCustomEventHandlers('dockworker-deployment-log-error-exceptions');
+    foreach ($handlers as $handler) {
+      $this->addLogErrorExceptions($handler());
+    }
+
     if (!empty($logs)) {
       foreach ($logs as $pod_id => $log) {
         $this->checkLogForErrors($pod_id, $log);

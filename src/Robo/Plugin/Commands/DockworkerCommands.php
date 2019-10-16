@@ -81,12 +81,11 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    * @throws \Dockworker\DockworkerException
    */
   public function setInstanceName() {
-    $container_name = Robo::Config()->get('dockworker.instance.name');
+    $this->instanceName = Robo::Config()->get('dockworker.instance.name');
 
-    if (empty($container_name)) {
+    if (empty($this->instanceName)) {
       throw new DockworkerException(sprintf(self::ERROR_INSTANCE_NAME_UNSET, $this->configFile));
     }
-    $this->instanceName = $container_name;
   }
 
   /**
@@ -158,8 +157,9 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   public function setRunOtherCommand($command_string, $exception_message = NULL) {
     $bin = $_SERVER['argv'][0];
     $command = "$bin $command_string";
-    $return = 0;
+
     passthru($command, $return);
+
     if ($return > 0) {
       throw new DockworkerException($exception_message);
     };

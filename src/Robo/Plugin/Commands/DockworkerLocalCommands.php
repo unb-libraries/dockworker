@@ -2,6 +2,8 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Consolidation\AnnotatedCommand\Events\CustomEventAwareInterface;
+use Consolidation\AnnotatedCommand\Events\CustomEventAwareTrait;
 use Dockworker\DockworkerException;
 use Dockworker\DockworkerLogCheckerTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
@@ -11,7 +13,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 /**
  * Defines the commands used to interact with a Dockworker local application.
  */
-class DockworkerLocalCommands extends DockworkerCommands {
+class DockworkerLocalCommands extends DockworkerCommands implements CustomEventAwareInterface {
 
   const ERROR_BUILDING_IMAGE = 'Error reported building image!';
   const ERROR_PULLING_UPSTREAM_IMAGE = 'Error pulling upstream image %s';
@@ -19,6 +21,7 @@ class DockworkerLocalCommands extends DockworkerCommands {
   const ERROR_CONTAINER_MISSING = 'The %s local deployment does not appear to exist.';
   const ERROR_CONTAINER_STOPPED = 'The %s local deployment appears to be stopped.';
 
+  use CustomEventAwareTrait;
   use DockworkerLogCheckerTrait;
   use loadTasks;
 
@@ -75,6 +78,7 @@ class DockworkerLocalCommands extends DockworkerCommands {
    */
   public function getLocalRunning() {
     $container_name = $this->instanceName;
+
     exec(
       "docker inspect -f {{.State.Running}} $container_name 2>&1",
       $output,
@@ -104,7 +108,7 @@ class DockworkerLocalCommands extends DockworkerCommands {
    * @return \Robo\Result
    *   The result of the command.
    */
-  private function getLocalLogs(array $opts = ['all' => FALSE]) {
+  protected function getLocalLogs(array $opts = ['all' => FALSE]) {
     $result = $this->taskExec('docker-compose')
       ->dir($this->repoRoot)
       ->silent(TRUE)
@@ -142,32 +146,6 @@ class DockworkerLocalCommands extends DockworkerCommands {
     else {
       return $this->_exec("docker-compose logs -f {$this->instanceName}");
     }
-  }
-
-  /**
-   * Checks the local application logs for errors.
-   *
-   * @param string[] $opts
-   *   An array of options to pass to the builder.
-   *
-   * @option bool $all
-   *   Check logs from all local services, not only the web endpoint.
-   *
-   * @command local:logs:check
-   * @throws \Dockworker\DockworkerException
-   */
-  public function localLogsCheck(array $opts = ['all' => FALSE]) {
-    $this->getlocalRunning();
-    $result = $this->getLocalLogs($opts);
-    $local_logs = $result->getMessage();
-    if (!empty($local_logs)) {
-      $this->checkLogForErrors('local', $local_logs);
-    }
-    else {
-      $this->io()->title("No logs for local instance!");
-    }
-    $this->auditStartupLogs();
-    $this->say("No errors found in logs.");
   }
 
   /**
@@ -236,7 +214,7 @@ class DockworkerLocalCommands extends DockworkerCommands {
   public function pullUpstreamImages() {
     $upstream_images = $this->getUpstreamImages();
     foreach ($upstream_images as $upstream_image) {
-      $result= $this->taskDockerPull($upstream_image)->run();
+      $result= $this->taskDockerPull($upstream_image)->silent(TRUE)->run();
       if ($result->getExitCode() > 0) {
         throw new DockworkerException(
           sprintf(
@@ -258,7 +236,14 @@ class DockworkerLocalCommands extends DockworkerCommands {
    *   The result of the removal command.
    */
   public function removeData() {
-    return $this->_exec('docker-compose rm -f -v');
+    $this->io()->title("Removing application data");
+    return $this->taskExec('docker-compose')
+      ->dir($this->repoRoot)
+      ->silent(TRUE)
+      ->printOutput(FALSE)
+      ->arg('rm')
+      ->arg('-f')
+      ->arg('-v');
   }
 
   /**
@@ -278,9 +263,12 @@ class DockworkerLocalCommands extends DockworkerCommands {
    */
   public function start(array $opts = ['no-cache' => FALSE, 'no-tail-logs' => FALSE]) {
     // $this->setRunOtherCommand('dockworker:update');
+    $this->io()->title("Initializing application");
     $this->setRunOtherCommand('local:update-hostfile');
     $this->setRunOtherCommand('local:pull-upstream');
 
+    $this->io()->newLine();
+    $this->io()->title("Building application");
     $build_command = 'local:build';
     if ($opts['no-cache']) {
       $build_command = $build_command . ' --no-cache';
@@ -293,7 +281,9 @@ class DockworkerLocalCommands extends DockworkerCommands {
 
     $this->setRunOtherCommand('local:up');
     $this->waitForDeployment();
-    $this->say('Checking startup logs for errors...');
+    sleep(3);
+
+    $this->io()->newLine();
     $this->setRunOtherCommand('local:logs:check');
 
     if (!$opts['no-tail-logs']) {
@@ -312,7 +302,6 @@ class DockworkerLocalCommands extends DockworkerCommands {
     $max = 80;
     $status = 0;
 
-    $this->say('Deploying local application. This can take several minutes...');
     $progressBar = new ProgressBar($this->output(), 100);
     ProgressBar::setFormatDefinition('minimal', 'Progress: %percent%% [%message%]');
     $progressBar->setFormat('minimal');
@@ -358,6 +347,40 @@ class DockworkerLocalCommands extends DockworkerCommands {
     $logs = $result->getMessage();
     return $this->parseLocalLogForStatus($logs);
   }
+
+  /**
+   * Checks the local application logs for errors.
+   *
+   * @param string[] $opts
+   *   An array of options to pass to the builder.
+   *
+   * @option bool $all
+   *   Check logs from all local services, not only the web endpoint.
+   *
+   * @command local:logs:check
+   * @throws \Dockworker\DockworkerException
+   */
+  public function localLogsCheck(array $opts = ['all' => FALSE]) {
+    $this->getlocalRunning();
+
+    // Allow modules to implement custom handlers to add exceptions.
+    $handlers = $this->getCustomEventHandlers('dockworker-local-log-error-exceptions');
+    foreach ($handlers as $handler) {
+      $this->addLogErrorExceptions($handler());
+    }
+
+    $result = $this->getLocalLogs($opts);
+    $local_logs = $result->getMessage();
+    if (!empty($local_logs)) {
+      $this->checkLogForErrors('local', $local_logs);
+    }
+    else {
+      $this->io()->title("No logs for local instance!");
+    }
+    $this->auditStartupLogs();
+    $this->say("No errors found in logs.");
+  }
+
 
   /**
    * Parses a log to determine the deployment status of the local application.
@@ -416,7 +439,13 @@ class DockworkerLocalCommands extends DockworkerCommands {
    * @throws \Exception
    */
   public function startOver($opts = ['no-cache' => FALSE]) {
-      $this->_exec('docker-compose kill');
+      $this->io()->title("Stopping application");
+
+      $this->taskExec('docker-compose')
+        ->dir($this->repoRoot)
+        ->printOutput(TRUE)
+        ->arg('kill');
+
       $this->setRunOtherCommand('local:rm');
       $start_command = 'local:start';
       if ($opts['no-cache']) {
@@ -440,6 +469,7 @@ class DockworkerLocalCommands extends DockworkerCommands {
      * @throws \Exception
      */
     public function rebuild($opts = ['no-cache' => FALSE]) {
+        $this->io()->title("Stopping application");
         $this->_exec('docker-compose kill');
         $start_command = 'local:start';
         if ($opts['no-cache']) {
@@ -455,9 +485,13 @@ class DockworkerLocalCommands extends DockworkerCommands {
    * @aliases up
    */
   public function up() {
+    $this->io()->newLine();
+    $this->io()->title("Starting docker containers");
     return $this->taskDockerComposeUp()
       ->detachedMode()
       ->removeOrphans()
+      ->printOutput(FALSE)
+      ->silent(TRUE)
       ->run();
   }
 
