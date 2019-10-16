@@ -239,8 +239,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     $this->io()->title("Removing application data");
     return $this->taskExec('docker-compose')
       ->dir($this->repoRoot)
-      ->silent(TRUE)
-      ->printOutput(FALSE)
       ->arg('rm')
       ->arg('-f')
       ->arg('-v');
@@ -439,12 +437,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @throws \Exception
    */
   public function startOver($opts = ['no-cache' => FALSE]) {
-      $this->io()->title("Stopping application");
-
-      $this->taskExec('docker-compose')
-        ->dir($this->repoRoot)
-        ->printOutput(TRUE)
-        ->arg('kill');
+      $this->io()->title("Killing application");
+      $this->_exec('docker-compose kill');
 
       $this->setRunOtherCommand('local:rm');
       $start_command = 'local:start';
@@ -485,8 +479,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @aliases up
    */
   public function up() {
-    $this->io()->newLine();
-    $this->io()->title("Starting docker containers");
+    $this->io()->title("Starting local containers");
     return $this->taskDockerComposeUp()
       ->detachedMode()
       ->removeOrphans()

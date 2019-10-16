@@ -22,8 +22,12 @@ trait ScssCompileTrait {
    */
   protected function compileScss($source_path, $target_path) {
     $cmd = "$this->scssCompiler lint -f crunched $source_path > $target_path";
-    $return_code = 0;
+
     system($cmd, $return_code);
+    if ($return_code != 0) {
+      throw new DockworkerException("Compile of $source_path to $target_path failed!");
+    }
+
     return $return_code;
   }
 
