@@ -28,9 +28,5 @@
   },
   "bin": [
     "bin/dockworker"
-  ],
-  "scripts": {
-    "dockworker-kubectl-init": "vendor/unb-libraries/dockworker/scripts/kubectl/init.sh",
-    "dockworker-trav-init": "vendor/unb-libraries/dockworker/scripts/travis/init.sh"
-  }
+  ]
 }
