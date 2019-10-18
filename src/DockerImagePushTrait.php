@@ -60,6 +60,7 @@ trait DockerImagePushTrait {
    * @throws \Exception
    */
   protected function pushToRepository($tag) {
+    $this->io()->title("Pushing {$this->dockerImageName}:$tag");
     return $this->taskExec('docker')
       ->printOutput(TRUE)
       ->arg('push')

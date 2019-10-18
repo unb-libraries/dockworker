@@ -38,6 +38,7 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
    * @dockerimage
    */
   public function buildImage($tag = NULL, array $opts = ['no-cache' => FALSE, 'cache-from' => '', 'no-allow-dirty' => FALSE]) {
+    $this->io()->title("Building {$this->dockerImageName}:$tag");
     if (!$this->gitRepoIsClean($this->repoRoot)) {
       if ($opts['no-allow-dirty']) {
         throw new DockworkerException(sprintf(self::ERROR_UNCLEAN_REPO));
