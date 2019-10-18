@@ -47,7 +47,9 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
         throw new DockworkerException(sprintf(self::ERROR_UNCLEAN_REPO));
       }
     }
+
     $build = $this->taskDockerBuild($this->repoRoot);
+
     if (!empty($tag)) {
       $build->tag("{$this->dockerImageName}:$tag");
     }

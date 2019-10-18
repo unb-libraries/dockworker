@@ -23,7 +23,8 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   use ContainerAwareTrait;
   use LoggerAwareTrait;
 
-  const ERROR_INSTANCE_NAME_UNSET = 'The instance.name value has not been set in %s';
+  const ERROR_CONFIG_VERSION = 'Invalid configuration version in %s. Config version must be at least 3.0';
+  const ERROR_INSTANCE_NAME_UNSET = 'The application name value has not been set in %s';
   const ERROR_PROJECT_PREFIX_UNSET = 'The project_prefix variable has not been set in %s';
   const ERROR_UPSTREAM_IMAGE_UNSET = 'The upstream_image variable has not been set in %s';
 
@@ -81,10 +82,23 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    * @throws \Dockworker\DockworkerException
    */
   public function setInstanceName() {
-    $this->instanceName = Robo::Config()->get('dockworker.instance.name');
+    $this->instanceName = Robo::Config()->get('dockworker.application.name');
 
     if (empty($this->instanceName)) {
       throw new DockworkerException(sprintf(self::ERROR_INSTANCE_NAME_UNSET, $this->configFile));
+    }
+  }
+
+  /**
+   * Ensure config and binary versions match.
+   *
+   * @hook init
+   * @throws \Dockworker\DockworkerException
+   */
+  public function checkConfigVersion() {
+    $version = Robo::Config()->get('dockworker.version');
+    if (version_compare($version, '3') <= 0) {
+      throw new DockworkerException(sprintf(self::ERROR_CONFIG_VERSION, $this->configFile));
     }
   }
 
@@ -97,7 +111,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    *   The project prefix.
    */
   public function getProjectPrefix() {
-    $project_prefix = Robo::Config()->get('dockworker.instance.project_prefix');
+    $project_prefix = Robo::Config()->get('dockworker.application.project_prefix');
     if (empty($project_prefix)) {
       throw new DockworkerException(sprintf(self::ERROR_PROJECT_PREFIX_UNSET, $this->configFile));
     }
@@ -113,7 +127,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    *   An array of upstream images configured for the repository.
    */
   public function getUpstreamImages() {
-    $upstream_images = Robo::Config()->get('dockworker.instance.upstream_image');
+    $upstream_images = Robo::Config()->get('dockworker.application.upstream_images');
     if (empty($upstream_images)) {
       throw new DockworkerException(sprintf(self::ERROR_UPSTREAM_IMAGE_UNSET, $this->configFile));
     }

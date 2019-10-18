@@ -72,15 +72,20 @@ class DockworkerDockerImagePushCommands extends DockworkerDockerImageBuildComman
    * @option string $cache-from
    *   The image to cache the build from.
    *
-   * @command image:build-push-deploy-env
+   * @command image:deploy
    * @throws \Exception
    *
    * @dockerimage
    * @dockerpush
    */
   public function buildPushDeployEnv($env) {
-    $timestamp = date('YmdHis');
-    $this->buildPushEnv($env, $timestamp);
+    if ($this->environmentIsDeployable($env)) {
+      $timestamp = date('YmdHis');
+      $this->buildPushEnv($env, $timestamp);
+    }
+    else {
+      $this->say("Skipping deployment for environment [$env].");
+    }
   }
 
   protected function buildPushEnv($env, $timestamp) {

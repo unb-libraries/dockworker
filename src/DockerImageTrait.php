@@ -25,7 +25,7 @@ trait DockerImageTrait {
    * @throws \Exception
    */
   public function setImageName() {
-    $name_key = 'dockworker.deployment.image.name';
+    $name_key = 'dockworker.application.deployment.image.name';
     $this->dockerImageName = Robo::Config()->get($name_key);
     if (empty($this->dockerImageName)) {
       throw new DockworkerException("The docker repository image name has not been defined in dockworker.yml [$name_key]");

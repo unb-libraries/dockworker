@@ -27,7 +27,7 @@ trait DockerImagePushTrait {
    * @throws \Exception
    */
   public function setImageRepository() {
-    $repository_key = 'dockworker.deployment.repository';
+    $repository_key = 'dockworker.application.deployment.repository';
     $this->dockerImageRepo = Robo::Config()->get($repository_key);
     if (empty($this->dockerImageRepo)) {
       throw new DockworkerException("The docker image repository has not been defined in dockworker.yml [$repository_key]");
@@ -65,6 +65,15 @@ trait DockerImagePushTrait {
       ->arg('push')
       ->arg($this->dockerImageName . ":$tag")
       ->run();
+  }
+
+  protected function environmentIsDeployable($env) {
+    $deployable_environments = Robo::Config()
+      ->get('dockworker.application.deployment.environments');
+    if (!in_array($env, $deployable_environments)) {
+      return FALSE;
+    }
+    return TRUE;
   }
 
 }

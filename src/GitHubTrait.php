@@ -31,9 +31,9 @@ trait GitHubTrait {
    * @throws \Dockworker\DockworkerException
    */
   public function setGitHubRepo() {
-    $this->gitHubRepo = Robo::Config()->get('dockworker.instance.github.repo');
+    $this->gitHubRepo = Robo::Config()->get('dockworker.application.github.repo');
     if (empty($this->gitHubRepo)) {
-      throw new DockworkerException('The GitHub repo value (dockworker.instance.github.repo) has not been set in the config file');
+      throw new DockworkerException('The GitHub repo value (dockworker.application.github.repo) has not been set in the config file');
     }
   }
 
@@ -44,9 +44,9 @@ trait GitHubTrait {
    * @throws \Dockworker\DockworkerException
    */
   public function setGitHubOwner() {
-    $this->gitHubOwner = Robo::Config()->get('dockworker.instance.github.owner');
+    $this->gitHubOwner = Robo::Config()->get('dockworker.application.github.owner');
     if (empty($this->gitHubOwner)) {
-      throw new DockworkerException('The GitHub owner value (dockworker.instance.github.owner) has not been set in the config file');
+      throw new DockworkerException('The GitHub owner value (dockworker.application.github.owner) has not been set in the config file');
     }
   }
 
