@@ -79,10 +79,13 @@ class DockworkerDockerImagePushCommands extends DockworkerDockerImageBuildComman
    * @dockerpush
    */
   public function buildPushDeployEnv($env) {
-
     if ($this->environmentIsDeployable($env)) {
       $timestamp = date('YmdHis');
       $this->buildPushEnv($env, $timestamp);
+      $this->setRunOtherCommand("deployment:image:update {$this->dockerImageName} $env-$timestamp $env");
+      $this->setRunOtherCommand("deployment:status $env");
+      $this->setRunOtherCommand("deployment:logs:check $env");
+      $this->setRunOtherCommand("deployment:logs");
     }
     else {
       $this->say("Skipping deployment for environment [$env].");
