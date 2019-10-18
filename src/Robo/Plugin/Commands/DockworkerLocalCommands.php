@@ -420,7 +420,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     $this->_exec('docker-compose kill');
     $this->setRunOtherCommand('local:rm');
     $this->setRunOtherCommand('local:start --no-cache --no-tail-logs');
-    $this->setRunOtherCommand('test:all');
+    $this->setRunOtherCommand('tests:all');
   }
 
   /**
