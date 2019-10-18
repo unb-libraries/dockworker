@@ -8,7 +8,7 @@ sudo mv ./kubectl /usr/local/bin/kubectl
 # Copy Config
 mkdir ${HOME}/.kube
 KUBECONFIG_FILE="${HOME}/.kube/config"
-cp vendor/unb-libraries/cargodock/data/kubectl/config ${KUBECONFIG_FILE}
+cp vendor/unb-libraries/dockworker/data/kubectl/config ${KUBECONFIG_FILE}
 
 # Replace tokens in config
 sed -i -e 's|KUBE_CA_CERT|'"${KUBE_CA_CERT}"'|g' ${KUBECONFIG_FILE}
