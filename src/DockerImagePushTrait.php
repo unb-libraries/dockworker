@@ -68,13 +68,27 @@ trait DockerImagePushTrait {
       ->run();
   }
 
+  /**
+   * Determines if an environment is marked as deployable.
+   *
+   * @throws \Exception
+   */
   protected function environmentIsDeployable($env) {
-    $deployable_environments = Robo::Config()
-      ->get('dockworker.application.deployment.environments');
+    $deployable_environments = $this->getDeployableEnvironments();
     if (!in_array($env, $deployable_environments)) {
       return FALSE;
     }
     return TRUE;
+  }
+
+  /**
+   * Retrieves the environments that are marked as deployable.
+   *
+   * @throws \Exception
+   */
+  protected function getDeployableEnvironments() {
+    return Robo::Config()
+      ->get('dockworker.application.deployment.environments');
   }
 
 }
