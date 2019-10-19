@@ -39,6 +39,18 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
+   * Gets the k8s deployment name from the site URI.
+   *
+   * @param string $uri
+   *   The uri to convert to deployment name.
+   *
+   * @return mixed
+   */
+  private static function getKubernetesDeploymentNameFromUri($uri) {
+    return str_replace('.', '-', $uri);
+  }
+
+  /**
    * Updates the k8s deployment docker image.
    *
    * @param string $image
@@ -66,6 +78,35 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
       ],
       TRUE
     );
+  }
+
+  /**
+   * Displays the k8s deployment logs.
+   *
+   * @param string $env
+   *   The environment to obtain the logs from.
+   *
+   * @command deployment:logs
+   * @throws \Exception
+   *
+   * @kubectl
+   */
+  public function printDeploymentLogs($env) {
+    $logs = $this->getDeploymentLogs($env);
+    $pod_counter = 0;
+
+    if (!empty($logs)) {
+      $num_pods = count($logs);
+      $this->io()->title("$num_pods pods found in $env environment.");
+      foreach ($logs as $pod_id => $log) {
+        $pod_counter++;
+        $this->io()->title("Logs for pod #$pod_counter [$env.$pod_id]");
+        $this->io()->writeln($log);
+      }
+    }
+    else {
+      $this->io()->title("No pods found. No logs!");
+    }
   }
 
   /**
@@ -105,35 +146,6 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Displays the k8s deployment logs.
-   *
-   * @param string $env
-   *   The environment to obtain the logs from.
-   *
-   * @command deployment:logs
-   * @throws \Exception
-   *
-   * @kubectl
-   */
-  public function printDeploymentLogs($env) {
-    $logs = $this->getDeploymentLogs($env);
-    $pod_counter = 0;
-
-    if (!empty($logs)) {
-      $num_pods = count($logs);
-      $this->io()->title("$num_pods pods found in $env environment.");
-      foreach ($logs as $pod_id => $log) {
-        $pod_counter++;
-        $this->io()->title("Logs for pod #$pod_counter [$env.$pod_id]");
-        $this->io()->writeln($log);
-      }
-    }
-    else {
-      $this->io()->title("No pods found. No logs!");
-    }
-  }
-
-  /**
    * Checks the k8s deployment logs for errors.
    *
    * @param string $env
@@ -163,18 +175,6 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
     }
     $this->auditStartupLogs();
     $this->say(sprintf("No errors found, %s pods deployed.", count($logs)));
-  }
-
-  /**
-   * Gets the k8s deployment name from the site URI.
-   *
-   * @param string $uri
-   *   The uri to convert to deployment name.
-   *
-   * @return mixed
-   */
-  private static function getKubernetesDeploymentNameFromUri($uri) {
-    return str_replace('.', '-', $uri);
   }
 
 }

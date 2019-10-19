@@ -9,6 +9,15 @@ use Dockworker\DockworkerException;
  */
 trait GitRepoTrait {
 
+  /**
+   * Determines if a git repository is clean.
+   *
+   * @param $path
+   *   The path to the git repository.
+   *
+   * @return bool
+   *   TRUE if the repository is clean, FALSE otherwise.
+   */
   private function gitRepoIsClean($path) {
     $repo_status = $this->taskExec('git')
       ->dir($path)

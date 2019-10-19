@@ -347,6 +347,36 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
+   * Parses a log to determine the deployment status of the local application.
+   *
+   * @param string $log
+   *   The raw log from the local application.
+   *
+   * @return string[]
+   *   An array containing two items. The first item is a percentage deployment
+   *   value, the second the current pre-init.d step that is running.
+   */
+  protected function parseLocalLogForStatus($log) {
+    if (strpos($log, '99_z_notify_user_URI') !== FALSE) {
+      return [
+        '100',
+        'Complete',
+      ];
+    }
+    preg_match_all('/pre-init\.d - processing \/scripts\/pre-init.d\/([0-9]{1,2})_(.*)/', $log, $matches);
+    if (!empty($matches[1])) {
+      return [
+        end($matches[1]),
+        end($matches[2]),
+      ];
+    }
+    return [
+      '0',
+      'Starting',
+    ];
+  }
+
+  /**
    * Checks the local application logs for errors.
    *
    * @param string[] $opts
@@ -377,37 +407,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     }
     $this->auditStartupLogs();
     $this->say("No errors found in logs.");
-  }
-
-
-  /**
-   * Parses a log to determine the deployment status of the local application.
-   *
-   * @param string $log
-   *   The raw log from the local application.
-   *
-   * @return string[]
-   *   An array containing two items. The first item is a percentage deployment
-   *   value, the second the current pre-init.d step that is running.
-   */
-  protected function parseLocalLogForStatus($log) {
-    if (strpos($log, '99_z_notify_user_URI') !== FALSE) {
-      return [
-        '100',
-        'Complete',
-      ];
-    }
-    preg_match_all('/pre-init\.d - processing \/scripts\/pre-init.d\/([0-9]{1,2})_(.*)/', $log, $matches);
-    if (!empty($matches[1])) {
-      return [
-        end($matches[1]),
-        end($matches[2]),
-      ];
-    }
-    return [
-      '0',
-      'Starting',
-    ];
   }
 
   /**

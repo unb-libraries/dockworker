@@ -29,6 +29,8 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
    *   Do not use any cached steps in the build.
    * @option string $cache-from
    *   The image to cache the build from.
+   * @option string $no-allow-dirty
+   *   Do not build if the repository is dirty.
    *
    * @command image:build
    * @throws \Exception
@@ -39,6 +41,8 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
    */
   public function buildImage($tag = NULL, array $opts = ['no-cache' => FALSE, 'cache-from' => '', 'no-allow-dirty' => FALSE]) {
     $this->io()->title("Building {$this->dockerImageName}:$tag");
+
+    // Handle dirty git repositories.
     if (!$this->gitRepoIsClean($this->repoRoot)) {
       if ($opts['no-allow-dirty']) {
         throw new DockworkerException(sprintf(self::ERROR_UNCLEAN_REPO));
@@ -51,6 +55,7 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
 
     $build = $this->taskDockerBuild($this->repoRoot);
 
+    // Determine the tag to use.
     if (!empty($tag)) {
       $build->tag("{$this->dockerImageName}:$tag");
     }
@@ -58,10 +63,12 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
       $build->tag("{$this->dockerImageName}:latest");
     }
 
+    // Build with no caching.
     if ($opts['no-cache']) {
       $build->arg('--no-cache');
     }
 
+    // Set the image to cache from.
     if (!empty($opts['cache-from'])) {
       $build->arg('--cache-from');
       $build->arg($opts['cache-from']);

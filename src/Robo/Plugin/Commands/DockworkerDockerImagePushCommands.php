@@ -62,7 +62,7 @@ class DockworkerDockerImagePushCommands extends DockworkerDockerImageBuildComman
   }
 
   /**
-   * Builds the docker image, tags it with a current timestamp, and deploys it.
+   * Builds the docker image, tags it, pushes to its repo, and deploys it.
    *
    * @param string $env
    *   The environment to target.
@@ -92,9 +92,23 @@ class DockworkerDockerImagePushCommands extends DockworkerDockerImageBuildComman
     }
   }
 
+  /**
+   * Builds the docker image, tags it with a current timestamp, and pushes it.
+   *
+   * This method is intended to be used as part of a build-push-deploy command,
+   * usually in travis. In the vein, this cannot be called from a dirty git
+   * repository.
+   *
+   * @param string $env
+   *   The environment to target.
+   * @param string $timestamp
+   *   The timestamp string to use when tagging the image.
+   *
+   * @throws \Dockworker\DockworkerException
+   */
   protected function buildPushEnv($env, $timestamp) {
-    $this->setRunOtherCommand("image:build $env");
-    $this->setRunOtherCommand("image:build $env-$timestamp");
+    $this->setRunOtherCommand("image:build $env --no-allow-dirty");
+    $this->setRunOtherCommand("image:build $env-$timestamp --no-allow-dirty");
     $this->pushToRepository($env);
     $this->pushToRepository("$env-$timestamp");
   }
