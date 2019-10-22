@@ -8,6 +8,7 @@ use Dockworker\DockworkerException;
 use Dockworker\DockworkerLogCheckerTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 use Droath\RoboDockerCompose\Task\loadTasks;
+use Robo\Robo;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 /**
@@ -16,14 +17,17 @@ use Symfony\Component\Console\Helper\ProgressBar;
 class DockworkerLocalCommands extends DockworkerCommands implements CustomEventAwareInterface {
 
   const ERROR_BUILDING_IMAGE = 'Error reported building image!';
-  const ERROR_PULLING_UPSTREAM_IMAGE = 'Error pulling upstream image %s';
-  const ERROR_UPDATING_HOSTFILE = 'Error updating hostfile!';
   const ERROR_CONTAINER_MISSING = 'The %s local deployment does not appear to exist.';
   const ERROR_CONTAINER_STOPPED = 'The %s local deployment appears to be stopped.';
+  const ERROR_FINISH_MARKER_UNSET = 'The local finish_marker is unset in dockworker.yml';
+  const ERROR_PULLING_UPSTREAM_IMAGE = 'Error pulling upstream image %s';
+  const ERROR_UPDATING_HOSTFILE = 'Error updating hostfile!';
 
   use CustomEventAwareTrait;
   use DockworkerLogCheckerTrait;
   use loadTasks;
+
+  private $localFinishMarker;
 
   /**
    * Removes unused (orphaned) docker images, volumes and networks.
@@ -307,10 +311,11 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     $progressBar->setProgress(0);
     $progressBar->start();
 
+    $this->setLocalFinishMarker();
     while ($status < 100 and ($counter < $max)) {
       $counter++;
       sleep($delay);
-      list($status, $description) = $this->getLocalDeploymentStatus();
+      list($status, $description) = $this->getLocalDeploymentStatus($this->localFinishMarker);
       if ($status < 100) {
         $progressBar->setMessage($description);
         $progressBar->setProgress($status);
@@ -328,6 +333,19 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
+   * Get the local instance's finish marker from config.
+   *
+   * @throws \Dockworker\DockworkerException
+   */
+  private function setLocalFinishMarker() {
+    $this->localFinishMarker = Robo::Config()->get('dockworker.application.finish_marker');
+
+    if (empty($this->localFinishMarker)) {
+      throw new DockworkerException(self::ERROR_FINISH_MARKER_UNSET);
+    }
+  }
+
+  /**
    * Gets the local application deployment status.
    *
    * This approximates the local application deployment status by checking the
@@ -339,11 +357,11 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *   An array containing two items. The first item is a percentage deployment
    *   value, the second the current pre-init.d step that is running.
    */
-  protected function getLocalDeploymentStatus() {
+  protected function getLocalDeploymentStatus($finish_marker) {
     $this->getlocalRunning();
     $result = $this->getLocalLogs([]);
     $logs = $result->getMessage();
-    return $this->parseLocalLogForStatus($logs);
+    return $this->parseLocalLogForStatus($logs, $finish_marker);
   }
 
   /**
@@ -356,8 +374,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *   An array containing two items. The first item is a percentage deployment
    *   value, the second the current pre-init.d step that is running.
    */
-  protected function parseLocalLogForStatus($log) {
-    if (strpos($log, '99_z_notify_user_URI') !== FALSE) {
+  protected function parseLocalLogForStatus($log, $finish_marker) {
+    if (strpos($log, $finish_marker) !== FALSE) {
       return [
         '100',
         'Complete',
