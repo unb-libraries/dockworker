@@ -29,8 +29,8 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
    *   Do not use any cached steps in the build.
    * @option string $cache-from
    *   The image to cache the build from.
-   * @option string $no-allow-dirty
-   *   Do not build if the repository is dirty.
+   * @option bool $allow-dirty
+   *   Skips the warning prompt if the git repository is dirty.
    *
    * @command image:build
    * @throws \Exception
@@ -39,14 +39,9 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
    *
    * @dockerimage
    */
-  public function buildImage($tag = NULL, array $opts = ['no-cache' => FALSE, 'cache-from' => '', 'no-allow-dirty' => FALSE]) {
+  public function buildImage($tag = NULL, array $opts = ['no-cache' => FALSE, 'cache-from' => '', 'allow-dirty' => FALSE]) {
     $this->io()->title("Building {$this->dockerImageName}:$tag");
-
-    // Handle dirty git repositories.
-    if (!$this->gitRepoIsClean($this->repoRoot)) {
-      if ($opts['no-allow-dirty']) {
-        throw new DockworkerException(sprintf(self::ERROR_UNCLEAN_REPO));
-      }
+    if (!$this->gitRepoIsClean($this->repoRoot) && !$opts['allow-dirty']) {
       $continue = $this->confirm('Warning: You are attempting to build an image in a dirty git repo. Would you like to proceed?');
       if (!$continue) {
         throw new DockworkerException(sprintf(self::ERROR_UNCLEAN_REPO));
