@@ -17,8 +17,6 @@ trait ScssCompileTrait {
    * @param string $target_path
    *   The CSS target path.
    *
-   * @throws \Dockworker\DockworkerException
-   *
    * @return int
    *   The return code of the compile command.
    */
