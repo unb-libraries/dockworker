@@ -12,11 +12,11 @@ trait GitRepoTrait {
   /**
    * Determines if a git repository is clean.
    *
-   * @param $path
+   * @param string $path
    *   The path to the git repository.
    *
    * @return bool
-   *   TRUE if the repository is clean, FALSE otherwise.
+   *   TRUE if the repository is clean. FALSE otherwise.
    */
   private function gitRepoIsClean($path) {
     $repo_status = $this->taskExec('git')
