@@ -17,6 +17,7 @@ trait DockerImageTrait {
    */
   protected $dockerImageName;
 
+
   /**
    * Reads the deployment repository image name from config.
    *

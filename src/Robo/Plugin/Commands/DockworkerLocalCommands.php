@@ -6,9 +6,9 @@ use Consolidation\AnnotatedCommand\Events\CustomEventAwareInterface;
 use Consolidation\AnnotatedCommand\Events\CustomEventAwareTrait;
 use Dockworker\DockworkerException;
 use Dockworker\DockworkerLogCheckerTrait;
+use Dockworker\GitRepoTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 use Droath\RoboDockerCompose\Task\loadTasks;
-use Robo\Robo;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 /**
@@ -17,14 +17,14 @@ use Symfony\Component\Console\Helper\ProgressBar;
 class DockworkerLocalCommands extends DockworkerCommands implements CustomEventAwareInterface {
 
   const ERROR_BUILDING_IMAGE = 'Error reported building image!';
-  const ERROR_CONTAINER_MISSING = 'The %s local deployment does not appear to exist.';
-  const ERROR_CONTAINER_STOPPED = 'The %s local deployment appears to be stopped.';
-  const ERROR_FINISH_MARKER_UNSET = 'The local finish_marker is unset in dockworker.yml';
   const ERROR_PULLING_UPSTREAM_IMAGE = 'Error pulling upstream image %s';
   const ERROR_UPDATING_HOSTFILE = 'Error updating hostfile!';
+  const ERROR_CONTAINER_MISSING = 'The %s local deployment does not appear to exist.';
+  const ERROR_CONTAINER_STOPPED = 'The %s local deployment appears to be stopped.';
 
   use CustomEventAwareTrait;
   use DockworkerLogCheckerTrait;
+  use GitRepoTrait;
   use loadTasks;
 
   private $localFinishMarker;
@@ -166,7 +166,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @throws \Dockworker\DockworkerException
    */
   public function build(array $opts = ['no-cache' => FALSE]) {
-    // Build the theme.
+    $this->io()->title("Building application theme");
     $this->setRunOtherCommand('theme:build-all');
 
     if ($opts['no-cache']) {
@@ -175,6 +175,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     else {
       $command = 'docker-compose build';
     }
+
+    $this->io()->title("Building image");
     if (!$this->_exec($command)->wasSuccessful()) {
       throw new DockworkerException(
         self::ERROR_BUILDING_IMAGE
