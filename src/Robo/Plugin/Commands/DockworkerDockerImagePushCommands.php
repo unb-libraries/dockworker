@@ -62,7 +62,7 @@ class DockworkerDockerImagePushCommands extends DockworkerDockerImageBuildComman
   }
 
   /**
-   * Builds the docker image, tags it, pushes to its repo, and deploys it.
+   * Builds the docker image, tags it with a current timestamp, and deploys it.
    *
    * @param string $env
    *   The environment to target.
