@@ -96,25 +96,4 @@ trait RecursivePathFileOperatorTrait {
     return NULL;
   }
 
-  /**
-   * Filters an array of files, removing any that do not match given extensions.
-   *
-   * @param string[] $files
-   *   The array of files to filter.
-   * @param string[] $extension_filter
-   *   An array of extensions to keep in the file list.
-   *
-   * @return string[]
-   *   The filtered array of files.
-   */
-  protected static function filterArrayFilesByExtension(array $files, $extension_filter = []) {
-    foreach ($files as $file_key => $filename) {
-      $fileExt = pathinfo($filename, PATHINFO_EXTENSION);
-      if (!empty($extension_filter) && !in_array($fileExt, $extension_filter)) {
-        unset($files[$file_key]);
-      }
-    }
-    return $files;
-  }
-
 }
