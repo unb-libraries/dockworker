@@ -127,7 +127,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
     $logs = [];
     if (!empty($this->kubernetesCurPods)) {
       foreach ($this->kubernetesCurPods as $pod_id) {
-        $result = $this->kubectlExec(
+        $logs[$pod_id] = $this->kubectlExec(
           'logs',
           [
             $pod_id,
@@ -136,7 +136,6 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
           ],
           FALSE
         );
-        $logs[$pod_id] = $result->getMessage();
       }
     }
     else {

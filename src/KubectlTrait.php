@@ -36,10 +36,7 @@ trait KubectlTrait {
    * @throws \Dockworker\DockworkerException
    */
   public function checkKubeCtlConnection() {
-    exec($this->kubeCtlBin . ' api-resources', $output, $return_code);
-    if ($return_code != 0) {
-      throw new DockworkerException("kubectl connection to the server failed.");
-    }
+    $this->kubectlExec('api-resources', [], FALSE);
   }
 
   /**
@@ -52,22 +49,35 @@ trait KubectlTrait {
    * @param bool $print_output
    *   TRUE if the kubectl command should output results. False otherwise.
    *
-   * @return \Robo\ResultData
-   *   The result of the execution.
+   * @return string
+   *   The output of the execution.
    */
   private function kubectlExec($command, $args = [], $print_output = TRUE) {
-    $kube = $this->taskExec($this->kubeCtlBin)
-      ->printOutput($print_output)
-      ->arg($command);
+    $o = NULL;
+    $r = NULL;
+    $args_string = implode(' ', $args);
+    $max_retries = 5;
+    $try_count = 0;
 
-    if (!empty($args)) {
-      foreach ($args as $arg) {
-        $kube->arg($arg);
+    while (TRUE) {
+      $try_count++;
+      exec("{$this->kubeCtlBin} $command $args_string 2>&1", $o, $r );
+      if ($r == 0) {
+        if ($print_output) {
+           $this->say(implode("\n", $o));
+        }
+        break;
+      }
+      else {
+        if (isset($o[1]) && strpos($o[1], 'i/o timeout') !== FALSE && $try_count < $max_retries) {
+        }
+        else {
+          throw new DockworkerException("kubectl connection to the server failed.");
+        }
       }
     }
-
-    $this->say(sprintf('Executing kubectl %s...', $command));
-    return $kube->run();
+    return implode("\n", $o);
   }
 
 }
+
