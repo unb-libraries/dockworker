@@ -105,8 +105,8 @@ class DockworkerDockerImagePushCommands extends DockworkerDockerImageBuildComman
    * @throws \Dockworker\DockworkerException
    */
   protected function buildPushEnv($env, $timestamp) {
-    $this->setRunOtherCommand("image:build $env --no-allow-dirty");
-    $this->setRunOtherCommand("image:build $env-$timestamp --no-allow-dirty");
+    $this->setRunOtherCommand("image:build $env");
+    $this->setRunOtherCommand("image:build $env-$timestamp");
     $this->pushToRepository($env);
     $this->pushToRepository("$env-$timestamp");
   }
