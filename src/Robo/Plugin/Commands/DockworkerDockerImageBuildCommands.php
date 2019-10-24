@@ -49,8 +49,8 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
     }
 
     $build = $this->taskDockerBuild($this->repoRoot);
+    $this->addMetadataBuildArgs($build);
 
-    // Determine the tag to use.
     if (!empty($tag)) {
       $build->tag("{$this->dockerImageName}:$tag");
     }
@@ -58,18 +58,40 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
       $build->tag("{$this->dockerImageName}:latest");
     }
 
-    // Build with no caching.
     if ($opts['no-cache']) {
       $build->arg('--no-cache');
     }
 
-    // Set the image to cache from.
     if (!empty($opts['cache-from'])) {
       $build->arg('--cache-from');
       $build->arg($opts['cache-from']);
     }
 
     return $build->run();
+  }
+
+  /**
+   * Add build arguments to populate metadata for image.
+   *
+   * @param \Robo\Task\Docker\Build $build
+   *   The docker build task.
+   *
+   * @throws \Exception
+   */
+  private function addMetadataBuildArgs($build) {
+    $arguments = [
+      'BUILD_DATE' => date("c"),
+      'VERSION' => $this->gitRepoLatestCommitHash($this->repoRoot),
+      'VCS_REF' => $this->gitRepoCurrentBranch($this->repoRoot),
+    ];
+
+    if (!$this->gitRepoIsClean($this->repoRoot)) {
+      $arguments['VERSION'] .= '-dirty';
+    }
+
+    foreach ($arguments as $arg_name => $argument) {
+      $build->arg('--build-arg')->arg("$arg_name=$argument");
+    }
   }
 
 }
