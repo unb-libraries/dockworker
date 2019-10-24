@@ -9,6 +9,7 @@ use Dockworker\DockworkerLogCheckerTrait;
 use Dockworker\GitRepoTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 use Droath\RoboDockerCompose\Task\loadTasks;
+use Robo\Robo;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 /**
