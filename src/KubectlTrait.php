@@ -64,12 +64,13 @@ trait KubectlTrait {
       exec("{$this->kubeCtlBin} $command $args_string 2>&1", $o, $r );
       if ($r == 0) {
         if ($print_output) {
-           $this->say(implode("\n", $o));
+         $this->say(implode("\n", $o));
         }
         break;
       }
       else {
         if (isset($o[1]) && strpos($o[1], 'i/o timeout') !== FALSE && $try_count < $max_retries) {
+          $this->io()->text("Connection to kubectl server timed out. Retrying... [$try_count/$max_retries]");
         }
         else {
           throw new DockworkerException("kubectl connection to the server failed.");
