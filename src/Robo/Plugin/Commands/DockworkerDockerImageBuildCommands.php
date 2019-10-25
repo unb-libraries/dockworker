@@ -79,10 +79,11 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
    * @throws \Exception
    */
   private function addMetadataBuildArgs($build) {
+    $commit_hash = $this->gitRepoLatestCommitHash($this->repoRoot);
     $arguments = [
       'BUILD_DATE' => date("c"),
-      'VERSION' => $this->gitRepoLatestCommitHash($this->repoRoot),
-      'VCS_REF' => $this->gitRepoCurrentBranch($this->repoRoot),
+      'VERSION' => $commit_hash,
+      'VCS_REF' => $commit_hash,
     ];
 
     if (!$this->gitRepoIsClean($this->repoRoot)) {
