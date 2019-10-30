@@ -434,6 +434,10 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     catch (DockworkerException $e) {
       $this->printLocalLogs();
       $this->printStartupLogErrors();
+      if (!empty(getenv('TRAVIS'))){
+        $this->io()->writeln('Sleeping to allow Travis io to flush...');
+        sleep(30);
+      }
       throw new DockworkerException(sprintf("%s errors found in local startup logs!", count($this->logErrors)));
     }
   }
