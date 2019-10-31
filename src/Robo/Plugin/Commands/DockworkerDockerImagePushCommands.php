@@ -79,15 +79,17 @@ class DockworkerDockerImagePushCommands extends DockworkerDockerImageBuildComman
    * @dockerpush
    */
   public function buildPushDeployEnv($env) {
-    if ($this->environmentIsDeployable($env)) {
-      $timestamp = date('YmdHis');
-      $this->buildPushEnv($env, $timestamp);
+    $this->pushCommandShouldContinue($env);
+    $timestamp = date('YmdHis');
+    $this->buildPushEnv($env, $timestamp);
+
+    if ($this->dockerImageTagDateStamp) {
       $this->setRunOtherCommand("deployment:image:update {$this->dockerImageName} $env-$timestamp $env");
-      $this->setRunOtherCommand("deployment:status $env");
     }
     else {
-      $this->say("Skipping deployment for environment [$env]. Deployable environments: " . implode(',', $this->getDeployableEnvironments()));
+      $this->setRunOtherCommand("deployment:image:update {$this->dockerImageName} $env $env");
     }
+    $this->setRunOtherCommand("deployment:status $env");
   }
 
   /**
@@ -105,10 +107,29 @@ class DockworkerDockerImagePushCommands extends DockworkerDockerImageBuildComman
    * @throws \Dockworker\DockworkerException
    */
   protected function buildPushEnv($env, $timestamp) {
+    $this->pushCommandShouldContinue($env);
     $this->setRunOtherCommand("image:build $env");
-    $this->setRunOtherCommand("image:build $env-$timestamp");
     $this->pushToRepository($env);
-    $this->pushToRepository("$env-$timestamp");
+
+    if ($this->dockerImageTagDateStamp) {
+      $this->setRunOtherCommand("image:build $env-$timestamp");
+      $this->pushToRepository("$env-$timestamp");
+    }
+  }
+
+  /**
+   * Determines if a push command should continue.
+   *
+   * @throws \Exception
+   */
+  protected function pushCommandShouldContinue($env) {
+    if ($this->environmentIsPushable($env)) {
+      return;
+    }
+    else {
+      $this->say("Skipping image push for environment [$env]. Pushable environments: " . implode(',', $this->getPushableEnvironments()));
+      exit(0);
+    }
   }
 
 }

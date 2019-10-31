@@ -11,6 +11,13 @@ use Robo\Robo;
 trait DockerImageTrait {
 
   /**
+   * Should the image tag be datestamped?
+   *
+   * @var bool
+   */
+  protected $dockerImageTagDateStamp = TRUE;
+
+  /**
    * The image name.
    *
    * @var string
@@ -25,10 +32,24 @@ trait DockerImageTrait {
    * @throws \Exception
    */
   public function setImageName() {
-    $name_key = 'dockworker.application.deployment.image.name';
+    $name_key = 'dockworker.image.name';
     $this->dockerImageName = Robo::Config()->get($name_key);
     if (empty($this->dockerImageName)) {
       throw new DockworkerException("The docker repository image name has not been defined in dockworker.yml [$name_key]");
+    }
+  }
+
+  /**
+   * Reads the deployment repository image name from config.
+   *
+   * @hook pre-init @dockerimage
+   * @throws \Exception
+   */
+  public function setImageTagDatestamp() {
+    $date_tag_value = 'dockworker.image.date_tag_image';
+    $value = Robo::Config()->get($date_tag_value);
+    if (!empty($value) && $value == 'false') {
+      $this->dockerImageTagDateStamp = FALSE;
     }
   }
 

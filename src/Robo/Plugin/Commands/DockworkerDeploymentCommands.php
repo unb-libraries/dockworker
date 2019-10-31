@@ -5,6 +5,7 @@ namespace Dockworker\Robo\Plugin\Commands;
 use Dockworker\DockworkerLogCheckerTrait;
 use Dockworker\KubernetesPodTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
+use Robo\Robo;
 
 /**
  * Defines the commands used to interact with Kubernetes deployments.
@@ -25,6 +26,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @kubectl
    */
   public function getDeploymentRolloutStatus($env) {
+    $this->deploymentCommandShouldContinue($env);
     $this->kubectlExec(
       'rollout',
       [
@@ -65,6 +67,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @kubectl
    */
   public function setDeploymentImage($image, $tag, $env) {
+    $this->deploymentCommandShouldContinue($env);
     $deployment_name = $this->getKubernetesDeploymentNameFromUri($this->instanceName);
     $this->kubectlExec(
       'set',
@@ -92,6 +95,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @kubectl
    */
   public function printDeploymentLogs($env) {
+    $this->deploymentCommandShouldContinue($env);
     $logs = $this->getDeploymentLogs($env);
     $pod_counter = 0;
 
@@ -121,6 +125,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *   An array of logs, keyed by pod IDs.
    */
   private function getDeploymentLogs($env) {
+    $this->deploymentCommandShouldContinue($env);
     $this->kubernetesPodNamespace = $env;
     $this->kubernetesSetupPods($this->instanceName, "Logs");
 
@@ -156,6 +161,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @kubectl
    */
   public function checkDeploymentLogs($env) {
+    $this->deploymentCommandShouldContinue($env);
     $logs = $this->getDeploymentLogs($env);
 
     // Allow modules to implement custom handlers to add exceptions.
@@ -174,6 +180,44 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
     }
     $this->auditStartupLogs();
     $this->say(sprintf("No errors found, %s pods deployed.", count($logs)));
+  }
+
+  /**
+   * Determines if a deployment command should continue.
+   *
+   * @throws \Exception
+   */
+  protected function deploymentCommandShouldContinue($env) {
+    if ($this->environmentIsDeployable($env)) {
+      return;
+    }
+    else {
+      $this->say("Skipping deployment command for environment [$env]. Deployable environments: " . implode(',', $this->getDeployableEnvironments()));
+      exit(0);
+    }
+  }
+
+  /**
+   * Determines if an environment is marked as deployable.
+   *
+   * @throws \Exception
+   */
+  protected function environmentIsDeployable($env) {
+    $deployable_environments = $this->getDeployableEnvironments();
+    if (!in_array($env, $deployable_environments)) {
+      return FALSE;
+    }
+    return TRUE;
+  }
+
+  /**
+   * Retrieves the environments that are marked as deployable.
+   *
+   * @throws \Exception
+   */
+  protected function getDeployableEnvironments() {
+    return Robo::Config()
+      ->get('dockworker.deployment.environments');
   }
 
 }

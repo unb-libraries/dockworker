@@ -19,7 +19,7 @@ trait DockworkerLogCheckerTrait {
    *
    * @throws \Dockworker\DockworkerException
    */
-  protected function auditStartupLogs($print_errors = TRUE) {
+  protected function auditStartupLogs() {
     if ($this->logsHaveErrorExceptions()) {
       $this->printConsoleTable(
         "Ignored Errors",
@@ -29,19 +29,13 @@ trait DockworkerLogCheckerTrait {
     }
 
     if ($this->logsHaveErrors()) {
-      if ($print_errors) {
-        $this->printStartupLogErrors();
-      }
-      throw new DockworkerException(sprintf("%s errors found in startup logs!", count($this->logErrors)));
+      $this->printConsoleTable(
+        "Errors",
+        ['Pod ID', 'Line', 'Error', 'Info'],
+        $this->logErrors
+      );
+      throw new DockworkerException(sprintf("%s errors found in deployment logs!", count($this->logErrors)));
     }
-  }
-
-  protected function printStartupLogErrors() {
-    $this->printConsoleTable(
-      "Errors",
-      ['Pod ID', 'Line', 'Error', 'Info'],
-      $this->logErrors
-    );
   }
 
 }
