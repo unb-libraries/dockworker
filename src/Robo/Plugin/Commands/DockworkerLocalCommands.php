@@ -426,8 +426,20 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     else {
       $this->io()->title("No logs for local instance!");
     }
-    $this->auditStartupLogs();
-    $this->say("No errors found in logs.");
+    try {
+      $this->auditStartupLogs(FALSE);
+      $this->printStartupLogErrors();
+      $this->say("No errors found in logs.");
+    }
+    catch (DockworkerException $e) {
+      $this->printLocalLogs();
+      $this->printStartupLogErrors();
+      if (!empty(getenv('TRAVIS'))){
+        $this->io()->writeln('Sleeping to allow Travis io to flush...');
+        sleep(30);
+      }
+      throw new DockworkerException("Error(s) found in local startup logs!");
+    }
   }
 
   /**
