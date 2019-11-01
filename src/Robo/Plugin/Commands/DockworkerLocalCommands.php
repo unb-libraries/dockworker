@@ -428,7 +428,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     }
     try {
       $this->auditStartupLogs(FALSE);
-      $this->printStartupLogErrors();
       $this->say("No errors found in logs.");
     }
     catch (DockworkerException $e) {
