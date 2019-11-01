@@ -217,7 +217,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    */
   protected function getDeployableEnvironments() {
     return Robo::Config()
-      ->get('dockworker.deployment.environments');
+      ->get('dockworker.deployment.environments', []);
   }
 
 }

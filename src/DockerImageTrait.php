@@ -47,10 +47,7 @@ trait DockerImageTrait {
    */
   public function setImageTagDatestamp() {
     $date_tag_value = 'dockworker.image.date_tag_image';
-    $value = Robo::Config()->get($date_tag_value);
-    if (!empty($value) && $value == 'false') {
-      $this->dockerImageTagDateStamp = FALSE;
-    }
+    $this->dockerImageTagDateStamp = (bool) Robo::Config()->get($date_tag_value, TRUE);
   }
 
 }

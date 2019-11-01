@@ -88,7 +88,7 @@ trait DockerImagePushTrait {
    */
   protected function getPushableEnvironments() {
     return Robo::Config()
-    ->get('dockworker.image.push_branches');
+    ->get('dockworker.image.push_branches', []);
   }
 
 }
