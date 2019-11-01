@@ -204,7 +204,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    */
   protected function environmentIsDeployable($env) {
     $deployable_environments = $this->getDeployableEnvironments();
-    if (!in_array($env, $deployable_environments)) {
+    if (empty($deployable_environments) || !in_array($env, $deployable_environments)) {
       return FALSE;
     }
     return TRUE;

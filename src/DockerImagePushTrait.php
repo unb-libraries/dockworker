@@ -75,7 +75,7 @@ trait DockerImagePushTrait {
    */
   protected function environmentIsPushable($env) {
     $pushable_environments = $this->getPushableEnvironments();
-    if (!in_array($env, $pushable_environments)) {
+    if (empty($pushable_environments) || !in_array($env, $pushable_environments)) {
       return FALSE;
     }
     return TRUE;
