@@ -84,6 +84,31 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
+   * Updates the k8s deployment.
+   *
+   * @param string $file
+   *   The file to apply.
+   * @param string $env
+   *   The environment to update.
+   *
+   * @command deployment:apply
+   *
+   * @kubectl
+   */
+  public function applyDeploymentImage($file, $env) {
+    $this->kubectlExec(
+      'apply',
+      [
+        '-f',
+        $file,
+        '--namespace',
+        $env,
+      ],
+      TRUE
+    );
+  }
+
+  /**
    * Displays the k8s deployment logs.
    *
    * @param string $env

@@ -6,6 +6,7 @@ use Dockworker\DockerImagePushTrait;
 use Dockworker\DockerImageTrait;
 use Dockworker\DockworkerException;
 use Dockworker\Robo\Plugin\Commands\DockworkerDockerImageBuildCommands;
+use Robo\Robo;
 
 /**
  * Defines the commands used to push a docker image to a repository.
@@ -84,11 +85,12 @@ class DockworkerDockerImagePushCommands extends DockworkerDockerImageBuildComman
     $this->buildPushEnv($env, $timestamp);
 
     if ($this->dockerImageTagDateStamp) {
-      $this->setRunOtherCommand("deployment:image:update {$this->dockerImageName} $env-$timestamp $env");
+      $image_name = "{$this->dockerImageName}:$env-$timestamp";
     }
     else {
-      $this->setRunOtherCommand("deployment:image:update {$this->dockerImageName} $env $env");
+      $image_name = "{$this->dockerImageName}:$env";
     }
+    $this->applyKubeDeploymentUpdate($env, $image_name);
     $this->setRunOtherCommand("deployment:status $env");
   }
 
@@ -130,6 +132,71 @@ class DockworkerDockerImagePushCommands extends DockworkerDockerImageBuildComman
       $this->say("Skipping image push for environment [$env]. Pushable environments: " . implode(',', $this->getPushableEnvironments()));
       exit(0);
     }
+  }
+
+  /**
+   * Tokenize the k8s deployment YAML and update the k8s deployment.
+   *
+   * @param string $env
+   *   The environment to target.
+   * @param string $image
+   *   The image to update the deployment with.
+   *
+   * @throws \Dockworker\DockworkerException
+   */
+  protected function applyKubeDeploymentUpdate($env, $image) {
+    if ($this->environmentIsDeployable($env)) {
+      $deployment_file = $this->getTempKubeDeploymentFile($env, $image);
+      $this->setRunOtherCommand("deployment:apply $deployment_file $env");
+    }
+    else {
+      $this->say("Skipping deployment for environment [$env]. Deployable environments: " . implode(',', $this->getDeployableEnvironments()));
+    }
+  }
+
+  /**
+   * Tokenize the k8s deployment YAML.
+   *
+   * @param string $env
+   *   The environment to target.
+   * @param string $image
+   *   The image to update the deployment with.
+   *
+   * @throws \Dockworker\DockworkerException
+   */
+  protected function getTempKubeDeploymentFile($env, $image) {
+    $deployment_file = "{$this->repoRoot}/deployment/k8s/$env/deployment.yaml";
+    if (!file_exists($deployment_file)) {
+      throw new DockworkerException("Cannot find deployment file [$deployment_file]");
+    }
+    $tmp_yaml = tempnam(sys_get_temp_dir(), 'prefix') . '.yaml';
+    $tokenized_deployment_yaml = file_get_contents($deployment_file);
+    $full_deployment_yaml = str_replace('||DEPLOYMENTIMAGE||', $image, $tokenized_deployment_yaml);
+    file_put_contents($tmp_yaml, $full_deployment_yaml);
+    return $tmp_yaml;
+  }
+
+  /**
+   * Determines if an environment is marked as deployable.
+   *
+   * @throws \Exception
+   */
+  protected function environmentIsDeployable($env) {
+    $deployable_environments = $this->getDeployableEnvironments();
+    if (empty($deployable_environments) || !in_array($env, $deployable_environments)) {
+      return FALSE;
+    }
+    return TRUE;
+  }
+
+  /**
+   * Retrieves the environments that are marked as deployable.
+   *
+   * @throws \Exception
+   */
+  protected function getDeployableEnvironments() {
+    return Robo::Config()
+      ->get('dockworker.deployment.environments', []);
   }
 
 }
