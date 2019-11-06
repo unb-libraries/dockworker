@@ -147,7 +147,7 @@ class DockworkerDockerImagePushCommands extends DockworkerDockerImageBuildComman
   protected function applyKubeDeploymentUpdate($env, $image) {
     if ($this->environmentIsDeployable($env)) {
       $deployment_file = $this->getTempKubeDeploymentFile($env, $image);
-      $this->setRunOtherCommand("deployment:apply $deployment_file $env");
+      $this->setRunOtherCommand("deployment:apply $deployment_file");
     }
     else {
       $this->say("Skipping deployment for environment [$env]. Deployable environments: " . implode(',', $this->getDeployableEnvironments()));

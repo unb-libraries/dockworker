@@ -88,21 +88,17 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *
    * @param string $file
    *   The file to apply.
-   * @param string $env
-   *   The environment to update.
    *
    * @command deployment:apply
    *
    * @kubectl
    */
-  public function applyDeploymentImage($file, $env) {
+  public function applyDeploymentImage($file) {
     $this->kubectlExec(
       'apply',
       [
         '-f',
         $file,
-        '--namespace',
-        $env,
       ],
       TRUE
     );
