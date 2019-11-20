@@ -1,6 +1,6 @@
 # Dockworker
 ## Develop, Test and Deploy into Kubernetes Docker-Based Web Applications
-Dockworker is a framework of (mostly) Robo commands that tests, deploys and allows local development (in Linux, OSX) of docker-based web applications. Stand-alone, this package offers very little benefit, but to see how we use dockworker: check out [an example of how we use dockworker to deploy lib.unb.ca](https://github.com/unb-libraries/lib.unb.ca).
+Dockworker is a framework of (mostly) Robo commands that makes local development of docker-based web applications a breeze. It also tests and deploys these applications into kubernetes. Stand-alone, this package offers very little benefit, but to see how we use dockworker: check out [an example of how we use dockworker to deploy lib.unb.ca](https://github.com/unb-libraries/lib.unb.ca).
 
 ![Dockworker Startup](https://github.com/unb-libraries/dockworker/raw/3.x/img/dockworker-startup.gif "Dockworker Startup")
 
