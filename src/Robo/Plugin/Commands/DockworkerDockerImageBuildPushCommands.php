@@ -2,15 +2,19 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\KubernetesDeploymentFileTrait;
-use Dockworker\Robo\Plugin\Commands\DockworkerDockerImagePushCommands;
+use Dockworker\DockerImagePushTrait;
+use Dockworker\DockerImageTrait;
+use Dockworker\KubernetesDeploymentTrait;
+use Dockworker\Robo\Plugin\Commands\DockworkerDockerImageBuildCommands;
 
 /**
  * Defines the commands used to build and push a docker image.
  */
-class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImagePushCommands {
+class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildCommands {
 
-  use KubernetesDeploymentFileTrait;
+  use DockerImagePushTrait;
+  use DockerImageTrait;
+  use KubernetesDeploymentTrait;
 
   /**
    * Builds the docker image, and pushes the docker image to its repository.
@@ -52,7 +56,7 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImagePushCo
    * @dockerpush
    */
   public function buildPushDeployEnv($env) {
-    $this->pushCommandShouldContinue($env);
+    $this->pushCommandInit($env);
     $timestamp = date('YmdHis');
     $this->buildPushEnv($env, $timestamp);
 
@@ -62,7 +66,7 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImagePushCo
     else {
       $image_name = "{$this->dockerImageName}:$env";
     }
-    $deployment_file = $this->applyKubeDeploymentUpdate($env, $image_name);
+    $deployment_file = $this->applyKubeDeploymentUpdate($this->repoRoot, $env, $image_name);
     $deploy_namespace = $this->getKubernetesDeploymentFileNamespace($deployment_file);
     $this->setRunOtherCommand("deployment:status $deploy_namespace");
   }
@@ -82,7 +86,7 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImagePushCo
    * @throws \Dockworker\DockworkerException
    */
   protected function buildPushEnv($env, $timestamp) {
-    $this->pushCommandShouldContinue($env);
+    $this->pushCommandInit($env);
     $this->setRunOtherCommand("image:build $env");
     $this->pushToRepository($env);
 
@@ -90,50 +94,6 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImagePushCo
       $this->setRunOtherCommand("image:build $env-$timestamp");
       $this->pushToRepository("$env-$timestamp");
     }
-  }
-
-  /**
-   * Tokenize the k8s deployment YAML and update the k8s deployment.
-   *
-   * @param string $env
-   *   The environment to target.
-   * @param string $image
-   *   The image to update the deployment with.
-   *
-   * @throws \Dockworker\DockworkerException
-   */
-  protected function applyKubeDeploymentUpdate($env, $image) {
-    if ($this->environmentIsDeployable($env)) {
-      $deployment_file = $this->getTempKubeDeploymentFile($env, $image);
-      $this->setRunOtherCommand("deployment:apply $deployment_file");
-      return $deployment_file;
-    }
-    else {
-      $this->say("Skipping deployment for environment [$env]. Deployable environments: " . implode(',', $this->getDeployableEnvironments()));
-    }
-    return NULL;
-  }
-
-  /**
-   * Tokenize the k8s deployment YAML.
-   *
-   * @param string $env
-   *   The environment to target.
-   * @param string $image
-   *   The image to update the deployment with.
-   *
-   * @throws \Dockworker\DockworkerException
-   */
-  protected function getTempKubeDeploymentFile($env, $image) {
-    $deployment_file = "{$this->repoRoot}/deployment/k8s/$env/deployment.yaml";
-    if (!file_exists($deployment_file)) {
-      throw new DockworkerException("Cannot find deployment file [$deployment_file]");
-    }
-    $tmp_yaml = tempnam(sys_get_temp_dir(), 'prefix') . '.yaml';
-    $tokenized_deployment_yaml = file_get_contents($deployment_file);
-    $full_deployment_yaml = str_replace('||DEPLOYMENTIMAGE||', $image, $tokenized_deployment_yaml);
-    file_put_contents($tmp_yaml, $full_deployment_yaml);
-    return $tmp_yaml;
   }
 
 }

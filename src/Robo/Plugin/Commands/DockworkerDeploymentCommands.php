@@ -3,6 +3,7 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\DockworkerLogCheckerTrait;
+use Dockworker\KubernetesDeploymentTrait;
 use Dockworker\KubernetesPodTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 use Robo\Robo;
@@ -13,7 +14,7 @@ use Robo\Robo;
 class DockworkerDeploymentCommands extends DockworkerLocalCommands {
 
   use DockworkerLogCheckerTrait;
-  use KubernetesPodTrait;
+  use KubernetesDeploymentTrait;
 
   /**
    * Checks the k8s deployment rollout status.
@@ -26,30 +27,18 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @kubectl
    */
   public function getDeploymentRolloutStatus($env) {
-    $this->deploymentCommandShouldContinue($env);
+    $this->deploymentCommandInit($this->repoRoot, $env);
     $this->kubectlExec(
       'rollout',
       [
         'status',
         'deployment',
-        $this->getKubernetesDeploymentNameFromUri($this->instanceName),
+        $this->deploymentK8sName,
         '--namespace',
-        $env,
+        $this->deploymentK8sNameSpace,
       ],
       TRUE
     );
-  }
-
-  /**
-   * Gets the k8s deployment name from the site URI.
-   *
-   * @param string $uri
-   *   The uri to convert to deployment name.
-   *
-   * @return mixed
-   */
-  private static function getKubernetesDeploymentNameFromUri($uri) {
-    return str_replace('.', '-', $uri);
   }
 
   /**
@@ -67,17 +56,16 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @kubectl
    */
   public function setDeploymentImage($image, $tag, $env) {
-    $this->deploymentCommandShouldContinue($env);
-    $deployment_name = $this->getKubernetesDeploymentNameFromUri($this->instanceName);
+    $this->deploymentCommandInit($this->repoRoot, $env);
     $this->kubectlExec(
       'set',
       [
         'image',
         '--record',
-        "deployment/{$deployment_name}",
+        "deployment/{$this->deploymentK8sName}",
         "{$deployment_name}=$image:$tag",
         '--namespace',
-        $env,
+        $this->deploymentK8sNameSpace,
       ],
       TRUE
     );
@@ -116,7 +104,6 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @kubectl
    */
   public function printDeploymentLogs($env) {
-    $this->deploymentCommandShouldContinue($env);
     $logs = $this->getDeploymentLogs($env);
     $pod_counter = 0;
 
@@ -146,9 +133,9 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *   An array of logs, keyed by pod IDs.
    */
   private function getDeploymentLogs($env) {
-    $this->deploymentCommandShouldContinue($env);
-    $this->kubernetesPodNamespace = $env;
-    $this->kubernetesSetupPods($this->instanceName, "Logs");
+    $this->deploymentCommandInit($this->repoRoot, $env);
+    $this->kubernetesPodNamespace = $this->deploymentK8sNameSpace;
+    $this->kubernetesSetupPods($this->deploymentK8sName, "Logs");
 
     $logs = [];
     if (!empty($this->kubernetesCurPods)) {
@@ -158,7 +145,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
           [
             $pod_id,
             '--namespace',
-            $env,
+            $this->deploymentK8sNameSpace,
           ],
           FALSE
         );
@@ -182,7 +169,6 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @kubectl
    */
   public function checkDeploymentLogs($env) {
-    $this->deploymentCommandShouldContinue($env);
     $logs = $this->getDeploymentLogs($env);
 
     // Allow modules to implement custom handlers to add exceptions.
@@ -201,44 +187,6 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
     }
     $this->auditStartupLogs();
     $this->say(sprintf("No errors found, %s pods deployed.", count($logs)));
-  }
-
-  /**
-   * Determines if a deployment command should continue.
-   *
-   * @throws \Exception
-   */
-  protected function deploymentCommandShouldContinue($env) {
-    if ($this->environmentIsDeployable($env)) {
-      return;
-    }
-    else {
-      $this->say("Skipping deployment command for environment [$env]. Deployable environments: " . implode(',', $this->getDeployableEnvironments()));
-      exit(0);
-    }
-  }
-
-  /**
-   * Determines if an environment is marked as deployable.
-   *
-   * @throws \Exception
-   */
-  protected function environmentIsDeployable($env) {
-    $deployable_environments = $this->getDeployableEnvironments();
-    if (empty($deployable_environments) || !in_array($env, $deployable_environments)) {
-      return FALSE;
-    }
-    return TRUE;
-  }
-
-  /**
-   * Retrieves the environments that are marked as deployable.
-   *
-   * @throws \Exception
-   */
-  protected function getDeployableEnvironments() {
-    return Robo::Config()
-      ->get('dockworker.deployment.environments', []);
   }
 
 }

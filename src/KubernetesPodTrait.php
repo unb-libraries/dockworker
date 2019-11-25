@@ -20,11 +20,11 @@ trait KubernetesPodTrait {
   protected $kubernetesCurPods = [];
 
   /**
-   * The instance name to use when populating the pod queue.
+   * The deployment name to use when populating the pod queue.
    *
    * @var string
    */
-  protected $kubernetesPodInstanceName = NULL;
+  protected $kubernetesDeploymentName = NULL;
 
   /**
    * The namespace to filter when populating the pod queue.
@@ -36,15 +36,15 @@ trait KubernetesPodTrait {
   /**
    * Sets up the pod details for the remote Kubernetes pods.
    *
-   * @param string $instance_name
-   *   The application URI.
+   * @param string $deployment_name
+   *   The deployment name.
    * @param string $action
    *   A description of the actions intended to take (Used for labels).
    *
    * @throws \Exception
    */
-  protected function kubernetesSetupPods($instance_name, $action) {
-    $this->kubernetesPodInstanceName = $instance_name;
+  protected function kubernetesSetupPods($deployment_name, $action) {
+    $this->kubernetesDeploymentName = $deployment_name;
 
     if (empty($this->kubernetesPodNamespace)) {
       $this->kubernetesPodNamespace = $this->askDefault("Environment to target for $action? (dev/prod)", 'prod');
@@ -61,13 +61,13 @@ trait KubernetesPodTrait {
    */
   private function kubernetesSetMatchingPods() {
     $get_pods_cmd = sprintf(
-      $this->kubeCtlBin . " get pods --namespace=%s --sort-by=.status.startTime -l instance=%s --no-headers | grep 'Running' | tac | awk '{ print $1 }'",
+      $this->kubeCtlBin . " get pods --namespace=%s --sort-by=.status.startTime --no-headers | grep %s | grep 'Running' | tac | awk '{ print $1 }'",
       $this->kubernetesPodNamespace,
-      $this->kubernetesPodInstanceName
+      $this->kubernetesDeploymentName
     );
 
     $pod_list = trim(
-      shell_exec(sprintf($get_pods_cmd, $this->kubernetesPodNamespace, $this->kubernetesPodInstanceName))
+      shell_exec($get_pods_cmd)
     );
 
     $pods = explode(PHP_EOL, $pod_list);
@@ -77,7 +77,7 @@ trait KubernetesPodTrait {
     }
 
     if (empty($this->kubernetesCurPods)) {
-      throw new DockworkerException("Could not find any pods for {$this->kubernetesPodInstanceName}:{$this->kubernetesPodNamespace}.");
+      throw new DockworkerException("Could not find any pods for {$this->kubernetesDeploymentName}:{$this->kubernetesPodNamespace}.");
     }
   }
 

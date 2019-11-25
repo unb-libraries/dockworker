@@ -91,4 +91,19 @@ trait DockerImagePushTrait {
     ->get('dockworker.image.push_branches', []);
   }
 
+  /**
+   * Determines if a push command should continue.
+   *
+   * @throws \Exception
+   */
+  protected function pushCommandInit($env) {
+    if ($this->environmentIsPushable($env)) {
+      return;
+    }
+    else {
+      $this->say("Skipping image push for environment [$env]. Pushable environments: " . implode(',', $this->getPushableEnvironments()));
+      exit(0);
+    }
+  }
+
 }

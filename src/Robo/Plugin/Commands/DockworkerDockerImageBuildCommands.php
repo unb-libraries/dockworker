@@ -2,10 +2,10 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\DockworkerException;
-use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
-use Dockworker\GitRepoTrait;
 use Dockworker\DockerImageTrait;
+use Dockworker\DockworkerException;
+use Dockworker\GitRepoTrait;
+use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 
 /**
  * Defines the commands used to build a docker image from the repository.

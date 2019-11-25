@@ -28,6 +28,11 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   use GitRepoTrait;
   use loadTasks;
 
+  /**
+   * The string in the logs that indicates the deployment has finished.
+   *
+   * @var string
+   */
   private $localFinishMarker;
 
   /**
