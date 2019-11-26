@@ -46,7 +46,7 @@ trait DockerImagePushTrait {
       $pass = getenv('DOCKER_CLOUD_USER_PASS');
       exec("(echo \"$pass\" | docker login --username \"$user\" --password-stdin)", $output, $return);
       if ($return != '0') {
-        throw new DockworkerException("DockerCloud auth failure. Have you provided DOCKER_CLOUD_USER_NAME and DOCKER_CLOUD_USER_PASS as environment variables?");
+        throw new DockworkerException("DockerCloud auth failure. Have you set DOCKER_CLOUD_USER_NAME and DOCKER_CLOUD_USER_PASS as environment variables?");
       }
     }
     else {

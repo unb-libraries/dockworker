@@ -23,6 +23,8 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *   The environment to check.
    *
    * @command deployment:status
+   * @throws \Dockworker\DockworkerException
+   * @throws \Exception
    *
    * @kubectl
    */
@@ -52,6 +54,8 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *   The environment to update.
    *
    * @command deployment:image:update
+   * @throws \Dockworker\DockworkerException
+   * @throws \Exception
    *
    * @kubectl
    */
@@ -63,7 +67,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
         'image',
         '--record',
         "deployment/{$this->deploymentK8sName}",
-        "{$deployment_name}=$image:$tag",
+        "{$this->deploymentK8sName}=$image:$tag",
         '--namespace',
         $this->deploymentK8sNameSpace,
       ],
@@ -78,6 +82,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *   The file to apply.
    *
    * @command deployment:apply
+   * @throws \Dockworker\DockworkerException
    *
    * @kubectl
    */

@@ -49,6 +49,8 @@ trait KubectlTrait {
    * @param bool $print_output
    *   TRUE if the kubectl command should output results. False otherwise.
    *
+   * @throws \Dockworker\DockworkerException
+   *
    * @return string
    *   The output of the execution.
    */
