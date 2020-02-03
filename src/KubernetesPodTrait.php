@@ -61,7 +61,7 @@ trait KubernetesPodTrait {
    */
   private function kubernetesSetMatchingPods() {
     $get_pods_cmd = sprintf(
-      $this->kubeCtlBin . " get pods --namespace=%s --sort-by=.status.startTime --no-headers | grep '^%s' | grep 'Running' | tac | awk '{ print $1 }'",
+      $this->kubeCtlBin . " get pods --namespace=%s --sort-by=.status.startTime --no-headers | grep '^%s' | grep 'Running' | sed '1!G;h;$!d' | awk '{ print $1 }'",
       $this->kubernetesPodNamespace,
       $this->kubernetesDeploymentName
     );
