@@ -291,12 +291,13 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
 
     $this->setRunOtherCommand('local:up');
     $this->waitForDeployment();
-    sleep(3);
+    sleep(2);
 
     $this->io()->newLine();
     $this->setRunOtherCommand('local:logs:check');
 
     if (!$opts['no-tail-logs']) {
+      sleep(2);
       $this->setRunOtherCommand('local:logs:tail');
     }
   }
