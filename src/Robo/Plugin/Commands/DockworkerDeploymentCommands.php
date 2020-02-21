@@ -190,7 +190,21 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
     else {
       $this->io()->title("No pods found. No logs!");
     }
-    $this->auditStartupLogs();
+
+    try {
+      $this->auditStartupLogs(FALSE);
+      $this->say("No errors found in logs.");
+    }
+    catch (DockworkerException $e) {
+      $this->printLocalLogs();
+      $this->printStartupLogErrors();
+      if (!empty(getenv('TRAVIS'))){
+        $this->io()->writeln('Sleeping to allow Travis io to flush...');
+        sleep(30);
+      }
+      throw new DockworkerException("Error(s) found in deployment startup logs!");
+    }
+
     $this->say(sprintf("No errors found, %s pods deployed.", count($logs)));
   }
 
