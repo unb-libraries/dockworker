@@ -10,10 +10,12 @@ use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 class ApplicationTestCommands extends DockworkerCommands {
 
   /**
-   * Tests the application using all testing frameworks.
+   * Tests the local application using all testing frameworks.
    *
    * @command tests:all
    * @aliases test
+   *
+   * @usage tests:all
    */
   public function testApplication() {
     // No-op here. Specific frameworks implement this in post-command hook.

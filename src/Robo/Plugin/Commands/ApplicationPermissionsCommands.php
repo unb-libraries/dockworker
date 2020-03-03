@@ -14,6 +14,8 @@ class ApplicationPermissionsCommands extends DockworkerCommands {
    *
    * @command dockworker:permissions:fix
    * @aliases pfix
+   *
+   * @usage dockworker:permissions:fix
    */
   public function fixPermissions() {
   }
@@ -23,6 +25,8 @@ class ApplicationPermissionsCommands extends DockworkerCommands {
    *
    * @param string $path
    *   The path to change the group for.
+   *
+   * @usage "1 /mnt/issues/archive"
    */
   protected function setPermissions($path) {
     $gid = posix_getgid();

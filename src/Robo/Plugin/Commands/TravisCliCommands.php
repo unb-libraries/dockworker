@@ -14,13 +14,15 @@ class TravisCliCommands extends DockworkerCommands {
   use TravisCliTrait;
 
   /**
-   * Restarts the latest travis build of this application.
+   * Restarts the latest travis build for the application.
    *
    * @param string $branch
    *   The branch of the repository to restart.
    *
    * @command travis:restart:latest
    * @throws \Exception
+   *
+   * @usage travis:restart:latest prod
    *
    * @return \Robo\ResultData
    *
@@ -33,13 +35,15 @@ class TravisCliCommands extends DockworkerCommands {
   }
 
   /**
-   * Retrieves the latest travis build ID of this application.
+   * Retrieves the latest travis build ID for the application.
    *
    * @param string $branch
    *   The branch of the repository to retrieve the ID for.
    *
    * @command travis:id:latest
    * @throws \Exception
+   *
+   * @usage travis:id:latest prod
    *
    * @return string
    *   The job ID, if it exists.
@@ -57,13 +61,15 @@ class TravisCliCommands extends DockworkerCommands {
   }
 
   /**
-   * Retrieves the latest travis build details of this application.
+   * Retrieves the latest travis build details for the application.
    *
    * @param string $branch
    *   The branch of the repository to retrieve details from.
    *
    * @command travis:info:latest
    * @throws \Exception
+   *
+   * @usage travis:info:latest prod
    *
    * @return string
    *   The build details, if it exists.
@@ -76,13 +82,15 @@ class TravisCliCommands extends DockworkerCommands {
   }
 
   /**
-   * Restarts a travis build of this application.
+   * Restarts a travis build for the application.
    *
    * @param string $build_id
    *   The build ID to restart.
    *
    * @command travis:restart
    * @throws \Exception
+   *
+   * @usage travis:restart 346
    *
    * @return \Robo\ResultData
    *
@@ -109,13 +117,15 @@ class TravisCliCommands extends DockworkerCommands {
   }
 
   /**
-   * Retrieves logs for a travis build of this application.
+   * Retrieves logs for a travis build for the application.
    *
    * @param string $build_id
    *   The build ID to retrieve the logs from.
    *
    * @command travis:logs
    * @throws \Exception
+   *
+   * @usage travis:logs 346
    *
    * @return \Robo\ResultData
    *
@@ -127,13 +137,15 @@ class TravisCliCommands extends DockworkerCommands {
   }
 
   /**
-   * Retrieves logs for the latest travis build of this application.
+   * Retrieves logs for the latest travis build for the application.
    *
    * @param string $branch
    *   The branch of the repository to retrieve the logs from.
    *
    * @command travis:logs:latest
    * @throws \Exception
+   *
+   * @usage travis:logs:latest prod
    *
    * @return bool
    *

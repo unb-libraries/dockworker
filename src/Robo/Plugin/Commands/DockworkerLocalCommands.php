@@ -36,9 +36,16 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   private $localFinishMarker;
 
   /**
-   * Removes unused (orphaned) docker images, volumes and networks.
+   * Clean up unused local docker assets.
+   *
+   * This command removes unused (orphaned) docker images, volumes and networks
+   * with extreme prejudice. It does not restrict itself to aforementioned
+   * assets associated with this application only, rather it removes them
+   * system-wide.
    *
    * @command dockworker:docker:cleanup
+   *
+   * @usage dockworker:docker:cleanup
    */
   public function localCleanup() {
     $this->say("Cleaning up dangling images and volumes:");
@@ -46,9 +53,14 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Halts the local application without removing any data.
+   * Halts the local application without removing any persistent data.
+   *
+   * Following a halt, the application can be restarted with the 'start'
+   * command, and all data will be preserved.
    *
    * @command local:halt
+   *
+   * @usage local:halt
    *
    * @return \Robo\Result
    *   The result of the command.
@@ -58,7 +70,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Displays the local application logs.
+   * Displays the local application's container logs.
    *
    * @param string[] $opts
    *   An array of options to pass to the builder.
@@ -68,6 +80,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @command local:logs
    * @throws \Exception
+   *
+   * @usage local:logs
    *
    * @return \Robo\Result
    *   The result of the command.
@@ -107,7 +121,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Gets logs from the local application.
+   * Gets logs from the local application container.
    *
    * @param string[] $opts
    *   An array of options to pass to the builder.
@@ -133,7 +147,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Tails the local application's logs.
+   * Display previous local application container logs and monitor for new ones.
    *
    * @param string[] $opts
    *   An array of options to pass to the builder.
@@ -144,6 +158,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @command local:logs:tail
    * @aliases logs
    * @throws \Exception
+   *
+   * @usage local:logs:tail
    *
    * @return \Robo\Result
    *   The result of the command.
@@ -159,7 +175,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Builds the local application.
+   * Builds the local application's docker image.
    *
    * @param string[] $opts
    *   An array of options to pass to the builder.
@@ -170,6 +186,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @command local:build
    * @aliases build
    * @throws \Dockworker\DockworkerException
+   *
+   * @usage local:build
    */
   public function build(array $opts = ['no-cache' => FALSE]) {
     $this->io()->title("Building application theme");
@@ -191,20 +209,24 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Builds the local application theme files.
+   * Builds the local application's deployable theme assets from source.
    *
    * @command theme:build-all
    * @aliases build-themes
+   *
+   * @usage theme:build-all
    */
   public function buildThemes() {
   }
 
   /**
-   * Opens the local application shell.
+   * Opens the local application container's shell.
    *
    * @command local:shell
    * @aliases shell
    * @throws \Exception
+   *
+   * @usage local:shell
    *
    * @return \Robo\Result
    *   The result of the command.
@@ -218,10 +240,12 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Pulls upstream images for the local application.
+   * Pulls any upstream images used in building the local application image.
    *
    * @command local:pull-upstream
    * @throws \Dockworker\DockworkerException
+   *
+   * @usage local:pull-upstream
    */
   public function pullUpstreamImages() {
     $upstream_images = $this->getUpstreamImages();
@@ -239,10 +263,12 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Brings down the local application and removes all persistent data.
+   * Removes removes all persistent data from the local docker application.
    *
    * @command local:rm
    * @aliases rm
+   *
+   * @usage local:rm
    *
    * @return \Robo\Result
    *   The result of the removal command.
@@ -257,7 +283,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Brings up the local application and displays the logs.
+   * Brings up the local application container, displays the application logs.
    *
    * @param string[] $opts
    *   An array of options to pass to the builder.
@@ -270,6 +296,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @command local:start
    * @aliases start
    * @throws \Exception
+   *
+   * @usage local:start
    */
   public function start(array $opts = ['no-cache' => FALSE, 'no-tail-logs' => FALSE]) {
     // $this->setRunOtherCommand('dockworker:update');
@@ -404,7 +432,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Checks the local application logs for errors.
+   * Checks the local application's container logs for errors.
    *
    * @param string[] $opts
    *   An array of options to pass to the builder.
@@ -414,6 +442,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @command local:logs:check
    * @throws \Dockworker\DockworkerException
+   *
+   * @usage local:logs:check
    */
   public function localLogsCheck(array $opts = ['all' => FALSE]) {
     $this->getlocalRunning();
@@ -448,10 +478,12 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Builds the local application from scratch and runs its tests.
+   * Builds the application image, starts a local container, and runs all tests.
    *
    * @command local:build-test
    * @throws \Exception
+   *
+   * @usage local:build-test
    */
   public function buildAndTest() {
     $this->_exec('docker-compose kill');
@@ -461,7 +493,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Kills the local application, removes all persistent data, and restarts it.
+   * Kills the local container, removes persistent data, and rebuilds/restarts.
    *
    * @param string[] $opts
    *   An array of options to pass to the builder.
@@ -472,6 +504,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @command local:start-over
    * @aliases start-over, deploy
    * @throws \Exception
+   *
+   * @usage local:start-over
    */
   public function startOver($opts = ['no-cache' => FALSE]) {
       $this->io()->title("Killing application");
@@ -486,7 +520,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
     /**
-     * Stops the local application, re-starts it, preserving persistent data.
+     * Stops the local container and re-starts it, preserving persistent data.
      *
      * @param string[] $opts
      *   An array of options to pass to the builder.
@@ -496,8 +530,9 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
      *
      * @command local:rebuild
      * @aliases rebuild
-     *
      * @throws \Exception
+     *
+     * @usage local:rebuild
      */
     public function rebuild($opts = ['no-cache' => FALSE]) {
         $this->io()->title("Stopping application");
@@ -510,10 +545,12 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     }
 
   /**
-   * Brings up the local application.
+   * Brings up the local application container.
    *
    * @command local:up
    * @aliases up
+   *
+   * @usage local:up
    */
   public function up() {
     $this->io()->title("Starting local containers");
@@ -530,6 +567,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @command local:update-hostfile
    * @throws \Dockworker\DockworkerException
+   *
+   * @usage local:update-hostfile
    */
   public function setHostFileEntry() {
     $hostname = escapeshellarg('local-' . $this->instanceName);

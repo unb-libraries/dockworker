@@ -17,10 +17,10 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
   use KubernetesDeploymentTrait;
 
   /**
-   * Builds the docker image, and pushes the docker image to its repository.
+   * Builds the application's docker image and pushes it to the deployment repository.
    *
    * @param string $tag
-   *   The image tag to push.
+   *   The tag to use when building and pushing the image.
    *
    * @option bool $no-cache
    *   Do not use any cached steps in the build.
@@ -29,6 +29,8 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
    *
    * @command image:build-push
    * @throws \Exception
+   *
+   * @usage image:build-push prod
    *
    * @dockerimage
    * @dockerpush
@@ -39,7 +41,7 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
   }
 
   /**
-   * Builds the docker image, tags it with a current timestamp, and deploys it.
+   * Builds, tags, pushes and deploys the application's docker image.
    *
    * @param string $env
    *   The environment to target.
@@ -51,6 +53,8 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
    *
    * @command image:deploy
    * @throws \Exception
+   *
+   * @usage image:deploy prod
    *
    * @dockerimage
    * @dockerpush

@@ -17,7 +17,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   use KubernetesDeploymentTrait;
 
   /**
-   * Checks the k8s deployment rollout status.
+   * Checks the application's k8s deployment rollout status.
    *
    * @param string $env
    *   The environment to check.
@@ -25,6 +25,8 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @command deployment:status
    * @throws \Dockworker\DockworkerException
    * @throws \Exception
+   *
+   * @usage deployment:status prod
    *
    * @kubectl
    */
@@ -44,7 +46,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Updates the k8s deployment docker image.
+   * Updates the application's k8s deployment image.
    *
    * @param string $image
    *   The docker image to use in the deployment.
@@ -56,6 +58,8 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @command deployment:image:update
    * @throws \Dockworker\DockworkerException
    * @throws \Exception
+   *
+   * @usage deployment:image:update unblibraries/lib.unb.ca prod-20200228122322 prod
    *
    * @kubectl
    */
@@ -76,13 +80,16 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Updates the k8s deployment.
+   * Updates the application's k8s deployment definition.
    *
    * @param string $file
-   *   The file to apply.
+   *   The path to the YAML deployment definition file to apply. This file must
+   *   define the namespace to update.
    *
    * @command deployment:apply
    * @throws \Dockworker\DockworkerException
+   *
+   * @usage deployment:apply /tmp/deployment/lib-unb-ca.Deployment.prod.yaml
    *
    * @kubectl
    */
@@ -98,13 +105,15 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Displays the k8s deployment logs.
+   * Displays the application's k8s deployed pod(s) logs.
    *
    * @param string $env
    *   The environment to obtain the logs from.
    *
    * @command deployment:logs
    * @throws \Exception
+   *
+   * @usage deployment:logs prod
    *
    * @kubectl
    */
@@ -127,7 +136,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Gets the k8s deployment logs.
+   * Gets the application's deployed k8s pod(s) logs.
    *
    * @param string $env
    *   The environment to check.
@@ -163,13 +172,15 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Checks the k8s deployment logs for errors.
+   * Checks the application's deployed k8s pod(s) logs for errors.
    *
    * @param string $env
    *   The environment to check the logs in.
    *
    * @command deployment:logs:check
    * @throws \Exception
+   *
+   * @usage deployment:logs:check prod
    *
    * @kubectl
    */
