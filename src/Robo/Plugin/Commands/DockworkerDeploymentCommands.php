@@ -4,7 +4,6 @@ namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\DockworkerLogCheckerTrait;
 use Dockworker\KubernetesDeploymentTrait;
-use Dockworker\KubernetesPodTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 use Robo\Robo;
 
