@@ -300,7 +300,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @usage local:start
    */
   public function start(array $opts = ['no-cache' => FALSE, 'no-tail-logs' => FALSE]) {
-    // $this->setRunOtherCommand('dockworker:update');
+    $this->setRunOtherCommand('dockworker:update');
     $this->io()->title("Initializing application");
     $this->setRunOtherCommand('local:update-hostfile');
     $this->setRunOtherCommand('local:pull-upstream');
