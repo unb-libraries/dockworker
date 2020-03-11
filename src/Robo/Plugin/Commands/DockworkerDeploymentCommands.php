@@ -232,6 +232,8 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @return \Robo\Result
    *   The result of the shell.
    *
+   * @usage deployment:shell prod /bin/sh
+   *
    * @kubectl
    */
   public function openDeploymentShell($env, $shell = '/bin/sh') {
