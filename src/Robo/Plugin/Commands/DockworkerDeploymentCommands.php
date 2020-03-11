@@ -218,4 +218,60 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
     $this->say(sprintf("No errors found, %s pods deployed.", count($logs)));
   }
 
+  /**
+   * Open a shell into the k8s deployment.
+   *
+   * @param string $env
+   *   The environment to open a shell to.
+   *
+   * @command deployment:shell
+   * @throws \Exception
+   *
+   * @return \Robo\Result
+   *   The result of the shell.
+   *
+   * @kubectl
+   */
+  public function openDeploymentShell($env) {
+    $this->deploymentCommandInit($this->repoRoot, $env);
+    $this->kubernetesPodNamespace = $this->deploymentK8sNameSpace;
+    $this->kubernetesSetupPods($this->deploymentK8sName, "Shell");
+
+    if (!empty($this->kubernetesCurPods)) {
+      $first_pod = reset($this->kubernetesCurPods);
+      if (count($this->kubernetesCurPods) > 0) {
+        $table_rows = array_map(
+          function ($el) {
+            return [$el];
+          },
+          $this->kubernetesCurPods
+        );
+        $this->printConsoleTable(
+          "Available Pods - {$this->deploymentK8sName}[{$this->kubernetesPodNamespace}]:",
+          ['Pod ID'],
+          $table_rows
+        );
+
+        $pod_id = $this->askDefault('Enter the Pod ID to shell to: ', $first_pod);
+      }
+      else {
+        $pod_id = $first_pod;
+      }
+
+      if (!in_array($pod_id, $this->kubernetesCurPods)) {
+        throw new DockworkerException(sprintf(self::UNKNOWN_POD_ID, $pod_id));
+      }
+      $this->io()->writeln('Opening remote shell... Type "exit" to quit.');
+      return $this->taskExec($this->kubeCtlBin)
+        ->arg('exec')->arg('-it')->arg($pod_id)
+        ->arg("--namespace={$this->kubernetesPodNamespace}")
+        ->arg('--')
+        ->arg('/bin/sh')
+        ->run();
+    }
+    else {
+      $this->io()->title('No pods found for deployment!');
+    }
+  }
+
 }
