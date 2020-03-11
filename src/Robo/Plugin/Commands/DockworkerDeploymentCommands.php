@@ -223,6 +223,8 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *
    * @param string $env
    *   The environment to open a shell to.
+   * @param string $shell
+   *   The path within pod to the shell binary to execute.
    *
    * @command deployment:shell
    * @throws \Exception
@@ -232,7 +234,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *
    * @kubectl
    */
-  public function openDeploymentShell($env) {
+  public function openDeploymentShell($env, $shell = '/bin/sh') {
     $this->deploymentCommandInit($this->repoRoot, $env);
     $this->kubernetesPodNamespace = $this->deploymentK8sNameSpace;
     $this->kubernetesSetupPods($this->deploymentK8sName, "Shell");
@@ -266,7 +268,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
         ->arg('exec')->arg('-it')->arg($pod_id)
         ->arg("--namespace={$this->kubernetesPodNamespace}")
         ->arg('--')
-        ->arg('/bin/sh')
+        ->arg($shell)
         ->run();
     }
     else {
