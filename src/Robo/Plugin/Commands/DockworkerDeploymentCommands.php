@@ -2,6 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Dockworker\DockworkerException;
 use Dockworker\DockworkerLogCheckerTrait;
 use Dockworker\KubernetesDeploymentTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
@@ -14,6 +15,9 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
 
   use DockworkerLogCheckerTrait;
   use KubernetesDeploymentTrait;
+
+  const ERROR_NO_PODS_IN_DEPLOYMENT = 'No pods were found for the deployment [%s:%s].';
+  const ERROR_UNKNOWN_POD_ID = 'Pod ID [%s] not found in deployment [%s:%s].';
 
   /**
    * Checks the application's k8s deployment rollout status.
@@ -165,7 +169,13 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
       }
     }
     else {
-      $this->io()->title('No pods found for deployment!');
+      throw new DockworkerException(
+        sprintf(
+          self::ERROR_NO_PODS_IN_DEPLOYMENT,
+          $this->deploymentK8sName,
+          $this->deploymentK8sNameSpace
+        )
+      );
     }
     return $logs;
   }
@@ -258,7 +268,14 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
       $pod_id = $this->askDefault('Enter the Pod ID to shell to: ', $first_pod);
 
       if (!in_array($pod_id, $this->kubernetesCurPods)) {
-        throw new DockworkerException(sprintf(self::UNKNOWN_POD_ID, $pod_id));
+        throw new DockworkerException(
+          sprintf(
+            self::ERROR_UNKNOWN_POD_ID,
+            $pod_id,
+            $this->deploymentK8sName,
+            $this->deploymentK8sNameSpace
+          )
+        );
       }
       $this->io()->writeln('Opening remote shell... Type "exit" to quit.');
       return $this->taskExec($this->kubeCtlBin)
@@ -269,7 +286,13 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
         ->run();
     }
     else {
-      $this->io()->title('No pods found for deployment!');
+      throw new DockworkerException(
+        sprintf(
+          self::ERROR_NO_PODS_IN_DEPLOYMENT,
+          $this->deploymentK8sName,
+          $this->deploymentK8sNameSpace
+        )
+      );
     }
   }
 
