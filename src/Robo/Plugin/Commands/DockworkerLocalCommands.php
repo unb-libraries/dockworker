@@ -18,10 +18,12 @@ use Symfony\Component\Console\Helper\ProgressBar;
 class DockworkerLocalCommands extends DockworkerCommands implements CustomEventAwareInterface {
 
   const ERROR_BUILDING_IMAGE = 'Error reported building image!';
-  const ERROR_PULLING_UPSTREAM_IMAGE = 'Error pulling upstream image %s';
-  const ERROR_UPDATING_HOSTFILE = 'Error updating hostfile!';
   const ERROR_CONTAINER_MISSING = 'The %s local deployment does not appear to exist.';
   const ERROR_CONTAINER_STOPPED = 'The %s local deployment appears to be stopped.';
+  const ERROR_PULLING_UPSTREAM_IMAGE = 'Error pulling upstream image %s';
+  const ERROR_UPDATING_HOSTFILE = 'Error updating hostfile!';
+  const WAIT_DEPLOYMENT_CYCLE_LENGTH = 5;
+  const WAIT_DEPLOYMENT_MAX_REPEATS = 300;
 
   use CustomEventAwareTrait;
   use DockworkerLogCheckerTrait;
@@ -337,8 +339,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    */
   protected function waitForDeployment() {
     $counter = 0;
-    $delay = 5;
-    $max = 80;
     $status = 0;
 
     $progressBar = new ProgressBar($this->output(), 100);
@@ -349,9 +349,9 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     $progressBar->start();
 
     $this->setLocalFinishMarker();
-    while ($status < 100 and ($counter < $max)) {
+    while ($status < 100 and ($counter < self::WAIT_DEPLOYMENT_MAX_REPEATS)) {
       $counter++;
-      sleep($delay);
+      sleep(self::WAIT_DEPLOYMENT_CYCLE_LENGTH);
       list($status, $description) = $this->getLocalDeploymentStatus($this->localFinishMarker);
       if ($status < 100) {
         $progressBar->setMessage($description);
@@ -359,7 +359,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
       }
     }
 
-    if ($counter == $max) {
+    if ($counter == self::WAIT_DEPLOYMENT_MAX_REPEATS) {
       throw new DockworkerException("Timeout waiting for local application deployment!");
     }
 
