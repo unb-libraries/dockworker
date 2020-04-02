@@ -72,6 +72,38 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
+   * Halts the local application and removes any persistent data.
+   *
+   * @command local:destroy
+   *
+   * @usage local:destroy
+   *
+   * @return \Robo\Result
+   *   The result of the command.
+   */
+  public function localDestroy() {
+    $this->setRunOtherCommand('local:halt');
+    $this->setRunOtherCommand('local:rm');
+  }
+
+  /**
+   * Destroys the local application, and removes any uncommitted repo changes.
+   *
+   * @command local:hard-reset
+   *
+   * @usage local:hard-reset
+   *
+   * @return \Robo\Result
+   *   The result of the command.
+   */
+  public function localHardReset() {
+    $this->setRunOtherCommand('local:destroy');
+    $this->setRunOtherCommand('dockworker:permissions:fix');
+    $this->_exec('git reset --hard HEAD');
+    $this->_exec('git clean -df');
+  }
+
+  /**
    * Displays the local application's container logs.
    *
    * @param string[] $opts
