@@ -22,14 +22,14 @@ trait KubernetesDeploymentTrait {
    *
    * @var string
    */
-  private $deploymentK8sName;
+  protected $deploymentK8sName;
 
   /**
    * The k8s target deployment namespace.
    *
    * @var string
    */
-  private $deploymentK8sNameSpace;
+  protected $deploymentK8sNameSpace;
 
   /**
    * Determines if a deployment command should continue.
