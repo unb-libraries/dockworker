@@ -216,7 +216,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
       $this->say("No errors found in logs.");
     }
     catch (DockworkerException $e) {
-      $this->printLocalLogs();
+      $this->printDeploymentLogs($env);
       $this->printStartupLogErrors();
       if (!empty(getenv('TRAVIS'))){
         $this->io()->writeln('Sleeping to allow Travis io to flush...');
