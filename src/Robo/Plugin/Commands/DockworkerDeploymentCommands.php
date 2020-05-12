@@ -49,6 +49,34 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
+   * Restarts the k8s deployment rollout.
+   *
+   * @param string $env
+   *   The environment to update.
+   *
+   * @command deployment:restart
+   * @throws \Dockworker\DockworkerException
+   * @throws \Exception
+   *
+   * @usage deployment:restart prod
+   *
+   * @kubectl
+   */
+  public function restartDeployment($env) {
+    $this->deploymentCommandInit($this->repoRoot, $env);
+    $this->kubectlExec(
+      'rollout',
+      [
+        'restart',
+        "deployment/{$this->deploymentK8sName}",
+        '--namespace',
+        $this->deploymentK8sNameSpace,
+      ],
+      TRUE
+    );
+  }
+
+  /**
    * Updates the application's k8s deployment image.
    *
    * @param string $image
