@@ -69,41 +69,11 @@ trait DockerImagePushTrait {
   }
 
   /**
-   * Determines if an environment is marked as pushable.
-   *
-   * @throws \Exception
-   */
-  protected function environmentIsPushable($env) {
-    $pushable_environments = $this->getPushableEnvironments();
-    if (empty($pushable_environments) || !in_array($env, $pushable_environments)) {
-      return FALSE;
-    }
-    return TRUE;
-  }
-
-  /**
-   * Retrieves the environments that are marked as pushable.
-   *
-   * @throws \Exception
-   */
-  protected function getPushableEnvironments() {
-    return Robo::Config()
-    ->get('dockworker.image.push_branches', []);
-  }
-
-  /**
    * Determines if a push command should continue.
    *
    * @throws \Exception
    */
   protected function pushCommandInit($env) {
-    if ($this->environmentIsPushable($env)) {
-      return;
-    }
-    else {
-      $this->say("Skipping image push for environment [$env]. Pushable environments: " . implode(',', $this->getPushableEnvironments()));
-      exit(0);
-    }
   }
 
 }
