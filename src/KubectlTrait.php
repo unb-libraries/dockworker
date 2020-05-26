@@ -75,7 +75,8 @@ trait KubectlTrait {
           $this->io()->text("Connection to kubectl server timed out. Retrying... [$try_count/$max_retries]");
         }
         else {
-          throw new DockworkerException("kubectl connection to the server failed.");
+          $error_string = implode("\n", $o);
+          throw new DockworkerException("kubectl connection to the server failed: $error_string");
         }
       }
     }
