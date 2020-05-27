@@ -63,7 +63,9 @@ trait KubectlTrait {
 
     while (TRUE) {
       $try_count++;
-      exec("{$this->kubeCtlBin} $command $args_string 2>&1", $o, $r );
+      $command_string = "{$this->kubeCtlBin} $command $args_string";
+      $this->io()->text("Executing: $command_string");
+      exec("$command_string 2>&1", $o, $r );
       if ($r == 0) {
         if ($print_output) {
          $this->say(implode("\n", $o));
