@@ -60,17 +60,7 @@ trait KubernetesPodTrait {
    * @throws \Exception
    */
   private function kubernetesSetMatchingPods() {
-    $get_pods_cmd = sprintf(
-      $this->kubeCtlBin . " get pods --namespace=%s --sort-by=.status.startTime --no-headers | grep '^%s' | grep 'Running' | sed '1!G;h;$!d' | awk '{ print $1 }'",
-      $this->kubernetesPodNamespace,
-      $this->kubernetesDeploymentName
-    );
-
-    $pod_list = trim(
-      shell_exec($get_pods_cmd)
-    );
-
-    $pods = explode(PHP_EOL, $pod_list);
+    $pods = $this->kubernetesGetMatchingPods($this->kubernetesDeploymentName, $this->kubernetesPodNamespace);
     foreach ($pods as $pod) {
       $this->kubernetesCheckPodShellAccess($pod);
       $this->kubernetesCurPods[] = $pod;
@@ -79,6 +69,26 @@ trait KubernetesPodTrait {
     if (empty($this->kubernetesCurPods)) {
       throw new DockworkerException("Could not find any pods for {$this->kubernetesDeploymentName}:{$this->kubernetesPodNamespace}.");
     }
+  }
+
+  /**
+   * @param $deployment_name
+   * @param $namespace
+   *
+   * @return false|string[]
+   */
+  protected function kubernetesGetMatchingPods($deployment_name, $namespace) {
+    $get_pods_cmd = sprintf(
+      $this->kubeCtlBin . " get pods --namespace=%s --sort-by=.status.startTime --no-headers | grep '^%s' | grep 'Running' | sed '1!G;h;$!d' | awk '{ print $1 }'",
+      $namespace,
+      $deployment_name
+    );
+
+    $pod_list = trim(
+      shell_exec($get_pods_cmd)
+    );
+
+    return explode(PHP_EOL, $pod_list);
   }
 
   /**
