@@ -134,8 +134,9 @@ trait KubernetesPodTrait {
       $cmd_output,
       $return_code
     );
+    $output_string = implode("\n", $cmd_output);
     if ($return_code != 0 && $except_on_error) {
-      throw new DockworkerException("Pod command [$command] returned error code $return_code : $cmd_output.");
+      throw new DockworkerException("Pod command [$command] returned error code $return_code : $output_string.");
     }
     return $cmd_output;
   }
@@ -167,8 +168,9 @@ trait KubernetesPodTrait {
       $cmd_output,
       $return_code
     );
+    $output_string = implode("\n", $cmd_output);
     if ($return_code != 0 && $except_on_error) {
-      throw new DockworkerException("Pod copy [$source_path -> $target_path] returned error code $return_code : $cmd_output.");
+      throw new DockworkerException("Pod copy [$source_path -> $target_path] returned error code $return_code : $output_string.");
     }
     return $cmd_output;
   }
