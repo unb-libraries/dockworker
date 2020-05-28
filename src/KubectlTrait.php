@@ -36,7 +36,7 @@ trait KubectlTrait {
    * @throws \Dockworker\DockworkerException
    */
   public function checkKubeCtlConnection() {
-    $this->kubectlExec('api-resources', [], FALSE);
+    $this->kubectlExec('api-resources', [], FALSE, FALSE);
   }
 
   /**
@@ -54,7 +54,7 @@ trait KubectlTrait {
    * @return string
    *   The output of the execution.
    */
-  private function kubectlExec($command, $args = [], $print_output = TRUE) {
+  private function kubectlExec($command, $args = [], $print_output = TRUE, $print_command_string = TRUE) {
     $o = NULL;
     $r = NULL;
     $args_string = implode(' ', $args);
@@ -64,7 +64,10 @@ trait KubectlTrait {
     while (TRUE) {
       $try_count++;
       $command_string = "{$this->kubeCtlBin} $command $args_string";
-      $this->io()->text("Executing: $command_string");
+      if ($print_command_string == TRUE) {
+        $this->io()->text("Executing: $command_string");
+      }
+
       exec("$command_string 2>&1", $o, $r );
       if ($r == 0) {
         if ($print_output) {
