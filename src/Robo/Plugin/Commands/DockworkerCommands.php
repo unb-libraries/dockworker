@@ -43,6 +43,13 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   protected $instanceName;
 
   /**
+   * The console output.
+   *
+   * @var object
+   */
+  protected $output;
+
+  /**
    * The path to the Dockworker repo.
    *
    * @var string
@@ -55,6 +62,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   public function __construct() {
     $this->repoRoot = realpath(__DIR__ . "/../../../../../../../");
     $this->configFile = 'dockworker.yml';
+    $this->output = $this->io();
     $this->config = Robo::loadConfiguration(
       [$this->repoRoot . '/' . $this->configFile]
     );
@@ -172,7 +180,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    *   The return code of the command.
    */
   public function setRunOtherCommand($command_string, $exception_message = NULL) {
-    $this->io()->text("Spawning new command thread: $command_string");
+    $this->output->note("Spawning new command thread: $command_string");
     $bin = $_SERVER['argv'][0];
     $command = "$bin --ansi $command_string";
 

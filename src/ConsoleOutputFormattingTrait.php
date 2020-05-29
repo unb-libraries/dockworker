@@ -20,7 +20,7 @@ trait ConsoleOutputFormattingTrait {
    *   The row values.
    */
   private function printConsoleTable($title, $headers, $rows) {
-    $this->io()->title($title);
+    $this->output->title($title);
     $table = new Table($this->output());
     $table
       ->setHeaders($headers)
