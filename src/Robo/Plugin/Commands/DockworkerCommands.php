@@ -29,6 +29,13 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   const ERROR_UPSTREAM_IMAGE_UNSET = 'The upstream_image variable has not been set in %s';
 
   /**
+   * The application's configuration object.
+   *
+   * @var \Consolidation\Config\ConfigInterface
+   */
+  protected $config;
+
+  /**
    * The path to the configuration file.
    *
    * @var string
