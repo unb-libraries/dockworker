@@ -19,7 +19,7 @@ class ApplicationTestCommands extends DockworkerCommands {
    */
   public function testApplication() {
     // No-op here. Specific frameworks implement this in post-command hook.
-    $this->output->title("Running All Tests");
+    $this->io()->title("Running All Tests");
   }
 
 }

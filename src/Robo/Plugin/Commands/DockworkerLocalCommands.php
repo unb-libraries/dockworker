@@ -123,7 +123,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   public function printLocalLogs(array $opts = ['all' => FALSE]) {
     $this->getlocalRunning();
     $result = $this->getLocalLogs($opts);
-    $this->output->writeln(
+    $this->io()->writeln(
       $result->getMessage()
     );
     return $result;
@@ -224,7 +224,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @usage local:build
    */
   public function build(array $opts = ['no-cache' => FALSE]) {
-    $this->output->title("Building application theme");
+    $this->io()->title("Building application theme");
     $this->setRunOtherCommand('theme:build-all');
 
     if ($opts['no-cache']) {
@@ -234,7 +234,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
       $command = 'docker-compose build';
     }
 
-    $this->output->title("Building image");
+    $this->io()->title("Building image");
     if (!$this->_exec($command)->wasSuccessful()) {
       throw new DockworkerException(
         self::ERROR_BUILDING_IMAGE
@@ -308,7 +308,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *   The result of the removal command.
    */
   public function removeData() {
-    $this->output->title("Removing application data");
+    $this->io()->title("Removing application data");
     return $this->taskExec('docker-compose')
       ->dir($this->repoRoot)
       ->arg('rm')
@@ -335,12 +335,12 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    */
   public function start(array $opts = ['no-cache' => FALSE, 'no-tail-logs' => FALSE]) {
     $this->setRunOtherCommand('dockworker:update');
-    $this->output->title("Initializing application");
+    $this->io()->title("Initializing application");
     $this->setRunOtherCommand('local:update-hostfile');
     $this->setRunOtherCommand('local:pull-upstream');
 
-    $this->output->newLine();
-    $this->output->title("Building application");
+    $this->io()->newLine();
+    $this->io()->title("Building application");
     $build_command = 'local:build';
     if ($opts['no-cache']) {
       $build_command = $build_command . ' --no-cache';
@@ -355,7 +355,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     $this->waitForDeployment();
     sleep(2);
 
-    $this->output->newLine();
+    $this->io()->newLine();
     $this->setRunOtherCommand('local:logs:check');
 
     if (!$opts['no-tail-logs']) {
@@ -398,7 +398,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     $progressBar->setProgress(100);
     $progressBar->setMessage('Finished');
     $progressBar->finish();
-    $this->output->newLine(1);
+    $this->io()->newLine(1);
   }
 
   /**
@@ -492,7 +492,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
       $this->checkLogForErrors('local', $local_logs);
     }
     else {
-      $this->output->title("No logs for local instance!");
+      $this->io()->title("No logs for local instance!");
     }
     try {
       $this->auditStartupLogs(FALSE);
@@ -502,7 +502,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
       $this->printLocalLogs();
       $this->printStartupLogErrors();
       if (!empty(getenv('TRAVIS'))){
-        $this->output->writeln('Sleeping to allow Travis io to flush...');
+        $this->io()->writeln('Sleeping to allow Travis io to flush...');
         sleep(30);
       }
       throw new DockworkerException("Error(s) found in local startup logs!");
@@ -540,7 +540,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @usage local:start-over
    */
   public function startOver($opts = ['no-cache' => FALSE]) {
-      $this->output->title("Killing application");
+      $this->io()->title("Killing application");
       $this->_exec('docker-compose kill');
 
       $this->setRunOtherCommand('local:rm');
@@ -567,7 +567,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
      * @usage local:rebuild
      */
     public function rebuild($opts = ['no-cache' => FALSE]) {
-        $this->output->title("Stopping application");
+        $this->io()->title("Stopping application");
         $this->_exec('docker-compose kill');
         $start_command = 'local:start';
         if ($opts['no-cache']) {
@@ -585,7 +585,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @usage local:up
    */
   public function up() {
-    $this->output->title("Starting local containers");
+    $this->io()->title("Starting local containers");
     return $this->taskDockerComposeUp()
       ->detachedMode()
       ->removeOrphans()

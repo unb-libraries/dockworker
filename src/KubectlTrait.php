@@ -65,7 +65,7 @@ trait KubectlTrait {
       $try_count++;
       $command_string = "{$this->kubeCtlBin} $command $args_string";
       if ($print_command_string == TRUE) {
-        $this->output->text("Executing: $command_string");
+        $this->io()->text("Executing: $command_string");
       }
 
       exec("$command_string 2>&1", $o, $r );
@@ -77,7 +77,7 @@ trait KubectlTrait {
       }
       else {
         if (isset($o[1]) && strpos($o[1], 'i/o timeout') !== FALSE && $try_count < $max_retries) {
-          $this->output->text("Connection to kubectl server timed out. Retrying... [$try_count/$max_retries]");
+          $this->io()->text("Connection to kubectl server timed out. Retrying... [$try_count/$max_retries]");
         }
         else {
           $error_string = implode("\n", $o);

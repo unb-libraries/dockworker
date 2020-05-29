@@ -154,15 +154,15 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
 
     if (!empty($logs)) {
       $num_pods = count($logs);
-      $this->output->title("$num_pods pods found in $env environment.");
+      $this->io()->title("$num_pods pods found in $env environment.");
       foreach ($logs as $pod_id => $log) {
         $pod_counter++;
-        $this->output->title("Logs for pod #$pod_counter [$env.$pod_id]");
-        $this->output->writeln($log);
+        $this->io()->title("Logs for pod #$pod_counter [$env.$pod_id]");
+        $this->io()->writeln($log);
       }
     }
     else {
-      $this->output->title("No pods found. No logs!");
+      $this->io()->title("No pods found. No logs!");
     }
   }
 
@@ -236,7 +236,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
       }
     }
     else {
-      $this->output->title("No pods found. No logs!");
+      $this->io()->title("No pods found. No logs!");
     }
 
     try {
@@ -247,7 +247,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
       $this->printDeploymentLogs($env);
       $this->printStartupLogErrors();
       if (!empty(getenv('TRAVIS'))){
-        $this->output->writeln('Sleeping to allow Travis io to flush...');
+        $this->io()->writeln('Sleeping to allow Travis io to flush...');
         sleep(30);
       }
       throw new DockworkerException("Error(s) found in deployment startup logs!");
@@ -305,7 +305,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
           )
         );
       }
-      $this->output->writeln('Opening remote shell... Type "exit" to quit.');
+      $this->io()->writeln('Opening remote shell... Type "exit" to quit.');
       return $this->taskExec($this->kubeCtlBin)
         ->arg('exec')->arg('-it')->arg($pod_id)
         ->arg("--namespace={$this->kubernetesPodNamespace}")
