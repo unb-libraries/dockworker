@@ -200,11 +200,14 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    */
   public function tailLocalLogs(array $opts = ['all' => FALSE]) {
     $this->getLocalRunning();
+    $log_dump_cmd = 'docker-compose logs --timestamps';
     if ($opts['all']) {
-      return $this->_exec('docker-compose logs -f');
+      passthru("$log_dump_cmd --tail='all'");
+      return passthru("$log_dump_cmd --tail=0 --follow");
     }
     else {
-      return $this->_exec("docker-compose logs -f {$this->instanceName}");
+      passthru("$log_dump_cmd --tail='all' {$this->instanceName}");
+      return passthru("$log_dump_cmd  --tail=0 --follow {$this->instanceName}");
     }
   }
 
@@ -353,13 +356,10 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
 
     $this->setRunOtherCommand('local:up');
     $this->waitForDeployment();
-    sleep(2);
-
     $this->io()->newLine();
     $this->setRunOtherCommand('local:logs:check');
 
     if (!$opts['no-tail-logs']) {
-      sleep(2);
       $this->setRunOtherCommand('local:logs:tail');
     }
   }
