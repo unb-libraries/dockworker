@@ -311,7 +311,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
           )
         );
       }
-      $this->io()->writeln('Opening remote shell... Type "exit" to quit.');
+      $this->io()->note('Opening remote pod shell... Type "exit" when finished.');
       return $this->taskExec($this->kubeCtlBin)
         ->arg('exec')->arg('-it')->arg($pod_id)
         ->arg("--namespace={$this->kubernetesPodNamespace}")
