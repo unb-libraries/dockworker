@@ -188,6 +188,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @option bool $all
    *   Display logs from all local services, not only the web endpoint.
+   * @option bool $timestamps
+   *   Display a timestamp for each line of the logs.
    *
    * @command local:logs:tail
    * @aliases logs
@@ -198,9 +200,14 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @return \Robo\Result
    *   The result of the command.
    */
-  public function tailLocalLogs(array $opts = ['all' => FALSE]) {
+  public function tailLocalLogs(array $opts = ['all' => FALSE, 'timestamps' => FALSE]) {
     $this->getLocalRunning();
-    $log_dump_cmd = 'docker-compose logs --timestamps';
+    $log_dump_cmd = 'docker-compose logs';
+
+    if ($opts['timestamps']) {
+      $log_dump_cmd .= ' --timestamps';
+    }
+
     if ($opts['all']) {
       passthru("$log_dump_cmd --tail='all'");
       return passthru("$log_dump_cmd --tail=0 --follow");
