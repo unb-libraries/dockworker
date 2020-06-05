@@ -281,19 +281,25 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
 
     if (!empty($this->kubernetesCurPods)) {
       $first_pod = reset($this->kubernetesCurPods);
-      $table_rows = array_map(
-        function ($el) {
-          return [$el];
-        },
-        $this->kubernetesCurPods
-      );
-      $this->printConsoleTable(
-        "Available Pods - {$this->deploymentK8sName}[{$this->kubernetesPodNamespace}]:",
-        ['Pod ID'],
-        $table_rows
-      );
 
-      $pod_id = $this->askDefault('Enter the Pod ID to shell to: ', $first_pod);
+      if (count($this->kubernetesCurPods) > 1) {
+        $table_rows = array_map(
+          function ($el) {
+            return [$el];
+          },
+          $this->kubernetesCurPods
+        );
+        $this->printConsoleTable(
+          "Available Pods - {$this->deploymentK8sName}[{$this->kubernetesPodNamespace}]:",
+          ['Pod ID'],
+          $table_rows
+        );
+        $pod_id = $this->askDefault('Enter the Pod ID to shell to: ', $first_pod);
+      }
+      else {
+        $pod_id = $first_pod;
+        $this->io()->note("Only one pod in deployment: $pod_id");
+      }
 
       if (!in_array($pod_id, $this->kubernetesCurPods)) {
         throw new DockworkerException(
