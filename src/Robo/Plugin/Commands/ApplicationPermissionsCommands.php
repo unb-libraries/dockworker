@@ -12,12 +12,15 @@ class ApplicationPermissionsCommands extends DockworkerCommands {
   /**
    * Sets the correct repository file permissions. Requires sudo.
    *
+   * @option string $path
+   *   Only update permissions in this path.
+   *
    * @command dockworker:permissions:fix
    * @aliases pfix
    *
    * @usage dockworker:permissions:fix
    */
-  public function fixPermissions() {
+  public function fixPermissions($options = ['path' => NULL]) {
   }
 
   /**
