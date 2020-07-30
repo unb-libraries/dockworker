@@ -68,7 +68,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *   The result of the command.
    */
   public function localHalt() {
-    return $this->taskDockerComposeDown()->run();
+    $this->_exec('docker-compose stop --timeout 10');
   }
 
   /**
