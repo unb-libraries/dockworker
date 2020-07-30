@@ -12,6 +12,7 @@ use Robo\Common\ConfigAwareTrait;
 use Robo\Contract\BuilderAwareInterface;
 use Robo\Robo;
 use Robo\Tasks;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Defines a base class for all Dockworker Robo commands.
@@ -201,6 +202,18 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
     $source_dir = $this->repoRoot . "/vendor/unb-libraries/dockworker/scripts/git-hooks";
     $target_dir = $this->repoRoot . "/.git/hooks";
     $this->_copy("$source_dir/commit-msg", "$target_dir/commit-msg");
+  }
+
+  protected function getLocalDeploymentPort() {
+    $docker_compose = Yaml::parse(
+      file_get_contents(
+        $this->repoRoot . '/docker-compose.yml'
+      )
+    );
+    foreach($docker_compose['services'][$this->instanceName]['ports'] as $portmap) {
+      $values = explode(':', $portmap);
+      return $values[0];
+    }
   }
 
 }
