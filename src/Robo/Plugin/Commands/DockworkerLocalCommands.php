@@ -547,7 +547,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     if ($opts['no-update-dockworker']) {
       $start_command = "$start_command --no-update-dockworker";
     }
-    $this->setRunOtherCommand('$start_command');
+    $this->setRunOtherCommand($start_command);
     $this->setRunOtherCommand('tests:all');
   }
 
