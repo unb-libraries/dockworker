@@ -336,6 +336,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *   Do not use any cached steps in the build.
    * @option bool $no-tail-logs
    *   Do not tail the application logs after starting.
+   * @option bool $no-update-dockworker
+   *   Do not update dockworker as part of the startup process.
    *
    * @command local:start
    * @aliases start
@@ -343,8 +345,11 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @usage local:start
    */
-  public function start(array $opts = ['no-cache' => FALSE, 'no-tail-logs' => FALSE]) {
-    $this->setRunOtherCommand('dockworker:update');
+  public function start(array $opts = ['no-cache' => FALSE, 'no-tail-logs' => FALSE, 'no-update-dockworker' => FALSE]) {
+    if (!$opts['no-update-dockworker']) {
+      $this->setRunOtherCommand('dockworker:update');
+    }
+
     $this->io()->title("Initializing application");
     $this->setRunOtherCommand('local:update-hostfile');
     $this->setRunOtherCommand('local:pull-upstream');
@@ -519,15 +524,30 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   /**
    * Builds the application image, starts a local container, and runs all tests.
    *
+   * @option bool $no-kill
+   *   Do not use kill the container before starting over.
+   * @option bool $no-rm
+   *   Do not remove the existing assets before starting over.
+   * @option bool $no-update-dockworker
+   *   Do not update dockworker as part of the startup process.
+   *
    * @command local:build-test
    * @throws \Exception
    *
    * @usage local:build-test
    */
-  public function buildAndTest() {
-    $this->_exec('docker-compose kill');
-    $this->setRunOtherCommand('local:rm');
-    $this->setRunOtherCommand('local:start --no-cache --no-tail-logs');
+  public function buildAndTest($opts = ['no-kill' => FALSE, 'no-rm' => FALSE, 'no-update-dockworker' => FALSE]) {
+    if (!$opts['no-kill']) {
+      $this->_exec('docker-compose kill');
+    }
+    if (!$opts['no-rm']) {
+      $this->setRunOtherCommand('local:rm');
+    }
+    $start_command = 'local:start --no-cache --no-tail-logs';
+    if ($opts['no-update-dockworker']) {
+      $start_command = "$start_command --no-update-dockworker";
+    }
+    $this->setRunOtherCommand('$start_command');
     $this->setRunOtherCommand('tests:all');
   }
 
@@ -539,6 +559,12 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @option bool $no-cache
    *   Do not use any cached steps in the build.
+   * @option bool $no-kill
+   *   Do not use kill the container before starting over.
+   * @option bool $no-rm
+   *   Do not remove the existing assets before starting over.
+   * @option bool $no-update-dockworker
+   *   Do not update dockworker as part of the startup process.
    *
    * @command local:start-over
    * @aliases start-over, deploy
@@ -546,16 +572,24 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @usage local:start-over
    */
-  public function startOver($opts = ['no-cache' => FALSE]) {
+  public function startOver($opts = ['no-cache' => FALSE, 'no-kill' => FALSE, 'no-rm' => FALSE, 'no-update-dockworker' => FALSE]) {
+    if (!$opts['no-kill']) {
       $this->io()->title("Killing application");
       $this->_exec('docker-compose kill');
+    }
 
+    if (!$opts['no-rm']) {
       $this->setRunOtherCommand('local:rm');
-      $start_command = 'local:start';
-      if ($opts['no-cache']) {
-          $start_command = $start_command . ' --no-cache';
-      }
-      $this->setRunOtherCommand($start_command);
+    }
+
+    $start_command = 'local:start';
+    if ($opts['no-cache']) {
+      $start_command = $start_command . ' --no-cache';
+    }
+    if ($opts['no-update-dockworker']) {
+      $start_command = $start_command . ' --no-update-dockworker';
+    }
+    $this->setRunOtherCommand($start_command);
   }
 
     /**
