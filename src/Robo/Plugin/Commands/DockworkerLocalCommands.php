@@ -82,7 +82,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *   The result of the command.
    */
   public function localDestroy() {
-    $this->setRunOtherCommand('local:halt');
+    $this->_exec('docker-compose kill');
     $this->setRunOtherCommand('local:rm');
   }
 
