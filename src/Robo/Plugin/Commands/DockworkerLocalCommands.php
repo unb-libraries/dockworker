@@ -347,6 +347,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *   Do not build any images before starting.
    * @option bool $only-start
    *   Alias for --no-update-dockworker --no-update-hostfile --no-upstream-pull --no-build
+   * @option bool $force-recreate
+   *   Pass a --force-recreate option to docker-compose up.
    *
    * @command local:start
    * @aliases start
@@ -354,7 +356,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @usage local:start
    */
-  public function start(array $opts = ['no-cache' => FALSE, 'no-tail-logs' => FALSE, 'no-update-dockworker' => FALSE, 'no-update-hostfile' => FALSE, 'no-upstream-pull' => FALSE, 'no-build' => FALSE, 'only-start' => FALSE]) {
+  public function start(array $opts = ['no-cache' => FALSE, 'no-tail-logs' => FALSE, 'no-update-dockworker' => FALSE, 'no-update-hostfile' => FALSE, 'no-upstream-pull' => FALSE, 'no-build' => FALSE, 'only-start' => FALSE, 'force-recreate' => FALSE]) {
     if (!$opts['no-update-dockworker'] && !$opts['only-start']) {
       $this->setRunOtherCommand('dockworker:update');
     }
@@ -378,8 +380,13 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
       );
     }
 
+    $up_command = 'local:up';
+    if ($opts['force-recreate']) {
+      $up_command = $up_command . ' --force-recreate';
+    }
+
     $this->say("Starting application...");
-    $this->setRunOtherCommand('local:up');
+    $this->setRunOtherCommand($up_command);
     $this->waitForDeployment();
     $this->io()->newLine();
     $this->setRunOtherCommand('local:logs:check');
@@ -632,19 +639,26 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   /**
    * Brings up the local application container.
    *
+   * @option bool $force-recreate
+   *   Pass a --force-recreate option to docker-compose up.
+   *
    * @command local:up
    * @aliases up
    *
    * @usage local:up
    */
-  public function up() {
+  public function up($opts = ['force-recreate' => FALSE]) {
     $this->io()->title("Starting local containers");
-    return $this->taskDockerComposeUp()
+    $cmd = $this->taskDockerComposeUp()
       ->detachedMode()
-      ->removeOrphans()
       ->printOutput(FALSE)
-      ->silent(TRUE)
-      ->run();
+      ->silent(TRUE);
+
+    if ($opts['force-recreate']) {
+      $cmd->forceRecreate();
+    }
+
+    return $cmd->run();
   }
 
   /**
