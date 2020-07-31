@@ -343,6 +343,10 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *   Do not update the local hostfile with the application alias.
    * @option bool $no-upstream-pull
    *   Do not pull the upstream docker images before building.
+   * @option bool $no-build
+   *   Do not build any images before starting.
+   * @option bool $only-start
+   *   Alias for --no-update-dockworker --no-update-hostfile --no-upstream-pull --no-build
    *
    * @command local:start
    * @aliases start
@@ -350,28 +354,29 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @usage local:start
    */
-  public function start(array $opts = ['no-cache' => FALSE, 'no-tail-logs' => FALSE, 'no-update-dockworker' => FALSE, 'no-update-hostfile' => FALSE, 'no-upstream-pull' => FALSE]) {
-    if (!$opts['no-update-dockworker']) {
+  public function start(array $opts = ['no-cache' => FALSE, 'no-tail-logs' => FALSE, 'no-update-dockworker' => FALSE, 'no-update-hostfile' => FALSE, 'no-upstream-pull' => FALSE, 'no-build' => FALSE, 'only-start' => FALSE]) {
+    if (!$opts['no-update-dockworker'] && !$opts['only-start']) {
       $this->setRunOtherCommand('dockworker:update');
     }
 
-    if (!$opts['no-update-hostfile']) {
+    if (!$opts['no-update-hostfile'] && !$opts['only-start']) {
       $this->setRunOtherCommand('local:update-hostfile');
     }
 
-    if (!$opts['no-upstream-pull']) {
+    if (!$opts['no-upstream-pull'] && !$opts['only-start']) {
       $this->setRunOtherCommand('local:pull-upstream');
     }
 
-    $build_command = 'local:build';
-    if ($opts['no-cache']) {
-      $build_command = $build_command . ' --no-cache';
-    }
-
-    $this->setRunOtherCommand(
+    if (!$opts['no-build'] && !$opts['only-start']) {
+      $build_command = 'local:build';
+      if ($opts['no-cache']) {
+        $build_command = $build_command . ' --no-cache';
+      }
+      $this->setRunOtherCommand(
         $build_command,
-      self::ERROR_BUILDING_IMAGE
-    );
+        self::ERROR_BUILDING_IMAGE
+      );
+    }
 
     $this->say("Starting application...");
     $this->setRunOtherCommand('local:up');
