@@ -339,7 +339,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *   Do not tail the application logs after starting.
    * @option bool $no-update-dockworker
    *   Do not update dockworker as part of the startup process.
-   * @option bool $no-upstream-hostfile
+   * @option bool $no-update-hostfile
    *   Do not update the local hostfile with the application alias.
    * @option bool $no-upstream-pull
    *   Do not pull the upstream docker images before building.
@@ -350,12 +350,12 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @usage local:start
    */
-  public function start(array $opts = ['no-cache' => FALSE, 'no-tail-logs' => FALSE, 'no-update-dockworker' => FALSE, 'no-hostfile' => FALSE, 'no-upstream-pull' => FALSE]) {
+  public function start(array $opts = ['no-cache' => FALSE, 'no-tail-logs' => FALSE, 'no-update-dockworker' => FALSE, 'no-update-hostfile' => FALSE, 'no-upstream-pull' => FALSE]) {
     if (!$opts['no-update-dockworker']) {
       $this->setRunOtherCommand('dockworker:update');
     }
 
-    if (!$opts['no-hostfile']) {
+    if (!$opts['no-update-hostfile']) {
       $this->setRunOtherCommand('local:update-hostfile');
     }
 
