@@ -373,7 +373,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
       self::ERROR_BUILDING_IMAGE
     );
 
-    $this->io()->say("Starting application...");
+    $this->say("Starting application...");
     $this->setRunOtherCommand('local:up');
     $this->waitForDeployment();
     $this->io()->newLine();
