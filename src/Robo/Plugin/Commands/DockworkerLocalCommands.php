@@ -292,6 +292,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @usage local:pull-upstream
    */
   public function pullUpstreamImages() {
+    $this->_exec('docker-compose pull --quiet --include-deps');
     $upstream_images = $this->getUpstreamImages();
     foreach ($upstream_images as $upstream_image) {
       $result= $this->taskDockerPull($upstream_image)->silent(TRUE)->run();
