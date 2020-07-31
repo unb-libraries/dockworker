@@ -22,7 +22,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   const ERROR_CONTAINER_STOPPED = 'The %s local deployment appears to be stopped.';
   const ERROR_PULLING_UPSTREAM_IMAGE = 'Error pulling upstream image %s';
   const ERROR_UPDATING_HOSTFILE = 'Error updating hostfile!';
-  const WAIT_DEPLOYMENT_CYCLE_LENGTH = 5;
+  const WAIT_DEPLOYMENT_CYCLE_LENGTH = 1;
   const WAIT_DEPLOYMENT_MAX_REPEATS = 300;
 
   use CustomEventAwareTrait;
