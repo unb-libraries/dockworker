@@ -327,7 +327,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Brings up the local application container, displays the application logs.
+   * Builds and deploys the local application, displaying the application logs.
    *
    * @param string[] $opts
    *   An array of options to pass to the builder.
@@ -338,6 +338,10 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *   Do not tail the application logs after starting.
    * @option bool $no-update-dockworker
    *   Do not update dockworker as part of the startup process.
+   * @option bool $no-upstream-hostfile
+   *   Do not update the local hostfile with the application alias.
+   * @option bool $no-upstream-pull
+   *   Do not pull the upstream docker images before building.
    *
    * @command local:start
    * @aliases start
@@ -345,17 +349,19 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @usage local:start
    */
-  public function start(array $opts = ['no-cache' => FALSE, 'no-tail-logs' => FALSE, 'no-update-dockworker' => FALSE]) {
+  public function start(array $opts = ['no-cache' => FALSE, 'no-tail-logs' => FALSE, 'no-update-dockworker' => FALSE, 'no-hostfile' => FALSE, 'no-upstream-pull' => FALSE]) {
     if (!$opts['no-update-dockworker']) {
       $this->setRunOtherCommand('dockworker:update');
     }
 
-    $this->io()->title("Initializing application");
-    $this->setRunOtherCommand('local:update-hostfile');
-    $this->setRunOtherCommand('local:pull-upstream');
+    if (!$opts['no-hostfile']) {
+      $this->setRunOtherCommand('local:update-hostfile');
+    }
 
-    $this->io()->newLine();
-    $this->io()->title("Building application");
+    if (!$opts['no-upstream-pull']) {
+      $this->setRunOtherCommand('local:pull-upstream');
+    }
+
     $build_command = 'local:build';
     if ($opts['no-cache']) {
       $build_command = $build_command . ' --no-cache';
@@ -366,6 +372,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
       self::ERROR_BUILDING_IMAGE
     );
 
+    $this->io()->say("Starting application...");
     $this->setRunOtherCommand('local:up');
     $this->waitForDeployment();
     $this->io()->newLine();
@@ -608,8 +615,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
      * @usage local:rebuild
      */
     public function rebuild($opts = ['no-cache' => FALSE]) {
-        $this->io()->title("Stopping application");
-        $this->_exec('docker-compose kill');
+        $this->setRunOtherCommand('local:halt');
         $start_command = 'local:start';
         if ($opts['no-cache']) {
             $start_command = $start_command . ' --no-cache';
