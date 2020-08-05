@@ -41,15 +41,13 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
   }
 
   /**
-   * Builds, tags, pushes and deploys the application's docker image.
+   * Optionally Builds, tags, pushes and deploys the application's docker image.
    *
    * @param string $env
    *   The environment to target.
    *
-   * @option bool $no-cache
-   *   Do not use any cached steps in the build.
-   * @option string $cache-from
-   *   The image to cache the build from.
+   * @option string $use-tag
+   *   Skip building and deploy with the specified tag.
    *
    * @command image:deploy
    * @throws \Exception
@@ -59,16 +57,21 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
    * @dockerimage
    * @dockerpush
    */
-  public function buildPushDeployEnv($env) {
+  public function buildPushDeployEnv($env, array $opts = ['use-tag' => NULL]) {
     $this->pushCommandInit($env);
-    $timestamp = date('YmdHis');
-    $this->buildPushEnv($env, $timestamp);
+    if (!empty($opts['use-tag'])) {
+      $timestamp = date('YmdHis');
+      $this->buildPushEnv($env, $timestamp);
 
-    if ($this->dockerImageTagDateStamp) {
-      $image_name = "{$this->dockerImageName}:$env-$timestamp";
+      if ($this->dockerImageTagDateStamp) {
+        $image_name = "{$this->dockerImageName}:$env-$timestamp";
+      }
+      else {
+        $image_name = "{$this->dockerImageName}:$env";
+      }
     }
     else {
-      $image_name = "{$this->dockerImageName}:$env";
+      $image_name = "{$this->dockerImageName}:{$opts['use-tag']}";
     }
     $deployment_file = $this->applyKubeDeploymentUpdate($this->repoRoot, $env, $image_name);
     $deploy_namespace = $this->getKubernetesDeploymentFileNamespace($deployment_file);
