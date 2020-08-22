@@ -62,7 +62,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    */
   public function __construct() {
     $this->repoRoot = realpath(__DIR__ . "/../../../../../../../");
-    $this->configFile = 'dockworker.yml';
+    $this->configFile = '.dockworker/dockworker.yml';
     $this->config = Robo::loadConfiguration(
       [$this->repoRoot . '/' . $this->configFile]
     );
