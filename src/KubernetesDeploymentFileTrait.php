@@ -120,7 +120,7 @@ trait KubernetesDeploymentFileTrait {
    * @throws \Dockworker\DockworkerException
    */
   protected function getTokenizedKubeDeploymentFile($repo_root, $env, $image) {
-    $deployment_file = getKubernetesDeploymentFileNameFromBranch($repo_root, $env);
+    $deployment_file = $this->getKubernetesDeploymentFileNameFromBranch($repo_root, $env);
     if (!file_exists($deployment_file)) {
       throw new DockworkerException("Cannot find deployment file [$deployment_file]");
     }
