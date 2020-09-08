@@ -22,7 +22,7 @@ trait GitHubTrait {
    *
    * @var object
    */
-  protected $gitHubClient;
+  protected $gitHubClient = NULL;
 
   /**
    * The GitHub Repository name corresponding to this instance.
@@ -34,7 +34,7 @@ trait GitHubTrait {
   /**
    * Retrieves the github repository name from config.
    *
-   * @hook pre-init @github
+   * @hook init @github
    * @throws \Dockworker\DockworkerException
    */
   public function setGitHubRepo() {
@@ -45,24 +45,29 @@ trait GitHubTrait {
   }
 
   /**
-   * Sets the github client.
+   * Sets the GitHub client.
    *
-   * @hook post-init @github
+   * @hook init @github
    * @throws \Dockworker\DockworkerException
    */
   public function setGitHubClient() {
-    try{
-      $this->gitHubClient = new \Github\Client();
-    }
-    catch (\Exception $e) {
-      throw new DockworkerException('The GitHub client could not be instantiated.');
+    if ($this->gitHubClient == NULL) {
+      try{
+        $this->gitHubClient = new \Github\Client();
+        if($gh_token = getenv('GITHUB_AUTH_ACCESS_TOKEN')) {
+          $this->gitHubClient->authenticate($gh_token, NULL, \Github\Client::AUTH_ACCESS_TOKEN);
+        }
+      }
+      catch (\Exception $e) {
+        throw new DockworkerException('The GitHub client could not be instantiated.');
+      }
     }
   }
 
   /**
    * Retrieves the github owner from config.
    *
-   * @hook pre-init @github
+   * @hook init @github
    * @throws \Dockworker\DockworkerException
    */
   public function setGitHubOwner() {
