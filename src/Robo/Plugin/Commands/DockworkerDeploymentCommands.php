@@ -275,14 +275,42 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @kubectl
    */
   public function openDeploymentShell($env, $shell = '/bin/sh') {
+    $pods = $this->getDeploymentExecPodIds($env);
+    $pod_id = array_shift($pods);
+    $this->io()->note('Opening remote pod shell... Type "exit" when finished.');
+    return $this->taskExec($this->kubeCtlBin)
+      ->arg('exec')->arg('-it')->arg($pod_id)
+      ->arg("--namespace={$this->kubernetesPodNamespace}")
+      ->arg('--')
+      ->arg($shell)
+      ->run();
+  }
+
+  /**
+   * Determine the deployment Pod ID to execute a command in.
+   *
+   * @param string $env
+   *   The environment to query.
+   * @param bool $only_first
+   *   If TRUE, returns the first pod found without a prompt. FALSE otherwise.
+   * @param bool $all_pods
+   *   TRUE if the command should return all active pods. FALSE returns one.
+   *
+   * @return string[]
+   *   The ID of the pods to run commands in.
+   */
+  protected function getDeploymentExecPodIds($env, $only_first = TRUE, $all_pods = FALSE) {
     $this->deploymentCommandInit($this->repoRoot, $env);
     $this->kubernetesPodNamespace = $this->deploymentK8sNameSpace;
     $this->kubernetesSetupPods($this->deploymentK8sName, "Shell");
 
     if (!empty($this->kubernetesCurPods)) {
+      if ($all_pods != FALSE) {
+        return $this->kubernetesCurPods;
+      }
       $first_pod = reset($this->kubernetesCurPods);
 
-      if (count($this->kubernetesCurPods) > 1) {
+      if (count($this->kubernetesCurPods) > 1 && $only_first == FALSE) {
         $table_rows = array_map(
           function ($el) {
             return [$el];
@@ -298,7 +326,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
       }
       else {
         $pod_id = $first_pod;
-        $this->io()->note("Only one pod in deployment: $pod_id");
+        $this->io()->note("Pod ID: $pod_id");
       }
 
       if (!in_array($pod_id, $this->kubernetesCurPods)) {
@@ -311,13 +339,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
           )
         );
       }
-      $this->io()->note('Opening remote pod shell... Type "exit" when finished.');
-      return $this->taskExec($this->kubeCtlBin)
-        ->arg('exec')->arg('-it')->arg($pod_id)
-        ->arg("--namespace={$this->kubernetesPodNamespace}")
-        ->arg('--')
-        ->arg($shell)
-        ->run();
+
     }
     else {
       throw new DockworkerException(
@@ -327,6 +349,35 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
           $this->deploymentK8sNameSpace
         )
       );
+    }
+    return [$pod_id];
+  }
+
+  /**
+   * Runs multiple commands sequentially in a deployment.
+   *
+   * @param array $env
+   *   The environments to run the commands in.
+   * @param array $commands
+   *   The commands to run.
+   * @param bool $all_pods
+   *   FALSE if the command should only be run in a single pod. TRUE otherwise.
+   *
+   */
+  protected function runMultipleInstanceCommands($env = [], $commands = [], $all_pods = FALSE) {
+    $pods = $this->getDeploymentExecPodIds($env);
+
+    foreach ($pods as $pod) {
+      foreach ($commands as $cmd) {
+        $this->kubernetesPodExecCommand(
+          $pod_id,
+          $env,
+          $cmd
+        );
+      }
+      if ($all_pods == FALSE) {
+        break;
+      }
     }
   }
 
