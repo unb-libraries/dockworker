@@ -512,6 +512,12 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   public function localLogsCheck(array $opts = ['all' => FALSE]) {
     $this->getlocalRunning();
 
+    // Allow modules to implement custom handlers to trigger errors.
+    $handlers = $this->getCustomEventHandlers('dockworker-local-log-error-triggers');
+    foreach ($handlers as $handler) {
+      $this->addLogErrorTriggers($handler());
+    }
+
     // Allow modules to implement custom handlers to add exceptions.
     $handlers = $this->getCustomEventHandlers('dockworker-local-log-error-exceptions');
     foreach ($handlers as $handler) {

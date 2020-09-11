@@ -130,4 +130,14 @@ trait LogCheckerTrait {
     $this->logErrorExceptions = array_merge($this->logErrorExceptions, $exceptions);
   }
 
+  /**
+   * Adds triggers to the current list of triggers.
+   *
+   * @param string[] $triggers
+   *   An associative array of triggers to add.
+   */
+  protected function addLogErrorTriggers(array $triggers) {
+    $this->logErrorTriggers = array_merge($this->logErrorTriggers, $triggers);
+  }
+
 }
