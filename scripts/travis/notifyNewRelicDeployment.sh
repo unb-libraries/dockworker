@@ -9,6 +9,7 @@ if [ ! -z "${NR_API_KEY}" ]; then
     NR_APP_NAME="dev-$NR_APP_NAME"
   fi
 
+  COMMITTER_EMAIL=$(git log -1 $TRAVIS_COMMIT --pretty="%cE")
   NR_APP_ID=$(curl -X GET 'https://api.newrelic.com/v2/applications.json' \
       -H "X-Api-Key:${NR_API_KEY}" \
       -G -d "filter[name]=${NR_APP_NAME}" -s | jq -r '.applications[0].id')
@@ -20,7 +21,8 @@ if [ ! -z "${NR_API_KEY}" ]; then
   "{
     \"deployment\": {
       \"revision\": \"${TRAVIS_COMMIT}\",
-      \"changelog\": \"${TRAVIS_COMMIT_MESSAGE}\"
+      \"changelog\": \"${TRAVIS_COMMIT_MESSAGE}\",
+      \"user\": \"${COMMITTER_EMAIL}\"
     }
   }"
 fi
