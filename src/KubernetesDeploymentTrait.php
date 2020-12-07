@@ -99,7 +99,7 @@ trait KubernetesDeploymentTrait {
    */
   protected function applyKubeDeploymentUpdate($repo_root, $env, $image) {
     if ($this->environmentIsDeployable($env)) {
-      $deployment_file = $this->getTokenizedKubeDeploymentFile($repo_root, $env, $image);
+      $deployment_file = $this->getTokenizedKubeFile($repo_root, $env, $image, 'deployment');
       $this->setRunOtherCommand("deployment:apply $deployment_file");
       return $deployment_file;
     }

@@ -81,8 +81,8 @@ trait KubernetesDeploymentFileTrait {
    *
    * @throws \Exception
    */
-  public static function getKubernetesDeploymentFileNameFromBranch($repo_root, $env) {
-    return "$repo_root/.dockworker/deployment/k8s/$env/deployment.yaml";
+  public static function getKubernetesFileNameFromBranch($repo_root, $env, $type) {
+    return "$repo_root/.dockworker/deployment/k8s/$env/$type.yaml";
   }
 
   /**
@@ -119,8 +119,8 @@ trait KubernetesDeploymentFileTrait {
    *
    * @throws \Dockworker\DockworkerException
    */
-  protected function getTokenizedKubeDeploymentFile($repo_root, $env, $image) {
-    $deployment_file = $this->getKubernetesDeploymentFileNameFromBranch($repo_root, $env);
+  protected function getTokenizedKubeFile($repo_root, $env, $image, $type) {
+    $deployment_file = $this->getKubernetesFileNameFromBranch($repo_root, $env, $type);
     if (!file_exists($deployment_file)) {
       throw new DockworkerException("Cannot find deployment file [$deployment_file]");
     }
