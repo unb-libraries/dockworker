@@ -64,7 +64,7 @@ trait KubernetesDeploymentFileTrait {
    */
   public static function getKubernetesDeploymentNameFromBranch($repo_root, $env) {
     return self::getKubernetesDeploymentFileDeploymentName(
-      self::getKubernetesDeploymentFileNameFromBranch($repo_root, $env)
+      self::getKubernetesFileNameFromBranch($repo_root, $env, 'deployment')
     );
   }
 
