@@ -73,14 +73,18 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
     else {
       $image_name = "{$this->dockerImageName}:{$opts['use-tag']}";
     }
+
+    $this->say('Updating deployment configuration..');
     $deployment_file = $this->applyKubeDeploymentUpdate($this->repoRoot, $env, $image_name);
 
     $cron_file = $this->getKubernetesFileNameFromBranch($this->repoRoot, $env, 'cron');
-    if (!file_exists($cron_file)) {
+    if (file_exists($cron_file)) {
+      $this->say('Updating cron configuration..');
       $cron_file = $this->getTokenizedKubeFile($this->repoRoot, $env, $image_name, 'cron');
       $this->setRunOtherCommand("deployment:apply $cron_file");
     }
 
+    $this->say('Checking for successful deployment..');
     $deploy_namespace = $this->getKubernetesDeploymentFileNamespace($deployment_file);
     $this->setRunOtherCommand("deployment:status $deploy_namespace");
   }
