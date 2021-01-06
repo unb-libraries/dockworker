@@ -365,7 +365,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
       $this->setRunOtherCommand('local:update-hostfile');
     }
 
-    if (!$opts['no-upstream-pull'] && !$opts['only-start']) {
+    if (!$opts['no-cache'] && !$opts['no-upstream-pull'] && !$opts['only-start']) {
       $this->setRunOtherCommand('local:pull-upstream');
     }
 
