@@ -41,6 +41,14 @@ trait DockerImagePushTrait {
    * @throws \Exception
    */
   public function authToRepository() {
+    if ($this->dockerImageRepo == 'ghcr') {
+      $user = getenv('GH_CONTAINER_REGISTRY_TOKEN');
+      $token = getenv('GH_CONTAINER_REGISTRY_USER');
+      exec("(echo \"$token\" | docker login ghcr.io -u \"$user\" --password-stdin)", $output, $return);
+      if ($return != '0') {
+        throw new DockworkerException("GitHub Container Registry auth failure. Have you set GH_CONTAINER_REGISTRY_TOKEN and GH_CONTAINER_REGISTRY_USER as environment variables?");
+      }
+    }
     if ($this->dockerImageRepo == 'dockercloud') {
       $user = getenv('DOCKER_CLOUD_USER_NAME');
       $pass = getenv('DOCKER_CLOUD_USER_PASS');
