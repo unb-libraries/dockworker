@@ -49,7 +49,7 @@ trait DockerImagePushTrait {
         throw new DockworkerException("GitHub Container Registry auth failure. Have you set GH_CONTAINER_REGISTRY_TOKEN and GH_CONTAINER_REGISTRY_USER as environment variables?");
       }
     }
-    if ($this->dockerImageRepo == 'dockercloud') {
+    elseif ($this->dockerImageRepo == 'dockercloud') {
       $user = getenv('DOCKER_CLOUD_USER_NAME');
       $pass = getenv('DOCKER_CLOUD_USER_PASS');
       exec("(echo \"$pass\" | docker login --username \"$user\" --password-stdin)", $output, $return);
