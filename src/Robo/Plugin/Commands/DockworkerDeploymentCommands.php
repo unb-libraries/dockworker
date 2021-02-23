@@ -136,6 +136,50 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
+   * Deletes the application's k8s deployment definition.
+   *
+   * @param string $file
+   *   The path to the YAML deployment definition file to delete. This file must
+   *   define the namespace to update.
+   *
+   * @command deployment:delete
+   * @throws \Dockworker\DockworkerException
+   *
+   * @usage deployment:delete /tmp/deployment/lib-unb-ca.Deployment.prod.yaml
+   *
+   * @kubectl
+   */
+  public function deleteDeploymentImage($file) {
+    $this->kubectlExec(
+      'delete',
+      [
+        '-f',
+        $file,
+      ],
+      TRUE
+    );
+  }
+
+  /**
+   * Deletes and applies the application's k8s deployment definition.
+   *
+   * @param string $file
+   *   The path to the YAML deployment definition file to apply. This file must
+   *   define the namespace to update.
+   *
+   * @command deployment:delete-apply
+   * @throws \Dockworker\DockworkerException
+   *
+   * @usage deployment:delete-apply /tmp/lib-unb-ca.Deployment.prod.yaml
+   *
+   * @kubectl
+   */
+  public function deleteApplyDeploymentImage($file) {
+    $this->deleteDeploymentImage($file);
+    $this->applyDeploymentImage($file);
+  }
+
+  /**
    * Displays the application's k8s deployed pod(s) logs.
    *
    * @param string $env
