@@ -81,6 +81,14 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
     if (file_exists($cron_file)) {
       $this->say('Updating cron configuration..');
       $cron_file = $this->getTokenizedKubeFile($this->repoRoot, $env, $image_name, 'cron');
+      $this->kubectlExec(
+        'delete',
+        [
+          '-f',
+          $cron_file,
+        ],
+        TRUE
+      );
       $this->setRunOtherCommand("deployment:apply $cron_file");
     }
 
