@@ -93,7 +93,7 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
    * Builds the docker image, tags it with a current timestamp, and pushes it.
    *
    * This method is intended to be used as part of a build-push-deploy command,
-   * usually in travis. In the vein, this cannot be called from a dirty git
+   * usually in deploy. In this vein, this cannot be called from a dirty git
    * repository.
    *
    * @param string $env
