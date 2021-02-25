@@ -46,7 +46,10 @@ class DockworkerReadmeCommands extends DockworkerCommands {
    * Generate the README screenshot image URI.
    */
   protected function getReadmeScreenshotUri() {
-    return "https://github.com/{$this->gitHubOwner}/{$this->gitHubRepo}/raw/prod/.dockworker/screenshot.png";
+    if (file_exists($this->repoRoot . '/.dockworker/screenshot.png')) {
+      return "https://github.com/{$this->gitHubOwner}/{$this->gitHubRepo}/raw/prod/.dockworker/screenshot.png";
+    }
+    return NULL;
   }
 
 }
