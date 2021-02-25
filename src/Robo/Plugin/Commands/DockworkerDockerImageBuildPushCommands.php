@@ -84,6 +84,13 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
       $this->setRunOtherCommand("deployment:delete-apply $cron_file");
     }
 
+    $backup_file = $this->getKubernetesFileNameFromBranch($this->repoRoot, $env, 'backup');
+    if (file_exists($backup_file)) {
+      $this->say('Updating backup configuration..');
+      $backup_file = $this->getTokenizedKubeFile($this->repoRoot, $env, $image_name, 'backup');
+      $this->setRunOtherCommand("deployment:delete-apply $backup_file");
+    }
+
     $this->say('Checking for successful deployment..');
     $deploy_namespace = $this->getKubernetesDeploymentFileNamespace($deployment_file);
     $this->setRunOtherCommand("deployment:status $deploy_namespace");
@@ -93,7 +100,7 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
    * Builds the docker image, tags it with a current timestamp, and pushes it.
    *
    * This method is intended to be used as part of a build-push-deploy command,
-   * usually in travis. In the vein, this cannot be called from a dirty git
+   * usually in deploy. In this vein, this cannot be called from a dirty git
    * repository.
    *
    * @param string $env
