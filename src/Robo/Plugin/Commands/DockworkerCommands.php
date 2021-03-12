@@ -28,6 +28,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   const ERROR_INSTANCE_NAME_UNSET = 'The application name value has not been set in %s';
   const ERROR_PROJECT_PREFIX_UNSET = 'The project_prefix variable has not been set in %s';
   const ERROR_UPSTREAM_IMAGE_UNSET = 'The upstream_image variable has not been set in %s';
+  const ERROR_UUID_UNSET = 'The application UUID value has not been set in %s';
 
   /**
    * The application's configuration object.
@@ -56,6 +57,13 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    * @var string
    */
   protected $repoRoot;
+
+  /**
+   * The UNBLibraries uuid of the application.
+   *
+   * @var string
+   */
+  protected $uuid;
 
   /**
    * DockworkerCommands constructor.
@@ -97,6 +105,20 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
 
     if (empty($this->instanceName)) {
       throw new DockworkerException(sprintf(self::ERROR_INSTANCE_NAME_UNSET, $this->configFile));
+    }
+  }
+
+  /**
+   * Get the UUID from config.
+   *
+   * @hook init
+   * @throws \Dockworker\DockworkerException
+   */
+  public function setUuid() {
+    $this->uuid = Robo::Config()->get('dockworker.application.uuid');
+
+    if (empty($this->uuid)) {
+      throw new DockworkerException(sprintf(self::ERROR_UUID_UNSET, $this->configFile));
     }
   }
 
