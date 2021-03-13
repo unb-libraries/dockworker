@@ -87,7 +87,6 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
     $backup_file = $this->getKubernetesFileNameFromBranch($this->repoRoot, $env, 'backup');
     if (file_exists($backup_file)) {
       $this->say('Updating backup configuration..');
-      $backup_file = $this->getTokenizedKubeFile($this->repoRoot, $env, $image_name, 'backup');
       $this->setRunOtherCommand("deployment:delete-apply $backup_file");
     }
 
