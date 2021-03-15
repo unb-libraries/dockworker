@@ -35,6 +35,7 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
     $this->getHourlyCycleCron(6);
     $this->getApplicationDailyCronSuggestion();
     $this->getApplicationWeeklyCronSuggestion();
+    $this->getApplicationMonthlyCronSuggestion();
   }
 
   /**
@@ -84,6 +85,24 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
         "Suggested Sunday Night Between 2-6 Crontab: %s %s * * 1",
         $cron_time->format('i'),
         $cron_time->format('H')
+      )
+    );
+  }
+
+  /**
+   * Generates cron suggestions for Monthly.
+   */
+  protected function getApplicationMonthlyCronSuggestion() {
+    $cron_time = $this->getRandomCronTime(31, 60 * 60 * 4, 'PT2H');
+    mt_srand($this->uuid * 31);
+    $month_day = mt_rand(0, 27);
+
+    $this->say(
+      sprintf(
+        "Suggested Monthly Crontab: %s %s %s * *",
+        $cron_time->format('i'),
+        $cron_time->format('H'),
+        $month_day
       )
     );
   }
