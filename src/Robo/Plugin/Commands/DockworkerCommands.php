@@ -52,6 +52,13 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   protected $instanceName;
 
   /**
+   * The instance slug of the application.
+   *
+   * @var string
+   */
+  protected $instanceSlug;
+
+  /**
    * The path to the Dockworker repo.
    *
    * @var string
@@ -102,6 +109,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    */
   public function setInstanceName() {
     $this->instanceName = Robo::Config()->get('dockworker.application.name');
+    $this->instanceSlug = str_replace('.', '-', $this->instanceName);
 
     if (empty($this->instanceName)) {
       throw new DockworkerException(sprintf(self::ERROR_INSTANCE_NAME_UNSET, $this->configFile));
