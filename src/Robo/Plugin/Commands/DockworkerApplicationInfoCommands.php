@@ -190,7 +190,6 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
 
     return sprintf(
         "%s %s * * *",
-        $hours,
         $cron_minute,
         implode(',',$cron_hours)
     );
