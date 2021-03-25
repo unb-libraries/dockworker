@@ -61,6 +61,7 @@ trait TemporaryDirectoryTrait {
      */
     $attempts = 0;
     do {
+      mt_srand();
       $path = sprintf('%s%s%s%s', $dir, DIRECTORY_SEPARATOR, $prefix, mt_rand(100000, mt_getrandmax()));
     } while (
       !mkdir($path, $mode) &&
