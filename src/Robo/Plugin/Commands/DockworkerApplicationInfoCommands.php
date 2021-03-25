@@ -42,6 +42,15 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
    * Generates cron suggestions for 'every fifteen minutes'.
    */
   protected function getApplicationFifteenCronSuggestion() {
+    $this->say(
+      sprintf(
+        "Suggested 15 minute Crontab: %s",
+        $this->getApplicationFifteenCronString()
+      )
+    );
+  }
+
+  protected function getApplicationFifteenCronString() {
     $cron_minutes=[];
     $cron_time = $this->getRandomCronTime(15, 15 * 60);
 
@@ -50,12 +59,9 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
       $cron_minutes[] = $cron_time->format('i');
     }
     sort($cron_minutes);
-
-    $this->say(
-      sprintf(
-        "Suggested 15 minute Crontab: %s * * * *",
-        implode(',',$cron_minutes)
-      )
+    return sprintf(
+      "%s * * * *",
+      implode(',',$cron_minutes)
     );
   }
 
@@ -63,14 +69,20 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
    * Generates cron suggestions for 'Nightly Between 2-6'.
    */
   protected function getApplicationDailyCronSuggestion() {
-    $cron_time = $this->getRandomCronTime(24, 60 * 60 * 4, 'PT2H');
-
     $this->say(
       sprintf(
-        "Suggested Nightly Between 2-6 Crontab: %s %s * * *",
+        "Suggested Nightly Between 2-6 Crontab: %s",
+        $this->getApplicationDailyCronString()
+      )
+    );
+  }
+
+  protected function getApplicationDailyCronString() {
+    $cron_time = $this->getRandomCronTime(24, 60 * 60 * 4, 'PT2H');
+    return sprintf(
+        "%s %s * * *",
         $cron_time->format('i'),
         $cron_time->format('H')
-      )
     );
   }
 
@@ -78,14 +90,20 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
    * Generates cron suggestions for 'Sunday Night Between 2-6'.
    */
   protected function getApplicationWeeklyCronSuggestion() {
-    $cron_time = $this->getRandomCronTime(24 * 7, 60 * 60 * 4, 'PT2H');
-
     $this->say(
       sprintf(
-        "Suggested Sunday Night Between 2-6 Crontab: %s %s * * 1",
+        "Suggested Sunday Night Between 2-6 Crontab: %s",
+        $this->getApplicationWeeklyCronString()
+      )
+    );
+  }
+
+  protected function getApplicationWeeklyCronString() {
+    $cron_time = $this->getRandomCronTime(24 * 7, 60 * 60 * 4, 'PT2H');
+    return sprintf(
+        "%s %s * * 1",
         $cron_time->format('i'),
         $cron_time->format('H')
-      )
     );
   }
 
@@ -93,17 +111,24 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
    * Generates cron suggestions for Monthly.
    */
   protected function getApplicationMonthlyCronSuggestion() {
+    $this->say(
+      sprintf(
+        "Suggested Monthly Crontab: %s",
+        $this->getApplicationMonthlyCronString()
+      )
+    );
+  }
+
+  protected function getApplicationMonthlyCronString() {
     $cron_time = $this->getRandomCronTime(31, 60 * 60 * 4, 'PT2H');
     mt_srand($this->uuid * 31);
     $month_day = mt_rand(0, 27);
 
-    $this->say(
-      sprintf(
-        "Suggested Monthly Crontab: %s %s %s * *",
+    return sprintf(
+        "%s %s %s * *",
         $cron_time->format('i'),
         $cron_time->format('H'),
         $month_day
-      )
     );
   }
 
@@ -144,6 +169,16 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
    * @throws \Exception
    */
   protected function getHourlyCycleCron($hours) {
+    $this->say(
+      sprintf(
+        "Suggested Every %s Hours Crontab: %s",
+        $hours,
+        $this->getHourlyCycleCronString($hours)
+      )
+    );
+  }
+
+  protected function getHourlyCycleCronString($hours) {
     $cron_time = $this->getRandomCronTime($hours, 60 * 60 * $hours);
     $cron_minute = $cron_time->format('i');
 
@@ -153,13 +188,11 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
     }
     sort($cron_hours);
 
-    $this->say(
-      sprintf(
-        "Suggested Every %s Hours Crontab: %s %s * * *",
+    return sprintf(
+        "%s %s * * *",
         $hours,
         $cron_minute,
         implode(',',$cron_hours)
-      )
     );
   }
 
