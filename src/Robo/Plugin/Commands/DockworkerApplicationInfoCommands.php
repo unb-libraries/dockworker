@@ -122,7 +122,7 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
   protected function getApplicationMonthlyCronString() {
     $cron_time = $this->getRandomCronTime(31, 60 * 60 * 4, 'PT2H');
     mt_srand($this->uuid * 31);
-    $month_day = mt_rand(0, 27);
+    $month_day = mt_rand(1, 27);
 
     return sprintf(
         "%s %s %s * *",
