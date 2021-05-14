@@ -319,6 +319,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *   The result of the removal command.
    */
   public function removeData() {
+    $this->unSetHostFileEntries();
     $this->io()->title("Removing application data");
     return $this->taskExec('docker-compose')
       ->dir($this->repoRoot)
@@ -671,19 +672,57 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @usage local:update-hostfile
    */
-  public function setHostFileEntry() {
-    $hostname = escapeshellarg('local-' . $this->instanceName);
+  public function setHostFileEntries() {
+    $hostnames = $this->getHostFileHostnames();
+    $this->say("Updating hostfile with entries. If you are asked for a password, you should enable passwordless sudo for your user.");
+    foreach ($hostnames as $hostname) {
+      $delete_command = "sudo sh -c 'sed -i '' -e \"/$hostname/d\" /etc/hosts'";
+      $add_command = "sudo sh -c 'echo \"127.0.0.1       $hostname\" >> /etc/hosts'";
 
-    $delete_command = "sudo sh -c 'sed -i '' -e \"/$hostname/d\" /etc/hosts'";
-    $add_command = "sudo sh -c 'echo \"127.0.0.1       $hostname\" >> /etc/hosts'";
+      $this->say("Updating hostfile with entry for $hostname...");
+      exec($delete_command, $delete_output, $delete_return);
+      exec($add_command, $add_output, $add_return);
 
-    $this->say("Updating hostfile with entry for $hostname. If you are asked for a password, you should enable passwordless sudo for your user.");
-    exec($delete_command, $delete_output, $delete_return);
-    exec($add_command, $add_output, $add_return);
-
-    if ($delete_return > 0 || $add_command > 0) {
-      throw new DockworkerException(sprintf(self::ERROR_UPDATING_HOSTFILE));
+      if ($delete_return > 0 || $add_return > 0) {
+        throw new DockworkerException(sprintf(self::ERROR_UPDATING_HOSTFILE));
+      }
     }
+  }
+
+  /**
+   * Reverts the local system hostfile for the local application. Requires sudo.
+   *
+   * @command local:revert-hostfile
+   * @throws \Dockworker\DockworkerException
+   *
+   * @usage local:revert-hostfile
+   */
+  public function unSetHostFileEntries() {
+    $hostnames = $this->getHostFileHostnames();
+    $this->say("Removing hostfile entries. If you are asked for a password, you should enable passwordless sudo for your user.");
+    foreach ($hostnames as $hostname) {
+      $this->say("Removing hostfile entry for $hostname...");
+      $delete_command = "sudo sh -c 'sed -i '' -e \"/$hostname/d\" /etc/hosts'";
+      exec($delete_command, $delete_output, $delete_return);
+      if ($delete_return > 0) {
+        throw new DockworkerException(sprintf(self::ERROR_UPDATING_HOSTFILE));
+      }
+    }
+  }
+
+  /**
+   * Get the list of hostnames that should be localhost for dev purposes.
+   *
+   * @return array
+   */
+  private function getHostFileHostnames() {
+    $hostnames = [escapeshellarg('local-' . $this->instanceName)];
+
+    $additional_hostnames = Robo::Config()->get('dockworker.deployment.local.localhost_hostnames');
+    if (!empty($additional_hostnames)) {
+      $hostnames = array_merge($hostnames, $additional_hostnames);
+    }
+    return $hostnames;
   }
 
 }
