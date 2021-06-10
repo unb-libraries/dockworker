@@ -26,6 +26,10 @@ class DockworkerReadmeCommands extends DockworkerCommands {
    * @readmecommand
    */
   public function setApplicationReadme() {
+    $repo_readme_overrides = $this->repoRoot . '/.dockworker/documentation/README';
+    if (file_exists($repo_readme_overrides)) {
+      array_unshift($this->readMeTemplatePaths, $this->repoRoot . '/.dockworker/documentation/README');
+    }
     $this->readMeTemplatePaths[] = $this->repoRoot . '/vendor/unb-libraries/dockworker/data/README';
     $loader = new \Twig\Loader\FilesystemLoader($this->readMeTemplatePaths);
     $this->readMeTwig = new \Twig\Environment($loader);
