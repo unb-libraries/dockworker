@@ -26,8 +26,10 @@ class DockworkerReadmeCommands extends DockworkerCommands {
    * @readmecommand
    */
   public function setApplicationReadme() {
-    $loader = new \Twig\Loader\FilesystemLoader();
+    $github_contributors = $this->getGitHubContributors($this->gitHubOwner, $this->gitHubRepo);
+    $screenshot_uri = $this->getReadmeScreenshotUri();
 
+    $loader = new \Twig\Loader\FilesystemLoader();
     $repo_readme_overrides = $this->repoRoot . '/.dockworker/documentation/README';
     if (file_exists($repo_readme_overrides)) {
       $loader->addPath($repo_readme_overrides);
@@ -47,8 +49,8 @@ class DockworkerReadmeCommands extends DockworkerCommands {
       $template->render(
         [
           'instance_name' => $this->instanceName,
-          'contributors' => $this->getGitHubContributors($this->gitHubOwner, $this->gitHubRepo),
-          'screenshot_uri' => $this->getReadmeScreenshotUri()
+          'contributors' => $github_contributors,
+          'screenshot_uri' => $screenshot_uri
         ]
       )
     );
