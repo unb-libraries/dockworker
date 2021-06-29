@@ -483,7 +483,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
         'Complete',
       ];
     }
-    preg_match_all('/pre-init\.d - processing \/scripts\/pre-init.d\/([0-9]{1,2})_(.*)/', $log, $matches);
+    preg_match_all('/pre-init.d - ([0-9]{1,2})_(.*)/', $log, $matches);
     if (!empty($matches[1])) {
       return [
         end($matches[1]),
