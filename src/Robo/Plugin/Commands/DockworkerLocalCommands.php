@@ -209,12 +209,17 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     }
 
     if ($opts['all']) {
-      passthru("$log_dump_cmd --tail='all'");
-      return passthru("$log_dump_cmd --tail=0 --follow");
+      $log_dump_cmd = "$log_dump_cmd --tail='all' --follow";
     }
     else {
-      passthru("$log_dump_cmd --tail='all' {$this->instanceName}");
-      return passthru("$log_dump_cmd  --tail=0 --follow {$this->instanceName}");
+      $log_dump_cmd = "$log_dump_cmd --tail='all' --follow {$this->instanceName}";
+    }
+
+    $handle = popen($log_dump_cmd, 'r');
+    while(!feof($handle)) {
+      $buffer = fgets($handle);
+      echo "$buffer";
+      flush();
     }
   }
 
@@ -393,7 +398,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     $this->setRunOtherCommand('local:logs:check');
 
     if (!$opts['no-tail-logs']) {
-      $this->setRunOtherCommand('local:logs:tail');
+      $this->tailLocalLogs();
     }
   }
 
