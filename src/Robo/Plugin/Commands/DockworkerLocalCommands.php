@@ -430,6 +430,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     }
 
     if ($counter == self::WAIT_DEPLOYMENT_MAX_REPEATS) {
+      $this->_exec('docker-compose logs');
       throw new DockworkerException("Timeout waiting for local application deployment!");
     }
 
