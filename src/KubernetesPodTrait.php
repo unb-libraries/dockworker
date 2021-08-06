@@ -142,6 +142,43 @@ trait KubernetesPodTrait {
   }
 
   /**
+   * Copies files from a remote kubernetes pod.
+   *
+   * @param string $pod
+   *   The pod name to check.
+   * @param string $namespace
+   *   The namespace to target the pod in.
+   * @param string $pod_path
+   *   The filepath inside the pod.
+   * @param string $local_path
+   *   The filepath target locally.
+   * @param bool $except_on_error
+   *   TRUE to throw an exception on error. FALSE otherwise.
+   *
+   * @throws \Dockworker\DockworkerException
+   *
+   * @return string
+   *   The STDOUT output from the command.
+   */
+  protected function kubernetesCopyFromPodCommand($pod, $namespace, $pod_path, $local_path, $except_on_error = TRUE) {
+    exec(
+      sprintf($this->kubeCtlBin . " cp %s/%s:%s %s",
+        $namespace,
+        $pod,
+        $pod_path,
+        $local_path
+      ),
+      $cp_output,
+      $return_code
+    );
+    $output_string = implode("\n", $cp_output);
+    if ($return_code != 0 && $except_on_error) {
+      throw new DockworkerException("Pod cp [$pod_path/$local_path] returned error code $return_code : $output_string.");
+    }
+    return $cp_output;
+  }
+
+  /**
    * Copies a file between a Kubernetes pod and the local filesystem.
    *
    * @param string $namespace
