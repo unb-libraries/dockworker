@@ -2,6 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use CzProject\GitPhp\Git;
 use Dockworker\DockworkerException;
 use League\Container\ContainerAwareInterface;
 use League\Container\ContainerAwareTrait;
@@ -66,6 +67,13 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   protected $repoRoot;
 
   /**
+   * The git repository.
+   *
+   * @var CzProject\GitPhp\Git;
+   */
+  protected $repoGit;
+
+  /**
    * The UNBLibraries uuid of the application.
    *
    * @var string
@@ -114,6 +122,16 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
     if (empty($this->instanceName)) {
       throw new DockworkerException(sprintf(self::ERROR_INSTANCE_NAME_UNSET, $this->configFile));
     }
+  }
+
+  /**
+   * Sets the git repo.
+   *
+   * @hook pre-init
+   */
+  public function setGitRepo() {
+    $git = new Git;
+    $this->repoGit = $git->open($this->repoRoot);
   }
 
   /**
