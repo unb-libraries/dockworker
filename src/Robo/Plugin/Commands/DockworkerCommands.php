@@ -264,4 +264,31 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
     }
   }
 
+  /**
+   * Retrieves a list of changed files in the repository.
+   *
+   * 'Inspired' by https://github.com/czproject/git-php/pull/42/files
+   *
+   * @param $file_mask
+   *   The regex pattern to search for, as a string.
+   *
+   * @return string[]
+   *   The changed files, keyed by file path and values indicating status.
+   */
+  protected function getGitRepoChanges($file_mask = '') {
+    $this->repoGit->execute('update-index', '-q', '--refresh');
+    $output = $this->repoGit->execute('status', '--porcelain');
+    $files = [];
+    foreach($output as $line) {
+      $line = trim($line);
+      $file = explode(" ", $line, 2);
+      if(count($file) >= 2){
+        if (empty($file_mask) || preg_match($file_mask, $file[1])) {
+          $files[$file[1]] = $file[0];
+        }
+      }
+    }
+    return $files;
+  }
+
 }
