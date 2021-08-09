@@ -35,8 +35,8 @@ class ApplicationPermissionsCommands extends DockworkerCommands {
     $gid = posix_getgid();
 
     $this->taskExec('sudo chgrp')
-      ->arg($gid)
       ->arg('-R')
+      ->arg($gid)
       ->arg($this->repoRoot . "/$path")
       ->run();
     $this->taskExec('sudo chmod')
