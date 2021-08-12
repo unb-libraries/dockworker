@@ -45,6 +45,8 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
    *
    * @param string $env
    *   The environment to target.
+   * @param string[] $options
+   *   The array of available CLI options.
    *
    * @option string $use-tag
    *   Skip building and deploy with the specified tag.
@@ -57,9 +59,9 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
    * @dockerimage
    * @dockerpush
    */
-  public function buildPushDeployEnv($env, array $opts = ['use-tag' => NULL]) {
+  public function buildPushDeployEnv($env, array $options = ['use-tag' => NULL]) {
     $this->pushCommandInit($env);
-    if (empty($opts['use-tag'])) {
+    if (empty($options['use-tag'])) {
       $timestamp = date('YmdHis');
       $this->buildPushEnv($env, $timestamp);
 
@@ -71,7 +73,7 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
       }
     }
     else {
-      $image_name = "{$this->dockerImageName}:{$opts['use-tag']}";
+      $image_name = "{$this->dockerImageName}:{$options['use-tag']}";
     }
 
     $this->say('Updating deployment configuration..');

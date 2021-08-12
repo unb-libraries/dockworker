@@ -12,6 +12,9 @@ class ApplicationPermissionsCommands extends DockworkerCommands {
   /**
    * Sets the correct repository file permissions. Requires sudo.
    *
+   * @param string[] $options
+   *   The array of available CLI options.
+   *
    * @option string $path
    *   Only update permissions in this path.
    *

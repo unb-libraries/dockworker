@@ -22,8 +22,8 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
    *
    * @param string $tag
    *   The tag to use when building the image.
-   * @param string[] $opts
-   *   An array of options to pass to the builder.
+   * @param string[] $options
+   *   The array of available CLI options.
    *
    * @option bool $no-cache
    *   Do not use any cached steps in the build.
@@ -41,8 +41,8 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
    *
    * @dockerimage
    */
-  public function buildImage($tag = NULL, array $opts = ['no-cache' => FALSE, 'cache-from' => '', 'allow-dirty' => FALSE]) {
-    $this->buildRepoCleanCheck($opts);
+  public function buildImage($tag = NULL, array $options = ['no-cache' => FALSE, 'cache-from' => '', 'allow-dirty' => FALSE]) {
+    $this->buildRepoCleanCheck($options);
     $this->io()->title("Building {$this->dockerImageName}:$tag");
     $build = $this->taskDockerBuild($this->repoRoot);
     $this->addMetadataBuildArgs($build);
@@ -54,13 +54,13 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
       $build->tag("{$this->dockerImageName}:latest");
     }
 
-    if ($opts['no-cache']) {
+    if ($options['no-cache']) {
       $build->arg('--no-cache');
     }
 
-    if (!empty($opts['cache-from'])) {
+    if (!empty($options['cache-from'])) {
       $build->arg('--cache-from');
-      $build->arg($opts['cache-from']);
+      $build->arg($options['cache-from']);
     }
 
     return $build->run();
@@ -69,13 +69,13 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
   /**
    * Confirms if the user wishes to build a dirty repo.
    *
-   * @param string[] $opts
-   *   The array of options to pass to the builder.
+   * @param string[] $options
+   *   The array of available CLI options.
    *
    * @throws \Dockworker\DockworkerException
    */
-  private function buildRepoCleanCheck(array $opts) {
-    if (!$this->gitRepoIsClean($this->repoRoot) && !$opts['allow-dirty']) {
+  private function buildRepoCleanCheck(array $options) {
+    if (!$this->gitRepoIsClean($this->repoRoot) && !$options['allow-dirty']) {
       $continue = $this->confirm('Warning: You are attempting to build an image in a dirty git repo. Would you like to proceed?');
       if (!$continue) {
         throw new DockworkerException(sprintf(self::ERROR_UNCLEAN_REPO));

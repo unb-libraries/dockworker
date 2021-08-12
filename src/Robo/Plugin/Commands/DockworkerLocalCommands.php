@@ -106,8 +106,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   /**
    * Displays the local application's container logs.
    *
-   * @param string[] $opts
-   *   An array of options to pass to the builder.
+   * @param string[] $options
+   *   The array of available CLI options.
    *
    * @option bool $all
    *   Display logs from all local services, not only the web endpoint.
@@ -120,9 +120,9 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @return \Robo\Result
    *   The result of the command.
    */
-  public function printLocalLogs(array $opts = ['all' => FALSE]) {
+  public function printLocalLogs(array $options = ['all' => FALSE]) {
     $this->getlocalRunning();
-    $result = $this->getLocalLogs($opts);
+    $result = $this->getLocalLogs($options);
     $this->io()->writeln(
       $result->getMessage()
     );
@@ -157,8 +157,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   /**
    * Gets logs from the local application container.
    *
-   * @param string[] $opts
-   *   An array of options to pass to the builder.
+   * @param string[] $options
+   *   The array of available CLI options.
    *
    * @option bool $all
    *   Return logs from all local services, not only the web endpoint.
@@ -166,14 +166,14 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @return \Robo\Result
    *   The result of the command.
    */
-  protected function getLocalLogs(array $opts = ['all' => FALSE]) {
+  protected function getLocalLogs(array $options = ['all' => FALSE]) {
     $result = $this->taskExec('docker-compose')
       ->dir($this->repoRoot)
       ->silent(TRUE)
       ->printOutput(FALSE)
       ->arg('logs');
 
-    if (isset($opts['all']) && !$opts['all']) {
+    if (isset($options['all']) && !$options['all']) {
       $result->arg($this->instanceName);
     }
 
@@ -183,8 +183,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   /**
    * Display previous local application container logs and monitor for new ones.
    *
-   * @param string[] $opts
-   *   An array of options to pass to the builder.
+   * @param string[] $options
+   *   The array of available CLI options.
    *
    * @option bool $all
    *   Display logs from all local services, not only the web endpoint.
@@ -200,15 +200,15 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @return \Robo\Result
    *   The result of the command.
    */
-  public function tailLocalLogs(array $opts = ['all' => FALSE, 'timestamps' => FALSE]) {
+  public function tailLocalLogs(array $options = ['all' => FALSE, 'timestamps' => FALSE]) {
     $this->getLocalRunning();
     $log_dump_cmd = 'docker-compose logs';
 
-    if ($opts['timestamps']) {
+    if ($options['timestamps']) {
       $log_dump_cmd .= ' --timestamps';
     }
 
-    if ($opts['all']) {
+    if ($options['all']) {
       $log_dump_cmd = "$log_dump_cmd --tail='all' --follow";
     }
     else {
@@ -226,8 +226,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   /**
    * Builds the local application's docker image.
    *
-   * @param string[] $opts
-   *   An array of options to pass to the builder.
+   * @param string[] $options
+   *   The array of available CLI options.
    *
    * @option bool $no-cache
    *   Do not use any cached steps in the build.
@@ -238,11 +238,11 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @usage local:build
    */
-  public function build(array $opts = ['no-cache' => FALSE]) {
+  public function build(array $options = ['no-cache' => FALSE]) {
     $this->io()->title("Building application theme");
     $this->setRunOtherCommand('theme:build-all');
 
-    if ($opts['no-cache']) {
+    if ($options['no-cache']) {
       $command = 'docker-compose build --no-cache';
     }
     else {
@@ -336,8 +336,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   /**
    * Builds and deploys the local application, displaying the application logs.
    *
-   * @param string[] $opts
-   *   An array of options to pass to the builder.
+   * @param string[] $options
+   *   The array of available CLI options.
    *
    * @option bool $no-cache
    *   Do not use any cached steps in the build.
@@ -362,22 +362,22 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @usage local:start
    */
-  public function start(array $opts = ['no-cache' => FALSE, 'no-tail-logs' => FALSE, 'no-update-dockworker' => FALSE, 'no-update-hostfile' => FALSE, 'no-upstream-pull' => FALSE, 'no-build' => FALSE, 'only-start' => FALSE, 'force-recreate' => FALSE]) {
-    if (!$opts['no-update-dockworker'] && !$opts['only-start']) {
+  public function start(array $options = ['no-cache' => FALSE, 'no-tail-logs' => FALSE, 'no-update-dockworker' => FALSE, 'no-update-hostfile' => FALSE, 'no-upstream-pull' => FALSE, 'no-build' => FALSE, 'only-start' => FALSE, 'force-recreate' => FALSE]) {
+    if (!$options['no-update-dockworker'] && !$options['only-start']) {
       $this->setRunOtherCommand('dockworker:update');
     }
 
-    if (!$opts['no-update-hostfile'] && !$opts['only-start']) {
+    if (!$options['no-update-hostfile'] && !$options['only-start']) {
       $this->setRunOtherCommand('local:update-hostfile');
     }
 
-    if (!$opts['no-cache'] && !$opts['no-upstream-pull'] && !$opts['only-start']) {
+    if (!$options['no-cache'] && !$options['no-upstream-pull'] && !$options['only-start']) {
       $this->setRunOtherCommand('local:pull-upstream');
     }
 
-    if (!$opts['no-build'] && !$opts['only-start']) {
+    if (!$options['no-build'] && !$options['only-start']) {
       $build_command = 'local:build';
-      if ($opts['no-cache']) {
+      if ($options['no-cache']) {
         $build_command = $build_command . ' --no-cache';
       }
       $this->setRunOtherCommand(
@@ -387,7 +387,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     }
 
     $up_command = 'local:up';
-    if ($opts['force-recreate']) {
+    if ($options['force-recreate']) {
       $up_command = $up_command . ' --force-recreate';
     }
 
@@ -397,7 +397,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     $this->io()->newLine();
     $this->setRunOtherCommand('local:logs:check');
 
-    if (!$opts['no-tail-logs']) {
+    if (!$options['no-tail-logs']) {
       $this->tailLocalLogs();
     }
   }
@@ -505,8 +505,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   /**
    * Checks the local application's container logs for errors.
    *
-   * @param string[] $opts
-   *   An array of options to pass to the builder.
+   * @param string[] $options
+   *   The array of available CLI options.
    *
    * @option bool $all
    *   Check logs from all local services, not only the web endpoint.
@@ -516,7 +516,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @usage local:logs:check
    */
-  public function localLogsCheck(array $opts = ['all' => FALSE]) {
+  public function localLogsCheck(array $options = ['all' => FALSE]) {
     $this->getlocalRunning();
 
     // Allow modules to implement custom handlers to trigger errors.
@@ -531,7 +531,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
       $this->addLogErrorExceptions($handler());
     }
 
-    $result = $this->getLocalLogs($opts);
+    $result = $this->getLocalLogs($options);
     $local_logs = $result->getMessage();
     if (!empty($local_logs)) {
       $this->checkLogForErrors('local', $local_logs);
@@ -553,6 +553,9 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   /**
    * Builds the application image, starts a local container, and runs all tests.
    *
+   * @param string[] $options
+   *   The array of available CLI options.
+   *
    * @option bool $no-kill
    *   Do not use kill the container before starting over.
    * @option bool $no-rm
@@ -565,15 +568,15 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @usage local:build-test
    */
-  public function buildAndTest($opts = ['no-kill' => FALSE, 'no-rm' => FALSE, 'no-update-dockworker' => FALSE]) {
-    if (!$opts['no-kill']) {
+  public function buildAndTest($options = ['no-kill' => FALSE, 'no-rm' => FALSE, 'no-update-dockworker' => FALSE]) {
+    if (!$options['no-kill']) {
       $this->_exec('docker-compose kill');
     }
-    if (!$opts['no-rm']) {
+    if (!$options['no-rm']) {
       $this->setRunOtherCommand('local:rm');
     }
     $start_command = 'local:start --no-cache --no-tail-logs';
-    if ($opts['no-update-dockworker']) {
+    if ($options['no-update-dockworker']) {
       $start_command = "$start_command --no-update-dockworker";
     }
     $this->setRunOtherCommand($start_command);
@@ -583,8 +586,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   /**
    * Kills the local container, removes persistent data, and rebuilds/restarts.
    *
-   * @param string[] $opts
-   *   An array of options to pass to the builder.
+   * @param string[] $options
+   *   The array of available CLI options.
    *
    * @option bool $no-cache
    *   Do not use any cached steps in the build.
@@ -601,21 +604,21 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @usage local:start-over
    */
-  public function startOver($opts = ['no-cache' => FALSE, 'no-kill' => FALSE, 'no-rm' => FALSE, 'no-update-dockworker' => FALSE]) {
-    if (!$opts['no-kill']) {
+  public function startOver($options = ['no-cache' => FALSE, 'no-kill' => FALSE, 'no-rm' => FALSE, 'no-update-dockworker' => FALSE]) {
+    if (!$options['no-kill']) {
       $this->io()->title("Killing application");
       $this->_exec('docker-compose kill');
     }
 
-    if (!$opts['no-rm']) {
+    if (!$options['no-rm']) {
       $this->setRunOtherCommand('local:rm');
     }
 
     $start_command = 'local:start';
-    if ($opts['no-cache']) {
+    if ($options['no-cache']) {
       $start_command = $start_command . ' --no-cache';
     }
-    if ($opts['no-update-dockworker']) {
+    if ($options['no-update-dockworker']) {
       $start_command = $start_command . ' --no-update-dockworker';
     }
     $this->setRunOtherCommand($start_command);
@@ -624,8 +627,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     /**
      * Stops the local container and re-starts it, preserving persistent data.
      *
-     * @param string[] $opts
-     *   An array of options to pass to the builder.
+     * @param string[] $options
+     *   The array of available CLI options.
      *
      * @option bool $no-cache
      *   Do not use any cached steps in the build.
@@ -636,10 +639,10 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
      *
      * @usage local:rebuild
      */
-    public function rebuild($opts = ['no-cache' => FALSE]) {
+    public function rebuild($options = ['no-cache' => FALSE]) {
         $this->setRunOtherCommand('local:halt');
         $start_command = 'local:start';
-        if ($opts['no-cache']) {
+        if ($options['no-cache']) {
             $start_command = $start_command . ' --no-cache';
         }
         $this->setRunOtherCommand($start_command);
@@ -647,6 +650,9 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
 
   /**
    * Brings up the local application container.
+   *
+   * @param string[] $options
+   *   The array of available CLI options.
    *
    * @option bool $force-recreate
    *   Pass a --force-recreate option to docker-compose up.
@@ -656,14 +662,14 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @usage local:up
    */
-  public function up($opts = ['force-recreate' => FALSE]) {
+  public function up($options = ['force-recreate' => FALSE]) {
     $this->io()->title("Starting local containers");
     $cmd = $this->taskDockerComposeUp()
       ->detachedMode()
       ->printOutput(FALSE)
       ->silent(TRUE);
 
-    if ($opts['force-recreate']) {
+    if ($options['force-recreate']) {
       $cmd->forceRecreate();
     }
 
