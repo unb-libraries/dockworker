@@ -568,7 +568,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @usage local:build-test
    */
-  public function buildAndTest($options = ['no-kill' => FALSE, 'no-rm' => FALSE, 'no-update-dockworker' => FALSE]) {
+  public function buildAndTest(array $options = ['no-kill' => FALSE, 'no-rm' => FALSE, 'no-update-dockworker' => FALSE]) {
     if (!$options['no-kill']) {
       $this->_exec('docker-compose kill');
     }
@@ -604,7 +604,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @usage local:start-over
    */
-  public function startOver($options = ['no-cache' => FALSE, 'no-kill' => FALSE, 'no-rm' => FALSE, 'no-update-dockworker' => FALSE]) {
+  public function startOver(array $options = ['no-cache' => FALSE, 'no-kill' => FALSE, 'no-rm' => FALSE, 'no-update-dockworker' => FALSE]) {
     if (!$options['no-kill']) {
       $this->io()->title("Killing application");
       $this->_exec('docker-compose kill');
@@ -639,7 +639,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
      *
      * @usage local:rebuild
      */
-    public function rebuild($options = ['no-cache' => FALSE]) {
+    public function rebuild(array $options = ['no-cache' => FALSE]) {
         $this->setRunOtherCommand('local:halt');
         $start_command = 'local:start';
         if ($options['no-cache']) {
@@ -662,7 +662,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @usage local:up
    */
-  public function up($options = ['force-recreate' => FALSE]) {
+  public function up(array $options = ['force-recreate' => FALSE]) {
     $this->io()->title("Starting local containers");
     $cmd = $this->taskDockerComposeUp()
       ->detachedMode()
