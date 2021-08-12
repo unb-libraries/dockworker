@@ -7,7 +7,7 @@ namespace Dockworker;
  */
 trait ScssCompileTrait {
 
-  private $scssCompiler = NULL;
+  private $scssCompiler;
 
   /**
    * Compiles a SCSS file to CSS.

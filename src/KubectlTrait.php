@@ -14,7 +14,7 @@ trait KubectlTrait {
    *
    * @var string
    */
-  protected $kubeCtlBin = NULL;
+  protected $kubeCtlBin;
 
   /**
    * Tests if kubectl is installed/executable.
@@ -55,8 +55,8 @@ trait KubectlTrait {
    *   The output of the execution.
    */
   private function kubectlExec($command, $args = [], $print_output = TRUE, $print_command_string = TRUE) {
-    $o = NULL;
-    $r = NULL;
+    $o = '';
+    $r = '';
     $args_string = implode(' ', $args);
     $max_retries = 5;
     $try_count = 0;

@@ -33,7 +33,7 @@ trait GitHubPackageDownloadTrait {
    *   The path to the desired repository data.
    */
   public static function downloadGithubRepositoryContents($owner, $repo, $refspec = 'master', $path = '/') {
-    $final_dir = NULL;
+    $final_dir = '';
     $remote_zip_file_path = "https://github.com/$owner/$repo/archive/$refspec.zip";
 
     $tmp_dir = TemporaryDirectoryTrait::tempdir();

@@ -9,8 +9,8 @@ use Dockworker\DockworkerException;
  */
 trait RepoGithubActionsWorkflowWriterTrait {
 
-  protected $githubActionsWorkflowFilepath = NULL;
-  protected $githubActionsWorkflowSourcePath = NULL;
+  protected $githubActionsWorkflowFilepath;
+  protected $githubActionsWorkflowSourcePath;
 
   /**
    * Sets the workflow file location.

@@ -9,8 +9,8 @@ use Dockworker\DockworkerException;
  */
 trait RepoReadmeWriterTrait {
 
-  protected $readMePath = NULL;
-  protected $readMeContents = NULL;
+  protected $readMePath;
+  protected $readMeContents;
   protected $readMeTemplatePaths = [];
   protected $readMeTwig = NULL;
 

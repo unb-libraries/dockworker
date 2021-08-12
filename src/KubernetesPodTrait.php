@@ -24,14 +24,14 @@ trait KubernetesPodTrait {
    *
    * @var string
    */
-  protected $kubernetesDeploymentName = NULL;
+  protected $kubernetesDeploymentName;
 
   /**
    * The namespace to filter when populating the pod queue.
    *
    * @var string
    */
-  protected $kubernetesPodNamespace = NULL;
+  protected $kubernetesPodNamespace;
 
   /**
    * Sets up the pod details for the remote Kubernetes pods.
