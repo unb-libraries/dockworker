@@ -6,17 +6,17 @@ use DateTime;
 use DateTimeZone;
 use Dockworker\ConsoleTableTrait;
 use Dockworker\DockworkerException;
-use Dockworker\GitHubActionsTrait;
+use Dockworker\CIServicesTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 /**
- * Defines a class to interact with GitHub Actions.
+ * Defines a class to interact with CI Services.
  */
-class DockworkerGithubActionsCommands extends DockworkerCommands {
+class DockworkerCIServicesCommands extends DockworkerCommands {
 
   use ConsoleTableTrait;
-  use GitHubActionsTrait;
+  use CIServicesTrait;
 
   /**
    * The current progress bar.
@@ -33,39 +33,42 @@ class DockworkerGithubActionsCommands extends DockworkerCommands {
   protected array $gitHubWorkflowRunUsage = [];
 
   /**
-   * Gets the latest GitHub Actions build/deploy times for the repository.
+   * Gets the latest CI Services build/deploy times for the repository.
    *
-   * @param string $env
+   * @param string[] $options
+   *   The array of available CLI options.
+   *
+   * @option string $branch
    *   The environment/branch to target. Defaults to 'prod'.
    *
-   * @command dockworker:gh-actions:deploy-times
-   * @aliases gh-actions-deploy-times
-   * @aliases gadt
+   * @command ci:deploy-times
+   * @aliases ci-deploy-times
+   * @aliases cidt
    *
-   * @usage dockworker:gh-actions:deploy-times
+   * @usage ci:deploy-times --branch=prod
    *
    * @github
-   * @github-actions
+   * @ci
    */
-  public function getGitHubActionsDeployTimes($env = 'prod') {
-    $runs = $this->getGitHubActionsWorkflowRunsByBranch($env);
+  public function getCIServicesDeployTimes(array $options = ['branch' => 'prod']) {
+    $runs = $this->getCIServicesWorkflowRunsByBranch($options['branch']);
     if (!empty($runs)) {
       $num_runs = count($runs);
       $this->setInitProgressBar($num_runs);
       foreach ($runs as $run) {
-        $this->setGithubActionsRunUsageData($run);
+        $this->setCIServicesRunUsageData($run);
       }
       $this->gitHubWorkflowRunProgressBar->setMessage("Done!");
       $this->gitHubWorkflowRunProgressBar->finish();
       $this->setDisplayConsoleTable(
         $this->io(),
-        $this->getGithubActionsRunUsageDataTableHeaders(),
-        $this->getGithubActionsRunUsageDataTableRows(),
-        "Latest $num_runs {$this->gitHubRepo} [$env] Builds"
+        $this->getCIServicesRunUsageDataTableHeaders(),
+        $this->getCIServicesRunUsageDataTableRows(),
+        "Latest $num_runs {$this->gitHubRepo} [{$options['branch']}] Builds"
       );
     }
     else {
-      $this->say("No workflow runs found for env: $env!");
+      $this->say("No workflow runs found for env: {$options['branch']}!");
     }
   }
 
@@ -82,12 +85,12 @@ class DockworkerGithubActionsCommands extends DockworkerCommands {
   }
 
   /**
-   * Sets the usage data for a GitHub actions run.
+   * Sets the usage data for a CI Services run.
    *
    * @param array $run
-   *   The GitHub actions run associative array.
+   *   The CI Services run associative array.
    */
-  protected function setGithubActionsRunUsageData(array $run) {
+  protected function setCIServicesRunUsageData(array $run) {
     $this->gitHubWorkflowRunProgressBar->setMessage("Querying Workflow Run #{$run['id']}");
     $usage = $this->gitHubClient->api('repo')->workflowRuns()->usage($this->gitHubOwner, $this->gitHubRepo, $run['id']);
     $usage['head_sha'] = $run['head_sha'];
@@ -103,7 +106,7 @@ class DockworkerGithubActionsCommands extends DockworkerCommands {
    * @return array
    *   The properly formatted headers.
    */
-  protected function getGithubActionsRunUsageDataTableHeaders() {
+  protected function getCIServicesRunUsageDataTableHeaders() {
     $zone = date_default_timezone_get();
     return ['Run ID', "Time ($zone)", 'Commit', 'Time(s)', 'Δ'];
   }
@@ -114,7 +117,7 @@ class DockworkerGithubActionsCommands extends DockworkerCommands {
    * @return array
    *   The properly formatted usage data.
    */
-  protected function getGithubActionsRunUsageDataTableRows() {
+  protected function getCIServicesRunUsageDataTableRows() {
     $rows = [];
     $prev_run_time = 0;
     $local_tz = new DateTimeZone(date_default_timezone_get());

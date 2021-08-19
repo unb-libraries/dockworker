@@ -6,9 +6,9 @@ use Dockworker\DockworkerException;
 use Dockworker\GitHubTrait;
 
 /**
- * Provides methods to interact with GitHub actions.
+ * Provides methods to interact with CI Services.
  */
-trait GitHubActionsTrait {
+trait CIServicesTrait {
 
   use GitHubTrait;
 
@@ -17,37 +17,37 @@ trait GitHubActionsTrait {
    *
    * @var array
    */
-  protected array $gitHubActionsCurWorkflow;
+  protected array $CIServicesCurWorkflow;
 
   /**
    * The current actions workflow's runs.
    *
    * @var array
    */
-  protected array $gitHubActionsCurWorkflowRuns;
+  protected array $CIServicesCurWorkflowRuns;
 
   /**
-   * Sets the GitHub Actions Workflow.
+   * Sets the CI Services Workflow Runs.
    *
-   * @hook post-init @github-actions
+   * @hook post-init @ci
    * @throws \Dockworker\DockworkerException
    */
-  public function setGitHubActionsWorkflow() {
-    $this->say("Querying GitHub Actions Workflow run data for $this->gitHubRepo...");
+  public function setCIServicesWorkflow() {
+    $this->say("Querying CI Services Workflow run data for $this->gitHubRepo...");
     $workflows = $this->gitHubClient->api('repo')->workflows()->all($this->gitHubOwner, $this->gitHubRepo);
     foreach ($workflows['workflows'] as $key => $value) {
       if ($value['name'] == $this->gitHubRepo) break;
     }
-    $this->gitHubActionsCurWorkflow = $workflows['workflows'][$key];
-    $this->setGitHubActionsWorkflowRuns();
+    $this->CIServicesCurWorkflow = $workflows['workflows'][$key];
+    $this->setCIServicesWorkflowRuns();
   }
 
   /**
    * Sets the current actions workflow runs.
    */
-  protected function setGitHubActionsWorkflowRuns() {
-    $run = $this->gitHubClient->api('repo')->workflowRuns()->listRuns($this->gitHubOwner, $this->gitHubRepo, $this->gitHubActionsCurWorkflow['id']);
-    $this->gitHubActionsCurWorkflowRuns = $run['workflow_runs'];
+  protected function setCIServicesWorkflowRuns() {
+    $run = $this->gitHubClient->api('repo')->workflowRuns()->listRuns($this->gitHubOwner, $this->gitHubRepo, $this->CIServicesCurWorkflow['id']);
+    $this->CIServicesCurWorkflowRuns = $run['workflow_runs'];
   }
 
   /**
@@ -59,8 +59,8 @@ trait GitHubActionsTrait {
    * @return array
    *  The latest workflow run for the branch.
    */
-  protected function getGitHubActionsWorkflowLatestRunByBranch($branch) {
-    $runs = $this->getGitHubActionsWorkflowRunsByBranch($branch);
+  protected function getCIServicesWorkflowLatestRunByBranch($branch) {
+    $runs = $this->getCIServicesWorkflowRunsByBranch($branch);
     if (!empty($runs[0])) {
       return $runs[0];
     }
@@ -76,9 +76,9 @@ trait GitHubActionsTrait {
    * @return array
    *   An array of workflow runs for that branch.
    */
-  protected function getGitHubActionsWorkflowRunsByBranch($branch) {
+  protected function getCIServicesWorkflowRunsByBranch($branch) {
     $branch_runs = [];
-    foreach($this->gitHubActionsCurWorkflowRuns as $run) {
+    foreach($this->CIServicesCurWorkflowRuns as $run) {
       if ($run['head_branch'] == $branch) {
         $branch_runs[] = $run;
       }
