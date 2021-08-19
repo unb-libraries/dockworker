@@ -105,7 +105,7 @@ class DockworkerGithubActionsCommands extends DockworkerCommands {
    */
   protected function getGithubActionsRunUsageDataTableHeaders() {
     $zone = date_default_timezone_get();
-    return ["Time ($zone)", 'Run ID', 'Commit', 'Time(s)', 'Δ'];
+    return ['Run ID', "Time ($zone)", 'Commit', 'Time(s)', 'Δ'];
   }
 
   /**
@@ -120,8 +120,8 @@ class DockworkerGithubActionsCommands extends DockworkerCommands {
     $local_tz = new DateTimeZone(date_default_timezone_get());
     foreach (array_reverse($this->gitHubWorkflowRunUsage) as $usage) {
       $rows[] = [
-        $this->getFormattedTimeString($usage['created_at'], $local_tz),
         $usage['id'],
+        $this->getFormattedTimeString($usage['created_at'], $local_tz),
         "https://github.com/{$this->gitHubOwner}/{$this->gitHubRepo}/commit/{$usage['head_sha']}",
         $usage['run_duration_ms'] / 1000,
         $prev_run_time == 0 ? "--" : $this->getFormattedPercentageDifference($usage['run_duration_ms'], $prev_run_time),
