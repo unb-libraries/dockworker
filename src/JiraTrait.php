@@ -23,7 +23,7 @@ trait JiraTrait {
    *
    * @var string
    */
-  protected $jiraHostName;
+  protected $jiraEndpointUri;
 
   /**
    * The jira server user name to authenticate with.
@@ -47,58 +47,84 @@ trait JiraTrait {
   protected $jiraService;
 
   /**
-   * Sets the JIRA host from config.
+   * Sets up the JIRA configuration.
    *
    * @throws \Exception
    *
    * @hook pre-init @jira
    */
-  public function setJiraHost() {
-    $this->jiraHostName = getenv('DOCKWORKER_JIRA_HOSTNAME');
-    if (empty($this->jiraHostName)) {
-      throw new \Exception(sprintf('The DOCKWORKER_JIRA_HOSTNAME environment variable was not found.'));
+  public function setupJiraConfiguration() {
+    $this->setDisplayEnvVarInfo();
+    $this->setJiraUri();
+    $this->setJiraUser();
+    $this->setJiraPass();
+    $this->setJiraConfig();
+    $this->setJiraService();
+  }
+
+  /**
+   * Informs the user of environment variables if not set.
+   *
+   * @throws \Exception
+   */
+  public function setDisplayEnvVarInfo() {
+    if (empty(getenv('DOCKWORKER_JIRA_URI'))) {
+      $this->say('Jira configuration is user-specific can be stored as environment variables. To avoid these prompts, set the following environment variables in your shell:');
+      $this->say('DOCKWORKER_JIRA_URI, DOCKWORKER_JIRA_USER_NAME, DOCKWORKER_JIRA_USER_PASSWORD');
     }
   }
 
   /**
-   * Sets the JIRA service.
+   * Sets the JIRA hostname.
    *
    * @throws \Exception
+   */
+  public function setJiraUri() {
+    $this->jiraEndpointUri = getenv('DOCKWORKER_JIRA_URI');
+    if (empty($this->jiraEndpointUri)) {
+      $this->jiraEndpointUri = $this->askDefault(
+        "Enter the URI of the Jira endpoint :",
+        'https://jira.lib.unb.ca'
+      );
+    }
+  }
+
+  /**
+   * Sets the JIRA service object.
    *
-   * @hook post-init @jira
+   * @throws \Exception
    */
   public function setJiraService() {
     $this->jiraService = new ProjectService($this->jiraConfig);
   }
 
   /**
-   * Sets the JIRA user from config.
+   * Sets the JIRA username.
    *
    * @throws \Exception
-   *
-   * @hook pre-init @jira
    */
   public function setJiraUser() {
     $this->jiraUserName = getenv('DOCKWORKER_JIRA_USER_NAME');
     if (empty($this->jiraUserName)) {
-      throw new \Exception(sprintf('The DOCKWORKER_JIRA_USER_NAME environment variable was not found.'));
+      $this->jiraUserName = $this->ask(
+        "Enter a Username for $this->jiraEndpointUri:"
+      );
     }
   }
 
   /**
-   * Sets the JIRA pass.
+   * Sets the JIRA user password.
    *
-   * JIRA on-premises doesn't allow API keys to generate, so we need to password at run-time.
+   * JIRA on-premises doesn't allow API keys to generate, so we need to
+   * enter a password at run-time.
    *
    * @throws \Exception
-   *
-   * @hook pre-init @jira
    */
   public function setJiraPass() {
     $this->jiraUserPassword = getenv('DOCKWORKER_JIRA_USER_PASSWORD');
     if (empty($this->jiraUserPassword)) {
       $this->jiraUserPassword = $this->ask(
-        "Enter $this->jiraUserName's JIRA password for $this->jiraHostName"
+        "Enter $this->jiraUserName's JIRA password for $this->jiraEndpointUri"
       );
     }
   }
@@ -107,13 +133,11 @@ trait JiraTrait {
    * Sets up the config array.
    *
    * @throws \Exception
-   *
-   * @hook init @jira
    */
   public function setJiraConfig() {
     $this->jiraConfig = new ArrayConfiguration(
       [
-        'jiraHost' => $this->jiraHostName,
+        'jiraHost' => $this->jiraEndpointUri,
         'jiraUser' => $this->jiraUserName,
         'jiraPassword' => $this->jiraUserPassword,
       ]
