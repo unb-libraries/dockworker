@@ -23,7 +23,7 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
    *
    * @var \Symfony\Component\Console\Helper\ProgressBar
    */
-  protected object $gitHubWorkflowRunProgressBar;
+  protected $gitHubWorkflowRunProgressBar;
 
   /**
    * The usage stats for the workflow runs.
