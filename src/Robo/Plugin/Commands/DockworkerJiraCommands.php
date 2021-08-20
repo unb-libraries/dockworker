@@ -54,7 +54,7 @@ class DockworkerJiraCommands extends DockworkerCommands {
    */
   public function createJiraIssue($options = ['summary' => '', 'description' => '', 'type' => '', 'yes' => FALSE]) {
     $this->options = $options;
-    $this->io()->title("Creating Jira Issue : {$this->getProjectPrefix()}");
+    $this->io()->title("Creating a New Jira Issue ({$this->getProjectPrefix()})");
     $this->setIssueSummary();
     $this->setIssueDescription();
     $this->setIssueType();
