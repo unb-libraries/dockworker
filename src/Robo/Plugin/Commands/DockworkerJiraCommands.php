@@ -48,7 +48,9 @@ class DockworkerJiraCommands extends DockworkerCommands {
    *
    * @command jira:issue:create
    * @aliases jiraticket
-   * @usage jira:issue:create 'Spark widget fieldset does not indicate its required fields'
+   * @aliases jt
+   *
+   * @usage jira:issue:create
    *
    * @jira
    */

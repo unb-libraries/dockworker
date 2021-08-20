@@ -17,10 +17,10 @@ class DockworkerReadmeCommands extends DockworkerCommands {
   /**
    * Updates the application's README.md.
    *
-   * @command dockworker:readme:update
-   * @aliases update-readme
+   * @command readme:update
+   * @aliases ru
    *
-   * @usage dockworker:readme:update
+   * @usage readme:update
    *
    * @github
    * @readmecommand

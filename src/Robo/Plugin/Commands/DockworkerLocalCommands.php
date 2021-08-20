@@ -45,9 +45,9 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * assets associated with this application only, rather it removes them
    * system-wide.
    *
-   * @command dockworker:docker:cleanup
+   * @command docker:cleanup
    *
-   * @usage dockworker:docker:cleanup
+   * @usage docker:cleanup
    */
   public function localCleanup() {
     $this->say("Cleaning up dangling images and volumes:");
