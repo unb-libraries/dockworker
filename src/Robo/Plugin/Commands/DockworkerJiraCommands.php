@@ -54,6 +54,7 @@ class DockworkerJiraCommands extends DockworkerCommands {
    */
   public function createJiraIssue($options = ['summary' => '', 'description' => '', 'type' => '', 'yes' => FALSE]) {
     $this->options = $options;
+    $this->io()->title("Creating Jira Issue For {$this->getProjectPrefix()}");
     $this->setIssueSummary();
     $this->setIssueDescription();
     $this->setIssueType();
@@ -69,13 +70,13 @@ class DockworkerJiraCommands extends DockworkerCommands {
       $issueService->create($issueField);
     }
     else {
-      $this->say('Creating a JIRA issue requires an issue summary (title).');
+      $this->say('Creating a JIRA issue requires an issue title.');
     }
   }
 
   protected function setIssueSummary() {
     if (empty($this->options['summary'])) {
-      $this->options['summary'] = $this->ask('Issue Summary (Title): ');
+      $this->options['summary'] = $this->ask('Issue Title: ');
     }
   }
 
@@ -87,7 +88,7 @@ class DockworkerJiraCommands extends DockworkerCommands {
 
   protected function setIssueType() {
     if (empty($this->options['type'])) {
-      $this->options['type'] = $this->askDefault('Issue Type: ', 'Bug');
+      $this->options['type'] = $this->askDefault('Issue Type (Bug, Task, Story): ', 'Bug');
     }
   }
 
