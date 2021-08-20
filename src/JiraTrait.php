@@ -51,7 +51,7 @@ trait JiraTrait {
    *
    * @throws \Exception
    *
-   * @hook pre-init
+   * @hook pre-init @jira
    */
   public function setJiraHost() {
     $this->jiraHostName = getenv('DOCKWORKER_JIRA_HOSTNAME');
@@ -65,7 +65,7 @@ trait JiraTrait {
    *
    * @throws \Exception
    *
-   * @hook post-init
+   * @hook post-init @jira
    */
   public function setJiraService() {
     $this->jiraService = new ProjectService($this->jiraConfig);
@@ -76,7 +76,7 @@ trait JiraTrait {
    *
    * @throws \Exception
    *
-   * @hook pre-init
+   * @hook pre-init @jira
    */
   public function setJiraUser() {
     $this->jiraUserName = getenv('DOCKWORKER_JIRA_USER_NAME');
@@ -92,7 +92,7 @@ trait JiraTrait {
    *
    * @throws \Exception
    *
-   * @hook pre-init
+   * @hook pre-init @jira
    */
   public function setJiraPass() {
     $this->jiraUserPassword = getenv('DOCKWORKER_JIRA_USER_PASSWORD');
@@ -108,7 +108,7 @@ trait JiraTrait {
    *
    * @throws \Exception
    *
-   * @hook init
+   * @hook init @jira
    */
   public function setJiraConfig() {
     $this->jiraConfig = new ArrayConfiguration(
