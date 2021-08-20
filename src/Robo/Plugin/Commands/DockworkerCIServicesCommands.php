@@ -30,7 +30,7 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
    *
    * @var array
    */
-  protected array $gitHubWorkflowRunUsage = [];
+  protected $gitHubWorkflowRunUsage = [];
 
   /**
    * Gets the latest CI Services build/deploy times for the repository.

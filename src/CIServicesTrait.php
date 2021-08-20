@@ -17,20 +17,19 @@ trait CIServicesTrait {
    *
    * @var array
    */
-  protected array $CIServicesCurWorkflow;
+  protected $CIServicesCurWorkflow;
 
   /**
    * The current actions workflow's runs.
    *
    * @var array
    */
-  protected array $CIServicesCurWorkflowRuns;
+  protected $CIServicesCurWorkflowRuns;
 
   /**
    * Sets the CI Services Workflow Runs.
    *
    * @hook post-init @ci
-   * @throws \Dockworker\DockworkerException
    */
   public function setCIServicesWorkflow() {
     $this->say("Querying CI Services Workflow run data for $this->gitHubRepo...");

@@ -14,7 +14,7 @@ trait ConsoleTableTrait {
    *
    * @var object
    */
-  protected object $consoleTableTraitOutput;
+  protected $consoleTableTraitOutput;
 
   /**
    * The title to use.
@@ -28,14 +28,14 @@ trait ConsoleTableTrait {
    *
    * @var array
    */
-  protected array $consoleTableTraitHeaders;
+  protected $consoleTableTraitHeaders;
 
   /**
    * The rows to use.
    *
    * @var array
    */
-  protected array $consoleTableTraitRows;
+  protected $consoleTableTraitRows;
 
   /**
    * Reads the deployment repository image name from config.
