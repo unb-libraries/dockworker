@@ -18,7 +18,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 class DockworkerLocalCommands extends DockworkerCommands implements CustomEventAwareInterface {
 
   const ERROR_BUILDING_IMAGE = 'Error reported building image!';
-  const ERROR_CONTAINER_MISSING = 'The %s local deployment does not appear to exist.';
+  const ERROR_CONTAINER_MISSING = 'The %s local deployment is not running. You can start it with \'dockworker deploy\'.';
   const ERROR_CONTAINER_STOPPED = 'The %s local deployment appears to be stopped.';
   const ERROR_PULLING_UPSTREAM_IMAGE = 'Error pulling upstream image %s';
   const ERROR_UPDATING_HOSTFILE = 'Error updating hostfile!';
