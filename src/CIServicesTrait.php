@@ -42,6 +42,30 @@ trait CIServicesTrait {
   }
 
   /**
+   * Restarts a CI Service Build.
+   */
+  protected function setRestartCiServiceBuild($id) {
+    $this->say(
+      sprintf(
+        'Restarting %s/%s Build #%s...',
+        $this->gitHubOwner,
+        $this->gitHubRepo,
+        $id
+      )
+    );
+    $this->gitHubClient->api('repo')->workflowRuns()->rerun($this->gitHubOwner, $this->gitHubRepo, $id);
+    $this->say("Done!");
+    $this->say(
+      sprintf(
+        'Build URI : https://github.com/%s/%s/actions/runs/%s',
+        $this->gitHubOwner,
+        $this->gitHubRepo,
+        $id
+      )
+    );
+  }
+
+  /**
    * Sets the current actions workflow runs.
    */
   protected function setCIServicesWorkflowRuns() {
