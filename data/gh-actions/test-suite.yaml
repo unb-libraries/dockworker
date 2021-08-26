@@ -192,8 +192,7 @@ jobs:
     needs: [start-install-application]
     if:
       contains('
-      refs/heads/dev
-      refs/heads/prod
+DEPLOY_BRANCHES
       ', github.ref)
     steps:
       - uses: FranzDiebold/github-env-vars-action@v2.1.0

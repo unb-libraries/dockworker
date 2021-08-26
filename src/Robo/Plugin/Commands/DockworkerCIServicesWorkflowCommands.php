@@ -2,6 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Dockworker\KubernetesDeploymentTrait;
 use Dockworker\RepoCIServicesWorkflowWriterTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 
@@ -11,6 +12,7 @@ use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 class DockworkerCIServicesWorkflowCommands extends DockworkerCommands {
 
   use RepoCIServicesWorkflowWriterTrait;
+  use KubernetesDeploymentTrait;
 
   /**
    * Updates the application's CI Services workflow file.
@@ -34,6 +36,11 @@ class DockworkerCIServicesWorkflowCommands extends DockworkerCommands {
   protected function writeApplicationCIServicesWorkflowFile() {
     $tokenized_workflow_contents = file_get_contents($this->CIServicesWorkflowSourcePath);
     $workflow_contents = str_replace('INSTANCE_NAME', $this->instanceName, $tokenized_workflow_contents);
+    $deployable_env_string = '';
+    foreach ($this->getDeployableEnvironments() as $deploy_env) {
+      $deployable_env_string .= "      refs/heads/$deploy_env\n";
+    }
+    $workflow_contents = str_replace('DEPLOY_BRANCHES', rtrim($deployable_env_string), $workflow_contents);
     file_put_contents($this->CIServicesWorkflowFilepath, $workflow_contents);
     $this->say('The updated GitHub actions workflow file has been written.');
   }
