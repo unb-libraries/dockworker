@@ -175,7 +175,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
       throw new DockworkerException(sprintf(self::ERROR_PROJECT_PREFIX_UNSET, $this->configFile));
     }
     if (is_array($project_prefix)) {
-      return $project_prefix[1];
+      return $project_prefix[0];
     }
     return $project_prefix;
   }
