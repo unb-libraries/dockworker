@@ -162,19 +162,41 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   }
 
   /**
-   * Gets the project prefix.
+   * Gets the main project prefix.
    *
    * @throws \Dockworker\DockworkerException
    *
    * @return string
-   *   The project prefix.
+   *   The main project prefix.
    */
   public function getProjectPrefix() {
     $project_prefix = Robo::Config()->get('dockworker.application.project_prefix');
     if (empty($project_prefix)) {
       throw new DockworkerException(sprintf(self::ERROR_PROJECT_PREFIX_UNSET, $this->configFile));
     }
+    if (is_array($project_prefix)) {
+      return $project_prefix[1];
+    }
     return $project_prefix;
+  }
+
+  /**
+   * Gets all project prefixes.
+   *
+   * @throws \Dockworker\DockworkerException
+   *
+   * @return array
+   *   The project prefixes.
+   */
+  public function getProjectPrefixes() {
+    $project_prefixes = Robo::Config()->get('dockworker.application.project_prefix');
+    if (empty($project_prefixes)) {
+      throw new DockworkerException(sprintf(self::ERROR_PROJECT_PREFIX_UNSET, $this->configFile));
+    }
+    if (is_array($project_prefixes)) {
+      return $project_prefixes;
+    }
+    return [$project_prefixes];
   }
 
   /**

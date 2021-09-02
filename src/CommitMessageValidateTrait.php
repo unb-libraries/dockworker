@@ -110,10 +110,9 @@ trait CommitMessageValidateTrait {
    *   TRUE if a JIRA ticket ID is attached to the subject. FALSE otherwise.
    */
   private function getValidateProjectPrefix() {
-    $prefix = $this->getProjectPrefix();
-    return
-      preg_match("/^$prefix-[0-9]+ {1}[a-zA-Z0-9]{1}.*/", $this->subjectLine) ||
-      preg_match("/^IN-[0-9]+ {1}[a-zA-Z0-9]{1}.*/", $this->subjectLine);
+    // Regex for all project prefixes, including IN (infrastructure) as a default.
+    $prefixes = '(IN|' . implode('|', $this->getProjectPrefixes()) . ')';
+    return preg_match("/^$prefixes-[0-9]+ {1}[a-zA-Z0-9]{1}.*/", $this->subjectLine);
   }
 
 }
