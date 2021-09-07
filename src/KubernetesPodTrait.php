@@ -20,11 +20,32 @@ trait KubernetesPodTrait {
   protected $kubernetesCurPods = [];
 
   /**
+   * The replica sets.
+   *
+   * @var string[]
+   */
+  protected $kubernetesCurReplicaSets = [];
+
+  /**
+   * The latest replica set.
+   *
+   * @var string[]
+   */
+  protected $kubernetesLatestReplicaSet;
+
+  /**
    * The deployment name to use when populating the pod queue.
    *
    * @var string
    */
   protected $kubernetesDeploymentName;
+
+  /**
+   * The deployment name currently active.
+   *
+   * @var string
+   */
+  protected $kubernetesCurDeployment;
 
   /**
    * The namespace to filter when populating the pod queue.
@@ -49,8 +70,48 @@ trait KubernetesPodTrait {
     if (empty($this->kubernetesPodNamespace)) {
       $this->kubernetesPodNamespace = $this->askDefault("Environment to target for $action? (dev/prod)", 'prod');
     }
-
+    $this->kubernetesSetMatchingDeployment();
+    $this->kubernetesSetMatchingReplicaSets();
     $this->kubernetesSetMatchingPods();
+  }
+
+  /**
+   * Set up the deployment that matches the currently configured data.
+   */
+  protected function kubernetesSetMatchingDeployment() {
+    $get_deployments_cmd = sprintf(
+      $this->kubeCtlBin . " get deployment/%s --namespace=%s --sort-by=.status.startTime --no-headers | awk '{ print $1 }'",
+      $this->kubernetesDeploymentName,
+      $this->kubernetesPodNamespace
+    );
+
+    $this->kubernetesCurDeployment = trim(
+      shell_exec($get_deployments_cmd)
+    );
+  }
+
+  /**
+   * Set up replica sets that match the currently configured data.
+   */
+  protected function kubernetesSetMatchingReplicaSets() {
+    $get_rs_cmd = sprintf(
+      $this->kubeCtlBin . " describe deployment/%s --namespace=%s | grep 'ReplicaSet.*:' | awk '{ print $2 }'",
+      $this->kubernetesCurDeployment,
+      $this->kubernetesPodNamespace
+    );
+
+    $rs_list = explode(
+      PHP_EOL,
+      trim(
+        shell_exec($get_rs_cmd)
+      )
+    );
+    foreach($rs_list as $rs) {
+      if ($rs != '<none>') {
+        $this->kubernetesCurReplicaSets[] = $rs;
+      }
+    }
+    $this->kubernetesLatestReplicaSet = end($this->kubernetesCurReplicaSets);
   }
 
   /**
@@ -79,9 +140,9 @@ trait KubernetesPodTrait {
    */
   protected function kubernetesGetMatchingPods($deployment_name, $namespace) {
     $get_pods_cmd = sprintf(
-      $this->kubeCtlBin . " get pods --namespace=%s --sort-by=.status.startTime --no-headers | grep '^%s' | grep 'Running' | sed '1!G;h;$!d' | awk '{ print $1 }'",
+      $this->kubeCtlBin . " get pods --namespace=%s -o json | jq -r '.items[] | select(.metadata.ownerReferences[] | select(.name==\"%s\")) | .metadata.name '",
       $namespace,
-      $deployment_name
+      $this->kubernetesLatestReplicaSet
     );
 
     $pod_list = trim(

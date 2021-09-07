@@ -198,7 +198,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
 
     if (!empty($logs)) {
       $num_pods = count($logs);
-      $this->io()->title("$num_pods pods found in $env environment.");
+      $this->io()->title("$num_pods pods owned by ReplicaSet:$env/$this->kubernetesLatestReplicaSet");
       foreach ($logs as $pod_id => $log) {
         $pod_counter++;
         $this->io()->title("Logs for pod #$pod_counter [$env.$pod_id]");
