@@ -34,6 +34,7 @@ class DockworkerCIServicesWorkflowCommands extends DockworkerCommands {
    * Write out the workflow file.
    */
   protected function writeApplicationCIServicesWorkflowFile() {
+    $this->setInstanceName();
     $tokenized_workflow_contents = file_get_contents($this->CIServicesWorkflowSourcePath);
     $workflow_contents = str_replace('INSTANCE_NAME', $this->instanceName, $tokenized_workflow_contents);
     $deployable_env_string = '';
