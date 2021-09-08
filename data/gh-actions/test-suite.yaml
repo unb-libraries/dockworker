@@ -79,11 +79,6 @@ jobs:
           tools: composer:v2
           extensions: curl,dom,gd,mbstring,posix,yaml,zip
       -
-        name: Install yq
-        run: |
-          sudo wget https://github.com/mikefarah/yq/releases/download/v4.12.2/yq_linux_amd64 -O /usr/bin/yq
-          sudo chmod +x /usr/bin/yq
-      -
         name: Install dockworker
         run: composer install --prefer-dist --no-progress --no-suggest
       -
@@ -185,11 +180,6 @@ jobs:
         name: Pull Required Docker Images
         run: docker-compose pull --parallel --quiet
       -
-        name: Install yq
-        run: |
-          sudo wget https://github.com/mikefarah/yq/releases/download/v4.12.2/yq_linux_amd64 -O /usr/bin/yq
-          sudo chmod +x /usr/bin/yq
-      -
         name: Install dockworker
         run: composer install --prefer-dist --no-progress --no-suggest
       -
@@ -281,11 +271,6 @@ DEPLOY_BRANCHES
             ${{ runner.os }}-composer-dockworker-
             ${{ runner.os }}-composer-
       -
-        name: Install yq
-        run: |
-          sudo wget https://github.com/mikefarah/yq/releases/download/v4.12.2/yq_linux_amd64 -O /usr/bin/yq
-          sudo chmod +x /usr/bin/yq
-      -
         name: Install dockworker
         run: composer install --prefer-dist --no-progress --no-suggest
       -
@@ -326,11 +311,6 @@ DEPLOY_BRANCHES
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
         id: setcontext-kubectl
-      -
-        name: Install yq
-        run: |
-          sudo wget https://github.com/mikefarah/yq/releases/download/v4.12.2/yq_linux_amd64 -O /usr/bin/yq
-          sudo chmod +x /usr/bin/yq
       -
         name: Install dockworker
         run: composer install --prefer-dist --no-progress --no-suggest
