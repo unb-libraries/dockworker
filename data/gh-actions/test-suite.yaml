@@ -18,7 +18,7 @@ jobs:
             {
               attachments: [{
                 color: 'warning',
-                text: `${process.env.AS_REPO} ${process.env.CI_REF_NAME} - Build Started :shipit: (${process.env.AS_ACTION})\n${process.env.AS_COMMIT} ${process.env.AS_MESSAGE}\n${process.env.AS_AUTHOR}`,
+                text: `${process.env.AS_REPO} ${process.env.CI_REF_NAME} - Build Started :deployparrot: (${process.env.AS_WORKFLOW})\n${process.env.AS_COMMIT} ${process.env.AS_MESSAGE}\n${process.env.AS_AUTHOR}`,
               }]
             }
         env:
@@ -80,7 +80,7 @@ jobs:
           extensions: curl,dom,gd,mbstring,posix,yaml,zip
       -
         name: Install dockworker
-        run: composer install --prefer-dist --no-progress --no-suggest
+        run: composer install --prefer-dist --no-progress
       -
         name: Build Themes
         run: vendor/bin/dockworker theme:build-all
@@ -150,22 +150,6 @@ jobs:
           tools: composer:v2
           extensions: curl,dom,gd,mbstring,posix,yaml,zip
       -
-        name: Set Composer Cache Directory
-        id: composer-set-cache-dir
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-      -
-        name: Cache Composer Cache Dir
-        uses: actions/cache@v2
-        id: composercachecache
-        with:
-          path: ${{ steps.composer-set-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-composer-dockworker-${{ hashFiles('**/composer.json') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-dockworker-${{ hashFiles('**/composer.json') }}
-            ${{ runner.os }}-composer-dockworker-
-            ${{ runner.os }}-composer-
-      -
         name: Download docker-compose
         uses: actions/download-artifact@v2
         with:
@@ -181,7 +165,7 @@ jobs:
         run: docker-compose pull --parallel --quiet
       -
         name: Install dockworker
-        run: composer install --prefer-dist --no-progress --no-suggest
+        run: composer install --prefer-dist --no-progress
       -
         name: Start container and check logs for errors
         run: vendor/bin/dockworker local:start --no-tail-logs --only-start --force-recreate
@@ -255,42 +239,19 @@ DEPLOY_BRANCHES
         name: Set Image Tag
         run: cat /tmp/image_tag.env >> $GITHUB_ENV
       -
-        name: Set Composer Cache Directory
-        id: composer-set-cache-dir
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-      -
-        name: Cache Composer Cache Dir
-        uses: actions/cache@v2
-        id: composercachecache
-        with:
-          path: ${{ steps.composer-set-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-composer-dockworker-${{ hashFiles('**/composer.json') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-dockworker-${{ hashFiles('**/composer.json') }}
-            ${{ runner.os }}-composer-dockworker-
-            ${{ runner.os }}-composer-
-      -
         name: Install dockworker
-        run: composer install --prefer-dist --no-progress --no-suggest
+        run: composer install --prefer-dist --no-progress
       -
         name: Deploy image to cluster
         run: vendor/bin/dockworker image:deploy $CI_REF_NAME --use-tag $BUILD_IMAGE_TAG
         env:
           GH_CONTAINER_REGISTRY_TOKEN: ${{secrets.GH_CONTAINER_REGISTRY_TOKEN}}
           GH_CONTAINER_REGISTRY_USER: ${{secrets.GH_CONTAINER_REGISTRY_USER}}
-      -
-        name: Check container startup logs for errors
-        run: vendor/bin/dockworker deployment:logs:check $CI_REF_NAME
-      -
-        name: Write out deployment logs
-        run: vendor/bin/dockworker deployment:logs $CI_REF_NAME
 
-  live-deploy-logs:
-    name: Live Deployment Logs
+  check-live-deployment:
+    name: Check Live Deployment Logs
     runs-on: ubuntu-latest
     needs: [deploy-live]
-    if: always() && (needs.deploy-live.result == 'success' || needs.deploy-live.result == 'failure')
     steps:
       - uses: FranzDiebold/github-env-vars-action@v2.1.0
       - uses: actions/checkout@v2
@@ -313,15 +274,18 @@ DEPLOY_BRANCHES
         id: setcontext-kubectl
       -
         name: Install dockworker
-        run: composer install --prefer-dist --no-progress --no-suggest
+        run: composer install --prefer-dist --no-progress
       -
         name: Write out deployment logs
         run: vendor/bin/dockworker deployment:logs $CI_REF_NAME
+      -
+        name: Check container startup logs for errors
+        run: vendor/bin/dockworker deployment:logs:check $CI_REF_NAME
 
   slack-results:
     name: Notify Slack of Build Results
     runs-on: ubuntu-latest
-    needs: [deploy-live]
+    needs: [check-live-deployment]
     if: always()
     steps:
       - uses: FranzDiebold/github-env-vars-action@v2.1.0
@@ -336,13 +300,12 @@ DEPLOY_BRANCHES
       - uses: 8398a7/action-slack@v3
         with:
           status: custom
-          job_name:
           fields: workflow,job,commit,repo,ref,author,action,message
           custom_payload: |
             {
               attachments: [{
                 color: '${{ env.WORKFLOW_CONCLUSION }}' === 'success' ? 'good' : '${{ env.WORKFLOW_CONCLUSION }}' === 'failure' ? 'danger' : 'warning',
-                text: `${process.env.AS_REPO} ${process.env.CI_REF_NAME} - ${{ env.WORKFLOW_CONCLUSION }} ${{ env.DEPLOY_EMOJI }} (${process.env.AS_ACTION})\n${process.env.AS_COMMIT} ${process.env.AS_MESSAGE}\n${process.env.AS_AUTHOR}`,
+                text: `${process.env.AS_REPO} ${process.env.CI_REF_NAME} - ${{ env.WORKFLOW_CONCLUSION }} ${{ env.DEPLOY_EMOJI }} (${process.env.AS_WORKFLOW})\n${process.env.AS_COMMIT} ${process.env.AS_MESSAGE}\n${process.env.AS_AUTHOR}`,
               }]
             }
         env:
