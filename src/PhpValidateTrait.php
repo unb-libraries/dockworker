@@ -15,20 +15,25 @@ trait PhpValidateTrait {
    * Validates files using phpcs.
    *
    * @param string $files
-   *   The files to validate.@
+   *   The files to validate.
    * @param string[] $lint_standards
    *   An array of linting standards to enforce.
+   * @param bool $no_warnings
+   *  Only report errors, not warnings.
    *
    * @return \Robo\Result
    */
-  protected function validatePhp($files, array $lint_standards = ['PSR2']) {
+  protected function validatePhp($files, array $lint_standards = ['PSR2'], $no_warnings = FALSE) {
     if (!empty($files)) {
-      return $this->taskPhpcsLintFiles()
+      $cmd = $this->taskPhpcsLintFiles()
         ->setStandards($lint_standards)
         ->setReport('full')
         ->setFiles($files)
-        ->setColors(TRUE)
-        ->run();
+        ->setColors(TRUE);
+      if ($no_warnings) {
+        $cmd->setWarningSeverity(0);
+      }
+      return $cmd->run();
     }
     else {
       print "No PHP files found to lint!\n";
