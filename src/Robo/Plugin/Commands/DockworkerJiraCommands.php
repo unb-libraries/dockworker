@@ -23,13 +23,6 @@ class DockworkerJiraCommands extends DockworkerCommands {
   protected $jiraProject;
 
   /**
-   * The current command options.
-   *
-   * @var array
-   */
-  protected $options;
-
-  /**
    * Creates a JIRA issue for this instance.
    *
    * @param array $options

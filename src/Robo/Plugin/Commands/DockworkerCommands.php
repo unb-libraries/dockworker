@@ -60,6 +60,13 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   protected $instanceSlug;
 
   /**
+   * The options passed to the command.
+   *
+   * @var array
+   */
+  protected $options;
+
+  /**
    * The path to the Dockworker repo.
    *
    * @var string
