@@ -155,6 +155,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
       [
         '-f',
         $file,
+        '--ignore-not-found=true',
       ],
       TRUE
     );
