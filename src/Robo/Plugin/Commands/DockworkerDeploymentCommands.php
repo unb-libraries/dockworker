@@ -74,6 +74,17 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
       ],
       TRUE
     );
+    $this->kubectlExec(
+      'rollout',
+      [
+        'status',
+        '--timeout=300s',
+        "deployment/{$this->deploymentK8sName}",
+        '--namespace',
+        $this->deploymentK8sNameSpace,
+      ],
+      TRUE
+    );
   }
 
   /**
