@@ -21,7 +21,7 @@
     "knplabs/github-api": "^2.14",
     "lesstif/php-jira-rest-client": "^1.19",
     "nikic/php-parser": "~4.2.1",
-    "php": "^7.1",
+    "php": "^7.1|^8.0",
     "php-http/guzzle6-adapter": "^2.0",
     "scssphp/scssphp": "~1.1.0",
     "sweetchuck/robo-phpcs": "~0.0.20"
