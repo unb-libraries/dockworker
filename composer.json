@@ -6,7 +6,6 @@
   "require": {
     "asm89/twig-lint": "~1.0.2",
     "aws/aws-sdk-php": "~3.62.9",
-    "consolidation/annotated-command": "4.3.1",
     "consolidation/robo": "~1.4.9",
     "czproject/git-php": "^4",
     "droath/robo-docker-compose": "~0.0.8",
