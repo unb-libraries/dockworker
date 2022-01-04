@@ -21,7 +21,7 @@ trait ScssCompileTrait {
    *   The return code of the compile command.
    */
   protected function compileScss($source_path, $target_path) {
-    $cmd = "$this->scssCompiler --style=crunched $source_path > $target_path";
+    $cmd = "$this->scssCompiler --style=compressed $source_path > $target_path";
 
     system($cmd, $return_code);
     if ($return_code != 0) {
