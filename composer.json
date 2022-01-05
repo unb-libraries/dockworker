@@ -1,6 +1,6 @@
 {
   "name": "unb-libraries/dockworker",
-  "description": "Services for wiring up docker containers for development",
+  "description": "Deploy and develop web applications via a consistent and unified workflow.",
   "type": "library",
   "minimum-stability": "stable",
   "require": {
