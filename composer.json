@@ -19,7 +19,7 @@
     "j13k/yaml-lint": "^1",
     "knplabs/github-api": "^2",
     "lesstif/php-jira-rest-client": "^1",
-    "nikic/php-parser": "~4.2.1",
+    "nikic/php-parser": "^4",
     "php": "^7.1|^8.0",
     "php-http/guzzle6-adapter": "^2",
     "scssphp/scssphp": "^1",
