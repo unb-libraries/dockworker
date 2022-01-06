@@ -208,7 +208,7 @@ jobs:
       - uses: unb-libraries/install-dockworker-composite-action@v1
       - uses: azure/setup-kubectl@v1
         with:
-          version: 'v1.18.0'
+          version: 'v1.23.1'
         id: install-kubectl
       - uses: azure/k8s-set-context@v1
         with:
