@@ -10,8 +10,8 @@ use Dockworker\Robo\Plugin\Commands\DockworkerDeploymentCommands;
  */
 class DockworkerDeploymentTransferCommands extends DockworkerDeploymentCommands {
 
-  const ERROR_FILE_NOT_FOUND = 'Local file [%s] not found.';
-  const INFO_COPYING_FILES = 'Copying file(s)...';
+  final const ERROR_FILE_NOT_FOUND = 'Local file [%s] not found.';
+  final const INFO_COPYING_FILES = 'Copying file(s)...';
 
   /**
    * Copies a file from a local development instance to the k8s deployment.

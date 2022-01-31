@@ -7,7 +7,7 @@ use Exception;
 /**
  * Provides an exception class for Dockworker commands.
  */
-class DockworkerException extends Exception {
+class DockworkerException extends Exception implements \Stringable {
 
   /**
    * {@inheritdoc}
@@ -19,8 +19,8 @@ class DockworkerException extends Exception {
   /**
    * {@inheritdoc}
    */
-  public function __toString() {
-    return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
+  public function __toString(): string {
+    return self::class . ": [{$this->code}]: {$this->message}\n";
   }
 
 }

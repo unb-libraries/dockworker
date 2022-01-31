@@ -181,7 +181,6 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
    *
    * @param string $time_string
    *   The time string, in ISO08601 Format (Zulu).
-   * @param \DateTimeZone $local_tz
    *   The local timezone.
    *
    * @return string

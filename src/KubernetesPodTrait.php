@@ -138,7 +138,7 @@ trait KubernetesPodTrait {
    *
    * @return false|string[]
    */
-  protected function kubernetesGetMatchingPods($deployment_name, $namespace) {
+  protected function kubernetesGetMatchingPods($deployment_name, $namespace): array|false {
     $get_pods_cmd = sprintf(
       $this->kubeCtlBin . " get pods --namespace=%s -o json | jq -r '.items[] | select(.metadata.ownerReferences[] | select(.name==\"%s\")) | .metadata.name '",
       $namespace,

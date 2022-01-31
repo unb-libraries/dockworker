@@ -55,7 +55,7 @@ trait GitHubPackageDownloadTrait {
       $final_dir = tempnam(sys_get_temp_dir(), "ghpdlt");
       unlink($final_dir);
       $fs->rename($file_source, $final_dir);
-    } catch (IOExceptionInterface $e) {
+    } catch (IOExceptionInterface) {
       print 'Error renaming folder';
     }
     return $final_dir;

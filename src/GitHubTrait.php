@@ -58,7 +58,7 @@ trait GitHubTrait {
           $this->gitHubClient->authenticate($gh_token, NULL, \Github\Client::AUTH_ACCESS_TOKEN);
         }
       }
-      catch (\Exception $e) {
+      catch (\Exception) {
         throw new DockworkerException('The GitHub client could not be instantiated.');
       }
     }

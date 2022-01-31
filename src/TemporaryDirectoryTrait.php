@@ -31,10 +31,9 @@ trait TemporaryDirectoryTrait {
    * @param int $maxAttempts
    *   Maximum attempts before giving up (to prevent endless loops).
    *
-   * @return string|bool
    *   Full path to newly-created dir, or false on failure.
    */
-  public static function tempdir($dir = null, $prefix = 'tmp_', $mode = 0700, $maxAttempts = 1000) {
+  public static function tempdir($dir = null, $prefix = 'tmp_', $mode = 0700, $maxAttempts = 1000): bool|string {
     /* Use the system temp dir by default. */
     if (is_null($dir)) {
       $dir = sys_get_temp_dir();
@@ -62,7 +61,7 @@ trait TemporaryDirectoryTrait {
     $attempts = 0;
     do {
       mt_srand();
-      $path = sprintf('%s%s%s%s', $dir, DIRECTORY_SEPARATOR, $prefix, mt_rand(100000, mt_getrandmax()));
+      $path = sprintf('%s%s%s%s', $dir, DIRECTORY_SEPARATOR, $prefix, random_int(100000, mt_getrandmax()));
     } while (
       !mkdir($path, $mode) &&
       $attempts++ < $maxAttempts

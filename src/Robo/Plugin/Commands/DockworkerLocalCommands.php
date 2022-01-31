@@ -17,13 +17,13 @@ use Symfony\Component\Console\Helper\ProgressBar;
  */
 class DockworkerLocalCommands extends DockworkerCommands implements CustomEventAwareInterface {
 
-  const ERROR_BUILDING_IMAGE = 'Error reported building image!';
-  const ERROR_CONTAINER_MISSING = 'The %s local deployment is not running. You can start it with \'dockworker deploy\'.';
-  const ERROR_CONTAINER_STOPPED = 'The %s local deployment appears to be stopped.';
-  const ERROR_PULLING_UPSTREAM_IMAGE = 'Error pulling upstream image %s';
-  const ERROR_UPDATING_HOSTFILE = 'Error updating hostfile!';
-  const WAIT_DEPLOYMENT_CYCLE_LENGTH = 1;
-  const WAIT_DEPLOYMENT_MAX_REPEATS = 300;
+  final const ERROR_BUILDING_IMAGE = 'Error reported building image!';
+  final const ERROR_CONTAINER_MISSING = 'The %s local deployment is not running. You can start it with \'dockworker deploy\'.';
+  final const ERROR_CONTAINER_STOPPED = 'The %s local deployment appears to be stopped.';
+  final const ERROR_PULLING_UPSTREAM_IMAGE = 'Error pulling upstream image %s';
+  final const ERROR_UPDATING_HOSTFILE = 'Error updating hostfile!';
+  final const WAIT_DEPLOYMENT_CYCLE_LENGTH = 1;
+  final const WAIT_DEPLOYMENT_MAX_REPEATS = 300;
 
   use CustomEventAwareTrait;
   use DockworkerLogCheckerTrait;
@@ -32,10 +32,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
 
   /**
    * The string in the logs that indicates the deployment has finished.
-   *
-   * @var string
    */
-  private $localFinishMarker;
+  private string $localFinishMarker;
 
   /**
    * Clean up unused local docker assets.
@@ -422,7 +420,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     while ($status < 100 and ($counter < self::WAIT_DEPLOYMENT_MAX_REPEATS)) {
       $counter++;
       sleep(self::WAIT_DEPLOYMENT_CYCLE_LENGTH);
-      list($status, $description) = $this->getLocalDeploymentStatus($this->localFinishMarker);
+      [$status, $description] = $this->getLocalDeploymentStatus($this->localFinishMarker);
       if ($status < 100) {
         $progressBar->setMessage($description);
         $progressBar->setProgress($status);
@@ -483,7 +481,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *   value, the second the current pre-init.d step that is running.
    */
   protected function parseLocalLogForStatus($log, $finish_marker) {
-    if (strpos($log, $finish_marker) !== FALSE) {
+    if (str_contains($log, $finish_marker)) {
       return [
         '100',
         'Complete',
@@ -543,7 +541,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
       $this->auditStartupLogs(FALSE);
       $this->say("No errors found in logs.");
     }
-    catch (DockworkerException $e) {
+    catch (DockworkerException) {
       $this->printLocalLogs();
       $this->printStartupLogErrors();
       throw new DockworkerException("Error(s) found in local startup logs!");

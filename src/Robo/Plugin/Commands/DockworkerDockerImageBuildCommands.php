@@ -15,7 +15,7 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
   use DockerImageTrait;
   use GitRepoTrait;
 
-  const ERROR_UNCLEAN_REPO = 'Aborted build due to unclean repo';
+  final const ERROR_UNCLEAN_REPO = 'Aborted build due to unclean repo';
 
   /**
    * Builds the application's docker image.

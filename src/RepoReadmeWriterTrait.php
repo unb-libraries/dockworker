@@ -34,7 +34,7 @@ trait RepoReadmeWriterTrait {
     try {
       file_put_contents($this->readMePath, $contents);
     }
-    catch (\Exception $e) {
+    catch (\Exception) {
       throw new DockworkerException('Error when writing README file.');
     };
   }

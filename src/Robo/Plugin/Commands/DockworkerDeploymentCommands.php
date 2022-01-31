@@ -16,8 +16,8 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   use DockworkerLogCheckerTrait;
   use KubernetesDeploymentTrait;
 
-  const ERROR_NO_PODS_IN_DEPLOYMENT = 'No pods were found for the deployment [%s:%s].';
-  const ERROR_UNKNOWN_POD_ID = 'Pod ID [%s] not found in deployment [%s:%s].';
+  final const ERROR_NO_PODS_IN_DEPLOYMENT = 'No pods were found for the deployment [%s:%s].';
+  final const ERROR_UNKNOWN_POD_ID = 'Pod ID [%s] not found in deployment [%s:%s].';
 
   /**
    * Checks the application's k8s deployment rollout status.
@@ -305,7 +305,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
       $this->auditStartupLogs(FALSE);
       $this->say("No errors found in logs.");
     }
-    catch (DockworkerException $e) {
+    catch (DockworkerException) {
       $this->printDeploymentLogs($env);
       $this->printStartupLogErrors();
       throw new DockworkerException("Error(s) found in deployment startup logs!");
@@ -370,9 +370,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
 
       if (count($this->kubernetesCurPods) > 1 && $only_first == FALSE) {
         $table_rows = array_map(
-          function ($el) {
-            return [$el];
-          },
+          fn($el) => [$el],
           $this->kubernetesCurPods
         );
         $this->printConsoleTable(

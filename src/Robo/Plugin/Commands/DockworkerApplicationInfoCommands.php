@@ -11,7 +11,7 @@ use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
  */
 class DockworkerApplicationInfoCommands extends DockworkerCommands {
 
-  const UNIX_EPOCH = '1970-01-01 00:00';
+  final const UNIX_EPOCH = '1970-01-01 00:00';
 
   /**
    * Generate suggested cron timings for the application.
@@ -122,7 +122,7 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
   protected function getApplicationMonthlyCronString() {
     $cron_time = $this->getRandomCronTime(31, 60 * 60 * 4, 'PT2H');
     mt_srand($this->uuid * 31);
-    $month_day = mt_rand(1, 27);
+    $month_day = random_int(1, 27);
 
     return sprintf(
         "%s %s %s * *",
@@ -155,7 +155,7 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
     }
 
     mt_srand($this->uuid * $seed_mutation);
-    $seconds_to_advance = mt_rand(0, $max_seconds);
+    $seconds_to_advance = random_int(0, $max_seconds);
     $cron_time->add(new DateInterval('PT' . $seconds_to_advance . 'S'));
     return $cron_time;
   }
@@ -179,6 +179,7 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
   }
 
   protected function getHourlyCycleCronString($hours) {
+    $cron_hours = [];
     $cron_time = $this->getRandomCronTime($hours, 60 * 60 * $hours);
     $cron_minute = $cron_time->format('i');
 

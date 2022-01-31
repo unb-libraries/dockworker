@@ -79,9 +79,9 @@ trait LogCheckerTrait {
    */
   protected function evaluateLineForErrors($line, $line_no, $id) {
     foreach ($this->logErrorTriggers as $trigger) {
-      if (strpos($line, $trigger) !== FALSE) {
+      if (str_contains($line, $trigger)) {
         foreach ($this->logErrorExceptions as $exception => $reason) {
-          if (strpos($line, $exception) !== FALSE) {
+          if (str_contains($line, $exception)) {
             $this->logIgnoredErrors[] = [
               'id' => $id,
               'line' => $line_no,

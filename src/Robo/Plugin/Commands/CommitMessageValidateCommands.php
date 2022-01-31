@@ -16,10 +16,10 @@ class CommitMessageValidateCommands extends DockworkerCommands {
 
   use CommitMessageValidateTrait;
 
-  const ERROR_INVALID_COMMIT_MESSAGE = 'Invalid commit message!';
-  const ERROR_MISSING_JIRA_INFO = 'JIRA project and issue missing from subject line.';
-  const SAMPLE_VALID_COMMIT_MESSAGE = 'Valid example: HERB-135 Add the new picture field to the article feature';
-  const WARN_MISSING_JIRA_INFO = 'You have not specified a JIRA project and issue in your subject line. Continue Anyway?';
+  final const ERROR_INVALID_COMMIT_MESSAGE = 'Invalid commit message!';
+  final const ERROR_MISSING_JIRA_INFO = 'JIRA project and issue missing from subject line.';
+  final const SAMPLE_VALID_COMMIT_MESSAGE = 'Valid example: HERB-135 Add the new picture field to the article feature';
+  final const WARN_MISSING_JIRA_INFO = 'You have not specified a JIRA project and issue in your subject line. Continue Anyway?';
 
   /**
    * Validates a git commit message against project standards.
@@ -37,7 +37,7 @@ class CommitMessageValidateCommands extends DockworkerCommands {
     $message = file_get_contents($message_file_path);
 
     $this->message = $message;
-    $this->subjectLine = strpos($message, "\n") !== FALSE ? strstr($message, "\n", TRUE) : $message;
+    $this->subjectLine = str_contains($message, "\n") ? strstr($message, "\n", TRUE) : $message;
 
     // Validators.
     $this->getValidateIsEmpty();

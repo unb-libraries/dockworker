@@ -76,7 +76,7 @@ trait KubectlTrait {
         break;
       }
       else {
-        if (isset($o[1]) && strpos($o[1], 'i/o timeout') !== FALSE && $try_count < $max_retries) {
+        if (isset($o[1]) && str_contains($o[1], 'i/o timeout') && $try_count < $max_retries) {
           $this->io()->text("Connection to kubectl server timed out. Retrying... [$try_count/$max_retries]");
         }
         else {

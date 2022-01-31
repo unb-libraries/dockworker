@@ -63,7 +63,7 @@ trait CommitMessageValidateTrait {
    * Validates if the commit message subject exceeds the maximum length.
    */
   private function getValidateSubjectLength() {
-    $length = strlen($this->subjectLine);
+    $length = strlen((string) $this->subjectLine);
     if ($length > $this->maxCommitMessageLength) {
       $this->errors[] = sprintf(
         'Limit the subject line to ' .
@@ -112,7 +112,7 @@ trait CommitMessageValidateTrait {
   private function getValidateProjectPrefix() {
     // Regex for all project prefixes, including IN (infrastructure) as a default.
     $prefixes = '(IN|' . implode('|', $this->getProjectPrefixes()) . ')';
-    return preg_match("/^$prefixes-[0-9]+ {1}[a-zA-Z0-9]{1}.*/", $this->subjectLine);
+    return preg_match("/^$prefixes-[0-9]+ {1}[a-zA-Z0-9]{1}.*/", (string) $this->subjectLine);
   }
 
 }
