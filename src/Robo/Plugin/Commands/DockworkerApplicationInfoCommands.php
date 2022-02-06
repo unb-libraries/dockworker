@@ -11,7 +11,7 @@ use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
  */
 class DockworkerApplicationInfoCommands extends DockworkerCommands {
 
-  final const UNIX_EPOCH = '1970-01-01 00:00';
+  const UNIX_EPOCH = '1970-01-01 00:00';
 
   /**
    * Generate suggested cron timings for the application.

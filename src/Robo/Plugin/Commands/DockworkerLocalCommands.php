@@ -17,13 +17,13 @@ use Symfony\Component\Console\Helper\ProgressBar;
  */
 class DockworkerLocalCommands extends DockworkerCommands implements CustomEventAwareInterface {
 
-  final const ERROR_BUILDING_IMAGE = 'Error reported building image!';
-  final const ERROR_CONTAINER_MISSING = 'The %s local deployment is not running. You can start it with \'dockworker deploy\'.';
-  final const ERROR_CONTAINER_STOPPED = 'The %s local deployment appears to be stopped.';
-  final const ERROR_PULLING_UPSTREAM_IMAGE = 'Error pulling upstream image %s';
-  final const ERROR_UPDATING_HOSTFILE = 'Error updating hostfile!';
-  final const WAIT_DEPLOYMENT_CYCLE_LENGTH = 1;
-  final const WAIT_DEPLOYMENT_MAX_REPEATS = 300;
+  const ERROR_BUILDING_IMAGE = 'Error reported building image!';
+  const ERROR_CONTAINER_MISSING = 'The %s local deployment is not running. You can start it with \'dockworker deploy\'.';
+  const ERROR_CONTAINER_STOPPED = 'The %s local deployment appears to be stopped.';
+  const ERROR_PULLING_UPSTREAM_IMAGE = 'Error pulling upstream image %s';
+  const ERROR_UPDATING_HOSTFILE = 'Error updating hostfile!';
+  const WAIT_DEPLOYMENT_CYCLE_LENGTH = 1;
+  const WAIT_DEPLOYMENT_MAX_REPEATS = 300;
 
   use CustomEventAwareTrait;
   use DockworkerLogCheckerTrait;

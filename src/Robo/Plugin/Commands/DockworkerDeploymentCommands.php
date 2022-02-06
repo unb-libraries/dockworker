@@ -16,8 +16,8 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   use DockworkerLogCheckerTrait;
   use KubernetesDeploymentTrait;
 
-  final const ERROR_NO_PODS_IN_DEPLOYMENT = 'No pods were found for the deployment [%s:%s].';
-  final const ERROR_UNKNOWN_POD_ID = 'Pod ID [%s] not found in deployment [%s:%s].';
+  const ERROR_NO_PODS_IN_DEPLOYMENT = 'No pods were found for the deployment [%s:%s].';
+  const ERROR_UNKNOWN_POD_ID = 'Pod ID [%s] not found in deployment [%s:%s].';
 
   /**
    * Checks the application's k8s deployment rollout status.
