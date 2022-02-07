@@ -8,7 +8,6 @@
     "aws/aws-sdk-php": "~3.208.4",
     "consolidation/robo": "^3",
     "czproject/git-php": "^4",
-    "droath/robo-docker-compose": "~0.0.8",
     "ext-curl": "*",
     "ext-dom": "*",
     "ext-gd": "*",

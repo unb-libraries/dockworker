@@ -352,7 +352,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @option bool $only-start
    *   Alias for --no-update-dockworker --no-update-hostfile --no-upstream-pull --no-build
    * @option bool $force-recreate
-   *   Pass a --force-recreate option to docker-compose up.
+   *   Pass the --force-recreate option to docker-compose up.
    *
    * @command local:start
    * @aliases start
@@ -653,7 +653,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *   The array of available CLI options.
    *
    * @option bool $force-recreate
-   *   Pass a --force-recreate option to docker-compose up.
+   *   Pass the --force-recreate option to docker-compose up.
    *
    * @command local:up
    * @aliases up
@@ -662,16 +662,13 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    */
   public function up(array $options = ['force-recreate' => FALSE]) {
     $this->io()->title("Starting local containers");
-    $cmd = $this->taskDockerComposeUp()
-      ->detachedMode()
-      ->printOutput(FALSE)
-      ->silent(TRUE);
+    $cmd_string = 'docker-compose up -d';
 
     if ($options['force-recreate']) {
-      $cmd->forceRecreate();
+      $cmd_string .= ' --force-recreate';
     }
 
-    return $cmd->run();
+    $this->_exec($cmd_string);
   }
 
   /**
