@@ -8,7 +8,6 @@ use Dockworker\DockworkerException;
 use Dockworker\DockworkerLogCheckerTrait;
 use Dockworker\GitRepoTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
-use Droath\RoboDockerCompose\Task\loadTasks;
 use Robo\Robo;
 use Symfony\Component\Console\Helper\ProgressBar;
 
@@ -28,7 +27,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   use CustomEventAwareTrait;
   use DockworkerLogCheckerTrait;
   use GitRepoTrait;
-  use loadTasks;
 
   /**
    * The string in the logs that indicates the deployment has finished.
