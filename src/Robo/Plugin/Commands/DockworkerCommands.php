@@ -88,6 +88,21 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   protected $uuid;
 
   /**
+   * The current user's name.
+   *
+   * @var string
+   */
+  protected $userName;
+
+  /**
+   * The current user's token.
+   *
+   * @var string
+   */
+  protected $userToken;
+
+
+  /**
    * DockworkerCommands constructor.
    */
   public function __construct() {
@@ -129,6 +144,31 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
     if (empty($this->instanceName)) {
       throw new DockworkerException(sprintf(self::ERROR_INSTANCE_NAME_UNSET, $this->configFile));
     }
+  }
+
+  /**
+   * Sets the running user credentials.
+   *
+   * @hook init
+   * @throws \Dockworker\DockworkerException
+   */
+  public function setUserDetails() {
+   $kubectl_bin = shell_exec(sprintf("which %s", 'kubectl'));
+   if (!empty($kubectl_bin) && is_executable($kubectl_bin)) {
+     $user_name_cmd = 'kubectl config view --raw --output jsonpath=\'{$.users[0].name}\'';
+     $this->userName = shell_exec($user_name_cmd);
+     $user_token_cmd = 'kubectl config view --raw --output jsonpath=\'{$.users[0].user.token}\'';
+     $this->userToken = shell_exec($user_token_cmd);
+   }
+  }
+
+  /**
+   * Determines if the current user has details defined.
+   *
+   * @return bool
+   */
+  protected function userDetailsDefined() {
+    return (!empty($this->userName) && !empty($this->userToken));
   }
 
   /**
