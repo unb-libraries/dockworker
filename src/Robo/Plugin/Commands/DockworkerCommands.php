@@ -4,6 +4,8 @@ namespace Dockworker\Robo\Plugin\Commands;
 
 use CzProject\GitPhp\Git;
 use Dockworker\DockworkerException;
+use Dockworker\LogShippperTrait;
+use Dockworker\MetricsShipperTrait;
 use League\Container\ContainerAwareInterface;
 use League\Container\ContainerAwareTrait;
 use Psr\Log\LoggerAwareInterface;
@@ -24,12 +26,16 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   use ConfigAwareTrait;
   use ContainerAwareTrait;
   use LoggerAwareTrait;
+  use LogShippperTrait;
+  use MetricsShipperTrait;
 
   const ERROR_CONFIG_VERSION = 'Invalid configuration version in %s. Config version must be at least 3.0';
   const ERROR_INSTANCE_NAME_UNSET = 'The application name value has not been set in %s';
   const ERROR_PROJECT_PREFIX_UNSET = 'The project_prefix variable has not been set in %s';
   const ERROR_UPSTREAM_IMAGE_UNSET = 'The upstream_image variable has not been set in %s';
   const ERROR_UUID_UNSET = 'The application UUID value has not been set in %s';
+  const LOKI_ENDPOINT_URI = 'http://logs.lib.unb.ca:3100/loki/api/v1/push';
+  const PROMETHEUS_ENDPOINT_URI = 'http://metrics.lib.unb.ca:9091';
 
   /**
    * The application's configuration object.
@@ -154,7 +160,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    */
   public function setUserDetails() {
    $kubectl_bin = shell_exec(sprintf("which %s", 'kubectl'));
-   if (!empty($kubectl_bin) && is_executable($kubectl_bin)) {
+   if (!empty($kubectl_bin)) {
      $user_name_cmd = 'kubectl config view --raw --output jsonpath=\'{$.users[0].name}\'';
      $this->userName = shell_exec($user_name_cmd);
      $user_token_cmd = 'kubectl config view --raw --output jsonpath=\'{$.users[0].user.token}\'';
@@ -358,6 +364,45 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
       }
     }
     return $files;
+  }
+
+  protected function shipStartupMetricsToAggregator($metrics) {
+    $this->shipPrometheusMetrics(
+      $metrics,
+      self::PROMETHEUS_ENDPOINT_URI
+    );
+  }
+
+  /**
+   * @param $deployment_id
+   * @param $logs
+   *
+   * @return void
+   */
+  protected function shipStartupLogsToAggregator($deployment_id, $logs) {
+    $this->shipLogs(
+      $logs,
+      'dockworker_deployment_startup_logs',
+      $deployment_id,
+      self::LOKI_ENDPOINT_URI,
+      TRUE
+    );
+  }
+
+  /**
+   * @param $deployment_id
+   * @param $logs
+   *
+   * @return void
+   */
+  protected function shipBuildLogsToAggregator($deployment_id, $logs) {
+    $this->shipLogs(
+      $logs,
+      'dockworker_build_logs',
+      $deployment_id,
+      self::LOKI_ENDPOINT_URI,
+      TRUE
+    );
   }
 
 }

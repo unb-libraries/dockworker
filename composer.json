@@ -22,6 +22,7 @@
     "lesstif/php-jira-rest-client": "^1",
     "nikic/php-parser": "^4",
     "php": "^8",
+    "promphp/prometheus_push_gateway_php": "^1",
     "scssphp/scssphp": "^1",
     "sweetchuck/robo-phpcs": "^2"
   },

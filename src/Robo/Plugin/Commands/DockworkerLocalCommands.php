@@ -34,6 +34,11 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   private string $localFinishMarker;
 
   /**
+   * The string in the logs that indicates the deployment has finished.
+   */
+  private string $localContainerId;
+
+  /**
    * Clean up unused local docker assets.
    *
    * This command removes unused (orphaned) docker images, volumes and networks
@@ -65,6 +70,138 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    */
   public function localHalt() {
     $this->_exec('docker-compose stop --timeout 10');
+  }
+
+  /**
+   * Halts the local application without removing any persistent data.
+   *
+   * Following a halt, the application can be restarted with the 'start'
+   * command, and all data will be preserved.
+   *
+   * @option bool $failed
+   *   TRUE if the build should be marked as failed. Defaults to FALSE.
+   * @option string $startup-hash
+   *   If provided, the startup hash is used instead of being generated.
+   *
+   * @command local:ship:startup-metrics
+   *
+   * @usage local:ship:startup-metrics
+   *
+   * @return \Robo\Result
+   *   The result of the command.
+   */
+  public function localShipStartupMetrics($options = ['failed' => FALSE, 'startup-hash' => '']) {
+    $this->getlocalRunning();
+    $startup_hash = $options['startup-hash'] ?: $this->getStartupHash();
+    $result = $this->getLocalLogs(['all' => FALSE, 'no-log-prefix' => TRUE]);
+    $logs = $result->getMessage();
+    $this->shipLocalStartupMetricsToAggregator($startup_hash, $logs, !$options['failed']);
+    $this->shipLocalStartupLogsToAggregator($startup_hash, $logs);
+  }
+
+  /**
+   * Halts the local application without removing any persistent data.
+   *
+   * Following a halt, the application can be restarted with the 'start'
+   * command, and all data will be preserved.
+   *
+   * @option bool $failed
+   *   TRUE if the build should be marked as failed. Defaults to FALSE.
+   * @option string $startup-hash
+   *   If provided, the startup hash is used instead of being generated.
+   *
+   * @command local:ship:build-metrics
+   *
+   * @usage local:ship:build-metrics
+   *
+   * @return \Robo\Result
+   *   The result of the command.
+   */
+  public function localShipBuildMetrics($options = ['failed' => FALSE, 'startup-hash' => '']) {
+    $startup_hash = $options['startup-hash'] ?: $this->getStartupHash();
+    $logs = file_get_contents($this->getLocalBuildLogFilename());
+    $this->shipLocalBuildMetricsToAggregator($startup_hash, $logs, !$options['failed']);
+    $this->shipLocalBuildLogsToAggregator($startup_hash, $logs);
+  }
+
+  protected function setLocalPrometheusMetricTags($deployment_id) {
+    $this->setPrometheusMetricTags(
+      [
+        'build_user' => $this->userName,
+        'deployment' => $deployment_id,
+        'env' => 'local',
+        'hwid' => trim(shell_exec('cat /etc/machine-id 2>/dev/null')),
+        'instance' => $this->instanceName,
+      ]
+    );
+  }
+
+  /**
+   * @param $deployment_id
+   * @param $logs
+   *
+   * @return void
+   */
+  protected function shipLocalBuildLogsToAggregator($deployment_id, $logs) {
+    $this->shipBuildLogsToAggregator($deployment_id, $logs);
+  }
+
+  protected function shipLocalBuildMetricsToAggregator($deployment_id, $logs, bool $passed) {
+    $this->setLocalPrometheusMetricTags($deployment_id);
+    $metrics = [
+      [
+        'name' => 'container_build_log_size_bytes',
+        'help_text' => 'The size of the deployment logs, in bytes.',
+        'value' => mb_strlen($logs),
+      ],
+      [
+        'name' => 'container_build_status',
+        'help_text' => 'The status of the build',
+        'value' => (int) $passed,
+      ]
+    ];
+    $this->shipStartupMetricsToAggregator($metrics);
+  }
+
+  protected function shipLocalStartupMetricsToAggregator($deployment_id, $logs, bool $passed) {
+    $this->setLocalPrometheusMetricTags($deployment_id);
+    $metrics = [
+      [
+        'name' => 'container_startup_log_size_bytes',
+        'help_text' => 'The size of the deployment logs, in bytes.',
+        'value' => mb_strlen($logs),
+      ],
+      [
+        'name' => 'container_startup_status',
+        'help_text' => 'The status ',
+        'value' => (int) $passed,
+      ]
+    ];
+
+    // Set the local container ID.
+    exec(
+      "docker-compose exec $this->instanceName cat /tmp/startup_time",
+      $output,
+      $return_code
+    );
+    if ($return_code == '0') {
+      $metrics[] = [
+        'name' => 'container_startup_time_seconds',
+        'help_text' => 'The total container startup time, in seconds.',
+        'value' => $output[0],
+      ];
+    }
+    $this->shipStartupMetricsToAggregator($metrics);
+  }
+
+  /**
+   * @param $deployment_id
+   * @param $logs
+   *
+   * @return void
+   */
+  protected function shipLocalStartupLogsToAggregator($deployment_id, $logs) {
+    $this->shipStartupLogsToAggregator($deployment_id, $logs);
   }
 
   /**
@@ -139,6 +276,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
       $return_code
     );
 
+    // 'docker-compose ps -q lib.unb.ca'
+
     // Check if container exists.
     if ($return_code > 0) {
       throw new DockworkerException(sprintf(self::ERROR_CONTAINER_MISSING, $container_name));
@@ -147,6 +286,16 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     // Check if container stopped.
     if ($output[0] == "false") {
       throw new DockworkerException(sprintf(self::ERROR_CONTAINER_STOPPED, $container_name));
+    }
+
+    // Set the local container ID.
+    exec(
+      "docker-compose ps -q  $container_name",
+      $output,
+      $return_code
+    );
+    if ($return_code == '0') {
+      $this->localContainerId = $output[1];
     }
   }
 
@@ -158,16 +307,22 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @option bool $all
    *   Return logs from all local services, not only the web endpoint.
+   * @option bool $no-log-prefix
+   *   If set, do not prefix logs with instance ID.
    *
    * @return \Robo\Result
    *   The result of the command.
    */
-  protected function getLocalLogs(array $options = ['all' => FALSE]) {
+  protected function getLocalLogs(array $options = ['all' => FALSE, 'no-log-prefix' => FALSE]) {
     $result = $this->taskExec('docker-compose')
       ->dir($this->repoRoot)
       ->silent(TRUE)
       ->printOutput(FALSE)
       ->arg('logs');
+
+    if (isset($options['no-log-prefix']) && $options['no-log-prefix']) {
+      $result->arg('--no-log-prefix');
+    }
 
     if (isset($options['all']) && !$options['all']) {
       $result->arg($this->instanceName);
@@ -237,12 +392,13 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   public function build(array $options = ['no-cache' => FALSE]) {
     $this->io()->title("Building application theme");
     $this->setRunOtherCommand('theme:build-all');
+    $build_logfile = $this->getLocalBuildLogFilename();
 
     if ($options['no-cache']) {
-      $command = 'docker-compose build --no-cache';
+      $command = "docker-compose build --no-cache 2>&1 | tee '$build_logfile'";
     }
     else {
-      $command = 'docker-compose build';
+      $command = "docker-compose build 2>&1 | tee '$build_logfile'";
     }
 
     $this->io()->title("Building image");
@@ -251,6 +407,10 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
         self::ERROR_BUILDING_IMAGE
       );
     }
+  }
+
+  protected function getLocalBuildLogFilename() {
+    return "/tmp/dockworker_{$this->instanceName}_build-logs";
   }
 
   /**
@@ -359,6 +519,12 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @usage local:start
    */
   public function start(array $options = ['no-cache' => FALSE, 'no-tail-logs' => FALSE, 'no-update-dockworker' => FALSE, 'no-update-hostfile' => FALSE, 'no-upstream-pull' => FALSE, 'no-build' => FALSE, 'only-start' => FALSE, 'force-recreate' => FALSE]) {
+    $startup_hash = $this->getStartupHash();
+
+    if ($this->repoGit->hasChanges()) {
+      // git ls-files --others --exclude-standard -z | xargs -0 -n 1 git --no-pager diff /dev/null
+    }
+
     if (!$options['no-update-dockworker'] && !$options['only-start']) {
       $this->setRunOtherCommand('dockworker:update');
     }
@@ -376,10 +542,14 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
       if ($options['no-cache']) {
         $build_command = $build_command . ' --no-cache';
       }
-      $this->setRunOtherCommand(
-        $build_command,
-        self::ERROR_BUILDING_IMAGE
-      );
+      try {
+        $this->setRunOtherCommand($build_command);
+        $this->setRunOtherCommand("local:ship:build-metrics --startup-hash=$startup_hash");
+      }
+      catch (DockworkerException $de) {
+        $this->setRunOtherCommand("local:ship:build-metrics --startup-hash=$startup_hash --failed");
+        throw new DockworkerException("Error in build process!");
+      }
     }
 
     $up_command = 'local:up';
@@ -391,11 +561,26 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     $this->setRunOtherCommand($up_command);
     $this->waitForDeployment();
     $this->io()->newLine();
-    $this->setRunOtherCommand('local:logs:check');
+
+    try {
+      $this->setRunOtherCommand('local:logs:check');
+      $this->setRunOtherCommand("local:ship:startup-metrics --startup-hash=$startup_hash");
+    }
+    catch (DockworkerException $de) {
+      $this->setRunOtherCommand("local:ship:startup-metrics --startup-hash=$startup_hash --failed");
+      throw new DockworkerException("Error(s) found in local startup logs!");
+    }
 
     if (!$options['no-tail-logs']) {
       $this->tailLocalLogs();
     }
+  }
+
+  protected function getStartupHash() {
+    $start_commit = $this->repoGit->getLastCommitId();
+    $start_time = time();
+    $startup_hash = md5("{$start_commit}{$start_time}");
+    return $startup_hash;
   }
 
   /**
