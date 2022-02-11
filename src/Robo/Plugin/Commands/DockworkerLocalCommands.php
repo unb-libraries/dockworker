@@ -83,6 +83,66 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @option string $startup-hash
    *   If provided, the startup hash is used instead of being generated.
    *
+   * @command local:ship:build-details
+   *
+   * @usage local:ship:build-details
+   *
+   * @return \Robo\Result
+   *   The result of the command.
+   */
+  public function localShipBuildDetails($options = ['failed' => FALSE, 'startup-hash' => '']) {
+    $startup_hash = $options['startup-hash'] ?: $this->getStartupHash();
+    $index = [
+      'index' => 'dockworker_builds',
+      'body' => [
+        'mappings' => [
+          'properties' => [
+            'deployment' => [
+              'type' => 'keyword'
+            ],
+            'timestamp' => [
+              'type' => 'date'
+            ],
+            'build_user' => [
+              'type' => 'keyword'
+            ],
+            'env' => [
+              'type' => 'keyword'
+            ],
+            'hwid' => [
+              'type' => 'keyword'
+            ],
+            'instance' => [
+              'type' => 'keyword'
+            ],
+          ],
+        ]
+      ]
+    ];
+    $this->shipDocumentToAggregator(
+      [
+        'deployment' => $startup_hash,
+        'timestamp' => round(microtime(TRUE) * 1000),
+        'build_user' => $this->userName,
+        'env' => 'local',
+        'hwid' => trim(shell_exec('cat /etc/machine-id 2>/dev/null')),
+        'instance' => $this->instanceName,
+      ],
+      $index
+    );
+  }
+
+  /**
+   * Halts the local application without removing any persistent data.
+   *
+   * Following a halt, the application can be restarted with the 'start'
+   * command, and all data will be preserved.
+   *
+   * @option bool $failed
+   *   TRUE if the build should be marked as failed. Defaults to FALSE.
+   * @option string $startup-hash
+   *   If provided, the startup hash is used instead of being generated.
+   *
    * @command local:ship:startup-metrics
    *
    * @usage local:ship:startup-metrics
@@ -127,11 +187,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   protected function setLocalPrometheusMetricTags($deployment_id) {
     $this->setPrometheusMetricTags(
       [
-        'build_user' => $this->userName,
         'deployment' => $deployment_id,
-        'env' => 'local',
-        'hwid' => trim(shell_exec('cat /etc/machine-id 2>/dev/null')),
-        'instance' => $this->instanceName,
       ]
     );
   }
@@ -520,6 +576,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    */
   public function start(array $options = ['no-cache' => FALSE, 'no-tail-logs' => FALSE, 'no-update-dockworker' => FALSE, 'no-update-hostfile' => FALSE, 'no-upstream-pull' => FALSE, 'no-build' => FALSE, 'only-start' => FALSE, 'force-recreate' => FALSE]) {
     $startup_hash = $this->getStartupHash();
+    $this->setRunOtherCommand("local:ship:build-details --startup-hash=$startup_hash");
 
     if ($this->repoGit->hasChanges()) {
       // git ls-files --others --exclude-standard -z | xargs -0 -n 1 git --no-pager diff /dev/null
