@@ -19,8 +19,8 @@ trait RepoCIServicesWorkflowWriterTrait {
    * @throws \Dockworker\DockworkerException
    */
   public function initActionsWorkflowCommand() {
-    $this->CIServicesWorkflowFilepath = $this->repoRoot . '/.github/workflows/test-suite.yaml';
-    $this->CIServicesWorkflowSourcePath = $this->repoRoot . '/vendor/unb-libraries/dockworker/data/gh-actions/test-suite.yaml';
+    $this->CIServicesWorkflowFilepath = $this->repoRoot . '/.github/workflows/deployment-workflow.yaml';
+    $this->CIServicesWorkflowSourcePath = $this->repoRoot . '/vendor/unb-libraries/dockworker/data/gh-actions/deployment-workflow.yaml';
   }
 
 }

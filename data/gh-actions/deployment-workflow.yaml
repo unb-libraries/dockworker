@@ -6,7 +6,7 @@ on:
 
 jobs:
   deploy:
-    uses: unb-libraries/dockworker/.github/workflows/deployment-workflow.yaml@4.x
+    uses: unb-libraries/dockworker/.github/workflows/deployment-workflow.yaml@5.x
     secrets:
       GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
       GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}

@@ -26,7 +26,7 @@ class DockworkerCIServicesWorkflowCommands extends DockworkerCommands {
    * @actionsworkflowcommand
    */
   public function setApplicationCIServicesWorkflowFile() {
-    $this->CIServicesWorkflowSourcePath = $this->repoRoot . '/vendor/unb-libraries/dockworker/data/gh-actions/test-suite.yaml';
+    $this->CIServicesWorkflowSourcePath = $this->repoRoot . '/vendor/unb-libraries/dockworker/data/gh-actions/deployment-workflow.yaml';
     $this->writeApplicationCIServicesWorkflowFile();
   }
 
