@@ -4,7 +4,6 @@ namespace Dockworker;
 
 use Dockworker\DockworkerException;
 use Dockworker\TemporaryDirectoryTrait;
-use GuzzleHttp\Client;
 use Robo\Robo;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -40,14 +39,14 @@ trait GitHubPackageDownloadTrait {
     $filename = "$repo.zip";
     $tmp_file = "$tmp_dir/$filename";
 
-    $client = new Client();
-    $client->get($remote_zip_file_path, ['save_to' => $tmp_file]);
+    file_put_contents(
+      $tmp_file,
+      file_get_contents($remote_zip_file_path)
+    );
 
     $zip = new ZipArchive;
     $zip->open($tmp_file);
     $zip->extractTo($tmp_dir);
-    $zip->close();
-
     $file_source = "$tmp_dir/$repo-$refspec$path";
 
     try {
