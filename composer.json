@@ -2,6 +2,14 @@
   "name": "unb-libraries/dockworker",
   "description": "Deploy and develop web applications via a consistent and unified workflow.",
   "type": "library",
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    },
+    "preferred-install": {
+      "*": "dist"
+    }
+  },
   "minimum-stability": "stable",
   "require": {
     "asm89/twig-lint": "^1",
