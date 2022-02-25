@@ -92,6 +92,24 @@ trait CIServicesTrait {
   }
 
   /**
+   * Gets a workflow run by ID.
+   *
+   * @param $id
+   *   The id to filter with.
+   *
+   * @return array
+   *  The latest workflow run for the branch.
+   */
+  protected function getCIServicesWorkflowRunById($id) {
+    foreach($this->CIServicesCurWorkflowRuns as $run) {
+      if ($run['id'] == $id) {
+        return $run;
+      }
+    }
+    return [];
+  }
+
+  /**
    * Gets all latest workflow runs for a branch.
    *
    * @param $branch
@@ -108,6 +126,10 @@ trait CIServicesTrait {
       }
     }
     return $branch_runs;
+  }
+
+  protected function initSetupCIServicesTrait() {
+    $this->setCIServicesWorkflow();
   }
 
 }

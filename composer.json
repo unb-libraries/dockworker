@@ -17,6 +17,7 @@
     "consolidation/robo": "^3",
     "czproject/git-php": "^4",
     "dflydev/dot-access-data": "^1",
+    "elasticsearch/elasticsearch": "^7",
     "ext-curl": "*",
     "ext-dom": "*",
     "ext-gd": "*",

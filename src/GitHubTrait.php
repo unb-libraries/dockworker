@@ -77,4 +77,10 @@ trait GitHubTrait {
     }
   }
 
+  protected function initSetupGitHubTrait() {
+    $this->setGitHubRepo();
+    $this->setGitHubClient();
+    $this->setGitHubOwner();
+  }
+
 }
