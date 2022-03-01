@@ -2,8 +2,8 @@
 
 namespace Dockworker;
 
+use Dockworker\DockworkerException;
 use Elasticsearch\ClientBuilder;
-use RuntimeException;
 
 /**
  * Provides methods to ships metrics to an elastic aggregation interface.
@@ -13,21 +13,38 @@ trait ElasticShipperTrait {
   protected $elasticsearchShipperClient;
 
   /**
-   * @param string $host
+   * Sets up the elasticsearch client for use.
+   *
+   * @param string $uri
+   *   The URI to the elasticsearch instance, including the port.
+   * @option string $auth-user
+   *   If basic authentication is needed, the username. Defaults to none.
+   * @option string $auth-pass
+   *   If basic authentication is needed, the password. Defaults to none.
+   *
+   * @param string $auth_pass
    *
    * @return void
    */
-  protected function setUpElasticSearchClient(string $host) {
-    $hosts = [
-      $host,
-    ];
-    $this->elasticsearchShipperClient = ClientBuilder::create()
-      ->setHosts($hosts)
-      ->build();
+  protected function setUpElasticSearchClient(string $uri, string $auth_user = '', string $auth_pass = '') {
+    $client_builder = ClientBuilder::create()
+      ->setHosts([
+        $uri,
+      ]);
+
+    // Password could be empty. Only check for user.
+    if (!empty($auth_user)) {
+      $client_builder->setBasicAuthentication($auth_user, $auth_pass);
+    }
+
+    $this->elasticsearchShipperClient = $client_builder->build();
   }
 
   /**
-   * @param array $index
+   * Creates an elasticsearch index if one does not already exist.
+   *
+   * @param string[] $index
+   *   The index properties.
    *
    * @return void
    */
@@ -38,25 +55,34 @@ trait ElasticShipperTrait {
   }
 
   /**
-   * @param array $document
-   * @param array $index
-   * @param string $endpoint_url
+   * Indexes a document in the target elasticsearch instance.
+   *
+   * @param string[] $document
+   *   An associative array defining the document that will be indexed as JSON.
+   * @param string[] $index
+   *   The index properties.
+   * @param string $uri
+   *   The URI to the elasticsearch instance, including the port.
+   * @option string $auth-user
+   *   If basic authentication is needed, the username. Defaults to none.
+   * @option string $auth-pass
+   *   If basic authentication is needed, the password. Defaults to none.
    *
    * @return void
    */
-  protected function shipElasticSearchDocument(array $document, array $index, string $endpoint_url) {
+  protected function shipElasticSearchDocument(array $document, array $index, string $uri, string $auth_user = '', string $auth_pass = '') {
     try {
-      $this->setUpElasticSearchClient($endpoint_url);
+      $this->setUpElasticSearchClient($uri, $auth_user, $auth_pass);
       $this->createElasticSearchIndex($index);
       $doc_params = [
         'index' => $index['index'],
         'body' => $document
       ];
       $response = $this->elasticsearchShipperClient->index($doc_params);
+      $this->say('Eh');
     }
     catch (\Exception $e) {
-      // Don't involve the user in this failure unless debugging.
-      $this->logger->debug('Document push to aggregator failed...');
+      throw new DockworkerException('Document push to elasticsearch failed!');
     }
   }
 
