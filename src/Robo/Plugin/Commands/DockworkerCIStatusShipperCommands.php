@@ -32,12 +32,16 @@ class DockworkerCIStatusShipperCommands extends DockworkerCommands {
    *   If basic authentication is needed, the username. Defaults to none.
    * @option string $auth-pass
    *   If basic authentication is needed, the password. Defaults to none.
+   * @option string $ci-build-status
+   *   Sets the build status. Defaults to retrieved status.
+   * @option string $ci-build-conclusion
+   *   Sets the build conclusion. Defaults to retrieved conclusion.
    *
    * @command ci:ship:build-details
    *
    * @usage ci:ship:build-details
    */
-  public function shipCiBuildDetails($id, array $options = ['es-uri' => 'localhost:9200', 'auth-user' => '', 'auth-pass' => '']) {
+  public function shipCiBuildDetails($id, array $options = ['es-uri' => 'localhost:9200', 'auth-user' => '', 'auth-pass' => '', 'ci-build-status' => '', 'ci-build-conclusion' => '']) {
     $this->options = $options;
     $this->initSetupCommand();
     $this->say("Finding build, id=$id...");
@@ -106,6 +110,13 @@ class DockworkerCIStatusShipperCommands extends DockworkerCommands {
         ]
       ]
     ];
+    if (empty($this->options['ci-build-status'])) {
+      $ci_build_status = $run['ci-build-status'];
+    }
+    if (empty($this->options['ci-build-conclusion'])) {
+      $ci_build_conclusion = $run['ci-build-conclusion'];
+    }
+
     $this->shipElasticSearchDocument(
       [
         'id' => $run['id'],
@@ -115,8 +126,8 @@ class DockworkerCIStatusShipperCommands extends DockworkerCommands {
         'committer' => $run['head_commit']['committer']['email'],
         'env' => $run['head_branch'],
         'instance' => $this->instanceName,
-        'status' => $run['status'],
-        'conclusion' => $run['conclusion'],
+        'status' => $ci_build_status,
+        'conclusion' => $ci_build_conclusion,
       ],
       $index,
       $this->options['es-uri'],
