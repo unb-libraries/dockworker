@@ -332,7 +332,10 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *
    * @kubectl
    */
-  public function openDeploymentShell($env, $shell = '/bin/sh') {
+  public function openDeploymentShell($env, $shell = '') {
+    if (empty($shell)) {
+      $shell = $this->applicationShell;
+    }
     $pods = $this->getDeploymentExecPodIds($env);
     $pod_id = array_shift($pods);
     $this->io()->note('Opening remote pod shell... Type "exit" when finished.');

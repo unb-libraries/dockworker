@@ -32,16 +32,12 @@ class DockworkerCIStatusShipperCommands extends DockworkerCommands {
    *   If basic authentication is needed, the username. Defaults to none.
    * @option string $auth-pass
    *   If basic authentication is needed, the password. Defaults to none.
-   * @option string $ci-build-status
-   *   Sets the build status. Defaults to retrieved status.
-   * @option string $ci-build-conclusion
-   *   Sets the build conclusion. Defaults to retrieved conclusion.
    *
    * @command ci:ship:build-details
    *
    * @usage ci:ship:build-details
    */
-  public function shipCiBuildDetails($id, array $options = ['es-uri' => 'localhost:9200', 'auth-user' => '', 'auth-pass' => '', 'ci-build-status' => '', 'ci-build-conclusion' => '']) {
+  public function shipCiBuildDetails($id, array $options = ['es-uri' => 'localhost:9200', 'auth-user' => '', 'auth-pass' => '']) {
     $this->options = $options;
     $this->initSetupCommand();
     $this->say("Finding build, id=$id...");

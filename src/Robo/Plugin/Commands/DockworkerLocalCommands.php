@@ -280,7 +280,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     return $this->taskDockerExec($this->instanceName)
       ->interactive()
       ->option('-t')
-      ->exec('sh')
+      ->exec($this->applicationShell)
       ->run();
   }
 
@@ -681,8 +681,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     $hostnames = $this->getHostFileHostnames();
     $this->say("Updating hostfile with entries. If you are asked for a password, you should enable passwordless sudo for your user.");
     foreach ($hostnames as $hostname) {
-      $delete_command = "sudo sh -c 'sed -i '' -e \"/$hostname/d\" /etc/hosts'";
-      $add_command = "sudo sh -c 'echo \"127.0.0.1       $hostname\" >> /etc/hosts'";
+      $delete_command = "sudo $this->applicationShell -c 'sed -i '' -e \"/$hostname/d\" /etc/hosts'";
+      $add_command = "sudo $this->applicationShell -c 'echo \"127.0.0.1       $hostname\" >> /etc/hosts'";
 
       $this->say("Updating hostfile with entry for $hostname...");
       exec($delete_command, $delete_output, $delete_return);
@@ -707,7 +707,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     $this->say("Removing hostfile entries. If you are asked for a password, you should enable passwordless sudo for your user.");
     foreach ($hostnames as $hostname) {
       $this->say("Removing hostfile entry for $hostname...");
-      $delete_command = "sudo sh -c 'sed -i '' -e \"/$hostname/d\" /etc/hosts'";
+      $delete_command = "sudo $this->applicationShell -c 'sed -i '' -e \"/$hostname/d\" /etc/hosts'";
       exec($delete_command, $delete_output, $delete_return);
       if ($delete_return > 0) {
         throw new DockworkerException(sprintf(self::ERROR_UPDATING_HOSTFILE));
