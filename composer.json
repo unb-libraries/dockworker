@@ -10,7 +10,8 @@
       "*": "dist"
     }
   },
-  "minimum-stability": "stable",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "require": {
     "asm89/twig-lint": "^1",
     "aws/aws-sdk-php": "^3",
