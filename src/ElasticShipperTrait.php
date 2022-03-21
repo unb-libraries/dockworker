@@ -15,11 +15,11 @@ trait ElasticShipperTrait {
   /**
    * Sets up the elasticsearch client for use.
    *
-   * @param string $uri
+   * @param $uri
    *   The URI to the elasticsearch instance, including the port.
-   * @option string $auth-user
+   * @option $auth-user
    *   If basic authentication is needed, the username. Defaults to none.
-   * @option string $auth-pass
+   * @option $auth-pass
    *   If basic authentication is needed, the password. Defaults to none.
    *
    * @param string $auth_pass
@@ -63,9 +63,10 @@ trait ElasticShipperTrait {
    *   The index properties.
    * @param string $uri
    *   The URI to the elasticsearch instance, including the port.
-   * @option string $auth-user
+   *
+   * @option $auth-user
    *   If basic authentication is needed, the username. Defaults to none.
-   * @option string $auth-pass
+   * @option $auth-pass
    *   If basic authentication is needed, the password. Defaults to none.
    *
    * @return void

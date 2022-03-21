@@ -25,11 +25,11 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
    * @param string[] $options
    *   The array of available CLI options.
    *
-   * @option bool $no-cache
+   * @option $no-cache
    *   Do not use any cached steps in the build.
-   * @option string $cache-from
+   * @option $cache-from
    *   The image to cache the build from.
-   * @option bool $allow-dirty
+   * @option $allow-dirty
    *   Skips the warning prompt if the git repository is dirty.
    *
    * @command image:build

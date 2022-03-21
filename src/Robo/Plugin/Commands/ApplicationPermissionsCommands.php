@@ -15,7 +15,7 @@ class ApplicationPermissionsCommands extends DockworkerCommands {
    * @param string[] $options
    *   The array of available CLI options.
    *
-   * @option string $path
+   * @option $path
    *   Only update permissions in this path.
    *
    * @command dockworker:permissions:fix

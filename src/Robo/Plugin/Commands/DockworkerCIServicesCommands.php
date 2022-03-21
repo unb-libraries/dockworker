@@ -38,7 +38,7 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
    * @param string[] $options
    *   The array of available CLI options.
    *
-   * @option string $branch
+   * @option $branch
    *   The environment/branch to target. Defaults to 'dev'.
    *
    * @command ci:restart-latest
@@ -62,7 +62,7 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
    * @param string[] $options
    *   The array of available CLI options.
    *
-   * @option string $branch
+   * @option $branch
    *   The environment/branch to target. Defaults to 'prod'.
    *
    * @command ci:deploy-times

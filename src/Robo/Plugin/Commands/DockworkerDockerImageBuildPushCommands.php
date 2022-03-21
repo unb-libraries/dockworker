@@ -22,9 +22,9 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
    * @param string $tag
    *   The tag to use when building and pushing the image.
    *
-   * @option bool $no-cache
+   * @option $no-cache
    *   Do not use any cached steps in the build.
-   * @option string $cache-from
+   * @option $cache-from
    *   The image to cache the build from.
    *
    * @command image:build-push
@@ -48,7 +48,7 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
    * @param string[] $options
    *   The array of available CLI options.
    *
-   * @option string $use-tag
+   * @option $use-tag
    *   Skip building and deploy with the specified tag.
    *
    * @command image:deploy

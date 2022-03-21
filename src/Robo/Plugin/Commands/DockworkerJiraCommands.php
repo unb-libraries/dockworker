@@ -28,13 +28,13 @@ class DockworkerJiraCommands extends DockworkerCommands {
    * @param array $options
    *   An array of CLI options to pass to the command.
    *
-   * @option string $summary
+   * @option $summary
    *   The issue summary (title).
-   * @option string $description
+   * @option $description
    *   The issue description.
-   * @option string $type
+   * @option $type
    *   The type of issue.
-   * @option bool yes
+   * @option $yes
    *   Assume a 'yes' answer for all prompts.
    *
    * @throws \Exception

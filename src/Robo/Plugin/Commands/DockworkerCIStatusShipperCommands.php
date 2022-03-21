@@ -26,11 +26,11 @@ class DockworkerCIStatusShipperCommands extends DockworkerCommands {
    * @param string[] $options
    *   The array of available CLI options.
    *
-   * @option string $es-uri
+   * @option $es-uri
    *   The URI (including port) to elasticsearch. Defaults to localhost:9200.
-   * @option string $auth-user
+   * @option $auth-user
    *   If basic authentication is needed, the username. Defaults to none.
-   * @option string $auth-pass
+   * @option $auth-pass
    *   If basic authentication is needed, the password. Defaults to none.
    *
    * @command ci:ship:build-details

@@ -105,7 +105,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @param string[] $options
    *   The array of available CLI options.
    *
-   * @option bool $all
+   * @option $all
    *   Display logs from all local services, not only the web endpoint.
    *
    * @command local:logs
@@ -156,7 +156,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @param string[] $options
    *   The array of available CLI options.
    *
-   * @option bool $all
+   * @option $all
    *   Return logs from all local services, not only the web endpoint.
    *
    * @return \Robo\Result
@@ -182,9 +182,9 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @param string[] $options
    *   The array of available CLI options.
    *
-   * @option bool $all
+   * @option $all
    *   Display logs from all local services, not only the web endpoint.
-   * @option bool $timestamps
+   * @option $timestamps
    *   Display a timestamp for each line of the logs.
    *
    * @command local:logs:tail
@@ -225,7 +225,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @param string[] $options
    *   The array of available CLI options.
    *
-   * @option bool $no-cache
+   * @option $no-cache
    *   Do not use any cached steps in the build.
    *
    * @command local:build
@@ -335,21 +335,21 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @param string[] $options
    *   The array of available CLI options.
    *
-   * @option bool $no-cache
+   * @option $no-cache
    *   Do not use any cached steps in the build.
-   * @option bool $no-tail-logs
+   * @option $no-tail-logs
    *   Do not tail the application logs after starting.
-   * @option bool $no-update-dockworker
+   * @option $no-update-dockworker
    *   Do not update dockworker as part of the startup process.
-   * @option bool $no-update-hostfile
+   * @option $no-update-hostfile
    *   Do not update the local hostfile with the application alias.
-   * @option bool $no-upstream-pull
+   * @option $no-upstream-pull
    *   Do not pull the upstream docker images before building.
-   * @option bool $no-build
+   * @option $no-build
    *   Do not build any images before starting.
-   * @option bool $only-start
+   * @option $only-start
    *   Alias for --no-update-dockworker --no-update-hostfile --no-upstream-pull --no-build
-   * @option bool $force-recreate
+   * @option $force-recreate
    *   Pass the --force-recreate option to docker-compose up.
    *
    * @command local:start
@@ -504,7 +504,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @param string[] $options
    *   The array of available CLI options.
    *
-   * @option bool $all
+   * @option $all
    *   Check logs from all local services, not only the web endpoint.
    *
    * @command local:logs:check
@@ -552,11 +552,11 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @param string[] $options
    *   The array of available CLI options.
    *
-   * @option bool $no-kill
+   * @option $no-kill
    *   Do not use kill the container before starting over.
-   * @option bool $no-rm
+   * @option $no-rm
    *   Do not remove the existing assets before starting over.
-   * @option bool $no-update-dockworker
+   * @option $no-update-dockworker
    *   Do not update dockworker as part of the startup process.
    *
    * @command local:build-test
@@ -585,13 +585,13 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @param string[] $options
    *   The array of available CLI options.
    *
-   * @option bool $no-cache
+   * @option $no-cache
    *   Do not use any cached steps in the build.
-   * @option bool $no-kill
+   * @option $no-kill
    *   Do not use kill the container before starting over.
-   * @option bool $no-rm
+   * @option $no-rm
    *   Do not remove the existing assets before starting over.
-   * @option bool $no-update-dockworker
+   * @option $no-update-dockworker
    *   Do not update dockworker as part of the startup process.
    *
    * @command local:start-over
@@ -626,7 +626,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
      * @param string[] $options
      *   The array of available CLI options.
      *
-     * @option bool $no-cache
+     * @option $no-cache
      *   Do not use any cached steps in the build.
      *
      * @command local:rebuild
@@ -650,7 +650,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @param string[] $options
    *   The array of available CLI options.
    *
-   * @option bool $force-recreate
+   * @option $force-recreate
    *   Pass the --force-recreate option to docker-compose up.
    *
    * @command local:up
