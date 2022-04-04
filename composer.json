@@ -15,6 +15,7 @@
   "require": {
     "asm89/twig-lint": "^1",
     "aws/aws-sdk-php": "^3",
+    "consolidation/annotated-command": "4.5.2",
     "consolidation/robo": "^3",
     "czproject/git-php": "^4",
     "dflydev/dot-access-data": "^1",
