@@ -2,14 +2,10 @@
 
 namespace Dockworker;
 
-use Sweetchuck\Robo\Phpcs\PhpcsTaskLoader;
-
 /**
  * Provides methods to validate YAML templates.
  */
 trait YamlValidateTrait {
-
-  use PhpcsTaskLoader;
 
   /**
    * Validates YAML files using yaml-lint.

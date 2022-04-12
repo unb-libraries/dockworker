@@ -2,14 +2,10 @@
 
 namespace Dockworker;
 
-use Sweetchuck\Robo\Phpcs\PhpcsTaskLoader;
-
 /**
  * Provides methods to validate PHP code for standards and errors.
  */
 trait PhpValidateTrait {
-
-  use PhpcsTaskLoader;
 
   /**
    * Validates files using phpcs.
@@ -25,15 +21,23 @@ trait PhpValidateTrait {
    */
   protected function validatePhp($files, array $lint_standards = ['PSR2'], $no_warnings = FALSE) {
     if (!empty($files)) {
-      $cmd = $this->taskPhpcsLintFiles()
-        ->setStandards($lint_standards)
-        ->setReport('full')
-        ->setFiles($files)
-        ->setColors(TRUE);
+      $standards_string = implode(',', $lint_standards);
+
+      $cmd = [
+        'vendor/bin/phpcs',
+        '--colors',
+        "--standard=$standards_string",
+        '--runtime-set ignore_warnings_on_exit 1',
+      ];
       if ($no_warnings) {
-        $cmd->setWarningSeverity(0);
+        $cmd[] = '--warning-severity=0';
       }
-      return $cmd->run();
+      $cmd[] = '--';
+      $cmd = array_merge($cmd, $files);
+
+      $cmd_string = implode(' ', $cmd);
+      $robo_cmd = $this->taskExec($cmd_string);
+      return $robo_cmd->run();
     }
     else {
       print "No PHP files found to lint!\n";

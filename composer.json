@@ -34,7 +34,7 @@
     "nikic/php-parser": "^4",
     "php": "^8",
     "scssphp/scssphp": "^1",
-    "sweetchuck/robo-phpcs": "^2"
+    "squizlabs/php_codesniffer": "^3"
   },
   "license": "MIT",
   "authors": [
