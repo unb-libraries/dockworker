@@ -25,6 +25,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   use ContainerAwareTrait;
   use LoggerAwareTrait;
 
+  const DOCKWORKER_DATA_BASE_DIR = '/.config/dockworker';
   const ERROR_CONFIG_VERSION = 'Invalid configuration version in %s. Config version must be at least 3.0';
   const ERROR_INSTANCE_NAME_UNSET = 'The application name value has not been set in %s';
   const ERROR_PROJECT_PREFIX_UNSET = 'The project_prefix variable has not been set in %s';
@@ -53,6 +54,13 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   protected $configFile;
 
   /**
+   * The local data directory for this application.
+   *
+   * @var string
+   */
+  protected $dockworkerApplicationDataDir;
+
+  /**
    * The instance name of the application.
    *
    * @var string
@@ -65,6 +73,20 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    * @var string
    */
   protected $instanceSlug;
+
+  /**
+   * The current user's configured kubectl username.
+   *
+   * @var string
+   */
+  protected $kubeUserName;
+
+  /**
+   * The current user's configured kubectl access token.
+   *
+   * @var string
+   */
+  protected $kubeUserToken;
 
   /**
    * The options passed to the command.
@@ -88,25 +110,26 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   protected $repoGit;
 
   /**
+   * The current user's configured home directory.
+   *
+   * @var string
+   */
+  protected $userHomeDir;
+
+  /**
+   * The current user's configured username.
+   *
+   * @var string
+   */
+  protected $userName;
+
+  /**
    * The UNBLibraries uuid of the application.
    *
    * @var string
    */
   protected $uuid;
 
-  /**
-   * The current user's configured kubectl username.
-   *
-   * @var string
-   */
-  protected $kubeUserName;
-
-  /**
-   * The current user's configured kubectl access token.
-   *
-   * @var string
-   */
-  protected $kubeUserToken;
 
   /**
    * Sets the application shell used.
@@ -165,9 +188,24 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   }
 
   /**
+   * Sets the running user's details and credentials.
+   *
+   * @hook post-init
+   * @throws \Dockworker\DockworkerException
+   */
+  public function setUserDetails() {
+    $this->userName = get_current_user();
+    $this->userHomeDir = $_SERVER['HOME'];
+    $this->dockworkerApplicationDataDir = implode('/', [$this->userHomeDir, self::DOCKWORKER_DATA_BASE_DIR, $this->instanceName]);
+    if (!file_exists($this->dockworkerApplicationDataDir)) {
+      mkdir($this->dockworkerApplicationDataDir, 0755, TRUE);
+    }
+    $this->setUserKubeDetails();
+  }
+
+  /**
    * Sets the running user's kubernetes credentials.
    *
-   * @hook init
    * @throws \Dockworker\DockworkerException
    */
   public function setUserKubeDetails() {
