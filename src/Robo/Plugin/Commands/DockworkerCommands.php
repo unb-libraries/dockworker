@@ -40,6 +40,13 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   protected $applicationShell = '/bin/sh';
 
   /**
+   * The timestamp the command was started.
+   *
+   * @var string
+   */
+  protected $commandStartTime;
+
+  /**
    * The application's configuration object.
    *
    * @var \Consolidation\Config\ConfigInterface
@@ -201,6 +208,16 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
       mkdir($this->dockworkerApplicationDataDir, 0755, TRUE);
     }
     $this->setUserKubeDetails();
+  }
+
+  /**
+   * Sets the running user's details and credentials.
+   *
+   * @hook pre-init
+   * @throws \Dockworker\DockworkerException
+   */
+  public function setCommandStartTime() {
+    $this->commandStartTime = time();
   }
 
   /**
