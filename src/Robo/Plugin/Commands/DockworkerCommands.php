@@ -95,18 +95,18 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   protected $uuid;
 
   /**
-   * The current user's name.
+   * The current user's configured kubectl username.
    *
    * @var string
    */
-  protected $userName;
+  protected $kubeUserName;
 
   /**
-   * The current user's token.
+   * The current user's configured kubectl access token.
    *
    * @var string
    */
-  protected $userToken;
+  protected $kubeUserToken;
 
   /**
    * Sets the application shell used.
@@ -165,28 +165,28 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   }
 
   /**
-   * Sets the running user credentials.
+   * Sets the running user's kubernetes credentials.
    *
    * @hook init
    * @throws \Dockworker\DockworkerException
    */
-  public function setUserDetails() {
+  public function setUserKubeDetails() {
    $kubectl_bin = shell_exec(sprintf("which %s", 'kubectl'));
    if (!empty($kubectl_bin) && is_executable($kubectl_bin)) {
      $user_name_cmd = 'kubectl config view --raw --output jsonpath=\'{$.users[0].name}\'';
-     $this->userName = shell_exec($user_name_cmd);
+     $this->kubeUserName = shell_exec($user_name_cmd);
      $user_token_cmd = 'kubectl config view --raw --output jsonpath=\'{$.users[0].user.token}\'';
-     $this->userToken = shell_exec($user_token_cmd);
+     $this->kubeUserToken = shell_exec($user_token_cmd);
    }
   }
 
   /**
-   * Determines if the current user has details defined.
+   * Determines if the current user has k8s details defined.
    *
    * @return bool
    */
-  protected function userDetailsDefined() {
-    return (!empty($this->userName) && !empty($this->userToken));
+  protected function k8sUserDetailsDefined() {
+    return (!empty($this->kubeUserName) && !empty($this->kubeUserToken));
   }
 
   /**
