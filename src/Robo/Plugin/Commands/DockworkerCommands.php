@@ -25,7 +25,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   use ContainerAwareTrait;
   use LoggerAwareTrait;
 
-  const DOCKWORKER_DATA_BASE_DIR = '/.config/dockworker';
+  const DOCKWORKER_DATA_BASE_DIR = '.config/dockworker';
   const ERROR_CONFIG_VERSION = 'Invalid configuration version in %s. Config version must be at least 3.0';
   const ERROR_INSTANCE_NAME_UNSET = 'The application name value has not been set in %s';
   const ERROR_PROJECT_PREFIX_UNSET = 'The project_prefix variable has not been set in %s';
