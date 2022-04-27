@@ -2,6 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Consolidation\AnnotatedCommand\CommandData;
 use CzProject\GitPhp\Git;
 use Dockworker\DockworkerException;
 use League\Container\ContainerAwareInterface;
@@ -218,6 +219,19 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    */
   public function setCommandStartTime() {
     $this->commandStartTime = time();
+  }
+
+  /**
+   * Displays the command's total run time.
+   *
+   * @hook post-command
+   */
+  public function postCommand($result, CommandData $commandData) {
+    $start = new \DateTime("@$this->commandStartTime");
+    $end = new \DateTime();
+    $diff = $start->diff($end);
+    $run_string = $diff->format('%H:%I:%S');
+    $this->say("Command run time: $run_string");
   }
 
   /**
