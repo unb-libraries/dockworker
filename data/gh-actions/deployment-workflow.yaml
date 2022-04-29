@@ -1,8 +1,9 @@
 name: INSTANCE_NAME
 
 on:
-  push:
   pull_request:
+  push:
+  workflow_dispatch:
 
 jobs:
   deploy:
