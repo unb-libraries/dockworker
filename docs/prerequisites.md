@@ -7,7 +7,7 @@ You must have the following tools available for use from the command line:
 
 * [docker](https://www.docker.com): Installation steps [are located here](https://docs.docker.com/install/).
 * [docker-compose](https://docs.docker.com/compose/): Installation steps [are located here](https://docs.docker.com/compose/install/).
-* [PHP7.3+](https://php.org/): Install via ```apt-get install php-cli```
+* [PHP8.0+](https://php.org/): Install via ```apt-get install php-cli```
 * Various PHP Extensions: Install via ```apt-get install php-curl php-ctype php-dom php-gd php-mbstring php-posix php-yaml php-zip```
 * [composer](https://getcomposer.org/): Installation steps [are located here](https://getcomposer.org/download/).
 * [jq](https://stedolan.github.io/jq/): Installation steps [are located here](https://stedolan.github.io/jq/download/).
