@@ -18,7 +18,7 @@ class DockworkerReadmeCommands extends DockworkerCommands implements CustomEvent
   use RepoReadmeWriterTrait;
 
   /**
-   * Updates the application's README.md.
+   * Writes a standardized README.md file for this application to its repository.
    *
    * @command readme:update
    * @aliases ru

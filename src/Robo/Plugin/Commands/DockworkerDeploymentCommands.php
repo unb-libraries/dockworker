@@ -20,7 +20,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   const ERROR_UNKNOWN_POD_ID = 'Pod ID [%s] not found in deployment [%s:%s].';
 
   /**
-   * Checks the application's k8s deployment rollout status.
+   * Retrieves the rollout status for this application's k8s deployment.
    *
    * @param string $env
    *   The environment to check.
@@ -49,7 +49,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Restarts the k8s deployment rollout.
+   * Restarts this application's k8s deployment.
    *
    * @param string $env
    *   The environment to update.
@@ -88,7 +88,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Updates the application's k8s deployment image.
+   * Sets the docker image this application's k8s deployment deploys.
    *
    * @param string $image
    *   The docker image to use in the deployment.
@@ -122,7 +122,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Updates the application's k8s deployment definition.
+   * Updates the metdata defining this application's k8s deployment.
    *
    * @param string $file
    *   The path to the YAML deployment definition file to apply. This file must
@@ -147,7 +147,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Deletes the application's k8s deployment definition.
+   * Deletes this application's k8s deployment.
    *
    * @param string $file
    *   The path to the YAML deployment definition file to delete. This file must
@@ -173,7 +173,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Deletes and applies the application's k8s deployment definition.
+   * Deletes this application's k8s deployment and re-creates it.
    *
    * @param string $file
    *   The path to the YAML deployment definition file to apply. This file must
@@ -192,7 +192,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Displays the application's k8s deployed pod(s) logs.
+   * Retrieves this application's k8s deployment logs.
    *
    * @param string $env
    *   The environment to obtain the logs from.
@@ -265,7 +265,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Checks the application's deployed k8s pod(s) logs for errors.
+   * Determines if this application's k8s deployment logs contain errors.
    *
    * @param string $env
    *   The environment to check the logs in.
@@ -315,7 +315,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Open a shell into the k8s deployment.
+   * Opens a shell within this application's k8s deployment.
    *
    * @param string $env
    *   The environment to open a shell to.

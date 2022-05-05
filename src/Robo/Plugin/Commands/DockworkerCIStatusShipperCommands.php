@@ -19,7 +19,7 @@ class DockworkerCIStatusShipperCommands extends DockworkerCommands {
   use ElasticShipperTrait;
 
   /**
-   * Ships the build details for a CI run into the aggregator.
+   * Ships details for a specific CI Services workflow run for this application into an aggregator.
    *
    * @param string $id
    *   The ID of the CI workflow to ship.
@@ -27,7 +27,7 @@ class DockworkerCIStatusShipperCommands extends DockworkerCommands {
    *   The array of available CLI options.
    *
    * @option $es-uri
-   *   The URI (including port) to elasticsearch. Defaults to localhost:9200.
+   *   The URI (including port) to an elasticsearch instance. Defaults to localhost:9200.
    * @option $auth-user
    *   If basic authentication is needed, the username. Defaults to none.
    * @option $auth-pass

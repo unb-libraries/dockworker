@@ -34,7 +34,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   private string $localFinishMarker;
 
   /**
-   * Clean up unused local docker assets.
+   * Cleans up any unused local docker container assets.
    *
    * This command removes unused (orphaned) docker images, volumes and networks
    * with extreme prejudice. It does not restrict itself to aforementioned
@@ -51,7 +51,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Halts the local application without removing any persistent data.
+   * Halts this local application without removing its persistent data.
    *
    * Following a halt, the application can be restarted with the 'start'
    * command, and all data will be preserved.
@@ -68,7 +68,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Halts the local application and removes any persistent data.
+   * Halts this local application and removes its persistent data permanently.
    *
    * @command local:destroy
    *
@@ -83,7 +83,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Destroys the local application, and removes any uncommitted repo changes.
+   * Halts this local application, removes its persistent data, and resets all repo files to the state at last commit.
    *
    * @command local:hard-reset
    *
@@ -100,7 +100,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Displays the local application's container logs.
+   * Displays all of this local application's previous logs.
    *
    * @param string[] $options
    *   The array of available CLI options.
@@ -151,7 +151,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Gets logs from the local application container.
+   * Retrieves all of this local application's previous logs.
    *
    * @param string[] $options
    *   The array of available CLI options.
@@ -177,7 +177,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Display previous local application container logs and monitor for new ones.
+   * Displays all of this local application's previous logs and outputs any new ones that accur.
    *
    * @param string[] $options
    *   The array of available CLI options.
@@ -220,7 +220,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Builds the local application's docker image.
+   * Builds this application's docker image, including modifications specified by its local docker-compose file.
    *
    * @param string[] $options
    *   The array of available CLI options.
@@ -254,7 +254,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Builds the local application's deployable theme assets from source.
+   * Builds this application's theme assets into a distributable state.
    *
    * @command theme:build-all
    * @aliases build-themes
@@ -265,7 +265,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Opens the local application container's shell.
+   * Opens a shell within this application's local deployment.
    *
    * @command local:shell
    * @aliases shell
@@ -285,7 +285,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Pulls any upstream images used in building the local application image.
+   * Pulls the newest version of docker images required to deploy this application's local deployment.
    *
    * @command local:pull-upstream
    * @throws \Dockworker\DockworkerException
@@ -309,7 +309,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Removes removes all persistent data from the local docker application.
+   * Deletes any persistent data from this application's stopped local deployment.
    *
    * @command local:rm
    * @aliases rm
@@ -330,7 +330,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Builds and deploys the local application, displaying the application logs.
+   * Builds and deploys this application's local deployment, and displays its logs.
    *
    * @param string[] $options
    *   The array of available CLI options.
@@ -499,7 +499,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Checks the local application's container logs for errors.
+   * Determines if this application's local deployment logs contain errors.
    *
    * @param string[] $options
    *   The array of available CLI options.
@@ -547,7 +547,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Builds the application image, starts a local container, and runs all tests.
+   * Builds and deploys this application's local deployment, and executes all tests within it.
    *
    * @param string[] $options
    *   The array of available CLI options.
@@ -580,7 +580,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Kills the local container, removes persistent data, and rebuilds/restarts.
+   * Stops this application's local deployment, deletes any persistent data, rebuilds its image, and redeploys it.
    *
    * @param string[] $options
    *   The array of available CLI options.
@@ -621,7 +621,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
     /**
-     * Stops the local container and re-starts it, preserving persistent data.
+     * Stops this application's local deployment, preserves persistent data, rebuilds its image, and redeploys it.
      *
      * @param string[] $options
      *   The array of available CLI options.
@@ -645,7 +645,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     }
 
   /**
-   * Brings up the local application container.
+   * Starts this application's already-build local deployment.
    *
    * @param string[] $options
    *   The array of available CLI options.
@@ -670,7 +670,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Updates the local system hostfile for the local application. Requires sudo.
+   * Adds this application's information into the local development computer's hostfile. Requires sudo.
    *
    * @command local:update-hostfile
    * @throws \Dockworker\DockworkerException
@@ -695,7 +695,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Reverts the local system hostfile for the local application. Requires sudo.
+   * Removes this application's information from the local development system's hostfile. Requires sudo.
    *
    * @command local:revert-hostfile
    * @throws \Dockworker\DockworkerException

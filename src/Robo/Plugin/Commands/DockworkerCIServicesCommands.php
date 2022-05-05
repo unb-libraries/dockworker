@@ -33,7 +33,7 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
   protected $gitHubWorkflowRunUsage = [];
 
   /**
-   * Restarts the latest CI Services build/deploy for the repository.
+   * Restarts the most recent CI Services workflow run for this application.
    *
    * @param string[] $options
    *   The array of available CLI options.
@@ -57,7 +57,7 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
   }
 
   /**
-   * Gets the latest CI Services build/deploy times for the repository.
+   * Retrieves total runtimes for recent CI Services workflow runs for this application.
    *
    * @param string[] $options
    *   The array of available CLI options.

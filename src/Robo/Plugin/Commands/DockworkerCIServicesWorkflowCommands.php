@@ -15,7 +15,7 @@ class DockworkerCIServicesWorkflowCommands extends DockworkerCommands {
   use KubernetesDeploymentTrait;
 
   /**
-   * Updates the application's CI Services workflow file.
+   * Writes a standardized CI Services workflow file for this application to its repository.
    *
    * @command ci:update-workflow-file
    * @aliases update-ci-workflow

@@ -163,7 +163,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   }
 
   /**
-   * Self-updates the dockworker application.
+   * Self-updates dockworker.
    *
    * @command dockworker:update
    * @aliases update
@@ -396,7 +396,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   }
 
   /**
-   * Set up the required git hooks for dockworker.
+   * Sets up the required git hooks for dockworker.
    *
    * @command dockworker:git:setup-hooks
    *

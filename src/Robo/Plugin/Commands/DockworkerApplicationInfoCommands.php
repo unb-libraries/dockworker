@@ -14,7 +14,7 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
   const UNIX_EPOCH = '1970-01-01 00:00';
 
   /**
-   * Generate suggested cron timings for the application.
+   * Suggests timings for cron runs in deployment for this application.
    *
    * @command deployment:cron:suggest-timings
    * @aliases cron-info

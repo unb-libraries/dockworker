@@ -18,7 +18,7 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
   const ERROR_UNCLEAN_REPO = 'Aborted build due to unclean repo';
 
   /**
-   * Builds the application's docker image.
+   * Builds this application's docker image.
    *
    * @param string $tag
    *   The tag to use when building the image.

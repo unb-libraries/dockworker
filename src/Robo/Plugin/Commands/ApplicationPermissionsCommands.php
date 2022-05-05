@@ -10,7 +10,7 @@ use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 class ApplicationPermissionsCommands extends DockworkerCommands {
 
   /**
-   * Sets the correct repository file permissions. Requires sudo.
+   * Sets proper file permissions for this repository (uses sudo).
    *
    * @param string[] $options
    *   The array of available CLI options.

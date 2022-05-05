@@ -10,7 +10,7 @@ use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 class ApplicationTestCommands extends DockworkerCommands {
 
   /**
-   * Tests the local application using all testing frameworks.
+   * Tests this application using all testing frameworks.
    *
    * @command tests:all
    * @aliases test

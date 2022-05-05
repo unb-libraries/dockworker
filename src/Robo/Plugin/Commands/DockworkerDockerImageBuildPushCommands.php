@@ -17,7 +17,7 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
   use KubernetesDeploymentTrait;
 
   /**
-   * Builds the application's docker image and pushes it to the deployment repository.
+   * Builds this application's docker image, and pushes the image to the container registry.
    *
    * @param string $tag
    *   The tag to use when building and pushing the image.
@@ -41,7 +41,7 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
   }
 
   /**
-   * Optionally Builds, tags, pushes and deploys the application's docker image.
+   * Builds this application's docker image, pushes it to the container registry, and updates its k8s deployment with it.
    *
    * @param string $env
    *   The environment to target.
