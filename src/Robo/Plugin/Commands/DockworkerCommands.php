@@ -62,6 +62,13 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   protected $configFile;
 
   /**
+   * Should the command display its total runtime when complete?
+   *
+   * @var bool
+   */
+  protected $displayCommandRunTime = TRUE;
+
+  /**
    * The local data directory for this application.
    *
    * @var string
@@ -227,12 +234,14 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    * @hook post-command
    */
   public function postCommand($result, CommandData $commandData) {
-    date_default_timezone_set('UTC');
-    $start = new \DateTime("@$this->commandStartTime");
-    $end = new \DateTime();
-    $diff = $start->diff($end);
-    $run_string = $diff->format('%H:%I:%S');
-    $this->say("Command run time: $run_string");
+    if ($this->displayCommandRunTime) {
+      date_default_timezone_set('UTC');
+      $start = new \DateTime("@$this->commandStartTime");
+      $end = new \DateTime();
+      $diff = $start->diff($end);
+      $run_string = $diff->format('%H:%I:%S');
+      $this->say("Command run time: $run_string");
+    }
   }
 
   /**
@@ -446,6 +455,14 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
       }
     }
     return $files;
+  }
+
+  /**
+   * Disables this command's total run time display.
+   *
+   */
+  protected function disableCommandRunTimeDisplay() {
+    $this->displayCommandRunTime = FALSE;
   }
 
 }
