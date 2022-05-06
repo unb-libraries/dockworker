@@ -41,11 +41,11 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
    * @option $branch
    *   The environment/branch to target. Defaults to 'dev'.
    *
-   * @command ci:restart-latest
+   * @command ci:workflow:run:restart-latest:latest
    * @aliases restart-latest-build
    * @aliases cirl
    *
-   * @usage ci:restart-latest --branch=dev
+   * @usage ci:workflow:run:restart-latest:latest --branch=dev
    *
    * @github
    * @ci
@@ -65,11 +65,11 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
    * @option $branch
    *   The environment/branch to target. Defaults to 'prod'.
    *
-   * @command ci:deploy-times
+   * @command ci:workflow:run:times
    * @aliases ci-deploy-times
    * @aliases cidt
    *
-   * @usage ci:deploy-times --branch=prod
+   * @usage ci:workflow:run:times --branch=prod
    *
    * @github
    * @ci

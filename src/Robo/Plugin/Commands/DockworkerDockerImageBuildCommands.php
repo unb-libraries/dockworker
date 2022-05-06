@@ -32,10 +32,10 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
    * @option $allow-dirty
    *   Skips the warning prompt if the git repository is dirty.
    *
-   * @command image:build
+   * @command docker:image:build
    * @throws \Exception
    *
-   * @usage image:build prod
+   * @usage docker:image:build prod
    *
    * @return \Robo\ResultData
    *

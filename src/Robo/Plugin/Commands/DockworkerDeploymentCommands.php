@@ -25,11 +25,11 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @param string $env
    *   The environment to check.
    *
-   * @command deployment:status
+   * @command k8s:deployment:status
    * @throws \Dockworker\DockworkerException
    * @throws \Exception
    *
-   * @usage deployment:status prod
+   * @usage k8s:deployment:status prod
    *
    * @kubectl
    */
@@ -54,11 +54,11 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @param string $env
    *   The environment to update.
    *
-   * @command deployment:restart
+   * @command k8s:deployment:restart
    * @throws \Dockworker\DockworkerException
    * @throws \Exception
    *
-   * @usage deployment:restart prod
+   * @usage k8s:deployment:restart prod
    *
    * @kubectl
    */
@@ -97,11 +97,11 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @param string $env
    *   The environment to update.
    *
-   * @command deployment:image:update
+   * @command k8s:deployment:image:update
    * @throws \Dockworker\DockworkerException
    * @throws \Exception
    *
-   * @usage deployment:image:update unblibraries/lib.unb.ca prod-20200228122322 prod
+   * @usage k8s:deployment:image:update unblibraries/lib.unb.ca prod-20200228122322 prod
    *
    * @kubectl
    */
@@ -128,10 +128,10 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *   The path to the YAML deployment definition file to apply. This file must
    *   define the namespace to update.
    *
-   * @command deployment:apply
+   * @command k8s:deployment:update
    * @throws \Dockworker\DockworkerException
    *
-   * @usage deployment:apply /tmp/deployment/lib-unb-ca.Deployment.prod.yaml
+   * @usage k8s:deployment:update /tmp/deployment/lib-unb-ca.Deployment.prod.yaml
    *
    * @kubectl
    */
@@ -153,10 +153,10 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *   The path to the YAML deployment definition file to delete. This file must
    *   define the namespace to update.
    *
-   * @command deployment:delete
+   * @command k8s:deployment:delete
    * @throws \Dockworker\DockworkerException
    *
-   * @usage deployment:delete /tmp/deployment/lib-unb-ca.Deployment.prod.yaml
+   * @usage k8s:deployment:delete /tmp/deployment/lib-unb-ca.Deployment.prod.yaml
    *
    * @kubectl
    */
@@ -179,10 +179,10 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *   The path to the YAML deployment definition file to apply. This file must
    *   define the namespace to update.
    *
-   * @command deployment:delete-apply
+   * @command k8s:deployment:delete-apply
    * @throws \Dockworker\DockworkerException
    *
-   * @usage deployment:delete-apply /tmp/lib-unb-ca.Deployment.prod.yaml
+   * @usage k8s:deployment:delete-apply /tmp/lib-unb-ca.Deployment.prod.yaml
    *
    * @kubectl
    */
@@ -197,10 +197,10 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @param string $env
    *   The environment to obtain the logs from.
    *
-   * @command deployment:logs
+   * @command logs:deployed
    * @throws \Exception
    *
-   * @usage deployment:logs prod
+   * @usage logs:deployed prod
    *
    * @kubectl
    */
@@ -270,10 +270,10 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @param string $env
    *   The environment to check the logs in.
    *
-   * @command deployment:logs:check
+   * @command logs:check:deployed
    * @throws \Exception
    *
-   * @usage deployment:logs:check prod
+   * @usage logs:check:deployed prod
    *
    * @kubectl
    */
@@ -322,13 +322,13 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @param string $shell
    *   The path within pod to the shell binary to execute.
    *
-   * @command deployment:shell
+   * @command shell:deployed
    * @throws \Exception
    *
    * @return \Robo\Result
    *   The result of the shell.
    *
-   * @usage deployment:shell prod /bin/sh
+   * @usage shell:deployed prod /bin/sh
    *
    * @kubectl
    */

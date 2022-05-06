@@ -23,13 +23,13 @@ class DockworkerDeploymentTransferCommands extends DockworkerDeploymentCommands 
    * @param string $dst
    *   The full remote path within the pod to save the file as.
    *
-   * @command deployment:copy-to
+   * @command sync:file:local:deployed
    * @throws \Dockworker\DockworkerException
    *
    * @return \Robo\Result
    *   The result of the copy command.
    *
-   * @usage deployment:copy-to prod /tmp/src_file.txt /tmp/dst_file.txt
+   * @usage sync:file:local:deployed prod /tmp/src_file.txt /tmp/dst_file.txt
    *
    * @kubectl
    */
@@ -59,13 +59,13 @@ class DockworkerDeploymentTransferCommands extends DockworkerDeploymentCommands 
    * @param string $dst
    *   The full local path to save the file as.
    *
-   * @command deployment:copy-from
+   * @command sync:file:deployed:local
    * @throws \Dockworker\DockworkerException
    *
    * @return \Robo\Result
    *   The result of the copy command.
    *
-   * @usage deployment:copy-from prod /tmp/src_file.txt /tmp/dst_file.txt
+   * @usage sync:file:deployed:local prod /tmp/src_file.txt /tmp/dst_file.txt
    *
    * @kubectl
    */

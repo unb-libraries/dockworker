@@ -108,10 +108,10 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @option $all
    *   Display logs from all local services, not only the web endpoint.
    *
-   * @command local:logs
+   * @command logs:local
    * @throws \Exception
    *
-   * @usage local:logs
+   * @usage logs:local
    *
    * @return \Robo\Result
    *   The result of the command.
@@ -187,11 +187,11 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @option $timestamps
    *   Display a timestamp for each line of the logs.
    *
-   * @command local:logs:tail
+   * @command logs:tail:local
    * @aliases logs
    * @throws \Exception
    *
-   * @usage local:logs:tail
+   * @usage logs:tail:local
    *
    * @return \Robo\Result
    *   The result of the command.
@@ -267,11 +267,11 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   /**
    * Opens a shell within this application's local deployment.
    *
-   * @command local:shell
+   * @command shell:local
    * @aliases shell
    * @throws \Exception
    *
-   * @usage local:shell
+   * @usage shell:local
    *
    * @return \Robo\Result
    *   The result of the command.
@@ -287,10 +287,10 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   /**
    * Pulls the newest version of docker images required to deploy this application's local deployment.
    *
-   * @command local:pull-upstream
+   * @command docker:image:pull-upstream
    * @throws \Dockworker\DockworkerException
    *
-   * @usage local:pull-upstream
+   * @usage docker:image:pull-upstream
    */
   public function pullUpstreamImages() {
     $this->_exec('docker-compose pull --quiet --include-deps');
@@ -364,11 +364,11 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     }
 
     if (!$options['no-update-hostfile'] && !$options['only-start']) {
-      $this->setRunOtherCommand('local:update-hostfile');
+      $this->setRunOtherCommand('hostfile:update');
     }
 
     if (!$options['no-cache'] && !$options['no-upstream-pull'] && !$options['only-start']) {
-      $this->setRunOtherCommand('local:pull-upstream');
+      $this->setRunOtherCommand('docker:image:pull-upstream');
     }
 
     if (!$options['no-build'] && !$options['only-start']) {
@@ -391,7 +391,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     $this->setRunOtherCommand($up_command);
     $this->waitForDeployment();
     $this->io()->newLine();
-    $this->setRunOtherCommand('local:logs:check');
+    $this->setRunOtherCommand('logs:check:local');
 
     if (!$options['no-tail-logs']) {
       $this->tailLocalLogs();
@@ -507,10 +507,10 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @option $all
    *   Check logs from all local services, not only the web endpoint.
    *
-   * @command local:logs:check
+   * @command logs:check:local
    * @throws \Dockworker\DockworkerException
    *
-   * @usage local:logs:check
+   * @usage logs:check:local
    */
   public function localLogsCheck(array $options = ['all' => FALSE]) {
     $this->getlocalRunning();
@@ -672,10 +672,10 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   /**
    * Adds this application's information into the local development computer's hostfile. Requires sudo.
    *
-   * @command local:update-hostfile
+   * @command hostfile:update
    * @throws \Dockworker\DockworkerException
    *
-   * @usage local:update-hostfile
+   * @usage hostfile:update
    */
   public function setHostFileEntries() {
     $hostnames = $this->getHostFileHostnames();
@@ -697,10 +697,10 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   /**
    * Removes this application's information from the local development system's hostfile. Requires sudo.
    *
-   * @command local:revert-hostfile
+   * @command hostfile:revert
    * @throws \Dockworker\DockworkerException
    *
-   * @usage local:revert-hostfile
+   * @usage hostfile:revert
    */
   public function unSetHostFileEntries() {
     $hostnames = $this->getHostFileHostnames();

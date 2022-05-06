@@ -16,10 +16,10 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
   /**
    * Suggests timings for cron runs in deployment for this application.
    *
-   * @command deployment:cron:suggest-timings
+   * @command cron:suggest-timings
    * @aliases cron-info
    *
-   * @usage deployment:cron:suggest-timings
+   * @usage cron:suggest-timings
    *
    */
   public function getApplicationCronInfo() {

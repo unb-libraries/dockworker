@@ -27,16 +27,16 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
    * @option $cache-from
    *   The image to cache the build from.
    *
-   * @command image:build-push
+   * @command docker:image:build-push
    * @throws \Exception
    *
-   * @usage image:build-push prod
+   * @usage docker:image:build-push prod
    *
    * @dockerimage
    * @dockerpush
    */
   public function buildAndPushImage($tag) {
-    $this->setRunOtherCommand('image:build $tag');
+    $this->setRunOtherCommand('docker:image:build $tag');
     $this->pushToRepository($tag);
   }
 
@@ -51,10 +51,10 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
    * @option $use-tag
    *   Skip building and deploy with the specified tag.
    *
-   * @command image:deploy
+   * @command docker:image:deploy
    * @throws \Exception
    *
-   * @usage image:deploy prod
+   * @usage docker:image:deploy prod
    *
    * @dockerimage
    * @dockerpush
@@ -83,18 +83,18 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
     if (file_exists($cron_file)) {
       $this->say('Updating cron configuration..');
       $cron_file = $this->getTokenizedKubeFile($this->repoRoot, $env, $image_name, 'cron');
-      $this->setRunOtherCommand("deployment:delete-apply $cron_file");
+      $this->setRunOtherCommand("k8s:deployment:delete-apply $cron_file");
     }
 
     $backup_file = static::getKubernetesFileNameFromBranch($this->repoRoot, $env, 'backup');
     if (file_exists($backup_file)) {
       $this->say('Updating backup configuration..');
-      $this->setRunOtherCommand("deployment:delete-apply $backup_file");
+      $this->setRunOtherCommand("k8s:deployment:delete-apply $backup_file");
     }
 
     $this->say('Checking for successful deployment..');
     $deploy_namespace = static::getKubernetesDeploymentFileNamespace($deployment_file);
-    $this->setRunOtherCommand("deployment:status $deploy_namespace");
+    $this->setRunOtherCommand("k8s:deployment:status $deploy_namespace");
   }
 
   /**
@@ -113,11 +113,11 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
    */
   protected function buildPushEnv($env, $timestamp) {
     $this->pushCommandInit($env);
-    $this->setRunOtherCommand("image:build $env");
+    $this->setRunOtherCommand("docker:image:build $env");
     $this->pushToRepository($env);
 
     if ($this->dockerImageTagDateStamp) {
-      $this->setRunOtherCommand("image:build $env-$timestamp");
+      $this->setRunOtherCommand("docker:image:build $env-$timestamp");
       $this->pushToRepository("$env-$timestamp");
     }
   }

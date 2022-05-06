@@ -17,11 +17,11 @@ class DockworkerCIServicesWorkflowCommands extends DockworkerCommands {
   /**
    * Writes a standardized CI Services workflow file for this application to this repository.
    *
-   * @command ci:update-workflow-file
+   * @command ci:workflow:file:write
    * @aliases update-ci-workflow
    * @aliases uciw
    *
-   * @usage ci:update-workflow-file
+   * @usage ci:workflow:file:write
    *
    * @actionsworkflowcommand
    */

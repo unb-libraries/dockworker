@@ -33,9 +33,9 @@ class DockworkerCIStatusShipperCommands extends DockworkerCommands {
    * @option $auth-pass
    *   If basic authentication is needed, the password. Defaults to none.
    *
-   * @command ci:ship:build-details
+   * @command ci:workflow:run:ship
    *
-   * @usage ci:ship:build-details
+   * @usage ci:workflow:run:ship
    */
   public function shipCiBuildDetails($id, array $options = ['es-uri' => 'localhost:9200', 'auth-user' => '', 'auth-pass' => '']) {
     $this->options = $options;
