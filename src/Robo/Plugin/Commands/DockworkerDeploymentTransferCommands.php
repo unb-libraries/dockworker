@@ -14,7 +14,7 @@ class DockworkerDeploymentTransferCommands extends DockworkerDeploymentCommands 
   const INFO_COPYING_FILES = 'Copying file(s)...';
 
   /**
-   * Copies a file from this application's local deployment filesystem to its k8s deployment filesystem.
+   * Synchronizes a single file from this application's local deployment filesystem to its k8s deployment filesystem.
    *
    * @param string $env
    *   The environment to copy to.
@@ -50,7 +50,7 @@ class DockworkerDeploymentTransferCommands extends DockworkerDeploymentCommands 
   }
 
   /**
-   * Copies a file from this application's k8s deployment filesystem to its local deployment filesystem.
+   * Synchronizes a single file from this application's k8s deployment filesystem to its local deployment filesystem.
    *
    * @param string $env
    *   The environment to copy from.
