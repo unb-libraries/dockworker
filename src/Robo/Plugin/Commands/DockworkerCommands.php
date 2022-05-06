@@ -227,6 +227,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    * @hook post-command
    */
   public function postCommand($result, CommandData $commandData) {
+    date_default_timezone_set('UTC');
     $start = new \DateTime("@$this->commandStartTime");
     $end = new \DateTime();
     $diff = $start->diff($end);
