@@ -79,10 +79,10 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
     $this->say('Updating deployment configuration..');
     $deployment_file = $this->applyKubeDeploymentUpdate($this->repoRoot, $env, $image_name);
 
-    $cron_file = static::getKubernetesFileNameFromBranch($this->repoRoot, $env, 'cron');
+    $cron_file = static::getKubernetesFileNameFromBranch($this->repoRoot, $env, 'cronjob');
     if (file_exists($cron_file)) {
       $this->say('Updating cron configuration..');
-      $cron_file = $this->getTokenizedKubeFile($this->repoRoot, $env, $image_name, 'cron');
+      $cron_file = $this->getTokenizedKubeFile($this->repoRoot, $env, $image_name, 'cronjob');
       $this->setRunOtherCommand("k8s:deployment:delete-apply $cron_file");
     }
 

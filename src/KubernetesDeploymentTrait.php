@@ -18,25 +18,32 @@ trait KubernetesDeploymentTrait {
   use KubernetesPodTrait;
 
   /**
-   * The k8s target deployment name.
+   * The k8s target entity name.
    *
    * @var string
    */
-  protected $deploymentK8sName;
+  protected $deployedK8sResourceName;
 
   /**
-   * The k8s target deployment namespace.
+   * The k8s target entity namespace.
    *
    * @var string
    */
-  protected $deploymentK8sNameSpace;
+  protected $deployedK8sResourceNameSpace;
+
+  /**
+   * The k8s target entity type.
+   *
+   * @var string
+   */
+  protected $deployedK8sResourceType;
 
   /**
    * Determines if a deployment command should continue.
    *
    * @throws \Exception
    */
-  protected function deploymentCommandShouldContinue($env) {
+  protected function checkDeployedK8sResourceEnv($env) {
     if ($this->environmentIsDeployable($env)) {
       return;
     }
@@ -70,7 +77,7 @@ trait KubernetesDeploymentTrait {
   }
 
   /**
-   * Initialize a deployment command.
+   * Initializes configuration to operate on a deployed k8s resource.
    *
    * @param string $repo_root
    *   The path to the repository to target.
@@ -79,10 +86,11 @@ trait KubernetesDeploymentTrait {
    *
    * @throws \Exception
    */
-  protected function deploymentCommandInit($repo_root, $env) {
-    $this->deploymentCommandShouldContinue($env);
-    $this->deploymentK8sNameSpace = self::getKubernetesDeploymentNamespaceFromBranch($repo_root, $env);
-    $this->deploymentK8sName = self::getKubernetesDeploymentNameFromBranch($repo_root, $env);
+  protected function deployedK8sResourceInit($repo_root, $env, $type = 'deployment') {
+    $this->checkDeployedK8sResourceEnv($env);
+    $this->deployedK8sResourceNameSpace = self::getDeployedK8sResourceNamespace($repo_root, $env, $type);
+    $this->deployedK8sResourceName = self::getDeployedK8sResourceName($repo_root, $env, $type);
+    $this->deployedK8sResourceType = $type;
   }
 
   /**

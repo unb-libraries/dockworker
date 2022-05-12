@@ -536,13 +536,13 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
       $this->io()->title("No logs for local instance!");
     }
     try {
-      $this->auditStartupLogs(FALSE);
+      $this->auditK8sPodLogs(FALSE);
       $this->say("No errors found in logs.");
     }
     catch (DockworkerException) {
       $this->printLocalLogs();
-      $this->printStartupLogErrors();
-      throw new DockworkerException("Error(s) found in local startup logs!");
+      $this->printK8sPodLogErrors();
+      throw new DockworkerException("Error(s) found in local logs!");
     }
   }
 

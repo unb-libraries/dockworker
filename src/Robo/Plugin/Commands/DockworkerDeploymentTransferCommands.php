@@ -34,8 +34,7 @@ class DockworkerDeploymentTransferCommands extends DockworkerDeploymentCommands 
    * @kubectl
    */
   public function copyFileToDeploymentPod($env, $src, $dst) {
-    $pods = $this->getDeploymentExecPodIds($env);
-    $pod_id = array_shift($pods);
+    $pod_id = $this->k8sGetLatestPod($env, 'deployment', 'Open Shell');
 
     if (!file_exists($src)) {
       throw new DockworkerException(
@@ -45,7 +44,7 @@ class DockworkerDeploymentTransferCommands extends DockworkerDeploymentCommands 
         )
       );
     }
-    $dst_string = "{$this->kubernetesPodNamespace}/$pod_id:$dst";
+    $dst_string = "{$this->kubernetesPodParentResourceNamespace}/$pod_id:$dst";
     return $this->kubeCtlCopyCommand($src, $dst_string);
   }
 
@@ -70,9 +69,8 @@ class DockworkerDeploymentTransferCommands extends DockworkerDeploymentCommands 
    * @kubectl
    */
   public function copyFileFromDeploymentPod($env, $src, $dst) {
-    $pods = $this->getDeploymentExecPodIds($env);
-    $pod_id = array_shift($pods);
-    $src_string = "{$this->kubernetesPodNamespace}/$pod_id:$src";
+    $pod_id = $this->k8sGetLatestPod($env, 'deployment', 'Open Shell');
+    $src_string = "{$this->kubernetesPodParentResourceNamespace}/$pod_id:$src";
     return $this->kubeCtlCopyCommand($src_string, $dst);
   }
 

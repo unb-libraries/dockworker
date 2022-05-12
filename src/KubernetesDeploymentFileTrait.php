@@ -43,9 +43,9 @@ trait KubernetesDeploymentFileTrait {
    *
    * @throws \Exception
    */
-  public static function getKubernetesDeploymentNamespaceFromBranch($repo_root, $env) {
+  public static function getDeployedK8sResourceNamespace($repo_root, $env, $type = 'deployment') {
     return self::getKubernetesDeploymentFileNamespace(
-      self::getKubernetesFileNameFromBranch($repo_root, $env, 'deployment')
+      self::getKubernetesFileNameFromBranch($repo_root, $env, $type)
     );
   }
 
@@ -62,9 +62,9 @@ trait KubernetesDeploymentFileTrait {
    *
    * @throws \Exception
    */
-  public static function getKubernetesDeploymentNameFromBranch($repo_root, $env) {
+  public static function getDeployedK8sResourceName($repo_root, $env, $type = 'deployment') {
     return self::getKubernetesDeploymentFileDeploymentName(
-      self::getKubernetesFileNameFromBranch($repo_root, $env, 'deployment')
+      self::getKubernetesFileNameFromBranch($repo_root, $env, $type)
     );
   }
 

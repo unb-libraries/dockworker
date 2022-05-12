@@ -15,11 +15,11 @@ trait DockworkerLogCheckerTrait {
   use LogCheckerTrait;
 
   /**
-   * Audit a dockworker application's startup logs for errors.
+   * Audits a dockworker application's k8s resource logs for errors.
    *
    * @throws \Dockworker\DockworkerException
    */
-  protected function auditStartupLogs($print_errors = TRUE) {
+  protected function auditK8sPodLogs($print_errors = TRUE) {
     if ($this->logsHaveErrorExceptions()) {
       $this->printConsoleTable(
         "Ignored Errors",
@@ -30,13 +30,17 @@ trait DockworkerLogCheckerTrait {
 
     if ($this->logsHaveErrors()) {
       if ($print_errors) {
-        $this->printStartupLogErrors();
+        $this->printK8sPodLogErrors();
       }
-      throw new DockworkerException(sprintf("%s errors found in startup logs!", count($this->logErrors)));
+      throw new DockworkerException(sprintf("%s errors found in logs!", count($this->logErrors)));
     }
   }
 
-  protected function printStartupLogErrors() {
+  /**
+   * Prints a summary of the current log errors to the console.
+   *
+   */
+  protected function printK8sPodLogErrors() {
     $this->printConsoleTable(
       "Errors",
       ['Pod ID', 'Line', 'Error', 'Info'],

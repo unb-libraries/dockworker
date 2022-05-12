@@ -3,6 +3,7 @@
 namespace Dockworker;
 
 use Dockworker\DockworkerException;
+use Dockworker\DockworkerLogCheckerTrait;
 use Dockworker\KubectlTrait;
 
 /**
@@ -10,6 +11,7 @@ use Dockworker\KubectlTrait;
  */
 trait KubernetesPodTrait {
 
+  use DockworkerLogCheckerTrait;
   use KubectlTrait;
 
   /**
@@ -34,11 +36,18 @@ trait KubernetesPodTrait {
   protected $kubernetesLatestReplicaSet;
 
   /**
-   * The deployment name to use when populating the pod queue.
+   * The entity name to use when populating the pod queue.
    *
    * @var string
    */
-  protected $kubernetesDeploymentName;
+  protected $kubernetesPodParentResourceName;
+
+  /**
+   * The entity type to use when populating the pod queue.
+   *
+   * @var string
+   */
+  protected $kubernetesPodParentResourceType;
 
   /**
    * The deployment name currently active.
@@ -48,44 +57,220 @@ trait KubernetesPodTrait {
   protected $kubernetesCurDeployment;
 
   /**
+   * The k8s resource name currently active.
+   *
+   * @var string
+   */
+  protected $kubernetesCurResource;
+
+  /**
    * The namespace to filter when populating the pod queue.
    *
    * @var string
    */
-  protected $kubernetesPodNamespace;
+  protected $kubernetesPodParentResourceNamespace;
 
   /**
    * Sets up the pod details for the remote Kubernetes pods.
    *
-   * @param string $deployment_name
+   * @param string $entity_name
    *   The deployment name.
    * @param string $action
    *   A description of the actions intended to take (Used for labels).
    *
    * @throws \Exception
    */
-  protected function kubernetesSetupPods($deployment_name, $action) {
-    $this->kubernetesDeploymentName = $deployment_name;
-
-    if (empty($this->kubernetesPodNamespace)) {
-      $this->kubernetesPodNamespace = $this->askDefault("Environment to target for $action? (dev/prod)", 'prod');
-    }
-    $this->kubernetesSetMatchingDeployment();
-    $this->kubernetesSetMatchingReplicaSets();
-    $this->kubernetesSetMatchingPods();
+  protected function kubernetesSetupPods($entity_name, $resource_type, $namespace, $action) {
+    $this->kubernetesCurPods = [];
+    $this->kubernetesPodParentResourceName = $entity_name;
+    $this->kubernetesPodParentResourceType = $resource_type;
+    $this->kubernetesPodParentResourceNamespace = $namespace;
+    $this->kubernetesSetPods();
+    $this->kubernetesThrowExceptionIfNoPods();
   }
 
   /**
-   * Set up the deployment that matches the currently configured data.
+   * Throws an exception if the current list of k8s pods is currently empty.
+   *
+   * @throws \Dockworker\DockworkerException
    */
-  protected function kubernetesSetMatchingDeployment() {
+  protected function kubernetesThrowExceptionIfNoPods() {
+    if (empty($this->kubernetesCurPods)) {
+      throw new DockworkerException(
+        sprintf(
+          "Could not find any pods for %s/%s:%s.",
+          $this->deployedK8sResourceType,
+          $this->deployedK8sResourceName,
+          $this->deployedK8sResourceNameSpace
+        )
+      );
+    }
+  }
+
+  /**
+   * Removes all pods except the latest from the list.
+   *
+   * @throws \Dockworker\DockworkerException
+   */
+  protected function kubernetesFilterPodsOnlyLatest() {
+    $this->kubernetesThrowExceptionIfNoPods();
+    $this->kubernetesCurPods = array_slice($this->kubernetesCurPods, 0, 1);
+  }
+
+  /**
+   * Gets the name of the latest pod selected.
+   *
+   * @throws \Dockworker\DockworkerException
+   */
+  protected function kubernetesGetLatestPod() {
+    return array_slice($this->kubernetesCurPods, 0, 1);
+  }
+
+  /**
+   * Displays logs from all currently selected pods.
+   *
+   * @throws \Dockworker\DockworkerException
+   */
+  protected function kubernetesPrintLogsFromCurrentPods() {
+    $logs = $this->kubernetesGetLogsFromCurrentPods();
+    if (!empty($logs)) {
+      $pod_counter = 0;
+      foreach ($logs as $pod_id => $log) {
+        $pod_counter++;
+        $this->io()->title("Logs for pod #$pod_counter [$this->kubernetesPodParentResourceNamespace.$pod_id]");
+        $this->io()->writeln($log);
+      }
+    }
+    else {
+      $this->io()->title("No cron pods found. No logs!");
+    }
+  }
+
+  /**
+   * Displays logs from all currently selected pods.
+   *
+   * @throws \Dockworker\DockworkerException
+   */
+  protected function kubernetesGetPrintLogsFromCurrentPods() {
+    $logs = $this->kubernetesGetLogsFromCurrentPods();
+    $this->kubernetesPrintPodLogs($logs);
+  }
+
+  protected function kubernetesPrintPodLogs($logs) {
+    if (!empty($logs)) {
+      $pod_counter = 0;
+      foreach ($logs as $pod_id => $log) {
+        $pod_counter++;
+        $this->io()->title("Logs for pod #$pod_counter [$this->kubernetesPodParentResourceNamespace.$pod_id]");
+        $this->io()->writeln($log);
+      }
+    }
+    else {
+      $this->io()->title("No cron pods found. No logs!");
+    }
+  }
+
+  /**
+   * Displays logs from all currently selected pods.
+   *
+   * @throws \Dockworker\DockworkerException
+   */
+  protected function kubernetesCheckLogsFromCurrentPods() {
+    $logs = $this->kubernetesGetLogsFromCurrentPods();
+
+    if (!empty($logs)) {
+      foreach ($logs as $pod_id => $log) {
+        $this->checkLogForErrors($pod_id, $log);
+      }
+    }
+    else {
+      $this->io()->title("No pods found. No logs!");
+    }
+
+    try {
+      $this->auditK8sPodLogs(FALSE);
+      $this->say("No errors found in logs.");
+    }
+    catch (DockworkerException) {
+      $this->kubernetesPrintPodLogs($logs);
+      $this->printK8sPodLogErrors();
+      throw new DockworkerException("Error(s) found in k8s resource pod logs!");
+    }
+
+    $this->say(sprintf("No errors found in %s pods.", count($logs)));
+  }
+
+  /**
+   * Removes all pods except the latest from the list.
+   *
+   * @throws \Dockworker\DockworkerException
+   */
+  protected function kubernetesGetLogsFromCurrentPods() {
+    $logs = [];
+    foreach ($this->kubernetesCurPods as $pod_id) {
+      $logs[$pod_id] = $this->getKubernetesPodLogs($pod_id);
+    }
+    return $logs;
+  }
+
+  /**
+   * Gets a pod's logs.
+   *
+   * @param string $env
+   *   The environment to check.
+   *
+   * @throws \Exception
+   *
+   * @return string[]
+   *   An array of logs, keyed by pod IDs.
+   */
+  protected function getKubernetesPodLogs($pod_id) {
+    return $this->kubectlExec(
+      'logs',
+      [
+        $pod_id,
+        '--namespace',
+        $this->deployedK8sResourceNameSpace,
+      ],
+      FALSE
+    );
+  }
+
+  /**
+   * Populates the pod queue.
+   *
+   * @throws \Dockworker\DockworkerException
+   * @throws \Exception
+   */
+  private function kubernetesSetPods() {
+    $this->kubernetesSetMatchingResource();
+    switch ($this->kubernetesPodParentResourceType) {
+      case 'deployment':
+        $this->kubernetesSetMatchingDeploymentReplicaSets();
+        $this->kubernetesSetMatchingDeploymentPods();
+        break;
+      case 'cronjob':
+        $this->kubernetesSetMatchingCronPods();
+        break;
+      default:
+        break;
+    }
+    $num_pods = count($this->kubernetesCurPods);
+    $this->io()->title("[$this->kubernetesPodParentResourceType/$this->kubernetesPodParentResourceName:$this->kubernetesPodParentResourceNamespace] $num_pods pods found.");
+  }
+
+  /**
+   * Set up the resource that matches the currently configured data.
+   */
+  protected function kubernetesSetMatchingResource() {
     $get_deployments_cmd = sprintf(
-      $this->kubeCtlBin . " get deployment/%s --namespace=%s --sort-by=.status.startTime --no-headers | awk '{ print $1 }'",
-      $this->kubernetesDeploymentName,
-      $this->kubernetesPodNamespace
+      $this->kubeCtlBin . ' get %s/%s --namespace=%s --sort-by=.status.startTime --no-headers | awk \'{ print $1 }\'',
+      $this->kubernetesPodParentResourceType,
+      $this->kubernetesPodParentResourceName,
+      $this->kubernetesPodParentResourceNamespace
     );
 
-    $this->kubernetesCurDeployment = trim(
+    $this->kubernetesCurResource = trim(
       shell_exec($get_deployments_cmd)
     );
   }
@@ -93,11 +278,12 @@ trait KubernetesPodTrait {
   /**
    * Set up replica sets that match the currently configured data.
    */
-  protected function kubernetesSetMatchingReplicaSets() {
+  protected function kubernetesSetMatchingDeploymentReplicaSets() {
+    $this->kubernetesCurReplicaSets = [];
     $get_rs_cmd = sprintf(
       $this->kubeCtlBin . " describe deployment/%s --namespace=%s | grep 'ReplicaSet.*:' | awk '{ print $2 }'",
-      $this->kubernetesCurDeployment,
-      $this->kubernetesPodNamespace
+      $this->kubernetesCurResource,
+      $this->kubernetesPodParentResourceNamespace
     );
 
     $rs_list = explode(
@@ -114,42 +300,47 @@ trait KubernetesPodTrait {
     $this->kubernetesLatestReplicaSet = end($this->kubernetesCurReplicaSets);
   }
 
-  /**
-   * Populates the pod queue.
-   *
-   * @throws \Dockworker\DockworkerException
-   * @throws \Exception
-   */
-  private function kubernetesSetMatchingPods() {
-    $pods = $this->kubernetesGetMatchingPods($this->kubernetesDeploymentName, $this->kubernetesPodNamespace);
-    foreach ($pods as $pod) {
-      $this->kubernetesCheckPodShellAccess($pod);
-      $this->kubernetesCurPods[] = $pod;
-    }
 
-    if (empty($this->kubernetesCurPods)) {
-      throw new DockworkerException("Could not find any pods for {$this->kubernetesDeploymentName}:{$this->kubernetesPodNamespace}.");
-    }
+  /**
+   * @return void
+   */
+  protected function kubernetesSetMatchingCronPods(): void {
+    $this->kubernetesSetPodsFromKubeCtlCmd(
+      sprintf(
+        $this->kubeCtlBin . " get pods --namespace=%s --sort-by=.status.startTime --no-headers | grep '^%s' | grep 'Completed\|Error' | sed '1!G;h;$!d' | awk '{ print $1 }'",
+        $this->kubernetesPodParentResourceNamespace,
+        $this->kubernetesPodParentResourceName
+      )
+    );
   }
 
   /**
-   * @param $deployment_name
-   * @param $namespace
-   *
-   * @return false|string[]
+   * @return void
    */
-  protected function kubernetesGetMatchingPods($deployment_name, $namespace): array|false {
-    $get_pods_cmd = sprintf(
-      $this->kubeCtlBin . " get pods --namespace=%s -o json | jq -r '.items[] | select(.metadata.ownerReferences[] | select(.name==\"%s\")) | .metadata.name '",
-      $namespace,
-      $this->kubernetesLatestReplicaSet
+  protected function kubernetesSetMatchingDeploymentPods(): void {
+    $this->kubernetesSetPodsFromKubeCtlCmd(
+      sprintf(
+        $this->kubeCtlBin . " get pods --namespace=%s -o json | jq -r '.items[] | select(.metadata.ownerReferences[] | select(.name==\"%s\")) | .metadata.name '",
+        $this->kubernetesPodParentResourceNamespace,
+        $this->kubernetesLatestReplicaSet
+      )
     );
+  }
 
+  /**
+   * @param $cmd_string
+   *
+   * @return void
+   */
+  protected function kubernetesSetPodsFromKubeCtlCmd($cmd_string) {
+    $this->kubernetesCurPods = [];
     $pod_list = trim(
-      shell_exec($get_pods_cmd)
+      shell_exec($cmd_string)
     );
 
-    return explode(PHP_EOL, $pod_list);
+    if (!empty($pod_list)) {
+      $this->kubernetesCurPods = explode(PHP_EOL, $pod_list);
+    }
   }
 
   /**
@@ -163,7 +354,7 @@ trait KubernetesPodTrait {
   private function kubernetesCheckPodShellAccess($pod) {
     $this->kubernetesPodExecCommand(
       $pod,
-      $this->kubernetesPodNamespace,
+      $this->kubernetesPodParentResourceNamespace,
       'ls'
     );
   }

@@ -3,7 +3,7 @@
 namespace Dockworker;
 
 /**
- * Provides methods to check startup logs for errors.
+ * Provides methods to check k8s resource pod logs for errors.
  */
 trait LogCheckerTrait {
 
