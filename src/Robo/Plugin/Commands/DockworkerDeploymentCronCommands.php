@@ -106,6 +106,7 @@ class DockworkerDeploymentCronCommands extends DockworkerDeploymentCommands {
    */
   public function checkDeploymentCronLogs($env) {
     $this->k8sInitSetupPods($env, 'cronjob', 'Cron Log Check');
+    $this->getCustomLogTriggersExceptions('cronjob');
     $this->kubernetesCheckLogsFromCurrentPods();
   }
 

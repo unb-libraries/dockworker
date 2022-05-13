@@ -230,20 +230,8 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @kubectl
    */
   public function checkDeploymentLogs($env) {
-    // Allow modules to implement custom handlers to trigger errors.
-    $handlers = $this->getCustomEventHandlers('dockworker-deployment-log-error-triggers');
-    foreach ($handlers as $handler) {
-      $this->addLogErrorTriggers($handler());
-    }
-
-    // Allow modules to implement custom handlers to add exceptions.
-    $handlers = $this->getCustomEventHandlers('dockworker-deployment-log-error-exceptions');
-    foreach ($handlers as $handler) {
-      $this->addLogErrorExceptions($handler());
-    }
-
-
     $this->k8sInitSetupPods($env, 'deployment', 'Check Logs');
+    $this->getCustomLogTriggersExceptions('deployment');
     $this->kubernetesCheckLogsFromCurrentPods();
   }
 
@@ -344,6 +332,26 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
       if ($all_pods == FALSE) {
         break;
       }
+    }
+  }
+
+  /**
+   * Retrieves and sets any log error triggers provided downstream.
+   *
+   * @param $type
+   *   The type of k8s resource logs being checked.
+   */
+  protected function getCustomLogTriggersExceptions($type) : void {
+    // Allow modules to implement custom handlers to trigger errors.
+    $handlers = $this->getCustomEventHandlers("dockworker-$type-log-error-triggers");
+    foreach ($handlers as $handler) {
+      $this->addLogErrorTriggers($handler());
+    }
+
+    // Allow modules to implement custom handlers to add exceptions.
+    $handlers = $this->getCustomEventHandlers("dockworker-$type-log-error-exceptions");
+    foreach ($handlers as $handler) {
+      $this->addLogErrorExceptions($handler());
     }
   }
 
