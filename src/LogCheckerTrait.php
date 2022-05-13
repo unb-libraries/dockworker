@@ -28,6 +28,8 @@ trait LogCheckerTrait {
    */
   protected $logErrorTriggers = [
     'error',
+    'Error',
+    'ERROR',
   ];
 
   /**
