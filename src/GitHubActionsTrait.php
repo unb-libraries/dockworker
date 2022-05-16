@@ -27,14 +27,15 @@ trait GitHubActionsTrait {
   protected $gitHubActionsCurWorkflowRuns;
 
   /**
-   * Sets up the latest GitHub Actions Workflow Runs.
+   * Sets up the latest GitHub Actions workflow run.
    *
    * @hook post-init @ci
    */
-  public function setGitHubActionsWorkflow() {
+  public function setGitHubActionsWorkflow() : void {
     $key = '';
     $this->say("Querying CI Services Workflow run data for $this->gitHubRepo...");
-    $workflows = $this->gitHubClient->api('repo')->workflows()->all($this->gitHubOwner, $this->gitHubRepo);
+    $workflows = $this->gitHubClient->api('repo')->workflows()
+      ->all($this->gitHubOwner, $this->gitHubRepo);
     foreach ($workflows['workflows'] as $key => $value) {
       if ($value['name'] == $this->gitHubRepo) break;
     }
@@ -45,7 +46,7 @@ trait GitHubActionsTrait {
   /**
    * Restarts a GitHub Actions workflow run.
    */
-  protected function setRestartGitHubActionsWorkflowRun($id) {
+  protected function setRestartGitHubActionsWorkflowRun($id) : void {
     $this->say(
       sprintf(
         'Restarting %s/%s Build #%s...',
@@ -54,7 +55,8 @@ trait GitHubActionsTrait {
         $id
       )
     );
-    $this->gitHubClient->api('repo')->workflowRuns()->rerun($this->gitHubOwner, $this->gitHubRepo, $id);
+    $this->gitHubClient->api('repo')->workflowRuns()
+      ->rerun($this->gitHubOwner, $this->gitHubRepo, $id);
     $this->say("Done!");
     $this->say(
       sprintf(
@@ -67,15 +69,20 @@ trait GitHubActionsTrait {
   }
 
   /**
-   * Sets the current actions workflow runs.
+   * Sets the GitHub Actions workflow runs.
    */
-  protected function setGitHubActionsWorkflowRuns() {
-    $run = $this->gitHubClient->api('repo')->workflowRuns()->listRuns($this->gitHubOwner, $this->gitHubRepo, $this->gitHubActionsCurWorkflow['id']);
+  protected function setGitHubActionsWorkflowRuns() : void {
+    $run = $this->gitHubClient->api('repo')->workflowRuns()
+      ->listRuns(
+        $this->gitHubOwner,
+        $this->gitHubRepo,
+        $this->gitHubActionsCurWorkflow['id']
+      );
     $this->gitHubActionsCurWorkflowRuns = $run['workflow_runs'];
   }
 
   /**
-   * Gets the latest workflow run for a branch.
+   * Gets the latest GitHub Actions workflow run for a branch.
    *
    * @param $branch
    *   The branch to filter with.
@@ -83,8 +90,8 @@ trait GitHubActionsTrait {
    * @return array
    *  The latest workflow run for the branch.
    */
-  protected function getCIServicesWorkflowLatestRunByBranch($branch) {
-    $runs = $this->getCIServicesWorkflowRunsByBranch($branch);
+  protected function getGitHubActionsWorkflowLatestRunByBranch($branch) : array {
+    $runs = $this->getGitHubActionsRunsByBranch($branch);
     if (!empty($runs[0])) {
       return $runs[0];
     }
@@ -92,7 +99,7 @@ trait GitHubActionsTrait {
   }
 
   /**
-   * Gets a workflow run by ID.
+   * Gets a GitHub Actions workflow run by ID.
    *
    * @param $id
    *   The id to filter with.
@@ -100,7 +107,7 @@ trait GitHubActionsTrait {
    * @return array
    *  The latest workflow run for the branch.
    */
-  protected function getCIServicesWorkflowRunById($id) {
+  protected function getGitHubActionsWorkflowRunById($id) : array {
     foreach($this->gitHubActionsCurWorkflowRuns as $run) {
       if ($run['id'] == $id) {
         return $run;
@@ -110,7 +117,7 @@ trait GitHubActionsTrait {
   }
 
   /**
-   * Gets all latest workflow runs for a branch.
+   * Gets latest GitHub Actions workflow runs for a branch.
    *
    * @param $branch
    *   The branch to filter with.
@@ -118,7 +125,7 @@ trait GitHubActionsTrait {
    * @return array
    *   An array of workflow runs for that branch.
    */
-  protected function getCIServicesWorkflowRunsByBranch($branch) {
+  protected function getGitHubActionsRunsByBranch($branch) : array {
     $branch_runs = [];
     foreach($this->gitHubActionsCurWorkflowRuns as $run) {
       if ($run['head_branch'] == $branch) {
@@ -128,7 +135,10 @@ trait GitHubActionsTrait {
     return $branch_runs;
   }
 
-  protected function initSetupGitHubActionsTrait() {
+  /**
+   * Initializes the trait for interacting with GitHub Actions.
+   */
+  protected function initSetupGitHubActionsTrait() : void {
     $this->setGitHubActionsWorkflow();
   }
 

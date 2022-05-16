@@ -41,18 +41,18 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
    * @option $branch
    *   The environment/branch to target. Defaults to 'dev'.
    *
-   * @command ci:workflow:run:restart-latest:latest
+   * @command ci:workflow:run:latest:restart
    * @aliases restart-latest-build
    * @aliases cirl
    *
-   * @usage ci:workflow:run:restart-latest:latest --branch=dev
+   * @usage ci:workflow:run:latest:restart --branch=dev
    *
    * @github
    * @ci
    */
   public function getRestartLatestCiBuild(array $options = ['branch' => 'dev']) {
     $this->say("Finding latest build, branch={$options['branch']}...");
-    $run = $this->getCIServicesWorkflowLatestRunByBranch($options['branch']);
+    $run = $this->getGitHubActionsWorkflowLatestRunByBranch($options['branch']);
     $this->setRestartGitHubActionsWorkflowRun($run['id']);
   }
 
