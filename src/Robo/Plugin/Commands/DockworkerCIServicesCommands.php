@@ -23,17 +23,17 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
    *
    * @var \Symfony\Component\Console\Helper\ProgressBar
    */
-  protected $gitHubWorkflowRunProgressBar;
+  protected ProgressBar $gitHubWorkflowRunProgressBar;
 
   /**
    * The usage stats for the workflow runs.
    *
    * @var array
    */
-  protected $gitHubWorkflowRunUsage = [];
+  protected array $gitHubWorkflowRunUsage = [];
 
   /**
-   * Restarts the most recent CI Services workflow run for this application.
+   * Restarts the most recent CI workflow run for this application.
    *
    * @param string[] $options
    *   The array of available CLI options.
@@ -50,14 +50,16 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
    * @github
    * @ci
    */
-  public function getRestartLatestCiBuild(array $options = ['branch' => 'dev']) {
+  public function getRestartLatestCiBuild(
+    array $options = ['branch' => 'dev'])
+  : void {
     $this->say("Finding latest build, branch={$options['branch']}...");
     $run = $this->getGitHubActionsWorkflowLatestRunByBranch($options['branch']);
     $this->setRestartGitHubActionsWorkflowRun($run['id']);
   }
 
   /**
-   * Retrieves total runtimes for recent CI Services workflow runs for this application.
+   * Displays runtimes for recent CI workflow runs for this application.
    *
    * @param string[] $options
    *   The array of available CLI options.
@@ -74,8 +76,10 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
    * @github
    * @ci
    */
-  public function getCIServicesDeployTimes(array $options = ['branch' => 'prod']) {
-    $runs = $this->getCIServicesWorkflowRunsByBranch($options['branch']);
+  public function getCIServicesDeployTimes(
+    array $options = ['branch' => 'prod']
+  ) : void {
+    $runs = $this->getGitHubActionsRunsByBranch($options['branch']);
     if (!empty($runs)) {
       $num_runs = count($runs);
       $this->setInitProgressBar($num_runs);
@@ -99,10 +103,10 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
   /**
    * Initializes the progress bar for iterations.
    *
-   * @param $max
+   * @param int $max
    *   The number of values to iterate over.
    */
-  protected function setInitProgressBar($max) {
+  protected function setInitProgressBar(int $max) : void {
     $this->gitHubWorkflowRunProgressBar = new ProgressBar($this->io(), $max);
     $this->gitHubWorkflowRunProgressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s% -- %message%');
     $this->gitHubWorkflowRunProgressBar->start();
@@ -112,11 +116,14 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
    * Sets the usage data for a CI Services run.
    *
    * @param array $run
-   *   The CI Services run associative array.
+   *   The CI Services run ID
    */
-  protected function setCIServicesRunUsageData(array $run) {
-    $this->gitHubWorkflowRunProgressBar->setMessage("Querying Workflow Run #{$run['id']}");
-    $usage = $this->gitHubClient->api('repo')->workflowRuns()->usage($this->gitHubOwner, $this->gitHubRepo, $run['id']);
+  protected function setCIServicesRunUsageData(array $run) : void {
+    $this->gitHubWorkflowRunProgressBar->setMessage(
+      "Querying Workflow Run #{$run['id']}"
+    );
+    $usage = $this->gitHubClient->api('repo')->workflowRuns()
+      ->usage($this->gitHubOwner, $this->gitHubRepo, $run['id']);
     $usage['head_sha'] = $run['head_sha'];
     $usage['created_at'] = $run['created_at'];
     $usage['id'] = $run['id'];
@@ -130,7 +137,7 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
    * @return array
    *   The properly formatted headers.
    */
-  protected function getCIServicesRunUsageDataTableHeaders() {
+  protected function getCIServicesRunUsageDataTableHeaders() : array {
     $zone = date_default_timezone_get();
     return ['Run ID', "Time ($zone)", 'Commit', 'Time(s)', 'Δ'];
   }
@@ -141,7 +148,7 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
    * @return array
    *   The properly formatted usage data.
    */
-  protected function getCIServicesRunUsageDataTableRows() {
+  protected function getCIServicesRunUsageDataTableRows() : array {
     $rows = [];
     $prev_run_time = 0;
     $local_tz = new DateTimeZone(date_default_timezone_get());
@@ -151,7 +158,10 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
         $this->getFormattedTimeString($usage['created_at'], $local_tz),
         "https://github.com/{$this->gitHubOwner}/{$this->gitHubRepo}/commit/{$usage['head_sha']}",
         $usage['run_duration_ms'] / 1000,
-        $prev_run_time == 0 ? "--" : $this->getFormattedPercentageDifference($usage['run_duration_ms'], $prev_run_time),
+        $prev_run_time == 0 ? "--" : $this->getFormattedPercentageDifference(
+          $usage['run_duration_ms'],
+          $prev_run_time
+        ),
       ];
       $prev_run_time = $usage['run_duration_ms'];
     }
@@ -169,7 +179,10 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
    * @return string
    *   The difference, expressed as a percentage.
    */
-  protected function getFormattedPercentageDifference($cur_time, $prev_time) {
+  protected function getFormattedPercentageDifference(
+    int $cur_time,
+    int $prev_time
+  ) : string {
     return sprintf(
       "%+d%%",
       (($cur_time / $prev_time) - 1) * 100,
@@ -186,8 +199,15 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
    * @return string
    *   The difference, expressed as a percentage.
    */
-  protected function getFormattedTimeString($time_string, DateTimeZone $local_tz) {
-    $utc_time = DateTime::createFromFormat(DateTime::ISO8601, $time_string, new DateTimeZone('UTC'));
+  protected function getFormattedTimeString(
+    string $time_string,
+    DateTimeZone $local_tz
+  ) : string {
+    $utc_time = DateTime::createFromFormat(
+      DateTime::ISO8601,
+      $time_string,
+      new DateTimeZone('UTC')
+    );
     $local_tz = new DateTimeZone(date_default_timezone_get());
     $local_time = $utc_time->setTimezone($local_tz);
     return $local_time->format('Y-m-d H:i:s');

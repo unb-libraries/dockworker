@@ -23,16 +23,14 @@ class ApplicationPermissionsCommands extends DockworkerCommands {
    *
    * @usage dockworker:permissions:fix
    */
-  public function fixPermissions(array $options = ['path' => NULL]) {
+  public function fixPermissions(array $options = ['path' => NULL]) : void {
   }
 
   /**
-   * Sets file permissions for a path to the current group. Requires sudo.
+   * Sets path file ownership to current user's primary group. Requires sudo.
    *
    * @param string $path
    *   The path to change the group for.
-   *
-   * @usage "1 /mnt/issues/archive"
    */
   protected function setPermissions($path) : void {
     $full_path = $this->repoRoot . "/$path";

@@ -37,7 +37,9 @@ class CommitMessageValidateCommands extends DockworkerCommands {
     $message = file_get_contents($message_file_path);
 
     $this->message = $message;
-    $this->subjectLine = str_contains($message, "\n") ? strstr($message, "\n", TRUE) : $message;
+    $this->subjectLine = str_contains($message, "\n") ?
+      strstr($message, "\n", TRUE) :
+      $message;
 
     // Validators.
     $this->getValidateIsEmpty();

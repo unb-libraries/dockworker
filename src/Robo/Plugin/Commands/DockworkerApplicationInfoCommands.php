@@ -7,7 +7,7 @@ use DateTime;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 
 /**
- * Defines a class to generate application information..
+ * Defines a class to generate helpful information related to the application.
  */
 class DockworkerApplicationInfoCommands extends DockworkerCommands {
 
@@ -20,9 +20,8 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
    * @aliases cron-info
    *
    * @usage cron:suggest-timings
-   *
    */
-  public function getApplicationCronInfo() {
+  public function getApplicationCronInfo() : void {
     $this->say($this->instanceName);
     $this->say(
       sprintf(
@@ -39,9 +38,9 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
   }
 
   /**
-   * Generates cron suggestions for 'every fifteen minutes'.
+   * Displays cron suggestions for 'every fifteen minutes'.
    */
-  protected function getApplicationFifteenCronSuggestion() {
+  protected function getApplicationFifteenCronSuggestion() : void {
     $this->say(
       sprintf(
         "Suggested 15 minute Crontab: %s",
@@ -50,7 +49,14 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
     );
   }
 
-  protected function getApplicationFifteenCronString() {
+  /**
+   * Generates cron suggestions for 'every fifteen minutes'.
+   *
+   * @throws \Exception
+   * @return string
+   *   The cron suggestions.
+   */
+  protected function getApplicationFifteenCronString() : string {
     $cron_minutes=[];
     $cron_time = $this->getRandomCronTime(15, 15 * 60);
 
@@ -66,9 +72,9 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
   }
 
   /**
-   * Generates cron suggestions for 'Nightly Between 2-6'.
+   * Displays cron suggestions for 'Nightly Between 2-6'.
    */
-  protected function getApplicationDailyCronSuggestion() {
+  protected function getApplicationDailyCronSuggestion() : void {
     $this->say(
       sprintf(
         "Suggested Nightly Between 2-6 Crontab: %s",
@@ -77,8 +83,19 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
     );
   }
 
-  protected function getApplicationDailyCronString() {
-    $cron_time = $this->getRandomCronTime(24, 60 * 60 * 4, 'PT2H');
+  /**
+   * Generates cron suggestions for 'Nightly Between 2-6'.
+   *
+   * @throws \Exception
+   * @return string
+   *   The cron suggestions.
+   */
+  protected function getApplicationDailyCronString() : string {
+    $cron_time = $this->getRandomCronTime(
+      24,
+      60 * 60 * 4,
+      'PT2H'
+    );
     return sprintf(
         "%s %s * * *",
         $cron_time->format('i'),
@@ -87,9 +104,9 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
   }
 
   /**
-   * Generates cron suggestions for 'Sunday Night Between 2-6'.
+   * Displays cron suggestions for 'Sunday Night Between 2-6'.
    */
-  protected function getApplicationWeeklyCronSuggestion() {
+  protected function getApplicationWeeklyCronSuggestion() : void {
     $this->say(
       sprintf(
         "Suggested Sunday Night Between 2-6 Crontab: %s",
@@ -98,8 +115,19 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
     );
   }
 
-  protected function getApplicationWeeklyCronString() {
-    $cron_time = $this->getRandomCronTime(24 * 7, 60 * 60 * 4, 'PT2H');
+  /**
+   * Generates cron suggestions for 'Sunday Night Between 2-6'.
+   *
+   * @throws \Exception
+   * @return string
+   *   The cron suggestions.
+   */
+  protected function getApplicationWeeklyCronString() : string {
+    $cron_time = $this->getRandomCronTime(
+      24 * 7,
+      60 * 60 * 4,
+      'PT2H'
+    );
     return sprintf(
         "%s %s * * 1",
         $cron_time->format('i'),
@@ -108,9 +136,9 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
   }
 
   /**
-   * Generates cron suggestions for Monthly.
+   * Displays cron suggestions for 'Monthly'.
    */
-  protected function getApplicationMonthlyCronSuggestion() {
+  protected function getApplicationMonthlyCronSuggestion() : void {
     $this->say(
       sprintf(
         "Suggested Monthly Crontab: %s",
@@ -119,8 +147,19 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
     );
   }
 
-  protected function getApplicationMonthlyCronString() {
-    $cron_time = $this->getRandomCronTime(31, 60 * 60 * 4, 'PT2H');
+  /**
+   * Generates cron suggestions for 'Monthly'.
+   *
+   * @throws \Exception
+   * @return string
+   *   The cron suggestions.
+   */
+  protected function getApplicationMonthlyCronString() : string {
+    $cron_time = $this->getRandomCronTime(
+      31,
+      60 * 60 * 4,
+      'PT2H'
+    );
     mt_srand($this->uuid * 31);
     $month_day = random_int(1, 27);
 
@@ -135,11 +174,11 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
   /**
    * Generates a random time in seconds.
    *
-   * @param $seed_mutation
+   * @param string $seed_mutation
    *   A mutation for the MT random number generator seed.
-   * @param $max_seconds
+   * @param int $max_seconds
    *   The maximum seconds value the time can be
-   * @param null $offset
+   * @param string $offset
    *   An offset from midnight for the returned DateTime value.
    *
    * @return \DateTime
@@ -147,7 +186,11 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
    *
    * @throws \Exception
    */
-  protected function getRandomCronTime($seed_mutation, $max_seconds, $offset = NULL) {
+  protected function getRandomCronTime(
+    string $seed_mutation,
+    int $max_seconds,
+    string $offset = NULL
+  ) : DateTime {
     $cron_time = new DateTime(self::UNIX_EPOCH);
 
     if (!empty($offset)) {
@@ -161,14 +204,14 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
   }
 
   /**
-   * Generates and displays cron suggestions for 'every x hours' cases.
+   * Displays cron suggestions for 'Every x Hours'.
    *
-   * @param $hours
-   *   The cycle time to generate for.
+   * @param string $hours
+   *   The cycle time, in hours to display the suggestions for.
    *
    * @throws \Exception
    */
-  protected function getHourlyCycleCron($hours) {
+  protected function getHourlyCycleCron(string $hours) : void {
     $this->say(
       sprintf(
         "Suggested Every %s Hours Crontab: %s",
@@ -178,7 +221,17 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
     );
   }
 
-  protected function getHourlyCycleCronString($hours) {
+  /**
+   * Generates cron suggestions for 'Every x Hours'.
+   *
+   * @param string $hours
+   *   The cycle time, in hours to generate the suggestions for.
+   *
+   * @throws \Exception
+   * @return string
+   *   The cron suggestions.
+   */
+  protected function getHourlyCycleCronString(string $hours) : string {
     $cron_hours = [];
     $cron_time = $this->getRandomCronTime($hours, 60 * 60 * $hours);
     $cron_minute = $cron_time->format('i');
