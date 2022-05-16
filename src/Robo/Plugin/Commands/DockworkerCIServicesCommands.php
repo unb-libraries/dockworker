@@ -6,7 +6,7 @@ use DateTime;
 use DateTimeZone;
 use Dockworker\ConsoleTableTrait;
 use Dockworker\DockworkerException;
-use Dockworker\CIServicesTrait;
+use Dockworker\GitHubActionsTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 use Symfony\Component\Console\Helper\ProgressBar;
 
@@ -16,7 +16,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 class DockworkerCIServicesCommands extends DockworkerCommands {
 
   use ConsoleTableTrait;
-  use CIServicesTrait;
+  use GitHubActionsTrait;
 
   /**
    * The current progress bar.
@@ -53,7 +53,7 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
   public function getRestartLatestCiBuild(array $options = ['branch' => 'dev']) {
     $this->say("Finding latest build, branch={$options['branch']}...");
     $run = $this->getCIServicesWorkflowLatestRunByBranch($options['branch']);
-    $this->setRestartCiServiceBuild($run['id']);
+    $this->setRestartGitHubActionsWorkflowRun($run['id']);
   }
 
   /**

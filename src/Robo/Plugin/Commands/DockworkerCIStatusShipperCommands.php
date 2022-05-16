@@ -4,7 +4,7 @@ namespace Dockworker\Robo\Plugin\Commands;
 
 use DateTime;
 use DateTimeZone;
-use Dockworker\CIServicesTrait;
+use Dockworker\GitHubActionsTrait;
 use Dockworker\DockworkerException;
 use Dockworker\ElasticShipperTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
@@ -15,7 +15,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
  */
 class DockworkerCIStatusShipperCommands extends DockworkerCommands {
 
-  use CIServicesTrait;
+  use GitHubActionsTrait;
   use ElasticShipperTrait;
 
   /**
