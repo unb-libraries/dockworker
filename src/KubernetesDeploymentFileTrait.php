@@ -122,7 +122,7 @@ trait KubernetesDeploymentFileTrait {
   protected function getTokenizedKubeFile($repo_root, $env, $image, $type) {
     $deployment_file = static::getKubernetesFileNameFromBranch($repo_root, $env, $type);
     if (!file_exists($deployment_file)) {
-      throw new DockworkerException("Cannot find deployment file [$deployment_file]");
+      throw new DockworkerException("Cannot find k8s resource file [$deployment_file]. This typically indicates this application does not have a $type resource.");
     }
     $tmp_yaml = tempnam(sys_get_temp_dir(), 'prefix') . '.yaml';
     $tokenized_deployment_yaml = file_get_contents($deployment_file);
