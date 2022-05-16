@@ -34,19 +34,26 @@ class ApplicationPermissionsCommands extends DockworkerCommands {
    *
    * @usage "1 /mnt/issues/archive"
    */
-  protected function setPermissions($path) {
-    $gid = posix_getgid();
+  protected function setPermissions($path) : void {
+    $full_path = $this->repoRoot . "/$path";
 
-    $this->taskExec('sudo chgrp')
-      ->arg('-R')
-      ->arg($gid)
-      ->arg($this->repoRoot . "/$path")
-      ->run();
-    $this->taskExec('sudo chmod')
-      ->arg('g+w')
-      ->arg('-R')
-      ->arg($this->repoRoot . "/$path")
-      ->run();
+    if (file_exists($full_path)) {
+      $gid = posix_getgid();
+      $this->taskExec('sudo chgrp')
+        ->arg('-R')
+        ->arg($gid)
+        ->arg($full_path)
+        ->run();
+      $this->taskExec('sudo chmod')
+        ->arg('g+w')
+        ->arg('-R')
+        ->arg($full_path)
+        ->run();
+    }
+    else {
+      $this->io()->note("Path $full_path not found, skipping.");
+    }
+
   }
 
 }
