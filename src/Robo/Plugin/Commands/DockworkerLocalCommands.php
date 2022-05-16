@@ -118,9 +118,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    */
   public function printLocalLogs(array $options = ['all' => FALSE]) {
     $this->getlocalRunning();
-    $result = $this->getLocalLogs($options);
     $this->io()->writeln(
-      $result->getMessage()
+      $this->getLocalLogs($options)
     );
     return $result;
   }
@@ -159,8 +158,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @option $all
    *   Return logs from all local services, not only the web endpoint.
    *
-   * @return \Robo\Result
-   *   The result of the command.
+   * @return string
+   *   The logs.
    */
   protected function getLocalLogs(array $options = ['all' => FALSE]) {
     $result = $this->taskExec('docker-compose')
@@ -172,8 +171,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     if (isset($options['all']) && !$options['all']) {
       $result->arg($this->instanceName);
     }
-
-    return $result->run();
+    $result->run();
+    return $result->getMessage();
   }
 
   /**
@@ -463,8 +462,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    */
   protected function getLocalDeploymentStatus($finish_marker) {
     $this->getlocalRunning();
-    $result = $this->getLocalLogs([]);
-    $logs = $result->getMessage();
+    $logs = $this->getLocalLogs([]);
     return $this->parseLocalLogForStatus($logs, $finish_marker);
   }
 
@@ -516,8 +514,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     $this->getlocalRunning();
     $this->getCustomLogTriggersExceptions('local');
 
-    $result = $this->getLocalLogs($options);
-    $local_logs = $result->getMessage();
+    $local_logs = $this->getLocalLogs($options);
     if (!empty($local_logs)) {
       $this->checkLogForErrors('local', $local_logs);
     }
