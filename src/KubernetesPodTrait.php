@@ -188,12 +188,12 @@ trait KubernetesPodTrait {
     }
 
     try {
-      $this->auditK8sPodLogs(FALSE);
+      $this->auditApplicationLogs(FALSE);
       $this->say("No errors found in logs.");
     }
     catch (DockworkerException) {
       $this->kubernetesPrintPodLogs($logs);
-      $this->printK8sPodLogErrors();
+      $this->printApplicationLogErrors();
       throw new DockworkerException("Error(s) found in k8s resource pod logs!");
     }
 

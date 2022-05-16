@@ -81,12 +81,12 @@ class DockworkerDeploymentCronCommands extends DockworkerDeploymentCommands {
     $logs = $this->getRunDeploymentCronPodLogs($env);
     $this->checkLogForErrors('Manual Cron Pod', $logs);
     try {
-      $this->auditK8sPodLogs(FALSE);
+      $this->auditApplicationLogs(FALSE);
       $this->say("No errors found in logs.");
     }
     catch (DockworkerException) {
       $this->kubernetesPrintPodLogs($logs);
-      $this->printK8sPodLogErrors();
+      $this->printApplicationLogErrors();
       throw new DockworkerException("Error(s) found in deployment cron logs!");
     }
   }
