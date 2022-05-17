@@ -123,7 +123,7 @@ trait KubernetesPodTrait {
    * @throws \Dockworker\DockworkerException
    */
   protected function kubernetesGetLatestPod() {
-    return array_slice($this->kubernetesCurPods, 0, 1);
+    return reset($this->kubernetesCurPods);
   }
 
   /**
