@@ -162,16 +162,16 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *   The logs.
    */
   protected function getLocalLogs(array $options = ['all' => FALSE]) {
-    $result = $this->taskExec('docker-compose')
+    $cmd = $this->taskExec('docker-compose')
       ->dir($this->repoRoot)
       ->silent(TRUE)
       ->printOutput(FALSE)
       ->arg('logs');
 
     if (isset($options['all']) && !$options['all']) {
-      $result->arg($this->instanceName);
+      $cmd->arg($this->instanceName);
     }
-    $result->run();
+    $result = $cmd->run();
     return $result->getMessage();
   }
 
