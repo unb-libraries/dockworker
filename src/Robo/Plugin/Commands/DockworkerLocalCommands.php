@@ -633,15 +633,17 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
       $this->taskExec('docker-compose')
         ->dir($this->repoRoot)
         ->arg('stop')
-        ->arg($this->instanceName);
+        ->arg($this->instanceName)
+        ->run();
 
       $this->say('Removing application container data...');
       $this->taskExec('docker-compose')
         ->dir($this->repoRoot)
         ->arg('rm')
-        ->arg($this->instanceName)
         ->arg('-f')
-        ->arg('-v');
+        ->arg('-v')
+        ->arg($this->instanceName)
+        ->run();
 
         $start_command = 'local:start --only-primary --no-update-dockworker --no-update-hostfile --no-upstream-pull';
         if ($options['no-cache']) {
