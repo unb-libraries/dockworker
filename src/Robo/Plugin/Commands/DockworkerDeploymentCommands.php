@@ -3,7 +3,6 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\DockworkerException;
-use Dockworker\DockworkerLogCheckerTrait;
 use Dockworker\KubernetesDeploymentTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 use Robo\Robo;
@@ -335,24 +334,6 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
     }
   }
 
-  /**
-   * Retrieves and sets any log error triggers provided downstream.
-   *
-   * @param $type
-   *   The type of k8s resource logs being checked.
-   */
-  protected function getCustomLogTriggersExceptions($type) : void {
-    // Allow modules to implement custom handlers to trigger errors.
-    $handlers = $this->getCustomEventHandlers("dockworker-$type-log-error-triggers");
-    foreach ($handlers as $handler) {
-      $this->addLogErrorTriggers($handler());
-    }
 
-    // Allow modules to implement custom handlers to add exceptions.
-    $handlers = $this->getCustomEventHandlers("dockworker-$type-log-error-exceptions");
-    foreach ($handlers as $handler) {
-      $this->addLogErrorExceptions($handler());
-    }
-  }
 
 }
