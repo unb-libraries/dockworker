@@ -121,7 +121,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     $this->io()->writeln(
       $this->getLocalLogs($options)
     );
-    return $result;
   }
 
   /**
