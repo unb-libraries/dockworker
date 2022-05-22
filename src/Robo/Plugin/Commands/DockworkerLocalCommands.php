@@ -322,8 +322,9 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     $this->io()->title("Removing application data");
     return $this->taskExec('docker-compose')
       ->dir($this->repoRoot)
-      ->arg('rm')
-      ->arg('-f')
+      ->arg('down')
+      ->arg('--rmi')
+      ->arg('local')
       ->arg('-v');
   }
 
@@ -349,6 +350,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *   Alias for --no-update-dockworker --no-update-hostfile --no-upstream-pull --no-build
    * @option $force-recreate
    *   Pass the --force-recreate option to docker-compose up.
+   * @option $only-primary
+   *   Only start the primary application container.
    *
    * @command local:start
    * @aliases start
@@ -356,7 +359,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @usage local:start
    */
-  public function start(array $options = ['no-cache' => FALSE, 'no-tail-logs' => FALSE, 'no-update-dockworker' => FALSE, 'no-update-hostfile' => FALSE, 'no-upstream-pull' => FALSE, 'no-build' => FALSE, 'only-start' => FALSE, 'force-recreate' => FALSE]) {
+  public function start(array $options = ['no-cache' => FALSE, 'no-tail-logs' => FALSE, 'no-update-dockworker' => FALSE, 'no-update-hostfile' => FALSE, 'no-upstream-pull' => FALSE, 'no-build' => FALSE, 'only-start' => FALSE, 'force-recreate' => FALSE, 'only-primary' => FALSE]) {
     if (!$options['no-update-dockworker'] && !$options['only-start']) {
       $this->setRunOtherCommand('dockworker:update');
     }
@@ -383,6 +386,10 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     $up_command = 'local:up';
     if ($options['force-recreate']) {
       $up_command = $up_command . ' --force-recreate';
+    }
+
+    if ($options['only-primary']) {
+      $up_command = $up_command . ' --only-primary';
     }
 
     $this->say("Starting application...");
@@ -621,10 +628,26 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
      * @usage local:rebuild
      */
     public function rebuild(array $options = ['no-cache' => FALSE]) {
-        $this->setRunOtherCommand('local:halt');
-        $start_command = 'local:start';
+      $this->io()->title("Rebuilding $this->instanceName");
+      $this->say('Stopping application container...');
+      $this->taskExec('docker-compose')
+        ->dir($this->repoRoot)
+        ->arg('stop')
+        ->arg($this->instanceName)
+        ->run();
+
+      $this->say('Removing application container data...');
+      $this->taskExec('docker-compose')
+        ->dir($this->repoRoot)
+        ->arg('rm')
+        ->arg('-f')
+        ->arg('-v')
+        ->arg($this->instanceName)
+        ->run();
+
+        $start_command = 'local:start --only-primary --no-update-dockworker --no-update-hostfile --no-upstream-pull';
         if ($options['no-cache']) {
-            $start_command = $start_command . ' --no-cache';
+            $start_command = $start_command . ' --no-cache ';
         }
         $this->setRunOtherCommand($start_command);
     }
@@ -637,18 +660,24 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @option $force-recreate
    *   Pass the --force-recreate option to docker-compose up.
+   * @option $only-primary
+   *   Only start the primary application container.
    *
    * @command local:up
    * @aliases up
    *
    * @usage local:up
    */
-  public function up(array $options = ['force-recreate' => FALSE]) {
+  public function up(array $options = ['force-recreate' => FALSE, 'only-primary' => FALSE] ) {
     $this->io()->title("Starting local containers");
     $cmd_string = 'docker-compose up -d';
 
     if ($options['force-recreate']) {
       $cmd_string .= ' --force-recreate';
+    }
+
+    if ($options['only-primary']) {
+      $cmd_string .= " $this->instanceName";
     }
 
     $this->_exec($cmd_string);
