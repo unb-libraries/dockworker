@@ -291,6 +291,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @usage docker:image:pull-upstream
    */
   public function pullUpstreamImages() {
+    $this->io()->title("Fetching Upstream Images");
     $this->_exec('docker-compose pull --quiet --include-deps');
     $upstream_images = $this->getUpstreamImages();
     foreach ($upstream_images as $upstream_image) {
@@ -693,7 +694,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    */
   public function setHostFileEntries() {
     $hostnames = $this->getHostFileHostnames();
-    $this->say("Updating hostfile with entries. If you are asked for a password, you should enable passwordless sudo for your user.");
+    $this->io()->title("Configuring Local Hostfile");
+    $this->say("If you are asked for a password, you should enable passwordless sudo for your user.");
     foreach ($hostnames as $hostname) {
       $delete_command = "sudo $this->applicationShell -c 'sed -i '' -e \"/$hostname/d\" /etc/hosts'";
       $add_command = "sudo $this->applicationShell -c 'echo \"127.0.0.1       $hostname\" >> /etc/hosts'";
@@ -718,7 +720,8 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    */
   public function unSetHostFileEntries() {
     $hostnames = $this->getHostFileHostnames();
-    $this->say("Removing hostfile entries. If you are asked for a password, you should enable passwordless sudo for your user.");
+    $this->io()->title("Reverting Local Hostfile");
+    $this->say("If you are asked for a password, you should enable passwordless sudo for your user.");
     foreach ($hostnames as $hostname) {
       $this->say("Removing hostfile entry for $hostname...");
       $delete_command = "sudo $this->applicationShell -c 'sed -i '' -e \"/$hostname/d\" /etc/hosts'";
