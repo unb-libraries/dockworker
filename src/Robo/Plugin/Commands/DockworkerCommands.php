@@ -66,7 +66,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    *
    * @var bool
    */
-  protected $displayCommandRunTime = TRUE;
+  protected $displayCommandRunTime = FALSE;
 
   /**
    * The local data directory for this application.
@@ -414,7 +414,6 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    * @usage dockworker:git:setup-hooks
    */
   public function setupHooks() {
-    $this->disableCommandRunTimeDisplay();
     $source_dir = $this->repoRoot . "/vendor/unb-libraries/dockworker/scripts/git-hooks";
     $target_dir = $this->repoRoot . "/.git/hooks";
     $this->_copy("$source_dir/commit-msg", "$target_dir/commit-msg");
@@ -460,7 +459,15 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   }
 
   /**
-   * Disables this command's total run time display.
+   * Enable this command's total run time display upon completion.
+   *
+   */
+  protected function enableCommandRunTimeDisplay() {
+    $this->displayCommandRunTime = TRUE;
+  }
+
+  /**
+   * Disables this command's total run time display upon completion.
    *
    */
   protected function disableCommandRunTimeDisplay() {
