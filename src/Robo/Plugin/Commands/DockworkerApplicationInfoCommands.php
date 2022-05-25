@@ -189,7 +189,7 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
   protected function getRandomCronTime(
     string $seed_mutation,
     int $max_seconds,
-    string $offset = NULL
+    string $offset = ''
   ) : DateTime {
     $cron_time = new DateTime(self::UNIX_EPOCH);
 

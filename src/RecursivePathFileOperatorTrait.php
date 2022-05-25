@@ -93,7 +93,7 @@ trait RecursivePathFileOperatorTrait {
     if (!empty($this->recursivePathOperatorFiles)) {
       return $quote . implode("$quote$separator$quote", $this->recursivePathOperatorFiles) . $quote;
     }
-    return NULL;
+    return '';
   }
 
 }

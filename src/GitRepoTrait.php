@@ -40,7 +40,7 @@ trait GitRepoTrait {
    *   The path to the git repository.
    *
    * @return string
-   *   The hash if the repository exists, NULL otherwise.
+   *   The hash if the repository exists, empty otherwise.
    */
   private function gitRepoLatestCommitHash($path) {
     $latest_hash = $this->taskExec('git')
@@ -54,7 +54,7 @@ trait GitRepoTrait {
     if (!empty($latest_hash->getMessage())) {
       return $latest_hash->getMessage();
     }
-    return NULL;
+    return '';
   }
 
   /**
@@ -64,7 +64,7 @@ trait GitRepoTrait {
    *   The path to the git repository.
    *
    * @return string
-   *   The branch name if the repository exists, NULL otherwise.
+   *   The branch name if the repository exists, empty otherwise.
    */
   private function gitRepoCurrentBranch($path) {
     $cur_branch = $this->taskExec('git')
@@ -79,7 +79,7 @@ trait GitRepoTrait {
     if (!empty($cur_branch->getMessage())) {
       return $cur_branch->getMessage();
     }
-    return NULL;
+    return '';
   }
 
 }

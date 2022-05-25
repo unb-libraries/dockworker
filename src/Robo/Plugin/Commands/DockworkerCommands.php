@@ -394,7 +394,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    * @return int
    *   The return code of the command.
    */
-  public function setRunOtherCommand($command_string, $exception_message = NULL) {
+  public function setRunOtherCommand($command_string, $exception_message = '') {
     $this->io()->note("Spawning new command thread: $command_string");
     $bin = $_SERVER['argv'][0];
     $command = "$bin --ansi $command_string";

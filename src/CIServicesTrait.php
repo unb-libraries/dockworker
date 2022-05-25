@@ -32,7 +32,7 @@ trait CIServicesTrait {
    * @hook post-init @ci
    */
   public function setCIServicesWorkflow() {
-    $key = NULL;
+    $key = '';
     $this->say("Querying CI Services Workflow run data for $this->gitHubRepo...");
     $workflows = $this->gitHubClient->api('repo')->workflows()->all($this->gitHubOwner, $this->gitHubRepo);
     foreach ($workflows['workflows'] as $key => $value) {

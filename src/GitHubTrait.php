@@ -55,7 +55,7 @@ trait GitHubTrait {
       try{
         $this->gitHubClient = new \Github\Client();
         if($gh_token = getenv('GITHUB_AUTH_ACCESS_TOKEN')) {
-          $this->gitHubClient->authenticate($gh_token, NULL, \Github\Client::AUTH_ACCESS_TOKEN);
+          $this->gitHubClient->authenticate($gh_token, '', \Github\Client::AUTH_ACCESS_TOKEN);
         }
       }
       catch (\Exception) {

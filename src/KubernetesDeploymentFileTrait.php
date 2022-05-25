@@ -18,7 +18,7 @@ trait KubernetesDeploymentFileTrait {
    *   The path to the deployment file.
    *
    * @return string
-   *   The value of the namespace element. NULL if does not exist.
+   *   The value of the namespace element. Empty if does not exist.
    *
    * @throws \Exception
    */
@@ -27,7 +27,7 @@ trait KubernetesDeploymentFileTrait {
     if (!empty($deployment['metadata']['namespace'])) {
       return $deployment['metadata']['namespace'];
     }
-    return NULL;
+    return '';
   }
 
   /**
@@ -92,7 +92,7 @@ trait KubernetesDeploymentFileTrait {
    *   The path to the deployment file.
    *
    * @return string
-   *   The value of the namespace element. NULL if does not exist.
+   *   The value of the namespace element. Empty if does not exist.
    *
    * @throws \Exception
    */
@@ -101,7 +101,7 @@ trait KubernetesDeploymentFileTrait {
     if (!empty($deployment['metadata']['name'])) {
       return $deployment['metadata']['name'];
     }
-    return NULL;
+    return '';
   }
 
   /**

@@ -59,7 +59,7 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
    * @dockerimage
    * @dockerpush
    */
-  public function buildPushDeployEnv($env, array $options = ['use-tag' => NULL]) {
+  public function buildPushDeployEnv($env, array $options = ['use-tag' => '']) {
     $this->pushCommandInit($env);
     if (empty($options['use-tag'])) {
       $timestamp = date('YmdHis');

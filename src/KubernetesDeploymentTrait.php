@@ -103,6 +103,9 @@ trait KubernetesDeploymentTrait {
    * @param string $image
    *   The image to update the deployment with.
    *
+   * @return string
+   *   The path to the deployment file being applied.
+   *
    * @throws \Dockworker\DockworkerException
    */
   protected function applyKubeDeploymentUpdate($repo_root, $env, $image) {
@@ -111,10 +114,8 @@ trait KubernetesDeploymentTrait {
       $this->setRunOtherCommand("k8s:deployment:update $deployment_file");
       return $deployment_file;
     }
-    else {
-      $this->say("Skipping deployment for environment [$env]. Deployable environments: " . implode(',', $this->getDeployableEnvironments()));
-    }
-    return NULL;
+    $this->say("Skipping deployment for environment [$env]. Deployable environments: " . implode(',', $this->getDeployableEnvironments()));
+    return '';
   }
 
 }

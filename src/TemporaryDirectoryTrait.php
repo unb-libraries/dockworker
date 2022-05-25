@@ -20,8 +20,8 @@ trait TemporaryDirectoryTrait {
    *
    * @link https://php.net/manual/en/function.tempnam.php
    *
-   * @param string|null $dir
-   *   Base directory under which to create temp dir. If null, the default
+   * @param string $dir
+   *   Base directory under which to create temp dir. If empty, the default
    *   system temp dir (sys_get_temp_dir()) will be used.
    * @param string $prefix
    *   String with which to prefix created dirs.
@@ -33,9 +33,9 @@ trait TemporaryDirectoryTrait {
    *
    *   Full path to newly-created dir, or false on failure.
    */
-  public static function tempdir($dir = null, $prefix = 'tmp_', $mode = 0700, $maxAttempts = 1000): bool|string {
+  public static function tempdir($dir = '', $prefix = 'tmp_', $mode = 0700, $maxAttempts = 1000): bool|string {
     /* Use the system temp dir by default. */
-    if (is_null($dir)) {
+    if (empty($dir)) {
       $dir = sys_get_temp_dir();
     }
 

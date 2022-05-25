@@ -34,7 +34,7 @@ function find_repo_root() {
       return $repo_root;
     }
   }
-  return NULL;
+  return '';
 }
 
 /**

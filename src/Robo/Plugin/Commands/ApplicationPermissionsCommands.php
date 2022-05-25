@@ -23,7 +23,7 @@ class ApplicationPermissionsCommands extends DockworkerCommands {
    *
    * @usage dockworker:permissions:fix
    */
-  public function fixPermissions(array $options = ['path' => NULL]) : void {
+  public function fixPermissions(array $options = ['path' => '']) : void {
   }
 
   /**

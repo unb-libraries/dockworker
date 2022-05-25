@@ -41,7 +41,7 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
    *
    * @dockerimage
    */
-  public function buildImage($tag = NULL, array $options = ['no-cache' => FALSE, 'cache-from' => '', 'allow-dirty' => FALSE]) {
+  public function buildImage($tag = '', array $options = ['no-cache' => FALSE, 'cache-from' => '', 'allow-dirty' => FALSE]) {
     $this->buildRepoCleanCheck($options);
     $this->io()->title("Building {$this->dockerImageName}:$tag");
     $build = $this->taskDockerBuild($this->repoRoot);

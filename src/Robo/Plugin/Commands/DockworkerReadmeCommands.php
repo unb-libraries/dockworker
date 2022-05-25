@@ -67,7 +67,7 @@ class DockworkerReadmeCommands extends DockworkerCommands implements CustomEvent
     if (file_exists($this->repoRoot . '/.dockworker/screenshot.png')) {
       return "https://github.com/{$this->gitHubOwner}/{$this->gitHubRepo}/raw/prod/.dockworker/screenshot.png";
     }
-    return NULL;
+    return '';
   }
 
 }

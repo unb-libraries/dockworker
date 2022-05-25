@@ -12,7 +12,7 @@ trait RepoReadmeWriterTrait {
   protected $readMePath;
   protected $readMeContents;
   protected $readMeTemplatePaths = [];
-  protected $readMeTwig = NULL;
+  protected $readMeTwig = '';
 
   /**
    * Sets the readme file contents.
