@@ -68,6 +68,17 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
+   * Provides log checker with ignored log exception items for local Drupal.
+   *
+   * @hook on-event dockworker-local-log-error-exceptions
+   */
+  public function getCoreErrorLogLocalExceptions() {
+    return [
+      'Operation CREATE USER failed' => 'Creating a local user failing is expected in deployment',
+    ];
+  }
+
+  /**
    * Halts this local application and removes its persistent data permanently.
    *
    * @command local:destroy
