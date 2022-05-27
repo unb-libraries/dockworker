@@ -13,6 +13,7 @@ use Robo\Common\BuilderAwareTrait;
 use Robo\Common\ConfigAwareTrait;
 use Robo\Contract\BuilderAwareInterface;
 use Robo\Robo;
+use Robo\Symfony\ConsoleIO;
 use Robo\Tasks;
 use Symfony\Component\Yaml\Yaml;
 
@@ -472,6 +473,16 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    */
   protected function disableCommandRunTimeDisplay() {
     $this->displayCommandRunTime = FALSE;
+  }
+
+  /**
+   * Warns the user that a destructive action is about to be performed.
+   *
+   * @param \Robo\Symfony\ConsoleIO $io
+   *   The IO to use when printing the statement.
+   */
+  protected function warnDestructiveAction(ConsoleIO $io) : void {
+    $io->warning('Destructive, Irreversible Actions Ahead!');
   }
 
 }
