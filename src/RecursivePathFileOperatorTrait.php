@@ -27,16 +27,18 @@ trait RecursivePathFileOperatorTrait {
    */
   protected function addRecursivePathFilesFromPath(array $paths, array $extension_filter = []) {
     foreach ($paths as $path) {
-      $directory = new RecursiveDirectoryIterator($path);
-      $iterator = new RecursiveIteratorIterator($directory);
-      $files = [];
-      foreach ($iterator as $info) {
-        $files[] = $info->getPathname();
+      if (file_exists($path)) {
+        $directory = new RecursiveDirectoryIterator($path);
+        $iterator = new RecursiveIteratorIterator($directory);
+        $files = [];
+        foreach ($iterator as $info) {
+          $files[] = $info->getPathname();
+        }
+        $this->recursivePathOperatorFiles = array_merge(
+          $this->recursivePathOperatorFiles,
+          self::filterArrayFilesByExtension($files, $extension_filter)
+        );
       }
-      $this->recursivePathOperatorFiles = array_merge(
-        $this->recursivePathOperatorFiles,
-        self::filterArrayFilesByExtension($files, $extension_filter)
-      );
     }
   }
 
