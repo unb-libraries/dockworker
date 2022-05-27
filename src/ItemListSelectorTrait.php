@@ -3,12 +3,14 @@
 namespace Dockworker;
 
 use Robo\Symfony\ConsoleIO;
-use Symfony\Component\Console\Helper\Table;
+use Dockworker\ConsoleTableTrait;
 
 /**
  * Provides methods to assist a user in selecting a value from a list of items.
  */
 trait ItemListSelectorTrait {
+
+  use ConsoleTableTrait;
 
   /**
    * The items to select from.
@@ -96,7 +98,13 @@ trait ItemListSelectorTrait {
     }
 
     $this->appendInternalValuesToItemList();
-    $this->renderItemSelectorTable();
+    $this->setDisplayConsoleTable(
+      $this->itemListSelectorIo,
+      $this->itemListSelectorTableHeaders,
+      $this->itemListSelectorItems,
+      $this->itemListSelectorTableTitle
+    );
+
     $selected_item = $this->getSelectedItemKeyFromList();
 
     if ($selected_item === '0' || !empty($selected_item)) {
@@ -114,18 +122,6 @@ trait ItemListSelectorTrait {
   protected function appendInternalValuesToItemList() : void {
     array_unshift($this->itemListSelectorTableHeaders, 'ID');
     array_walk($this->itemListSelectorItems, [$this, 'addIdToListItems']);
-  }
-
-  /**
-   * Displays the list of items as a table within the console.
-   */
-  protected function renderItemSelectorTable() : void {
-    $this->itemListSelectorIo->title($this->itemListSelectorTableTitle);
-    $table = new Table($this->itemListSelectorIo);
-    $table
-      ->setHeaders($this->itemListSelectorTableHeaders)
-      ->setRows($this->itemListSelectorItems);
-    $table->render();
   }
 
   /**
