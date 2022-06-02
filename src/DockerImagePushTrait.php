@@ -4,6 +4,7 @@ namespace Dockworker;
 
 use Dockworker\DockworkerException;
 use Dockworker\GitHubTrait;
+use Dockworker\PersistentGlobalDockworkerConfigTrait;
 use Robo\Robo;
 
 /**
@@ -12,6 +13,7 @@ use Robo\Robo;
 trait DockerImagePushTrait {
 
   use GitHubTrait;
+  use PersistentGlobalDockworkerConfigTrait;
 
   /**
    * The image repository.
@@ -42,19 +44,43 @@ trait DockerImagePushTrait {
    */
   public function authToRepository() {
     if ($this->dockerImageRepo == 'ghcr') {
-      $user = getenv('GH_CONTAINER_REGISTRY_USER');
-      $token = getenv('GH_CONTAINER_REGISTRY_TOKEN');
+      $user = $this->getSetGlobalDockworkerConfigItem(
+        'dockworker.github.registry.user',
+        "Enter the username for auth to the GitHub container registry",
+        $this->io(),
+        '',
+        'GH_CONTAINER_REGISTRY_USER'
+      );
+      $token = $this->getSetGlobalDockworkerConfigItem(
+        'dockworker.github.registry.token',
+        "Enter the token for auth to the GitHub container registry",
+        $this->io(),
+        '',
+        'GH_CONTAINER_REGISTRY_TOKEN'
+      );
       exec("(echo \"$token\" | docker login ghcr.io -u \"$user\" --password-stdin)", $output, $return);
       if ($return != '0') {
-        throw new DockworkerException("GitHub Container Registry auth failure. Have you set GH_CONTAINER_REGISTRY_TOKEN and GH_CONTAINER_REGISTRY_USER as environment variables?");
+        throw new DockworkerException("GitHub Container Registry auth failure.");
       }
     }
     elseif ($this->dockerImageRepo == 'dockercloud') {
-      $user = getenv('DOCKER_CLOUD_USER_NAME');
-      $pass = getenv('DOCKER_CLOUD_USER_PASS');
+      $user = $this->getSetGlobalDockworkerConfigItem(
+        'dockworker.dockercloud.registry.user',
+        "Enter the username for auth to the Docker Cloud container registry",
+        $this->io(),
+        '',
+        'DOCKER_CLOUD_USER_NAME'
+      );
+      $pass = $this->getSetGlobalDockworkerConfigItem(
+        'dockworker.dockercloud.registry.password',
+        "Enter the password for auth to the Docker Cloud container registry",
+        $this->io(),
+        '',
+        'DOCKER_CLOUD_USER_PASS'
+      );
       exec("(echo \"$pass\" | docker login --username \"$user\" --password-stdin)", $output, $return);
       if ($return != '0') {
-        throw new DockworkerException("DockerCloud auth failure. Have you set DOCKER_CLOUD_USER_NAME and DOCKER_CLOUD_USER_PASS as environment variables?");
+        throw new DockworkerException("DockerCloud auth failure.");
       }
     }
     else {
