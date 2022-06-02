@@ -2,6 +2,7 @@
 
 namespace Dockworker;
 
+use Dockworker\PersistentGlobalDockworkerConfigTrait;
 use JiraRestApi\Configuration\ArrayConfiguration;
 use JiraRestApi\Project\ProjectService;
 use Robo\Robo;
@@ -10,6 +11,8 @@ use Robo\Robo;
  * Trait for interacting with a Jira instance.
  */
 trait JiraTrait {
+
+  use PersistentGlobalDockworkerConfigTrait;
 
   /**
    * The config to use.
@@ -54,7 +57,6 @@ trait JiraTrait {
    * @hook pre-init @jira
    */
   public function setupJiraConfiguration() {
-    $this->setDisplayEnvVarInfo();
     $this->setJiraUri();
     $this->setJiraUser();
     $this->setJiraPass();
@@ -63,30 +65,18 @@ trait JiraTrait {
   }
 
   /**
-   * Informs the user of environment variables if not set.
-   *
-   * @throws \Exception
-   */
-  public function setDisplayEnvVarInfo() {
-    if (empty(getenv('DOCKWORKER_JIRA_URI'))) {
-      $this->say('Jira configuration is user-specific can be stored as environment variables. To avoid these prompts, set the following environment variables in your shell:');
-      $this->say('DOCKWORKER_JIRA_URI, DOCKWORKER_JIRA_USER_NAME, DOCKWORKER_JIRA_USER_PASSWORD');
-    }
-  }
-
-  /**
    * Sets the JIRA hostname.
    *
    * @throws \Exception
    */
   public function setJiraUri() {
-    $this->jiraEndpointUri = getenv('DOCKWORKER_JIRA_URI');
-    if (empty($this->jiraEndpointUri)) {
-      $this->jiraEndpointUri = $this->askDefault(
-        "Enter the URI of the Jira endpoint :",
-        'https://jira.lib.unb.ca'
-      );
-    }
+    $this->jiraEndpointUri = $this->getSetGlobalDockworkerConfigItem(
+      'dockworker.jira.uri',
+      "Enter the URI of the Jira endpoint",
+      $this->io(),
+      'https://jira.lib.unb.ca',
+      'DOCKWORKER_JIRA_URI'
+    );
   }
 
   /**
@@ -104,12 +94,13 @@ trait JiraTrait {
    * @throws \Exception
    */
   public function setJiraUser() {
-    $this->jiraUserName = getenv('DOCKWORKER_JIRA_USER_NAME');
-    if (empty($this->jiraUserName)) {
-      $this->jiraUserName = $this->ask(
-        "Enter a Username for $this->jiraEndpointUri:"
-      );
-    }
+    $this->jiraUserName = $this->getSetGlobalDockworkerConfigItem(
+      'dockworker.jira.username',
+      "Enter the Username for $this->jiraEndpointUri",
+      $this->io(),
+      '',
+      'DOCKWORKER_JIRA_USER_NAME'
+    );
   }
 
   /**
@@ -121,12 +112,13 @@ trait JiraTrait {
    * @throws \Exception
    */
   public function setJiraPass() {
-    $this->jiraUserPassword = getenv('DOCKWORKER_JIRA_USER_PASSWORD');
-    if (empty($this->jiraUserPassword)) {
-      $this->jiraUserPassword = $this->ask(
-        "Enter $this->jiraUserName's JIRA password for $this->jiraEndpointUri"
-      );
-    }
+    $this->jiraUserPassword = $this->getSetGlobalDockworkerConfigItem(
+      'dockworker.jira.password',
+      "Enter $this->jiraUserName's JIRA password for $this->jiraEndpointUri",
+      $this->io(),
+      '',
+      'DOCKWORKER_JIRA_USER_PASSWORD'
+    );
   }
 
   /**
