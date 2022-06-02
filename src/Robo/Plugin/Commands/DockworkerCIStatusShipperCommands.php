@@ -58,7 +58,7 @@ class DockworkerCIStatusShipperCommands extends DockworkerCommands {
    */
   private function initSetupCommand() {
     $this->initSetupGitHubTrait();
-    $this->initSetupCIServicesTrait();
+    $this->initSetupGitHubActionsTrait();
   }
 
   /**
