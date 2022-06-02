@@ -3,12 +3,15 @@
 namespace Dockworker;
 
 use Dockworker\DockworkerException;
+use Dockworker\PersistentGlobalDockworkerConfigTrait;
 use Robo\Robo;
 
 /**
  * Provides methods to interact with GitHub repositories.
  */
 trait GitHubTrait {
+
+  use PersistentGlobalDockworkerConfigTrait;
 
   /**
    * The owner of the GitHub Repository corresponding to this instance.
@@ -54,7 +57,14 @@ trait GitHubTrait {
     if ($this->gitHubClient == NULL) {
       try{
         $this->gitHubClient = new \Github\Client();
-        if($gh_token = getenv('GITHUB_AUTH_ACCESS_TOKEN')) {
+        $gh_token = $this->getSetGlobalDockworkerConfigItem(
+          'dockworker.github.token',
+          "Enter a personal access token for auth to GitHub",
+          $this->io(),
+          '',
+          'GITHUB_AUTH_ACCESS_TOKEN'
+        );
+        if(!empty($gh_token)) {
           $this->gitHubClient->authenticate($gh_token, '', \Github\Client::AUTH_ACCESS_TOKEN);
         }
       }
