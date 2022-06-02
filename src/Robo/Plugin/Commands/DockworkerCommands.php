@@ -207,17 +207,26 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   /**
    * Sets the running user's details and credentials.
    *
-   * @hook post-init
+   * @hook pre-init
    * @throws \Dockworker\DockworkerException
    */
   public function setUserDetails() {
     $this->userName = get_current_user();
     $this->userHomeDir = $_SERVER['HOME'];
+    $this->setUserKubeDetails();
+  }
+
+  /**
+   * Sets the application data dirs.
+   *
+   * @hook init
+   * @throws \Dockworker\DockworkerException
+   */
+  public function setApplicationDataDir() {
     $this->dockworkerApplicationDataDir = implode('/', [$this->userHomeDir, self::DOCKWORKER_DATA_BASE_DIR, $this->instanceName]);
     if (!file_exists($this->dockworkerApplicationDataDir)) {
       mkdir($this->dockworkerApplicationDataDir, 0755, TRUE);
     }
-    $this->setUserKubeDetails();
   }
 
   /**
