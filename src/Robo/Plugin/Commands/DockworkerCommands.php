@@ -232,7 +232,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   }
 
   /**
-   * Sets the git repo.
+   * Sets up the lean repository git repo.
    *
    * @hook pre-init
    */
@@ -242,7 +242,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   }
 
   /**
-   * Get the UUID from config.
+   * Determines the UUID from config.
    *
    * @hook init
    * @throws \Dockworker\DockworkerException
@@ -256,7 +256,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   }
 
   /**
-   * Gets the main project prefix.
+   * Determines the main project prefix.
    *
    * @throws \Dockworker\DockworkerException
    *
@@ -275,7 +275,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   }
 
   /**
-   * Gets all project prefixes.
+   * Retrieves all defined project prefixes from the application configuration.
    *
    * @throws \Dockworker\DockworkerException
    *
@@ -294,7 +294,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   }
 
   /**
-   * Gets the upstream image.
+   * Retrieves the upstream images defined in the application configuration.
    *
    * @throws \Dockworker\DockworkerException
    *
@@ -368,6 +368,12 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
     $this->_copy("$source_dir/commit-msg", "$target_dir/commit-msg");
   }
 
+  /**
+   * Determines the local primary service deployment port.
+   *
+   * @return string
+   *   The local primary service deployment port.
+   */
   protected function getLocalDeploymentPort() {
     $docker_compose = Yaml::parse(
       file_get_contents(
@@ -409,7 +415,6 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
 
   /**
    * Enable this command's total run time display upon completion.
-   *
    */
   protected function enableCommandRunTimeDisplay() {
     $this->displayCommandRunTime = TRUE;
@@ -417,7 +422,6 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
 
   /**
    * Disables this command's total run time display upon completion.
-   *
    */
   protected function disableCommandRunTimeDisplay() {
     $this->displayCommandRunTime = FALSE;
