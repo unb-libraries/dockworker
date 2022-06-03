@@ -3,11 +3,14 @@
 namespace Dockworker;
 
 use Dockworker\DockworkerException;
+use Dockworker\PersistentGlobalDockworkerConfigTrait;
 
 /**
  * Provides methods to interact with kubectl.
  */
 trait KubectlTrait {
+
+  use PersistentGlobalDockworkerConfigTrait;
 
   /**
    * The path to the kubectl bin.
@@ -17,13 +20,34 @@ trait KubectlTrait {
   protected $kubeCtlBin;
 
   /**
+   * The current user's configured kubectl username.
+   *
+   * @var string
+   */
+  protected $kubeUserName;
+
+  /**
+   * The current user's configured kubectl access token.
+   *
+   * @var string
+   */
+  protected $kubeUserToken;
+
+  /**
    * Tests if kubectl is installed/executable.
    *
-   * @hook pre-init @kubectl
+   * @hook init @kubectl
    * @throws \Dockworker\DockworkerException
    */
   public function checkKubeCtlBinExists() {
-    $this->kubeCtlBin = trim(shell_exec(sprintf("which %s", 'kubectl')));
+    $this->kubeCtlBin = $this->getSetGlobalDockworkerConfigItem(
+      'dockworker.kubectl.bin',
+      "Enter the full path to kubectl",
+      $this->io(),
+      '/snap/bin/kubectl',
+      'DOCKWORKER_KUBECTL_BIN'
+    );
+
     if (empty($this->kubeCtlBin)) {
       throw new DockworkerException("kubectl binary not found.");
     }
@@ -86,6 +110,29 @@ trait KubectlTrait {
       }
     }
     return implode("\n", $o);
+  }
+
+  /**
+   * Sets the running user's kubernetes credentials.
+   *
+   * @throws \Dockworker\DockworkerException
+   */
+  protected function setKubectlUserDetails() {
+    if (!empty($this->kubeCtlBin) && is_executable($this->kubeCtlBin)) {
+      $user_name_cmd = $this->kubeCtlBin . ' config view --raw --output jsonpath=\'{$.users[0].name}\'';
+      $this->kubeUserName = shell_exec($user_name_cmd);
+      $user_token_cmd = $this->kubeCtlBin . ' config view --raw --output jsonpath=\'{$.users[0].user.token}\'';
+      $this->kubeUserToken = shell_exec($user_token_cmd);
+    }
+  }
+
+  /**
+   * Determines if the current user has k8s details defined.
+   *
+   * @return bool
+   */
+  protected function kubectlUserDetailsDefined() {
+    return (!empty($this->kubeUserName) && !empty($this->kubeUserToken));
   }
 
 }

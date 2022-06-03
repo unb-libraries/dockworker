@@ -91,20 +91,6 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   protected $instanceSlug;
 
   /**
-   * The current user's configured kubectl username.
-   *
-   * @var string
-   */
-  protected $kubeUserName;
-
-  /**
-   * The current user's configured kubectl access token.
-   *
-   * @var string
-   */
-  protected $kubeUserToken;
-
-  /**
    * The options passed to the command.
    *
    * @var array
@@ -168,6 +154,8 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
     $this->config = Robo::loadConfiguration(
       [$this->repoRoot . '/' . $this->configFile]
     );
+    $this->userName = get_current_user();
+    $this->userHomeDir = $_SERVER['HOME'];
   }
 
   /**
@@ -202,18 +190,6 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
     if (empty($this->instanceName)) {
       throw new DockworkerException(sprintf(self::ERROR_INSTANCE_NAME_UNSET, $this->configFile));
     }
-  }
-
-  /**
-   * Sets the running user's details and credentials.
-   *
-   * @hook pre-init
-   * @throws \Dockworker\DockworkerException
-   */
-  public function setUserDetails() {
-    $this->userName = get_current_user();
-    $this->userHomeDir = $_SERVER['HOME'];
-    $this->setUserKubeDetails();
   }
 
   /**
@@ -253,30 +229,6 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
       $run_string = $diff->format('%H:%I:%S');
       $this->say("Command run time: $run_string");
     }
-  }
-
-  /**
-   * Sets the running user's kubernetes credentials.
-   *
-   * @throws \Dockworker\DockworkerException
-   */
-  public function setUserKubeDetails() {
-   $kubectl_bin = shell_exec(sprintf("which %s", 'kubectl'));
-   if (!empty($kubectl_bin) && is_executable($kubectl_bin)) {
-     $user_name_cmd = 'kubectl config view --raw --output jsonpath=\'{$.users[0].name}\'';
-     $this->kubeUserName = shell_exec($user_name_cmd);
-     $user_token_cmd = 'kubectl config view --raw --output jsonpath=\'{$.users[0].user.token}\'';
-     $this->kubeUserToken = shell_exec($user_token_cmd);
-   }
-  }
-
-  /**
-   * Determines if the current user has k8s details defined.
-   *
-   * @return bool
-   */
-  protected function k8sUserDetailsDefined() {
-    return (!empty($this->kubeUserName) && !empty($this->kubeUserToken));
   }
 
   /**
