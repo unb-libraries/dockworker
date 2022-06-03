@@ -225,6 +225,12 @@ jobs:
         name: Set Image Tag
         run: cat /tmp/image_tag.env >> $GITHUB_ENV
       -
+        name: Set KubeCtl Bin Env
+        run: echo "DOCKWORKER_KUBECTL_BIN=$(which kubectl)" >> $GITHUB_ENV
+      -
+        name: Set KubeCtl Conf Env
+        run: echo "DOCKWORKER_KUBECTL_CONF=$KUBECONFIG" >> $GITHUB_ENV
+      -
         name: Deploy image to cluster
         run: vendor/bin/dockworker docker:image:deploy $CI_REF_NAME --use-tag $BUILD_IMAGE_TAG
         env:
