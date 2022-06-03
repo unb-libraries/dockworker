@@ -180,7 +180,7 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
   /**
    * Get the instance name from config.
    *
-   * @hook init
+   * @hook pre-init
    * @throws \Dockworker\DockworkerException
    */
   public function setInstanceName() {
@@ -252,19 +252,6 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
 
     if (empty($this->uuid)) {
       throw new DockworkerException(sprintf(self::ERROR_UUID_UNSET, $this->configFile));
-    }
-  }
-
-  /**
-   * Ensure config and binary versions match.
-   *
-   * @hook init
-   * @throws \Dockworker\DockworkerException
-   */
-  public function checkConfigVersion() {
-    $version = Robo::Config()->get('dockworker.version');
-    if (version_compare($version, '3') <= 0) {
-      throw new DockworkerException(sprintf(self::ERROR_CONFIG_VERSION, $this->configFile));
     }
   }
 
