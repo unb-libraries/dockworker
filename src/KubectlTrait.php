@@ -20,6 +20,13 @@ trait KubectlTrait {
   protected $kubeCtlBin;
 
   /**
+   * The path to the kubectl conf file.
+   *
+   * @var string
+   */
+  protected $kubeCtlConf;
+
+  /**
    * The current user's configured kubectl username.
    *
    * @var string
@@ -34,12 +41,33 @@ trait KubectlTrait {
   protected $kubeUserToken;
 
   /**
-   * Tests if kubectl is installed/executable.
+   * Configure kubectl for operation.
    *
    * @hook init @kubectl
    * @throws \Dockworker\DockworkerException
    */
-  public function checkKubeCtlBinExists() {
+  public function configureKubectl() {
+    $this->configureKubectlBin();
+    $this->configureKubectlConf();
+  }
+
+  /**
+   * Configure the kubectl conf file to use.
+   */
+  protected function configureKubectlConf() {
+    $this->kubeCtlConf = $this->getSetGlobalDockworkerConfigItem(
+      'dockworker.kubectl.conf',
+      "Enter path to the kubectl conf to use",
+      $this->io(),
+      $this->userHomeDir . '/.kube/config',
+      'DOCKWORKER_KUBECTL_CONF'
+    );
+  }
+
+  /**
+   * Configure the kubectl binary location.
+   */
+  protected function configureKubectlBin() {
     $this->kubeCtlBin = $this->getSetGlobalDockworkerConfigItem(
       'dockworker.kubectl.bin',
       "Enter the full path to kubectl",
@@ -47,11 +75,8 @@ trait KubectlTrait {
       '/snap/bin/kubectl',
       'DOCKWORKER_KUBECTL_BIN'
     );
-
-    if (empty($this->kubeCtlBin)) {
-      throw new DockworkerException("kubectl binary not found.");
-    }
   }
+
 
   /**
    * Tests if kubectl can make a connection to the API server.
@@ -87,7 +112,7 @@ trait KubectlTrait {
 
     while (TRUE) {
       $try_count++;
-      $command_string = "{$this->kubeCtlBin} $command $args_string";
+      $command_string = "$this->kubeCtlBin --kubeconfig $this->kubeCtlConf $command $args_string";
       if ($print_command_string == TRUE) {
         $this->io()->text("Executing: $command_string");
       }
@@ -119,9 +144,9 @@ trait KubectlTrait {
    */
   protected function setKubectlUserDetails() {
     if (!empty($this->kubeCtlBin) && is_executable($this->kubeCtlBin)) {
-      $user_name_cmd = $this->kubeCtlBin . ' config view --raw --output jsonpath=\'{$.users[0].name}\'';
+      $user_name_cmd = $this->kubeCtlBin . " --kubeconfig $this->kubeCtlConf" . ' config view --raw --output jsonpath=\'{$.users[0].name}\'';
       $this->kubeUserName = shell_exec($user_name_cmd);
-      $user_token_cmd = $this->kubeCtlBin . ' config view --raw --output jsonpath=\'{$.users[0].user.token}\'';
+      $user_token_cmd = $this->kubeCtlBin . " --kubeconfig $this->kubeCtlConf"  . ' config view --raw --output jsonpath=\'{$.users[0].user.token}\'';
       $this->kubeUserToken = shell_exec($user_token_cmd);
     }
   }

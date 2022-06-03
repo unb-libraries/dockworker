@@ -121,7 +121,7 @@ class DockworkerDeploymentCronCommands extends DockworkerDeploymentCommands {
    */
   protected function getRunDeploymentCronPodLogs($env) {
     $delete_job_cmd = sprintf(
-      $this->kubeCtlBin . ' delete job/manual-dockworker-cron-%s --ignore-not-found=true --namespace=%s',
+      $this->kubeCtlBin . " --kubeconfig $this->kubeCtlConf" . ' delete job/manual-dockworker-cron-%s --ignore-not-found=true --namespace=%s',
       $this->deployedK8sResourceName,
       $this->deployedK8sResourceNameSpace
     );
@@ -129,7 +129,7 @@ class DockworkerDeploymentCronCommands extends DockworkerDeploymentCommands {
     shell_exec($delete_job_cmd);
 
     $create_job_cmd = sprintf(
-      $this->kubeCtlBin . ' create job --from=cronjob/cron-%s manual-dockworker-cron-%s --namespace=%s',
+      $this->kubeCtlBin . " --kubeconfig $this->kubeCtlConf" . ' create job --from=cronjob/cron-%s manual-dockworker-cron-%s --namespace=%s',
       $this->deployedK8sResourceName,
       $this->deployedK8sResourceName,
       $this->deployedK8sResourceNameSpace
@@ -138,7 +138,7 @@ class DockworkerDeploymentCronCommands extends DockworkerDeploymentCommands {
     shell_exec($create_job_cmd);
 
     $wait_job_cmd = sprintf(
-      $this->kubeCtlBin . ' wait --for=condition=complete job/manual-dockworker-cron-%s --namespace=%s',
+      $this->kubeCtlBin . " --kubeconfig $this->kubeCtlConf" . ' wait --for=condition=complete job/manual-dockworker-cron-%s --namespace=%s',
       $this->deployedK8sResourceName,
       $this->deployedK8sResourceNameSpace
     );
@@ -146,7 +146,7 @@ class DockworkerDeploymentCronCommands extends DockworkerDeploymentCommands {
     shell_exec($wait_job_cmd);
 
     $get_logs_cmd = sprintf(
-      $this->kubeCtlBin . ' logs job/manual-dockworker-cron-%s --namespace=%s',
+      $this->kubeCtlBin . " --kubeconfig $this->kubeCtlConf" . ' logs job/manual-dockworker-cron-%s --namespace=%s',
       $this->deployedK8sResourceName,
       $this->deployedK8sResourceNameSpace
     );

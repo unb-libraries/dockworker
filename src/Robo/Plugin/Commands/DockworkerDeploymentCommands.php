@@ -259,6 +259,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
     $pod_id = $this->k8sGetLatestPod($env, 'deployment', 'Open Shell');
     $this->io()->note('Opening remote pod shell... Type "exit" when finished.');
     return $this->taskExec($this->kubeCtlBin)
+      ->arg('--kubeconfig')->arg($this->kubeCtlConf)
       ->arg('exec')->arg('-it')->arg($pod_id)
       ->arg("--namespace={$this->kubernetesPodParentResourceNamespace}")
       ->arg('--')

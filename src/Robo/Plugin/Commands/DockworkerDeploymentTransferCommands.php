@@ -91,6 +91,7 @@ class DockworkerDeploymentTransferCommands extends DockworkerDeploymentCommands 
   private function kubeCtlCopyCommand($src, $dst) {
     $this->io()->note(self::INFO_COPYING_FILES);
     return $this->taskExec($this->kubeCtlBin)
+      ->arg('--kubeconfig')->arg($this->kubeCtlConf)
       ->arg('cp')
       ->arg($src)
       ->arg($dst)

@@ -264,7 +264,7 @@ trait KubernetesPodTrait {
    */
   protected function kubernetesSetMatchingResource() {
     $get_deployments_cmd = sprintf(
-      $this->kubeCtlBin . ' get %s/%s --namespace=%s --sort-by=.status.startTime --no-headers | awk \'{ print $1 }\'',
+      $this->kubeCtlBin . " --kubeconfig $this->kubeCtlConf" . ' get %s/%s --namespace=%s --sort-by=.status.startTime --no-headers | awk \'{ print $1 }\'',
       $this->kubernetesPodParentResourceType,
       $this->kubernetesPodParentResourceName,
       $this->kubernetesPodParentResourceNamespace
@@ -281,7 +281,7 @@ trait KubernetesPodTrait {
   protected function kubernetesSetMatchingDeploymentReplicaSets() {
     $this->kubernetesCurReplicaSets = [];
     $get_rs_cmd = sprintf(
-      $this->kubeCtlBin . " describe deployment/%s --namespace=%s | grep 'ReplicaSet.*:' | awk '{ print $2 }'",
+      $this->kubeCtlBin . " --kubeconfig $this->kubeCtlConf" . " describe deployment/%s --namespace=%s | grep 'ReplicaSet.*:' | awk '{ print $2 }'",
       $this->kubernetesCurResource,
       $this->kubernetesPodParentResourceNamespace
     );
@@ -307,7 +307,7 @@ trait KubernetesPodTrait {
   protected function kubernetesSetMatchingCronPods(): void {
     $this->kubernetesSetPodsFromKubeCtlCmd(
       sprintf(
-        $this->kubeCtlBin . " get pods --namespace=%s --sort-by=.status.startTime --no-headers | grep '^%s' | grep 'Completed\|Error' | sed '1!G;h;$!d' | awk '{ print $1 }'",
+        $this->kubeCtlBin . " --kubeconfig $this->kubeCtlConf" . " get pods --namespace=%s --sort-by=.status.startTime --no-headers | grep '^%s' | grep 'Completed\|Error' | sed '1!G;h;$!d' | awk '{ print $1 }'",
         $this->kubernetesPodParentResourceNamespace,
         $this->kubernetesPodParentResourceName
       )
@@ -320,7 +320,7 @@ trait KubernetesPodTrait {
   protected function kubernetesSetMatchingDeploymentPods(): void {
     $this->kubernetesSetPodsFromKubeCtlCmd(
       sprintf(
-        $this->kubeCtlBin . " get pods --namespace=%s -o json | jq -r '.items[] | select(.metadata.ownerReferences[] | select(.name==\"%s\")) | .metadata.name '",
+        $this->kubeCtlBin . " --kubeconfig $this->kubeCtlConf" . " get pods --namespace=%s -o json | jq -r '.items[] | select(.metadata.ownerReferences[] | select(.name==\"%s\")) | .metadata.name '",
         $this->kubernetesPodParentResourceNamespace,
         $this->kubernetesLatestReplicaSet
       )
@@ -378,7 +378,7 @@ trait KubernetesPodTrait {
    */
   protected function kubernetesPodExecCommand($pod, $namespace, $command, $except_on_error = TRUE) {
     exec(
-      sprintf($this->kubeCtlBin . " exec %s --namespace=%s -- sh -c '%s'",
+      sprintf($this->kubeCtlBin . " --kubeconfig $this->kubeCtlConf" . " exec %s --namespace=%s -- sh -c '%s'",
         $pod,
         $namespace,
         $command
@@ -414,7 +414,7 @@ trait KubernetesPodTrait {
    */
   protected function kubernetesCopyFromPodCommand($pod, $namespace, $pod_path, $local_path, $except_on_error = TRUE) {
     exec(
-      sprintf($this->kubeCtlBin . " cp %s/%s:%s %s",
+      sprintf($this->kubeCtlBin . " --kubeconfig $this->kubeCtlConf" . " cp %s/%s:%s %s",
         $namespace,
         $pod,
         $pod_path,
@@ -449,7 +449,7 @@ trait KubernetesPodTrait {
    */
   protected function kubernetesPodFileCopyCommand($namespace, $source_path, $target_path, $except_on_error = TRUE) {
     exec(
-      sprintf($this->kubeCtlBin . " cp %s %s --namespace=%s",
+      sprintf($this->kubeCtlBin . " --kubeconfig $this->kubeCtlConf" . " cp %s %s --namespace=%s",
         $source_path,
         $target_path,
         $namespace
