@@ -350,8 +350,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *   Do not use any cached steps in the build.
    * @option $no-tail-logs
    *   Do not tail the application logs after starting.
-   * @option $no-update-dockworker
-   *   Do not update dockworker as part of the startup process.
    * @option $no-update-hostfile
    *   Do not update the local hostfile with the application alias.
    * @option $no-upstream-pull
@@ -359,7 +357,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @option $no-build
    *   Do not build any images before starting.
    * @option $only-start
-   *   Alias for --no-update-dockworker --no-update-hostfile --no-upstream-pull --no-build
+   *   Alias for --no-update-hostfile --no-upstream-pull --no-build
    * @option $force-recreate
    *   Pass the --force-recreate option to docker-compose up.
    * @option $only-primary
@@ -371,11 +369,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @usage local:start
    */
-  public function start(array $options = ['no-cache' => FALSE, 'no-tail-logs' => FALSE, 'no-update-dockworker' => FALSE, 'no-update-hostfile' => FALSE, 'no-upstream-pull' => FALSE, 'no-build' => FALSE, 'only-start' => FALSE, 'force-recreate' => FALSE, 'only-primary' => FALSE]) {
-    if (!$options['no-update-dockworker'] && !$options['only-start']) {
-      $this->setRunOtherCommand('dockworker:update');
-    }
-
+  public function start(array $options = ['no-cache' => FALSE, 'no-tail-logs' => FALSE, 'no-update-hostfile' => FALSE, 'no-upstream-pull' => FALSE, 'no-build' => FALSE, 'only-start' => FALSE, 'force-recreate' => FALSE, 'only-primary' => FALSE]) {
     if (!$options['no-update-hostfile'] && !$options['only-start']) {
       $this->setRunOtherCommand('hostfile:update');
     }
@@ -560,15 +554,13 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *   Do not use kill the container before starting over.
    * @option $no-rm
    *   Do not remove the existing assets before starting over.
-   * @option $no-update-dockworker
-   *   Do not update dockworker as part of the startup process.
    *
    * @command local:build-test
    * @throws \Exception
    *
    * @usage local:build-test
    */
-  public function buildAndTest(array $options = ['no-kill' => FALSE, 'no-rm' => FALSE, 'no-update-dockworker' => FALSE]) {
+  public function buildAndTest(array $options = ['no-kill' => FALSE, 'no-rm' => FALSE]) {
     if (!$options['no-kill']) {
       $this->_exec('docker-compose kill');
     }
@@ -576,9 +568,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
       $this->setRunOtherCommand('local:rm');
     }
     $start_command = 'local:start --no-cache --no-tail-logs';
-    if ($options['no-update-dockworker']) {
-      $start_command = "$start_command --no-update-dockworker";
-    }
     $this->setRunOtherCommand($start_command);
     $this->setRunOtherCommand('tests:all');
   }
@@ -595,8 +584,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *   Do not use kill the container before starting over.
    * @option $no-rm
    *   Do not remove the existing assets before starting over.
-   * @option $no-update-dockworker
-   *   Do not update dockworker as part of the startup process.
    *
    * @command local:start-over
    * @aliases start-over, deploy
@@ -604,7 +591,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @usage local:start-over
    */
-  public function startOver(array $options = ['no-cache' => FALSE, 'no-kill' => FALSE, 'no-rm' => FALSE, 'no-update-dockworker' => FALSE]) {
+  public function startOver(array $options = ['no-cache' => FALSE, 'no-kill' => FALSE, 'no-rm' => FALSE]) {
     if (!$options['no-kill']) {
       $this->io()->title("Killing application");
       $this->_exec('docker-compose kill');
@@ -617,9 +604,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
     $start_command = 'local:start';
     if ($options['no-cache']) {
       $start_command = $start_command . ' --no-cache';
-    }
-    if ($options['no-update-dockworker']) {
-      $start_command = $start_command . ' --no-update-dockworker';
     }
     $this->setRunOtherCommand($start_command);
   }
@@ -657,7 +641,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
         ->arg($this->instanceName)
         ->run();
 
-        $start_command = 'local:start --only-primary --no-update-dockworker --no-update-hostfile --no-upstream-pull';
+        $start_command = 'local:start --only-primary --no-update-hostfile --no-upstream-pull';
         if ($options['no-cache']) {
             $start_command = $start_command . ' --no-cache ';
         }
