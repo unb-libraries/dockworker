@@ -2,6 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Dockworker\DockerImageTrait;
 use Dockworker\DockworkerException;
 use Dockworker\KubernetesDeploymentTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
@@ -13,6 +14,7 @@ use Robo\Symfony\ConsoleIO;
  */
 class DockworkerDeploymentCommands extends DockworkerLocalCommands {
 
+  use DockerImageTrait;
   use KubernetesDeploymentTrait;
 
   /**
@@ -145,6 +147,31 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   public function applyDeploymentImage($file) {
     $this->kubectlExec(
       'apply',
+      [
+        '-f',
+        $file,
+      ],
+      TRUE
+    );
+  }
+
+  /**
+   * Creates the k8s deployment.
+   *
+   * @param string $file
+   *   The path to the YAML deployment definition file to apply. This file must
+   *   define the namespace to update.
+   *
+   * @command k8s:deployment:create
+   * @throws \Dockworker\DockworkerException
+   *
+   * @usage k8s:deployment:create /tmp/deployment/lib-unb-ca.Deployment.prod.yaml
+   *
+   * @kubectl
+   */
+  public function createDeploymentImage($file) {
+    $this->kubectlExec(
+      'create',
       [
         '-f',
         $file,
@@ -346,6 +373,8 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @usage k8s:deployment:delete:default dev
    *
    * @hidden
+   *
+   * @dockerimage
    * @kubectl
    */
   public function deleteK8sDeploymentDefault(ConsoleIO $io, $env) {
@@ -364,6 +393,8 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @usage k8s:deployment:create:default dev
    *
    * @hidden
+   *
+   * @dockerimage
    * @kubectl
    */
   public function createK8sDeploymentDefault(ConsoleIO $io, $env) {
