@@ -6,6 +6,7 @@ use Dockworker\DockworkerException;
 use Dockworker\KubernetesDeploymentTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 use Robo\Robo;
+use Robo\Symfony\ConsoleIO;
 
 /**
  * Defines the commands used to interact with Kubernetes deployment resources.
@@ -335,6 +336,40 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
     }
   }
 
+  /**
+   * Deletes the k8s deployment from the dockworker default deployment file.
+   *
+   * @param string $env
+   *   The environment to delete the deployment from.
+   *
+   * @command k8s:deployment:delete:default
+   * @usage k8s:deployment:delete:default dev
+   *
+   * @hidden
+   * @kubectl
+   */
+  public function deleteK8sDeploymentDefault(ConsoleIO $io, $env) {
+    $image_name = "{$this->dockerImageName}:$env";
+    $cron_file = $this->getTokenizedKubeFile($this->repoRoot, $env, $image_name, 'deployment');
+    $this->setRunOtherCommand("k8s:deployment:delete $cron_file");
+  }
 
+  /**
+   * Creates the k8s deployment from the dockworker default deployment file.
+   *
+   * @param string $env
+   *   The environment to create the deployment from.
+   *
+   * @command k8s:deployment:create:default
+   * @usage k8s:deployment:create:default dev
+   *
+   * @hidden
+   * @kubectl
+   */
+  public function createK8sDeploymentDefault(ConsoleIO $io, $env) {
+    $image_name = "{$this->dockerImageName}:$env";
+    $cron_file = $this->getTokenizedKubeFile($this->repoRoot, $env, $image_name, 'deployment');
+    $this->setRunOtherCommand("k8s:deployment:create $cron_file");
+  }
 
 }
