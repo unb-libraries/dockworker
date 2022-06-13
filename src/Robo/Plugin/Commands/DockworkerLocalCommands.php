@@ -68,7 +68,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   }
 
   /**
-   * Provides log checker with ignored log exception items for local Drupal.
+   * Provides log checker with ignored log exception items for local.
    *
    * @hook on-event dockworker-local-log-error-exceptions
    */
