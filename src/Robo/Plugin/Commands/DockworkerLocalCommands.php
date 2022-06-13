@@ -75,6 +75,7 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
   public function getCoreErrorLogLocalExceptions() {
     return [
       'Operation CREATE USER failed' => 'Creating a local user failing is expected in deployment',
+      'errors=0' => 'A report of zero errors is not an error',
     ];
   }
 

@@ -403,4 +403,15 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
     $this->setRunOtherCommand("k8s:deployment:create $cron_file");
   }
 
+  /**
+   * Provides log checker with ignored log exception items for deployed pods.
+   *
+   * @hook on-event dockworker-deployment-log-error-exceptions
+   */
+  public function getCoreErrorLogDeployedExceptions() {
+    return [
+      'errors=0' => 'A report of zero errors is not an error',
+    ];
+  }
+
 }
