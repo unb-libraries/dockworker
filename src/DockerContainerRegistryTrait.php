@@ -10,7 +10,7 @@ use Robo\Robo;
 /**
  * Provides methods to push to a remote docker repo.
  */
-trait DockerImagePushTrait {
+trait DockerContainerRegistryTrait {
 
   use GitHubTrait;
   use PersistentGlobalDockworkerConfigTrait;
@@ -44,47 +44,65 @@ trait DockerImagePushTrait {
    */
   public function authToRepository() {
     if ($this->dockerImageRepo == 'ghcr') {
-      $user = $this->getSetGlobalDockworkerConfigItem(
-        'dockworker.github.registry.user',
-        "Enter the username for auth to the GitHub container registry",
-        $this->io(),
-        '',
-        'GH_CONTAINER_REGISTRY_USER'
-      );
-      $token = $this->getSetGlobalDockworkerConfigItem(
-        'dockworker.github.registry.token',
-        "Enter the token for auth to the GitHub container registry",
-        $this->io(),
-        '',
-        'GH_CONTAINER_REGISTRY_TOKEN'
-      );
-      exec("(echo \"$token\" | docker login ghcr.io -u \"$user\" --password-stdin)", $output, $return);
-      if ($return != '0') {
-        throw new DockworkerException("GitHub Container Registry auth failure.");
-      }
+      $this->authToGitHubContainerRegistry();
     }
     elseif ($this->dockerImageRepo == 'dockercloud') {
-      $user = $this->getSetGlobalDockworkerConfigItem(
-        'dockworker.dockercloud.registry.user',
-        "Enter the username for auth to the Docker Cloud container registry",
-        $this->io(),
-        '',
-        'DOCKER_CLOUD_USER_NAME'
-      );
-      $pass = $this->getSetGlobalDockworkerConfigItem(
-        'dockworker.dockercloud.registry.password',
-        "Enter the password for auth to the Docker Cloud container registry",
-        $this->io(),
-        '',
-        'DOCKER_CLOUD_USER_PASS'
-      );
-      exec("(echo \"$pass\" | docker login --username \"$user\" --password-stdin)", $output, $return);
-      if ($return != '0') {
-        throw new DockworkerException("DockerCloud auth failure.");
-      }
+      $this->authToDockerCloudContainerRegistry();
     }
     else {
       throw new DockworkerException("The docker image repository type '{$this->dockerImageRepo}' is unsupported.");
+    }
+  }
+
+  /**
+   * Authenticates the user to docker cloud's container registry.
+   *
+   * @throws \Dockworker\DockworkerException
+   */
+  protected function authToDockerCloudContainerRegistry() {
+    $user = $this->getSetGlobalDockworkerConfigItem(
+      'dockworker.dockercloud.registry.user',
+      "Enter the username for auth to the Docker Cloud container registry",
+      $this->io(),
+      '',
+      'DOCKER_CLOUD_USER_NAME'
+    );
+    $pass = $this->getSetGlobalDockworkerConfigItem(
+      'dockworker.dockercloud.registry.token',
+      "Enter the access token for auth to the Docker Cloud container registry",
+      $this->io(),
+      '',
+      'DOCKER_CLOUD_ACCESS_TOKEN'
+    );
+    exec("(echo \"$pass\" | docker login --username \"$user\" --password-stdin)", $output, $return);
+    if ($return != '0') {
+      throw new DockworkerException("DockerCloud auth failure.");
+    }
+  }
+
+  /**
+   * Authenticates the user to GitHub's container registry.
+   *
+   * @throws \Dockworker\DockworkerException
+   */
+  protected function authToGitHubContainerRegistry() {
+    $user = $this->getSetGlobalDockworkerConfigItem(
+      'dockworker.github.registry.user',
+      "Enter the username for auth to the GitHub container registry",
+      $this->io(),
+      '',
+      'GH_CONTAINER_REGISTRY_USER'
+    );
+    $token = $this->getSetGlobalDockworkerConfigItem(
+      'dockworker.github.registry.token',
+      "Enter the token for auth to the GitHub container registry",
+      $this->io(),
+      '',
+      'GH_CONTAINER_REGISTRY_TOKEN'
+    );
+    exec("(echo \"$token\" | docker login ghcr.io -u \"$user\" --password-stdin)", $output, $return);
+    if ($return != '0') {
+      throw new DockworkerException("GitHub Container Registry auth failure.");
     }
   }
 

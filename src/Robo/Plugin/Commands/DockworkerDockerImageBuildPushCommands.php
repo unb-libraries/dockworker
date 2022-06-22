@@ -2,7 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\DockerImagePushTrait;
+use Dockworker\DockerContainerRegistryTrait;
 use Dockworker\DockerImageTrait;
 use Dockworker\KubernetesDeploymentTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerDockerImageBuildCommands;
@@ -12,7 +12,7 @@ use Dockworker\Robo\Plugin\Commands\DockworkerDockerImageBuildCommands;
  */
 class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildCommands {
 
-  use DockerImagePushTrait;
+  use DockerContainerRegistryTrait;
   use DockerImageTrait;
   use KubernetesDeploymentTrait;
 
