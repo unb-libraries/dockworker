@@ -42,8 +42,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * system-wide.
    *
    * @command docker:cleanup
-   *
-   * @usage docker:cleanup
    */
   public function localCleanup() {
     $this->say("Cleaning up dangling images and volumes:");
@@ -57,8 +55,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * command, and all data will be preserved.
    *
    * @command local:halt
-   *
-   * @usage local:halt
    *
    * @return \Robo\Result
    *   The result of the command.
@@ -84,8 +80,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @command local:destroy
    *
-   * @usage local:destroy
-   *
    * @return \Robo\Result
    *   The result of the command.
    */
@@ -98,8 +92,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * Halts this local application, removes its persistent data, and resets all repo files to the state at last commit.
    *
    * @command local:hard-reset
-   *
-   * @usage local:hard-reset
    *
    * @return \Robo\Result
    *   The result of the command.
@@ -122,8 +114,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @command logs:local
    * @throws \Exception
-   *
-   * @usage logs:local
    *
    * @return \Robo\Result
    *   The result of the command.
@@ -201,8 +191,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @aliases logs
    * @throws \Exception
    *
-   * @usage logs:tail:local
-   *
    * @return \Robo\Result
    *   The result of the command.
    */
@@ -241,8 +229,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @command local:build
    * @aliases build
    * @throws \Dockworker\DockworkerException
-   *
-   * @usage local:build
    */
   public function build(array $options = ['no-cache' => FALSE]) {
     $this->io()->title("Building application theme");
@@ -268,8 +254,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @command theme:build-all
    * @aliases build-themes
-   *
-   * @usage theme:build-all
    */
   public function buildThemes() {
   }
@@ -280,8 +264,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @command shell:local
    * @aliases shell
    * @throws \Exception
-   *
-   * @usage shell:local
    *
    * @return \Robo\Result
    *   The result of the command.
@@ -299,8 +281,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @command docker:image:pull-upstream
    * @throws \Dockworker\DockworkerException
-   *
-   * @usage docker:image:pull-upstream
    */
   public function pullUpstreamImages() {
     $this->io()->title("Fetching Upstream Images");
@@ -324,8 +304,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @command local:rm
    * @aliases rm
-   *
-   * @usage local:rm
    *
    * @return \Robo\Result
    *   The result of the removal command.
@@ -367,8 +345,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @command local:start
    * @aliases start
    * @throws \Exception
-   *
-   * @usage local:start
    */
   public function start(array $options = ['no-cache' => FALSE, 'no-tail-logs' => FALSE, 'no-update-hostfile' => FALSE, 'no-upstream-pull' => FALSE, 'no-build' => FALSE, 'only-start' => FALSE, 'force-recreate' => FALSE, 'only-primary' => FALSE]) {
     if (!$options['no-update-hostfile'] && !$options['only-start']) {
@@ -520,8 +496,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @command logs:check:local
    * @throws \Dockworker\DockworkerException
-   *
-   * @usage logs:check:local
    */
   public function localLogsCheck(array $options = ['all' => FALSE]) {
     $this->getlocalRunning();
@@ -558,8 +532,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @command local:build-test
    * @throws \Exception
-   *
-   * @usage local:build-test
    */
   public function buildAndTest(array $options = ['no-kill' => FALSE, 'no-rm' => FALSE]) {
     if (!$options['no-kill']) {
@@ -589,8 +561,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    * @command local:start-over
    * @aliases start-over, deploy
    * @throws \Exception
-   *
-   * @usage local:start-over
    */
   public function startOver(array $options = ['no-cache' => FALSE, 'no-kill' => FALSE, 'no-rm' => FALSE]) {
     if (!$options['no-kill']) {
@@ -621,8 +591,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
      * @command local:rebuild
      * @aliases rebuild
      * @throws \Exception
-     *
-     * @usage local:rebuild
      */
     public function rebuild(array $options = ['no-cache' => FALSE]) {
       $this->io()->title("Rebuilding $this->instanceName");
@@ -662,8 +630,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @command local:up
    * @aliases up
-   *
-   * @usage local:up
    */
   public function up(array $options = ['force-recreate' => FALSE, 'only-primary' => FALSE] ) {
     $this->io()->title("Starting local containers");
@@ -685,8 +651,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @command hostfile:update
    * @throws \Dockworker\DockworkerException
-   *
-   * @usage hostfile:update
    */
   public function setHostFileEntries() {
     $hostnames = $this->getHostFileHostnames();
@@ -711,8 +675,6 @@ class DockworkerLocalCommands extends DockworkerCommands implements CustomEventA
    *
    * @command hostfile:revert
    * @throws \Dockworker\DockworkerException
-   *
-   * @usage hostfile:revert
    */
   public function unSetHostFileEntries() {
     $hostnames = $this->getHostFileHostnames();

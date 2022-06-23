@@ -21,8 +21,6 @@ class DockworkerCIServicesWorkflowCommands extends DockworkerCommands {
    * @aliases update-ci-workflow
    * @aliases uciw
    *
-   * @usage ci:workflow:file:write
-   *
    * @actionsworkflowcommand
    */
   public function setApplicationCIServicesWorkflowFile() {

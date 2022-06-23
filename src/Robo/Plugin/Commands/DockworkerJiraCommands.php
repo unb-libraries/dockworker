@@ -43,8 +43,6 @@ class DockworkerJiraCommands extends DockworkerCommands {
    * @aliases jiraticket
    * @aliases jt
    *
-   * @usage jira:issue:create
-   *
    * @jira
    */
   public function createJiraIssue($options = ['summary' => '', 'description' => '', 'type' => '', 'yes' => FALSE]) {

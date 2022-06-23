@@ -163,8 +163,6 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    *
    * @command dockworker:update
    * @aliases update
-   *
-   * @usage dockworker:update
    */
   public function getDockworkerUpdates() {
     $this->io()->title("Updating Dockworker");
@@ -359,8 +357,6 @@ class DockworkerCommands extends Tasks implements ContainerAwareInterface, Logge
    * Sets up the required git hooks for dockworker.
    *
    * @command dockworker:git:setup-hooks
-   *
-   * @usage dockworker:git:setup-hooks
    */
   public function setupHooks() {
     $source_dir = $this->repoRoot . "/vendor/unb-libraries/dockworker/scripts/git-hooks";

@@ -30,7 +30,7 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
    * @command docker:image:build-push
    * @throws \Exception
    *
-   * @usage docker:image:build-push prod
+   * @usage prod
    *
    * @dockerimage
    * @dockerpush
@@ -54,7 +54,7 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
    * @command docker:image:deploy
    * @throws \Exception
    *
-   * @usage docker:image:deploy prod
+   * @usage prod
    *
    * @dockerimage
    * @dockerpush

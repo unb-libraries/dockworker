@@ -18,8 +18,6 @@ class DockworkerApplicationInfoCommands extends DockworkerCommands {
    *
    * @command cron:suggest-timings
    * @aliases cron-info
-   *
-   * @usage cron:suggest-timings
    */
   public function getApplicationCronInfo() : void {
     $this->say($this->instanceName);

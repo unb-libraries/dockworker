@@ -29,7 +29,7 @@ class DockworkerDeploymentTransferCommands extends DockworkerDeploymentCommands 
    * @return \Robo\Result
    *   The result of the copy command.
    *
-   * @usage sync:file:local:deployed prod /tmp/src_file.txt /tmp/dst_file.txt
+   * @usage prod /tmp/src_file.txt /tmp/dst_file.txt
    *
    * @kubectl
    */
@@ -64,7 +64,7 @@ class DockworkerDeploymentTransferCommands extends DockworkerDeploymentCommands 
    * @return \Robo\Result
    *   The result of the copy command.
    *
-   * @usage sync:file:deployed:local prod /tmp/src_file.txt /tmp/dst_file.txt
+   * @usage prod /tmp/src_file.txt /tmp/dst_file.txt
    *
    * @kubectl
    */

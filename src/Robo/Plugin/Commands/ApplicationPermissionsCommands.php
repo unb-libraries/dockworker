@@ -20,8 +20,6 @@ class ApplicationPermissionsCommands extends DockworkerCommands {
    *
    * @command dockworker:permissions:fix
    * @aliases pfix
-   *
-   * @usage dockworker:permissions:fix
    */
   public function fixPermissions(array $options = ['path' => '']) : void {
   }

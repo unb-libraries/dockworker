@@ -30,7 +30,7 @@ class CommitMessageValidateCommands extends DockworkerCommands {
    * @command validate:git:commit-msg
    * @throws \Dockworker\DockworkerException
    *
-   * @usage validate:git:commit-msg /tmp/commit_msg.txt
+   * @usage /tmp/commit_msg.txt
    */
   public function validateCommitMsg($message_file) {
     $message_file_path = $this->repoRoot . '/' . $message_file;

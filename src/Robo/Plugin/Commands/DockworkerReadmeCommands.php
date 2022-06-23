@@ -23,8 +23,6 @@ class DockworkerReadmeCommands extends DockworkerCommands implements CustomEvent
    * @command readme:file:write
    * @aliases ru
    *
-   * @usage readme:file:write
-   *
    * @github
    * @readmecommand
    */

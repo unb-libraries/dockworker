@@ -27,8 +27,6 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @throws \Dockworker\DockworkerException
    * @throws \Exception
    *
-   * @usage k8s:deployment:status prod
-   *
    * @kubectl
    */
   public function getDeploymentRolloutStatus($env) {
@@ -55,8 +53,6 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @command k8s:deployment:restart
    * @throws \Dockworker\DockworkerException
    * @throws \Exception
-   *
-   * @usage k8s:deployment:restart prod
    *
    * @kubectl
    */
@@ -99,7 +95,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @throws \Dockworker\DockworkerException
    * @throws \Exception
    *
-   * @usage k8s:deployment:image:update ghcr.io/unb-libraries/lib.unb.ca prod-20200228122322 prod
+   * @usage ghcr.io/unb-libraries/lib.unb.ca prod-20200228122322 prod
    *
    * @kubectl
    */
@@ -140,7 +136,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @command k8s:deployment:update
    * @throws \Dockworker\DockworkerException
    *
-   * @usage k8s:deployment:update /tmp/deployment/lib-unb-ca.Deployment.prod.yaml
+   * @usage /tmp/deployment/lib-unb-ca.Deployment.prod.yaml
    *
    * @kubectl
    */
@@ -165,7 +161,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @command k8s:deployment:create
    * @throws \Dockworker\DockworkerException
    *
-   * @usage k8s:deployment:create /tmp/deployment/lib-unb-ca.Deployment.prod.yaml
+   * @usage /tmp/deployment/lib-unb-ca.Deployment.prod.yaml
    *
    * @kubectl
    */
@@ -190,7 +186,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @command k8s:deployment:delete
    * @throws \Dockworker\DockworkerException
    *
-   * @usage k8s:deployment:delete /tmp/deployment/lib-unb-ca.Deployment.prod.yaml
+   * @usage /tmp/deployment/lib-unb-ca.Deployment.prod.yaml
    *
    * @kubectl
    */
@@ -216,7 +212,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @command k8s:deployment:delete-apply
    * @throws \Dockworker\DockworkerException
    *
-   * @usage k8s:deployment:delete-apply /tmp/lib-unb-ca.Deployment.prod.yaml
+   * @usage /tmp/lib-unb-ca.Deployment.prod.yaml
    *
    * @kubectl
    */
@@ -234,7 +230,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @command logs:deployed
    * @throws \Exception
    *
-   * @usage logs:deployed prod
+   * @usage prod
    *
    * @kubectl
    */
@@ -252,7 +248,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @command logs:check:deployed
    * @throws \Exception
    *
-   * @usage logs:check:deployed prod
+   * @usage prod
    *
    * @kubectl
    */
@@ -276,7 +272,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @return \Robo\Result
    *   The result of the shell.
    *
-   * @usage shell:deployed prod /bin/sh
+   * @usage prod /bin/sh
    *
    * @kubectl
    */
@@ -370,7 +366,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *   The environment to delete the deployment from.
    *
    * @command k8s:deployment:delete:default
-   * @usage k8s:deployment:delete:default dev
+   * @usage dev
    *
    * @hidden
    *
@@ -390,7 +386,7 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *   The environment to create the deployment from.
    *
    * @command k8s:deployment:create:default
-   * @usage k8s:deployment:create:default dev
+   * @usage dev
    *
    * @hidden
    *

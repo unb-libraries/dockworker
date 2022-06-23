@@ -23,7 +23,7 @@ class DockworkerDeploymentCronCommands extends DockworkerDeploymentCommands {
    * @command cron:logs:deployed
    * @throws \Exception
    *
-   * @usage cron:logs:deployed dev
+   * @usage dev
    *
    * @kubectl
    */
@@ -48,7 +48,7 @@ class DockworkerDeploymentCronCommands extends DockworkerDeploymentCommands {
    * @command cron:exec:deployed
    * @throws \Exception
    *
-   * @usage cron:exec:deployed prod
+   * @usage prod
    *
    * @kubectl
    */
@@ -72,7 +72,7 @@ class DockworkerDeploymentCronCommands extends DockworkerDeploymentCommands {
    * @command cron:exec-check:deployed
    * @throws \Exception
    *
-   * @usage cron:exec-check:deployed prod
+   * @usage prod
    *
    * @kubectl
    */
@@ -100,7 +100,7 @@ class DockworkerDeploymentCronCommands extends DockworkerDeploymentCommands {
    * @command cron:logs:check:deployed
    * @throws \Exception
    *
-   * @usage cron:logs:check:deployed prod
+   * @usage prod
    *
    * @kubectl
    */

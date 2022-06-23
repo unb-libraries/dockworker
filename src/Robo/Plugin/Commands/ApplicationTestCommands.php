@@ -14,8 +14,6 @@ class ApplicationTestCommands extends DockworkerCommands {
    *
    * @command tests:all
    * @aliases test
-   *
-   * @usage tests:all
    */
   public function testApplication() {
     // No-op here. Specific frameworks implement this in post-command hook.

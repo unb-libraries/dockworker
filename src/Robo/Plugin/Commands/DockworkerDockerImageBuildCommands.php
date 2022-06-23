@@ -35,7 +35,7 @@ class DockworkerDockerImageBuildCommands extends DockworkerCommands {
    * @command docker:image:build
    * @throws \Exception
    *
-   * @usage docker:image:build prod
+   * @usage prod
    *
    * @return \Robo\ResultData
    *

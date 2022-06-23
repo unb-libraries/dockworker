@@ -45,7 +45,7 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
    * @aliases restart-latest-build
    * @aliases cirl
    *
-   * @usage ci:workflow:run:latest:restart --branch=dev
+   * @usage --branch=dev
    *
    * @github
    * @ci
@@ -71,7 +71,7 @@ class DockworkerCIServicesCommands extends DockworkerCommands {
    * @aliases ci-deploy-times
    * @aliases cidt
    *
-   * @usage ci:workflow:run:times --branch=prod
+   * @usage --branch=prod
    *
    * @github
    * @ci
