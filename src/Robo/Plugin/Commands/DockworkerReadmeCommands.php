@@ -7,6 +7,7 @@ use Consolidation\AnnotatedCommand\Events\CustomEventAwareTrait;
 use Dockworker\GitContributorsListTrait;
 use Dockworker\RepoReadmeWriterTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
+use Twig\TemplateWrapper;
 
 /**
  * Defines a class to write a standardized README to a repository.
@@ -16,6 +17,22 @@ class DockworkerReadmeCommands extends DockworkerCommands implements CustomEvent
   use CustomEventAwareTrait;
   use GitContributorsListTrait;
   use RepoReadmeWriterTrait;
+
+  const DOCKWORKER_DOCUMENTATION_DIR = 'documentation';
+
+  /**
+   * The path to the project documentation.
+   *
+   * @var string
+   */
+  protected string $documentationPath;
+
+  /**
+   * The README template.
+   *
+   * @var \Twig\TemplateWrapper
+   */
+  protected TemplateWrapper $readMeTemplate;
 
   /**
    * Writes a standardized README.md file for this application to this repository.
@@ -44,18 +61,54 @@ class DockworkerReadmeCommands extends DockworkerCommands implements CustomEvent
 
     // Render the file.
     $loader = new \Twig\Loader\FilesystemLoader($this->readMeTemplatePaths);
-    $this->readMeTwig = new \Twig\Environment($loader);
-    $template = $this->readMeTwig->load('README.md.twig');
+    $readme_twig = new \Twig\Environment($loader);
+    $this->readMeTemplate = $readme_twig->load('README.md.twig');
+
     $this->writeReadme(
-      $template->render(
+      $this->readMeTemplate->render(
         [
-          'instance_name' => $this->instanceName,
           'contributors' => $this->getGitHubContributors($this->gitHubOwner, $this->gitHubRepo),
-          'screenshot_uri' => $this->getReadmeScreenshotUri()
+          'has_documentation' => $this->projectHasReadMeDocumentationFile(),
+          'instance_name' => $this->instanceName,
+          'screenshot_uri' => $this->getReadmeScreenshotUri(),
         ]
       )
     );
     $this->say('The updated README.md contents have been written.');
+  }
+
+  /**
+   * Sets the project documentation path.
+   */
+  protected function setDocumentationPath() : void {
+    $this->documentationPath = implode(
+      '/',
+      [
+        $this->repoRoot,
+        self::DOCKWORKER_DOCUMENTATION_DIR,
+      ]
+    );
+  }
+
+  /**
+   * Determines if the project documentation README.md file exists.
+   *
+   * @return bool
+   */
+  protected function projectHasReadMeDocumentationFile() : bool {
+    $this->setDocumentationPath();
+    if (!file_exists(
+      implode(
+        '/',
+        [
+          $this->documentationPath,
+          'README.md',
+        ]
+      )
+    )) {
+      return FALSE;
+    }
+    return TRUE;
   }
 
   /**

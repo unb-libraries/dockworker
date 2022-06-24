@@ -5,6 +5,9 @@
 {% endblock %}
 
 {% block description %}{% include 'description.md.twig' %}{% endblock %}
+{% if has_documentation %}
+{% block documentation %}{% include 'documentation.md.twig' %}{% endblock %}
+{% endif %}
 
 {% block howto %}{% include 'howto.md.twig' %}{% endblock %}
 
