@@ -203,6 +203,39 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
   }
 
   /**
+   * Creates required secrets for cypress testing.
+   *
+   * @command k8s:deployment:create-test-secrets
+   * @throws \Dockworker\DockworkerException
+   *
+   * @kubectl
+   */
+  public function createTestSecrets() {
+    $this->kubectlExec(
+      'delete',
+      [
+        'secret',
+        $this->instanceSlug . '-cypress',
+        '--ignore-not-found=true',
+        '--namespace=prod',
+      ],
+      TRUE
+    );
+    $this->kubectlExec(
+      'create',
+      [
+        'secret',
+        'generic',
+        $this->instanceSlug . '-cypress',
+        "--from-file=file=$this->repoRoot/tests/cypress/spec.js",
+        "--from-literal=file_name={$this->instanceSlug}_spec.js",
+        '--namespace=prod',
+      ],
+      TRUE
+    );
+  }
+
+  /**
    * Deletes this application's k8s deployment and re-creates it.
    *
    * @param string $file

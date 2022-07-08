@@ -92,6 +92,13 @@ class DockworkerDockerImageBuildPushCommands extends DockworkerDockerImageBuildC
       $this->setRunOtherCommand("k8s:deployment:delete-apply $backup_file");
     }
 
+    $testing_file = static::getKubernetesFileNameFromBranch($this->repoRoot, $env, 'testing');
+    if (file_exists($testing_file)) {
+      $this->say('Updating test configuration..');
+      $this->setRunOtherCommand("k8s:deployment:create-test-secrets");
+      $this->setRunOtherCommand("k8s:deployment:delete-apply $testing_file");
+    }
+
     $this->say('Checking for successful deployment..');
     $deploy_namespace = static::getKubernetesDeploymentFileNamespace($deployment_file);
     $this->setRunOtherCommand("k8s:deployment:status $deploy_namespace");
