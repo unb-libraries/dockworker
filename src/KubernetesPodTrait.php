@@ -120,6 +120,9 @@ trait KubernetesPodTrait {
   /**
    * Gets the name of the latest pod selected.
    *
+   * @return string
+   *   The ID of the latest pod in the configuration.
+   *
    * @throws \Dockworker\DockworkerException
    */
   protected function kubernetesGetLatestPod() {
@@ -373,8 +376,8 @@ trait KubernetesPodTrait {
    *
    * @throws \Dockworker\DockworkerException
    *
-   * @return string
-   *   The STDOUT output from the command.
+   * @return string[]
+   *   The STDOUT output from the command, each line as an array element.
    */
   protected function kubernetesPodExecCommand($pod, $namespace, $command, $except_on_error = TRUE) {
     exec(

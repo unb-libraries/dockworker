@@ -357,7 +357,9 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    * @param $action
    *   The intended action being taken, used for messaging.
    *
-   * @return void
+   * @return string
+   *   The ID of the latest pod in the configuration.
+   *
    * @throws \Exception
    */
   protected function k8sGetLatestPod($env, $type, $action) {
