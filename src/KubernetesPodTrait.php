@@ -91,7 +91,7 @@ trait KubernetesPodTrait {
     $this->kubernetesPodParentResourceName = $entity_name;
     $this->kubernetesPodParentResourceType = $resource_type;
     $this->kubernetesPodParentResourceNamespace = $namespace;
-    $this->kubernetesSetPods();
+    $this->kubernetesSetPods($quiet);
     $this->kubernetesThrowExceptionIfNoPods();
   }
 
