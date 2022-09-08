@@ -74,13 +74,19 @@ trait KubernetesPodTrait {
    * Sets up the pod details for the remote Kubernetes pods.
    *
    * @param string $entity_name
-   *   The deployment name.
+   *   The resource name.
+   * @param string $resource_type
+   *   The type of resource being set up.
+   * @param string $namespace
+   *   The namespace of the resource.
    * @param string $action
    *   A description of the actions intended to take (Used for labels).
+   * @param bool $quiet
+   *   TRUE if all io should be suppressed.
    *
    * @throws \Exception
    */
-  protected function kubernetesSetupPods($entity_name, $resource_type, $namespace, $action) {
+  protected function kubernetesSetupPods($entity_name, $resource_type, $namespace, $action, $quiet = FALSE) {
     $this->kubernetesCurPods = [];
     $this->kubernetesPodParentResourceName = $entity_name;
     $this->kubernetesPodParentResourceType = $resource_type;
@@ -245,7 +251,7 @@ trait KubernetesPodTrait {
    * @throws \Dockworker\DockworkerException
    * @throws \Exception
    */
-  private function kubernetesSetPods() {
+  private function kubernetesSetPods($quiet = FALSE) {
     $this->kubernetesSetMatchingResource();
     switch ($this->kubernetesPodParentResourceType) {
       case 'deployment':
@@ -259,7 +265,9 @@ trait KubernetesPodTrait {
         break;
     }
     $num_pods = count($this->kubernetesCurPods);
-    $this->io()->title("[$this->kubernetesPodParentResourceType/$this->kubernetesPodParentResourceName:$this->kubernetesPodParentResourceNamespace] $num_pods pods found.");
+    if (!$quiet) {
+      $this->io()->title("[$this->kubernetesPodParentResourceType/$this->kubernetesPodParentResourceName:$this->kubernetesPodParentResourceNamespace] $num_pods pods found.");
+    }
   }
 
   /**

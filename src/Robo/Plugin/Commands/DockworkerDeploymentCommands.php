@@ -333,17 +333,20 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *   The type of k8s resource to target.
    * @param $action
    *   The intended action being taken, used for messaging.
+   * @param bool $quiet
+   *   TRUE if all io should be suppressed.
    *
    * @return void
    * @throws \Exception
    */
-  protected function k8sInitSetupPods($env, $type, $action) {
+  protected function k8sInitSetupPods($env, $type, $action, $quiet = FALSE) {
     $this->deployedK8sResourceInit($this->repoRoot, $env, $type);
     $this->kubernetesSetupPods(
       $this->deployedK8sResourceName,
       $type,
       $this->deployedK8sResourceNameSpace,
-      $action
+      $action,
+      $quiet
     );
   }
 
@@ -356,14 +359,16 @@ class DockworkerDeploymentCommands extends DockworkerLocalCommands {
    *   The type of k8s resource to target.
    * @param $action
    *   The intended action being taken, used for messaging.
+   * @param bool $quiet
+   *   TRUE if all io should be suppressed.
    *
    * @return string
    *   The ID of the latest pod in the configuration.
    *
    * @throws \Exception
    */
-  protected function k8sGetLatestPod($env, $type, $action) {
-    $this->k8sInitSetupPods($env, $type, $action);
+  protected function k8sGetLatestPod($env, $type, $action, $quiet = FALSE) {
+    $this->k8sInitSetupPods($env, $type, $action, $quiet);
     return $this->kubernetesGetLatestPod();
   }
 
