@@ -2,7 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\DockworkerBaseCommands;
+use Dockworker\Robo\Plugin\Commands\DockworkerBaseCommands;
 
 /**
  * Defines a base class for all Dockworker Robo commands.
