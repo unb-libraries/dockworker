@@ -17,7 +17,6 @@
     "lesstif/php-jira-rest-client": "^1",
     "scssphp/scssphp": "^1",
     "squizlabs/php_codesniffer": "^3",
-    "twig/twig": "^3",
     "unb-libraries/dockworker-base": "^5"
   },
   "license": "MIT",
