@@ -344,6 +344,7 @@ class DockworkerLocalDaemonCommands extends DockworkerLocalCommands {
       $this->setRunOtherCommand('local:rm');
     }
 
+    $this->io()->title("Building application");
     $start_command = 'local:start';
     if ($options['no-cache']) {
       $start_command = $start_command . ' --no-cache';
@@ -475,20 +476,6 @@ class DockworkerLocalDaemonCommands extends DockworkerLocalCommands {
       $hostnames = array_merge($hostnames, $additional_hostnames);
     }
     return $hostnames;
-  }
-
-  /**
-   * Deletes any persistent data from this application's stopped local deployment.
-   *
-   * @command local:rm
-   * @aliases rm
-   *
-   * @return \Robo\Result
-   *   The result of the removal command.
-   */
-  public function removeData() {
-    $this->unSetHostFileEntries();
-    parent::removeData();
   }
 
   /**
