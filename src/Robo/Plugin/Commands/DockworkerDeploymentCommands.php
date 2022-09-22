@@ -5,14 +5,14 @@ namespace Dockworker\Robo\Plugin\Commands;
 use Dockworker\DockerImageTrait;
 use Dockworker\DockworkerException;
 use Dockworker\KubernetesDeploymentTrait;
-use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
+use Dockworker\Robo\Plugin\Commands\DockworkerLocalDaemonCommands;
 use Robo\Robo;
 use Robo\Symfony\ConsoleIO;
 
 /**
  * Defines the commands used to interact with Kubernetes deployment resources.
  */
-class DockworkerDeploymentCommands extends DockworkerLocalCommands {
+class DockworkerDeploymentCommands extends DockworkerLocalDaemonCommands {
 
   use DockerImageTrait;
   use KubernetesDeploymentTrait;
