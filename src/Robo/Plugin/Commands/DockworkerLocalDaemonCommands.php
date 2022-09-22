@@ -2,9 +2,11 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Dockworker\DockworkerException;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 use Robo\Robo;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Defines the commands used to interact with a Dockworker local application.
@@ -16,6 +18,13 @@ class DockworkerLocalDaemonCommands extends DockworkerLocalCommands {
   const ERROR_UPDATING_HOSTFILE = 'Error updating hostfile!';
   const WAIT_DEPLOYMENT_CYCLE_LENGTH = 1;
   const WAIT_DEPLOYMENT_MAX_REPEATS = 300;
+
+  /**
+   * The shell of the current application.
+   *
+   * @var string
+   */
+  protected $applicationShell = '/bin/sh';
 
   /**
    * Halts this local deamon application without removing its persistent data.
@@ -466,6 +475,50 @@ class DockworkerLocalDaemonCommands extends DockworkerLocalCommands {
       $hostnames = array_merge($hostnames, $additional_hostnames);
     }
     return $hostnames;
+  }
+
+  /**
+   * Deletes any persistent data from this application's stopped local deployment.
+   *
+   * @command local:rm
+   * @aliases rm
+   *
+   * @return \Robo\Result
+   *   The result of the removal command.
+   */
+  public function removeData() {
+    $this->unSetHostFileEntries();
+    parent::removeData();
+  }
+
+  /**
+   * Sets the application shell used.
+   *
+   * @hook init
+   */
+  public function setApplicationShell() {
+    $deployment_shell = Robo::Config()->get('dockworker.application.shell');
+    if (!empty($deployment_shell)) {
+      $this->applicationShell = $deployment_shell;
+    }
+  }
+
+  /**
+   * Determines the local primary service deployment port.
+   *
+   * @return string
+   *   The local primary service deployment port.
+   */
+  protected function getLocalDeploymentPort() {
+    $docker_compose = Yaml::parse(
+      file_get_contents(
+        $this->repoRoot . '/docker-compose.yml'
+      )
+    );
+    foreach($docker_compose['services'][$this->instanceName]['ports'] as $portmap) {
+      $values = explode(':', $portmap);
+      return $values[0];
+    }
   }
 
 }
