@@ -3,6 +3,7 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\DockworkerException;
+use Dockworker\LocalDockerContainerTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 use Robo\Robo;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -12,6 +13,8 @@ use Symfony\Component\Yaml\Yaml;
  * Defines the commands used to interact with a Dockworker local application.
  */
 class DockworkerLocalDaemonCommands extends DockworkerLocalCommands {
+
+  use LocalDockerContainerTrait;
 
   const ERROR_CONTAINER_MISSING = 'The %s local deployment is not running. You can start it with \'dockworker deploy\'.';
   const ERROR_CONTAINER_STOPPED = 'The %s local deployment appears to be stopped.';
@@ -41,30 +44,7 @@ class DockworkerLocalDaemonCommands extends DockworkerLocalCommands {
     $this->_exec('docker-compose stop --timeout 10');
   }
 
-  /**
-   * Checks if the local application is running.
-   *
-   * @throws \Dockworker\DockworkerException
-   */
-  public function getLocalRunning() {
-    $container_name = $this->instanceName;
 
-    exec(
-      "docker inspect -f {{.State.Running}} $container_name 2>&1",
-      $output,
-      $return_code
-    );
-
-    // Check if container exists.
-    if ($return_code > 0) {
-      throw new DockworkerException(sprintf(self::ERROR_CONTAINER_MISSING, $container_name));
-    }
-
-    // Check if container stopped.
-    if ($output[0] == "false") {
-      throw new DockworkerException(sprintf(self::ERROR_CONTAINER_STOPPED, $container_name));
-    }
-  }
 
   /**
    * Displays all of this local application's previous logs and outputs any new ones that occur.
