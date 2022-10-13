@@ -15,7 +15,7 @@ jobs:
     name: Notify Slack of Testing Start
     runs-on: ubuntu-latest
     steps:
-      - uses: FranzDiebold/github-env-vars-action@v2.1.0
+      - uses: FranzDiebold/github-env-vars-action@v2.7.0
       - uses: 8398a7/action-slack@v3
         with:
           status: custom
@@ -35,10 +35,10 @@ jobs:
     name: Set deployment image tag
     runs-on: ubuntu-latest
     steps:
-      - uses: FranzDiebold/github-env-vars-action@v2.1.0
+      - uses: FranzDiebold/github-env-vars-action@v2.7.0
       -
         name: Get current time
-        uses: 1466587594/get-current-time@v2
+        uses: josStorer/get-current-time@v2.0.2
         id: current-time
         with:
           format: YYYYMMDDHHMMSS
@@ -51,7 +51,7 @@ jobs:
         name: Display Tag
         run: cat /tmp/image_tag.env
       -
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: build-image-tag
           path: /tmp/image_tag.env
@@ -61,8 +61,8 @@ jobs:
     needs: [set-deployment-image-tag]
     runs-on: ubuntu-latest
     steps:
-      - uses: FranzDiebold/github-env-vars-action@v2.1.0
-      - uses: actions/checkout@v2
+      - uses: FranzDiebold/github-env-vars-action@v2.7.0
+      - uses: actions/checkout@v3
       -
         name: Retrieve Image Tag
         uses: actions/download-artifact@v2
@@ -111,7 +111,7 @@ jobs:
       refs/heads/prod
       ', github.ref)
     steps:
-      - uses: FranzDiebold/github-env-vars-action@v2.1.0
+      - uses: FranzDiebold/github-env-vars-action@v2.7.0
       -
         name: Login to GHCR
         run: echo $GH_CONTAINER_REGISTRY_TOKEN | docker login ghcr.io -u $GH_CONTAINER_REGISTRY_USER --password-stdin
@@ -143,7 +143,7 @@ jobs:
     needs: [push-branch-tag-image-repository]
     if: always()
     steps:
-      - uses: FranzDiebold/github-env-vars-action@v2.1.0
+      - uses: FranzDiebold/github-env-vars-action@v2.7.0
       - uses: technote-space/workflow-conclusion-action@v2
       - name: Set environment variables
         run: |
