@@ -65,7 +65,7 @@ jobs:
       - uses: actions/checkout@v3
       -
         name: Retrieve Image Tag
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: build-image-tag
           path: /tmp
@@ -120,7 +120,7 @@ jobs:
           GH_CONTAINER_REGISTRY_USER: ${{secrets.GH_CONTAINER_REGISTRY_USER}}
       -
         name: Retrieve Image Tag
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: build-image-tag
           path: /tmp
@@ -144,7 +144,7 @@ jobs:
     if: always()
     steps:
       - uses: FranzDiebold/github-env-vars-action@v2.7.0
-      - uses: technote-space/workflow-conclusion-action@v2
+      - uses: technote-space/workflow-conclusion-action@v3
       - name: Set environment variables
         run: |
           if [[ ${{ env.WORKFLOW_CONCLUSION }} == success ]]; then
