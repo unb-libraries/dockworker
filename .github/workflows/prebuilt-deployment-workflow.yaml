@@ -82,10 +82,6 @@ jobs:
       -
         name: Set Image Tag
         run: cat /tmp/image_tag.env >> $GITHUB_ENV
-      -
-        name: Get current time
-        uses: gerred/actions/current-time@master
-        id: current-time
       - uses: unb-libraries/install-dockworker-composite-action@v2
       -
         name: Build Themes
@@ -93,7 +89,7 @@ jobs:
       -
         name: Build Docker Image
         env:
-          TIMESTAMP: "${{ steps.current-time.outputs.time }}"
+          TIMESTAMP: "${{ github.event.repository.updated_at }}"
         run: |
           docker build \
             --build-arg BUILD_DATE=$TIMESTAMP \
