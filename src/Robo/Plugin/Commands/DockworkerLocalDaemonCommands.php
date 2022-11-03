@@ -5,6 +5,7 @@ namespace Dockworker\Robo\Plugin\Commands;
 use Dockworker\ApplicationShellTrait;
 use Dockworker\DockworkerException;
 use Dockworker\LocalDockerContainerTrait;
+use Dockworker\WorkstationShellTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 use Robo\Robo;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -17,6 +18,7 @@ class DockworkerLocalDaemonCommands extends DockworkerLocalCommands {
 
   use LocalDockerContainerTrait;
   use ApplicationShellTrait;
+  use WorkstationShellTrait;
 
   const ERROR_CONTAINER_MISSING = 'The %s local deployment is not running. You can start it with \'dockworker deploy\'.';
   const ERROR_CONTAINER_STOPPED = 'The %s local deployment appears to be stopped.';
@@ -401,15 +403,15 @@ class DockworkerLocalDaemonCommands extends DockworkerLocalCommands {
    * @command hostfile:update
    * @throws \Dockworker\DockworkerException
    *
-   * @shell
+   * @workstationshell
    */
   public function setHostFileEntries() {
     $hostnames = $this->getHostFileHostnames();
     $this->io()->title("Configuring Local Hostfile");
     $this->say("If you are asked for a password, you should enable passwordless sudo for your user.");
     foreach ($hostnames as $hostname) {
-      $delete_command = "sudo $this->applicationShell -c 'sed -i '' -e \"/$hostname/d\" /etc/hosts'";
-      $add_command = "sudo $this->applicationShell -c 'echo \"127.0.0.1       $hostname\" >> /etc/hosts'";
+      $delete_command = "sudo $this->workstationShell -c 'sed -i '' -e \"/$hostname/d\" /etc/hosts'";
+      $add_command = "sudo $this->workstationShell -c 'echo \"127.0.0.1       $hostname\" >> /etc/hosts'";
 
       $this->say("Updating hostfile with entry for $hostname...");
       exec($delete_command, $delete_output, $delete_return);
