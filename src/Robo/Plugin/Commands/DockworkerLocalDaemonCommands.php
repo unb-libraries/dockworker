@@ -2,6 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Dockworker\ApplicationShellTrait;
 use Dockworker\DockworkerException;
 use Dockworker\LocalDockerContainerTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
@@ -15,6 +16,7 @@ use Symfony\Component\Yaml\Yaml;
 class DockworkerLocalDaemonCommands extends DockworkerLocalCommands {
 
   use LocalDockerContainerTrait;
+  use ApplicationShellTrait;
 
   const ERROR_CONTAINER_MISSING = 'The %s local deployment is not running. You can start it with \'dockworker deploy\'.';
   const ERROR_CONTAINER_STOPPED = 'The %s local deployment appears to be stopped.';
@@ -22,12 +24,6 @@ class DockworkerLocalDaemonCommands extends DockworkerLocalCommands {
   const WAIT_DEPLOYMENT_CYCLE_LENGTH = 1;
   const WAIT_DEPLOYMENT_MAX_REPEATS = 300;
 
-  /**
-   * The shell of the current application.
-   *
-   * @var string
-   */
-  protected $applicationShell = '/bin/sh';
 
   /**
    * Halts this local deamon application without removing its persistent data.
@@ -43,8 +39,6 @@ class DockworkerLocalDaemonCommands extends DockworkerLocalCommands {
   public function localHalt() {
     $this->_exec('docker-compose stop --timeout 10');
   }
-
-
 
   /**
    * Displays all of this local application's previous logs and outputs any new ones that occur.
@@ -96,6 +90,8 @@ class DockworkerLocalDaemonCommands extends DockworkerLocalCommands {
    *
    * @return \Robo\Result
    *   The result of the command.
+   *
+   * @shell
    */
   public function openLocalShell() {
     return $this->taskDockerExec($this->instanceName)
@@ -404,6 +400,8 @@ class DockworkerLocalDaemonCommands extends DockworkerLocalCommands {
    *
    * @command hostfile:update
    * @throws \Dockworker\DockworkerException
+   *
+   * @shell
    */
   public function setHostFileEntries() {
     $hostnames = $this->getHostFileHostnames();
@@ -428,6 +426,8 @@ class DockworkerLocalDaemonCommands extends DockworkerLocalCommands {
    *
    * @command hostfile:revert
    * @throws \Dockworker\DockworkerException
+   *
+   * @shell
    */
   public function unSetHostFileEntries() {
     $hostnames = $this->getHostFileHostnames();
@@ -456,18 +456,6 @@ class DockworkerLocalDaemonCommands extends DockworkerLocalCommands {
       $hostnames = array_merge($hostnames, $additional_hostnames);
     }
     return $hostnames;
-  }
-
-  /**
-   * Sets the application shell used.
-   *
-   * @hook init
-   */
-  public function setApplicationShell() {
-    $deployment_shell = Robo::Config()->get('dockworker.application.shell');
-    if (!empty($deployment_shell)) {
-      $this->applicationShell = $deployment_shell;
-    }
   }
 
   /**

@@ -2,6 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Dockworker\ApplicationShellTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerDeploymentCommands;
 
 /**
@@ -9,12 +10,7 @@ use Dockworker\Robo\Plugin\Commands\DockworkerDeploymentCommands;
  */
 class DockworkerDeploymentDaemonCommands extends DockworkerDeploymentCommands {
 
-  /**
-   * The shell of the current application.
-   *
-   * @var string
-   */
-  protected $applicationShell = '/bin/sh';
+  use ApplicationShellTrait;
 
   /**
    * Opens a shell within this application's k8s deployment.
@@ -33,6 +29,7 @@ class DockworkerDeploymentDaemonCommands extends DockworkerDeploymentCommands {
    * @usage prod /bin/sh
    *
    * @kubectl
+   * @shell
    */
   public function openDeploymentShell($env, $shell = '') {
     if (empty($shell)) {
