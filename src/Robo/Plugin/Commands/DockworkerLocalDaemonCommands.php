@@ -451,6 +451,7 @@ class DockworkerLocalDaemonCommands extends DockworkerLocalCommands {
    * @return array
    */
   private function getHostFileHostnames() {
+    $this->setInstanceName();
     $hostnames = [escapeshellarg('local-' . $this->instanceName)];
 
     $additional_hostnames = Robo::Config()->get('dockworker.deployment.local.localhost_hostnames');
