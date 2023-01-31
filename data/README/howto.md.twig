@@ -1,0 +1,18 @@
+{{ '##' }} Deploy this Application Yourself
+Local deployment, development and testing of {{ instance_name }} is simple! [dockworker](https://github.com/unb-libraries/dockworker) provides web application developers, site builders and operational engineers a single technical entrypoint with a consistent, unified workflow regardless of the framework.
+
+{{ '###' }} Step 1: Install Dependencies
+Dockworker requires a minimal number of 'one time' dependencies. Some of these may already be installed in your local development environment; see the list of these dependencies (with installation instructions) [here](https://github.com/unb-libraries/dockworker/blob/5.x/docs/prerequisites.md).
+
+{{ '###' }} Step 2: Deploy Locally
+With all dependencies installed, you are ready to deploy this application locally:
+
+```
+composer install
+vendor/bin/dockworker deploy
+```
+
+And that's it! The application will build and deploy in your local environment.
+
+{{ '###' }} (Optional) Step 3: Create a Dockworker Shell Alias
+If you work with dockworker applications often, you may also consider [creating a dockworker alias in your shell](https://github.com/unb-libraries/dockworker/blob/5.x/docs/alias.md).

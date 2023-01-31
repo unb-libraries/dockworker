@@ -1,5 +1,5 @@
 {
-  "name": "unb-libraries/dockworker",
+  "name": "unb-libraries/dockworker-base",
   "description": "Deploy and develop web applications via a consistent and unified workflow.",
   "type": "library",
   "config": {
@@ -13,11 +13,22 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "aws/aws-sdk-php": "^3",
-    "lesstif/php-jira-rest-client": "^1",
-    "scssphp/scssphp": "^1",
-    "squizlabs/php_codesniffer": "^3",
-    "unb-libraries/dockworker-base": "^5"
+    "consolidation/annotated-command": "4.5.2",
+    "consolidation/robo": "^3",
+    "czproject/git-php": "^4",
+    "ext-curl": "*",
+    "ext-dom": "*",
+    "ext-gd": "*",
+    "ext-mbstring": "*",
+    "ext-posix": "*",
+    "ext-yaml": "*",
+    "ext-zip": "*",
+    "guzzlehttp/guzzle": "^7",
+    "http-interop/http-factory-guzzle": "^1",
+    "knplabs/github-api": "^3",
+    "nikic/php-parser": "^4",
+    "php": "^8",
+    "twig/twig": "^3"
   },
   "license": "MIT",
   "authors": [
@@ -30,5 +41,8 @@
     "psr-4": {
       "Dockworker\\": "./src/"
     }
-  }
+  },
+  "bin": [
+    "bin/dockworker"
+  ]
 }

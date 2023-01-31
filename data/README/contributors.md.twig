@@ -1,0 +1,6 @@
+{{ '##' }} Author / Contributors
+{% include 'created_at.md.twig' %}
+
+{% for contributor in contributors %}
+<a href="https://github.com/{{ contributor.login }}"><img src="https://avatars.githubusercontent.com/u/{{ contributor.id }}?v=3" title="{{ contributor.name }}" width="128" height="128"></a>
+{% endfor %}

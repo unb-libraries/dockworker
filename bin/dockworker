@@ -1,0 +1,85 @@
+#!/usr/bin/env php
+<?php
+
+$repo_root = find_repo_root();
+$autoloaderPath = "$repo_root/vendor/autoload.php";
+
+$classLoader = require $autoloaderPath;
+$commandClasses = [ 'Dockworker\Robo\Plugin\Command\DockworkerCommands' ];
+
+$runner = new \Robo\Runner($commandClasses);
+$runner
+  ->setRelativePluginNamespace('Robo\Plugin')
+  ->setSelfUpdateRepository('unb-libraries\dockworker')
+  ->setEnvConfigPrefix('DOCKWORKER')
+  ->setClassLoader($classLoader);
+
+$statusCode = $runner->execute($_SERVER['argv']);
+exit($statusCode);
+
+/**
+ * Finds the root directory for the repository.
+ *
+ * @return string
+ */
+function find_repo_root() {
+  $possible_repo_roots = [
+    $_SERVER['PWD'],
+    getcwd(),
+    realpath(__DIR__ . '/../'),
+    realpath(__DIR__ . '/../../../'),
+  ];
+  foreach ($possible_repo_roots as $possible_repo_root) {
+    if ($repo_root = find_directory_containing_files($possible_repo_root, ['vendor/bin/dockworker', 'vendor/autoload.php'])) {
+      return $repo_root;
+    }
+  }
+  return '';
+}
+
+/**
+ * Traverses file system upwards in search of a given file.
+ *
+ * Begins searching for $file in $working_directory and climbs up directories
+ * $max_height times, repeating search.
+ *
+ * @param string $working_directory
+ * @param string[] $files
+ * @param int $max_height
+ *
+ * @return bool|string
+ *   FALSE if file was not found. Otherwise, the directory path containing the
+ *   file.
+ */
+function find_directory_containing_files($working_directory, array $files, $max_height = 10) {
+  // Find the root directory of the git repository containing BLT.
+  // We traverse the file tree upwards $max_height times until we find
+  // vendor/bin/blt.
+  $file_path = $working_directory;
+  for ($i = 0; $i <= $max_height; $i++) {
+    if (files_exist($file_path, $files)) {
+      return $file_path;
+    }
+    else {
+      $file_path = realpath($file_path . '/..');
+    }
+  }
+  return FALSE;
+}
+
+/**
+ * Determines if an array of files exist in a particular directory.
+ *
+ * @param string $dir
+ * @param string[] $files
+ *
+ * @return bool
+ */
+function files_exist($dir, array $files) {
+  foreach ($files as $file) {
+    if (!file_exists($dir . '/' . $file)) {
+      return FALSE;
+    }
+  }
+  return TRUE;
+}

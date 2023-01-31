@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+DOCKWORKER_BIN="$(pwd)/vendor/bin/dockworker"
+
+if [ ! -f $DOCKWORKER_BIN ];
+then
+  echo "Dockworker was not found in this project's bin directory. Please run composer install."
+  exit 1
+fi
+
+echo "Validating commit message..."
+exec < /dev/tty
+$DOCKWORKER_BIN validate:git:commit-msg "$1" || exit 1;
+
+# Return the status of the last run command.
+exit $?
