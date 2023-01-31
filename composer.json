@@ -1,6 +1,6 @@
 {
-  "name": "unb-libraries/dockworker-base",
-  "description": "Deploy and develop web applications via a consistent and unified workflow.",
+  "name": "unb-libraries/dockworker",
+  "description": "Dockworker provides web application developers, site builders and operational engineers a single technical entrypoint with a consistent, unified workflow regardless of the framework.",
   "type": "library",
   "config": {
     "allow-plugins": {
