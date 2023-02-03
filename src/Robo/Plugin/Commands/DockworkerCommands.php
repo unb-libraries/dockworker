@@ -209,7 +209,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
         string $config_key
     ): void {
         $config_value = Robo::Config()->get($config_key);
-        if (empty($this->$property)) {
+        if (empty($config_value)) {
             throw new DockworkerException(sprintf(
                 self::ERROR_CONFIG_ELEMENT_UNSET,
                 $config_key,
