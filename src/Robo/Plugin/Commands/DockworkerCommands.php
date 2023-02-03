@@ -37,7 +37,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     protected const DOCKWORKER_CONFIG_FILE = '.dockworker/dockworker.yml';
     protected const DOCKWORKER_GLOBAL_DATA_BASE_DIR = '.config/dockworker';
     protected const DOCKWORKER_LOCAL_DATA_BASE_DIR = '.dockworker/data';
-    protected const ERROR_CONFIG_ELEMENT_UNSET = 'The configuration element %s is not set in %s.';
+    protected const ERROR_CONFIG_ELEMENT_UNSET = 'Error! A required configuration element [%s] does not exist in %s.';
 
     /**
      * The name of the application.
@@ -208,7 +208,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
         string $property,
         string $config_key
     ): void {
-        $this->$property = Robo::Config()->get($config_key);
+        $config_value = Robo::Config()->get($config_key);
         if (empty($this->$property)) {
             throw new DockworkerException(sprintf(
                 self::ERROR_CONFIG_ELEMENT_UNSET,
@@ -216,6 +216,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
                 $this->configFile
             ));
         }
+        $this->$property = $config_value;
     }
 
     /**
