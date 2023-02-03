@@ -13,7 +13,7 @@ use Robo\Robo;
  * @link https://github.com/acquia/blt Acquia BLT
  * @link https://github.com/mleko/validate-commit Commit Validation
  */
-abstract class DockworkerCommitMessageValidateCommands extends DockworkerCommands
+class DockworkerCommitMessageValidateCommands extends DockworkerCommands
 {
     use GitCommitMessageValidatorTrait;
 

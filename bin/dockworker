@@ -5,9 +5,9 @@ $repo_root = find_repo_root();
 $autoloaderPath = "$repo_root/vendor/autoload.php";
 
 $classLoader = require $autoloaderPath;
-$commandClasses = [ 'Dockworker\Robo\Plugin\Command\DockworkerCommands' ];
 
-$runner = new \Robo\Runner($commandClasses);
+$baseCommandClasses = [ 'Dockworker\Robo\Plugin\Commands\DockworkerCommands' ];
+$runner = new \Robo\Runner($baseCommandClasses;
 $runner
   ->setRelativePluginNamespace('Robo\Plugin')
   ->setSelfUpdateRepository('unb-libraries\dockworker')

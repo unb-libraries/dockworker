@@ -8,26 +8,30 @@ use Dockworker\DestructiveActionTrait;
 use Dockworker\DockworkerException;
 use Dockworker\FileSystemOperationsTrait;
 use Dockworker\GitRepoTrait;
+use League\Container\ContainerAwareInterface;
+use League\Container\ContainerAwareTrait;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Robo\Common\ConfigAwareTrait;
 use Robo\Common\ExecTrait;
+use Robo\Common\IO;
 use Robo\Contract\ConfigAwareInterface;
 use Robo\Contract\IOAwareInterface;
 use Robo\Robo;
-use Robo\Tasks;
+use \Robo\Tasks;
 
 /**
  * Defines a base class for all Dockworker Robo commands.
  */
-abstract class DockworkerCommands extends Tasks implements IOAwareInterface, LoggerAwareInterface, ConfigAwareInterface
+abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface, ContainerAwareInterface, IOAwareInterface, LoggerAwareInterface
 {
     use CommandRuntimeTrackerTrait;
     use ConfigAwareTrait;
+    use ContainerAwareTrait;
     use DestructiveActionTrait;
-    use ExecTrait;
     use FileSystemOperationsTrait;
     use GitRepoTrait;
+    use IO;
     use LoggerAwareTrait;
 
     protected const DOCKWORKER_CONFIG_FILE = '.dockworker/dockworker.yml';
