@@ -2,7 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use CzProject\GitPhp\Git;
+use CzProject\GitPhp\GitRepository;
 use Dockworker\CommandRuntimeTrackerTrait;
 use Dockworker\DestructiveActionTrait;
 use Dockworker\DockworkerException;
@@ -91,9 +91,9 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     /**
      * The application's git repository.
      *
-     * @var \CzProject\GitPhp\Git;
+     * @var \CzProject\GitPhp\GitRepository;
      */
-    protected Git $repoGit;
+    protected GitRepository $repoGit;
 
     /**
      * The current user's operating system home directory.
