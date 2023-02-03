@@ -2,84 +2,59 @@
 
 namespace Dockworker;
 
-use Dockworker\DockworkerException;
+use CzProject\GitPhp\Git;
+use CzProject\GitPhp\GitRepository;
 
 /**
  * Provides methods to interact with a local git repo.
  */
-trait GitRepoTrait {
-
+trait GitRepoTrait
+{
   /**
-   * Determines if a git repository is clean.
+   * Retrieves a git repository object from a repository path.
    *
    * @param string $path
    *   The path to the git repository.
    *
-   * @return bool
-   *   TRUE if the repository is clean. FALSE otherwise.
+   * @return \CzProject\GitPhp\GitRepository
+   *   The git repository object.
    */
-  private function gitRepoIsClean($path) {
-    $repo_status = $this->taskExec('git')
-      ->dir($path)
-      ->arg('status')
-      ->arg('--short')
-      ->silent(TRUE)
-      ->printOutput(FALSE)
-      ->run();
-
-    if (!empty($repo_status->getMessage())) {
-      return FALSE;
+    protected function getGitRepoFromPath(string $path): GitRepository
+    {
+        $git = new Git();
+        return $git->open($path);
     }
-    return TRUE;
-  }
 
-  /**
-   * Retrieves the latest commit hash from a git repository.
-   *
-   * @param string $path
-   *   The path to the git repository.
-   *
-   * @return string
-   *   The hash if the repository exists, empty otherwise.
-   */
-  private function gitRepoLatestCommitHash($path) {
-    $latest_hash = $this->taskExec('git')
-      ->dir($path)
-      ->arg('rev-parse')
-      ->arg('HEAD')
-      ->silent(TRUE)
-      ->printOutput(FALSE)
-      ->run();
-
-    if (!empty($latest_hash->getMessage())) {
-      return $latest_hash->getMessage();
+    /**
+     * Retrieves a list of changed files in the repository.
+     *
+     * 'Inspired' by https://github.com/czproject/git-php/pull/42/files
+     *
+     * @param \CzProject\GitPhp\GitRepository $repository
+     *   The repository to query for changed files.
+     * @param string $file_mask
+     *   The regex pattern to search for, as a string.
+     *
+     * @return string[]
+     *   The changed files, keyed by file path and values indicating status.
+     * @throws \CzProject\GitPhp\GitException
+     */
+    protected function getGitRepoChanges(
+        GitRepository $repository,
+        string $file_mask = ''
+    ): array {
+        $repository->execute('update-index', '-q', '--refresh');
+        $output = $repository->execute('status', '--porcelain');
+        $files = [];
+        foreach ($output as $line) {
+            $line = trim($line);
+            $file = explode(" ", $line, 2);
+            if (count($file) >= 2) {
+                if (empty($file_mask) || preg_match($file_mask, $file[1])) {
+                    $files[$file[1]] = $file[0];
+                }
+            }
+        }
+        return $files;
     }
-    return '';
-  }
-
-  /**
-   * Retrieves the current branch from a git repository.
-   *
-   * @param string $path
-   *   The path to the git repository.
-   *
-   * @return string
-   *   The branch name if the repository exists, empty otherwise.
-   */
-  private function gitRepoCurrentBranch($path) {
-    $cur_branch = $this->taskExec('git')
-      ->dir($path)
-      ->arg('rev-parse')
-      ->arg('--abbrev-ref')
-      ->arg('HEAD')
-      ->silent(TRUE)
-      ->printOutput(FALSE)
-      ->run();
-
-    if (!empty($cur_branch->getMessage())) {
-      return $cur_branch->getMessage();
-    }
-    return '';
-  }
-
 }
