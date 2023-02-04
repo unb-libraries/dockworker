@@ -142,6 +142,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      *
      * @command dockworker:update
      * @aliases update
+     * @hidden
      */
     public function updateDockworker(): void
     {
