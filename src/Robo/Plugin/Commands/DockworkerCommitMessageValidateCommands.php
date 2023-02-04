@@ -23,17 +23,17 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
     protected const WARN_MISSING_JIRA_INFO = 'You have not specified a JIRA project and issue in your subject line. Continue Anyway?';
 
     /**
-     * Validates a git commit message against project standards.
+     * Validates a git commit message against this application's standards.
      *
      * @param string $message_file
-     *   The path to the file containing the git commit message.
+     *   The path to a file containing the git commit message.
      *
      * @command validate:git:commit-msg
      * @usage /tmp/commit_msg.txt
      *
      * @throws \Dockworker\DockworkerException
      */
-    public function validateCommitMsg($message_file): void
+    public function validateCommitMsg(string $message_file): void
     {
         $message_file_path = $this->repoRoot . '/' . $message_file;
         $message = file_get_contents($message_file_path);
@@ -63,7 +63,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
 
         // Validate optional project prefix.
         if (!$this->getValidateProjectPrefix()) {
-            if (!$this->getAllowsPrefixLessCommit()) {
+            if (!$this->allowPrefixlessCommitMessages()) {
                 if (!$this->confirm(self::WARN_MISSING_JIRA_INFO)) {
                     $this->say(self::SAMPLE_VALID_COMMIT_MESSAGE);
                     throw new DockworkerException(self::ERROR_MISSING_JIRA_INFO);
@@ -73,12 +73,12 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
     }
 
     /**
-     * Gets if the project allows prefix-less commit messages.
+     * Determines if the application permits prefix-less commit messages.
      *
      * @return bool
-     *   The command's total run time, formatted for humans.
+     *   True if the commit messages do not require prefixes. False otherwise.
      */
-    protected function getAllowsPrefixLessCommit(): bool
+    protected function allowPrefixlessCommitMessages(): bool
     {
         $allow_prefixless_commits = Robo::Config()->get('dockworker.git.allow_prefixless_commits');
         if (empty($upstream_image)) {
