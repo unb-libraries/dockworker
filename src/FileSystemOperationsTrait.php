@@ -12,6 +12,8 @@ trait FileSystemOperationsTrait
      *
      * @param array $path_elements
      *   The path elements to use to initialize the directory.
+     * @param string $permissions
+     *   The octal permissions to assign to the path, if it is created.
      *
      * @return string
      *   The path to the directory.
