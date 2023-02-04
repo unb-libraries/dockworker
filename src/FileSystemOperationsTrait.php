@@ -16,7 +16,7 @@ trait FileSystemOperationsTrait
      * @return string
      *   The path to the directory.
      */
-    protected function initgetPathFromPathElements(
+    protected function initGetPathFromPathElements(
         array $path_elements,
         string $permissions = '0755'
     ): string {

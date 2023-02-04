@@ -34,9 +34,9 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     use IO;
     use LoggerAwareTrait;
 
+    protected const APPLICATION_DATA_STORAGE_BASE_DIR = '.dockworker/data';
     protected const DOCKWORKER_CONFIG_FILE = '.dockworker/dockworker.yml';
-    protected const DOCKWORKER_GLOBAL_DATA_BASE_DIR = '.config/dockworker';
-    protected const DOCKWORKER_LOCAL_DATA_BASE_DIR = '.dockworker/data';
+    protected const DOCKWORKER_DATA_STORAGE_BASE_DIR = '.config/dockworker';
     protected const ERROR_CONFIG_ELEMENT_UNSET = 'Error! A required configuration element [%s] does not exist in %s.';
 
     /**
@@ -47,11 +47,11 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     protected string $applicationName;
 
     /**
-     * The local data directory for this application.
+     * The path to the application's data storage directory.
      *
      * @var string
      */
-    protected string $applicationLocalDataDir;
+    protected string $applicationDataStorageDir;
 
     /**
      * The 'slug' of the application.
@@ -75,11 +75,11 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     protected string $configFile;
 
     /**
-     * The global dockworker data directory.
+     * The path to the dockworker data storage directory.
      *
      * @var string
      */
-    protected string $dockworkerLocalDataDir;
+    protected string $dockworkerDataStorageDir;
 
     /**
      * The path to the application's git repository.
@@ -165,7 +165,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     {
         $this->setCommandStartTime();
         $this->setCoreProperties();
-        $this->setDockworkerDataDirs();
+        $this->initDataStorageDirs();
         $this->setGitRepo();
     }
 
@@ -220,38 +220,38 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     }
 
     /**
-     * Initializes the data directories for the application.
+     * Initializes the data storage for dockworker and the application.
      *
      */
-    protected function setDockworkerDataDirs(): void
+    protected function initDataStorageDirs(): void
     {
-        $this->setDockworkerLocalDataDir();
-        $this->setApplicationLocalDataDir();
+        $this->setDockworkerDataStorageDir();
+        $this->setApplicationDataStorageDir();
     }
 
     /**
-     * Sets the dockworker local data storage directory.
+     * Sets the dockworker data storage directory.
      */
-    protected function setDockworkerLocalDataDir(): void
+    protected function setDockworkerDataStorageDir(): void
     {
-        $this->dockworkerLocalDataDir = $this->initgetPathFromPathElements(
+        $this->dockworkerDataStorageDir = $this->initGetPathFromPathElements(
             [
                 $this->userHomeDir,
-                self::DOCKWORKER_GLOBAL_DATA_BASE_DIR,
+                self::DOCKWORKER_DATA_STORAGE_BASE_DIR,
                 $this->applicationName,
             ]
         );
     }
 
     /**
-     * Sets the application's local storage data directory.
+     * Sets the application's data storage directory.
      */
-    protected function setApplicationLocalDataDir(): void
+    protected function setApplicationDataStorageDir(): void
     {
-        $this->applicationLocalDataDir = $this->initgetPathFromPathElements(
+        $this->applicationDataStorageDir = $this->initGetPathFromPathElements(
             [
                 $this->repoRoot,
-                self::DOCKWORKER_LOCAL_DATA_BASE_DIR
+                self::APPLICATION_DATA_STORAGE_BASE_DIR
             ]
         );
     }
