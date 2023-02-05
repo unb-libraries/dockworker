@@ -8,6 +8,7 @@ use Dockworker\DestructiveActionTrait;
 use Dockworker\DockworkerApplicationLocalDataStorageTrait;
 use Dockworker\DockworkerApplicationPersistentDataStorageTrait;
 use Dockworker\DockworkerException;
+use Dockworker\DockworkerIO;
 use Dockworker\DockworkerPersistentDataStorageTrait;
 use Dockworker\FileSystemOperationsTrait;
 use Dockworker\GitRepoTrait;
@@ -16,14 +17,13 @@ use League\Container\ContainerAwareTrait;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Robo\Common\ConfigAwareTrait;
-use Robo\Common\IO;
 use Robo\Contract\ConfigAwareInterface;
 use Robo\Contract\IOAwareInterface;
 use Robo\Robo;
 use Robo\Tasks;
 
 /**
- * Defines a base class for all Dockworker Robo commands.
+ * Defines a base class for all Dockworker commands.
  */
 abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface, ContainerAwareInterface, IOAwareInterface, LoggerAwareInterface
 {
@@ -33,10 +33,10 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     use DestructiveActionTrait;
     use DockworkerApplicationLocalDataStorageTrait;
     use DockworkerApplicationPersistentDataStorageTrait;
+    use DockworkerIO;
     use DockworkerPersistentDataStorageTrait;
     use FileSystemOperationsTrait;
     use GitRepoTrait;
-    use IO;
     use LoggerAwareTrait;
 
     protected const DOCKWORKER_CONFIG_FILE = '.dockworker/dockworker.yml';
@@ -50,11 +50,18 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     protected string $applicationName;
 
     /**
-     * The 'slug' of the application.
+     * The application's git repository.
+     *
+     * @var \CzProject\GitPhp\GitRepository;
+     */
+    protected GitRepository $applicationRepository;
+
+    /**
+     * The path to the application's git repository.
      *
      * @var string
      */
-    protected string $applicationSlug;
+    protected string $applicationRoot;
 
     /**
     * The shortened slug of the application.
@@ -64,25 +71,18 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     protected string $applicationShortSlug;
 
     /**
+     * The 'slug' of the application.
+     *
+     * @var string
+     */
+    protected string $applicationSlug;
+
+    /**
      * The full path to the application's dockworker configuration file.
      *
      * @var string
      */
     protected string $configFile;
-
-    /**
-     * The path to the application's git repository.
-     *
-     * @var string
-     */
-    protected string $repoRoot;
-
-    /**
-     * The application's git repository.
-     *
-     * @var \CzProject\GitPhp\GitRepository;
-     */
-    protected GitRepository $repoGit;
 
     /**
      * The current user's operating system home directory.
@@ -111,10 +111,10 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      */
     public function __construct()
     {
-        $this->repoRoot = realpath(__DIR__ . "/../../../../../../../");
+        $this->applicationRoot = realpath(__DIR__ . "/../../../../../../../");
         $this->configFile = $this->getPathFromPathElements(
             [
-                $this->repoRoot,
+                $this->applicationRoot,
                 self::DOCKWORKER_CONFIG_FILE,
             ]
         );
@@ -136,9 +136,9 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     public function updateDockworker(): void
     {
         $this->io()->title("Updating Dockworker");
-        $this->say('Checking for any updates to unb-libraries/dockworker...');
+        $this->dockworkerSay(['Checking for any updates to unb-libraries/dockworker...']);
         $this->taskExec('composer')
-          ->dir($this->repoRoot)
+          ->dir($this->applicationRoot)
           ->arg('update')
           ->arg('unb-libraries/dockworker')
           ->silent(true)
@@ -219,7 +219,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
             $this->userHomeDir,
             $this->applicationName
         );
-        $this->initApplicationPersistentDataStorageDir($this->repoRoot);
+        $this->initApplicationPersistentDataStorageDir($this->applicationRoot);
         $this->initDockworkerPersistentDataStorageDir($this->userHomeDir);
     }
 
@@ -230,8 +230,8 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      */
     protected function setGitRepo(): void
     {
-        $this->repoGit = $this->getGitRepoFromPath($this->repoRoot);
-        if (empty($this->repoGit)) {
+        $this->applicationRepository = $this->getGitRepoFromPath($this->applicationRoot);
+        if (empty($this->applicationRepository)) {
             throw new DockworkerException('Could not initialize the git repository.');
         }
     }
@@ -244,7 +244,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     public function displayCommandRunTime(): void
     {
         if ($this->displayCommandRunTime) {
-            $this->say($this->getTimeSinceCommandStart());
+            $this->dockworkerSay([$this->getTimeSinceCommandStart()]);
         }
     }
 
@@ -255,10 +255,24 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      */
     public function setupGitHooks(): void
     {
-        // $this->getPathFromPathElements();
-        $source_dir = $this->repoRoot . "/vendor/unb-libraries/dockworker/data/scripts/git-hooks";
-        $target_dir = $this->repoRoot . "/.git/hooks";
-        $this->_copy("$source_dir/commit-msg", "$target_dir/commit-msg");
+        $hooks = ['commit-msg'];
+        foreach ($hooks as $hook) {
+            $source_file = $this->getPathFromPathElements(
+                [
+                    $this->applicationRoot,
+                    'vendor/unb-libraries/dockworker/data/scripts/git-hooks',
+                    $hook,
+                ]
+            );
+            $target_file = $this->getPathFromPathElements(
+                [
+                    $this->applicationRoot,
+                    '.git/hooks',
+                    $hook,
+                ]
+            );
+            $this->_copy($source_file, $target_file);
+        }
     }
 
     /**
@@ -282,7 +296,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
         string $command_string,
         string $exception_message = ''
     ): int {
-        $this->io()->note("Spawning new command thread: $command_string");
+        $this->dockworkerNote(["Spawning new command thread: $command_string"]);
         $bin = $_SERVER['argv'][0];
         $command = "$bin --ansi $command_string";
         passthru($command, $return);

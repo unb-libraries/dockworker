@@ -2,10 +2,8 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\DockworkerException;
 use Dockworker\GitCommitMessageValidatorTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
-use Robo\Robo;
 
 /**
  * Defines commands used to validate a git commit message.
@@ -35,7 +33,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
      */
     public function validateCommitMsg(string $message_file): void
     {
-        $message_file_path = $this->repoRoot . '/' . $message_file;
+        $message_file_path = $this->applicationRoot . '/' . $message_file;
         $message = file_get_contents($message_file_path);
 
         $this->message = $message;
@@ -53,11 +51,9 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
 
         // Process universal errors.
         if (!empty($this->errors)) {
-            $this->say("Commit messages issues:\n");
-            foreach ($this->errors as $error) {
-                $this->say($error);
-            }
-            $this->say(self::SAMPLE_VALID_COMMIT_MESSAGE);
+            $this->dockworkerSubTitle('Issues with commit message');
+            $this->dockworkerListing($this->errors);
+            $this->dockworkerSay([self::SAMPLE_VALID_COMMIT_MESSAGE]);
             throw new DockworkerException(self::ERROR_INVALID_COMMIT_MESSAGE);
         }
 
@@ -65,7 +61,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
         if (!$this->getValidateProjectPrefix()) {
             if (!$this->allowPrefixlessCommitMessages()) {
                 if (!$this->confirm(self::WARN_MISSING_JIRA_INFO)) {
-                    $this->say(self::SAMPLE_VALID_COMMIT_MESSAGE);
+                    $this->dockworkerSay([self::SAMPLE_VALID_COMMIT_MESSAGE]);
                     throw new DockworkerException(self::ERROR_MISSING_JIRA_INFO);
                 }
             }
