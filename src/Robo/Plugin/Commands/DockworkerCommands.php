@@ -5,7 +5,10 @@ namespace Dockworker\Robo\Plugin\Commands;
 use CzProject\GitPhp\GitRepository;
 use Dockworker\CommandRuntimeTrackerTrait;
 use Dockworker\DestructiveActionTrait;
+use Dockworker\DockworkerApplicationLocalDataStorageTrait;
+use Dockworker\DockworkerApplicationPersistentDataStorageTrait;
 use Dockworker\DockworkerException;
+use Dockworker\DockworkerPersistentDataStorageTrait;
 use Dockworker\FileSystemOperationsTrait;
 use Dockworker\GitRepoTrait;
 use League\Container\ContainerAwareInterface;
@@ -13,12 +16,11 @@ use League\Container\ContainerAwareTrait;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Robo\Common\ConfigAwareTrait;
-use Robo\Common\ExecTrait;
 use Robo\Common\IO;
 use Robo\Contract\ConfigAwareInterface;
 use Robo\Contract\IOAwareInterface;
 use Robo\Robo;
-use \Robo\Tasks;
+use Robo\Tasks;
 
 /**
  * Defines a base class for all Dockworker Robo commands.
@@ -29,14 +31,15 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     use ConfigAwareTrait;
     use ContainerAwareTrait;
     use DestructiveActionTrait;
+    use DockworkerApplicationLocalDataStorageTrait;
+    use DockworkerApplicationPersistentDataStorageTrait;
+    use DockworkerPersistentDataStorageTrait;
     use FileSystemOperationsTrait;
     use GitRepoTrait;
     use IO;
     use LoggerAwareTrait;
 
-    protected const APPLICATION_DATA_STORAGE_BASE_DIR = '.dockworker/data';
     protected const DOCKWORKER_CONFIG_FILE = '.dockworker/dockworker.yml';
-    protected const DOCKWORKER_DATA_STORAGE_BASE_DIR = '.config/dockworker';
     protected const ERROR_CONFIG_ELEMENT_UNSET = 'Error! A required configuration element [%s] does not exist in %s.';
 
     /**
@@ -45,13 +48,6 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      * @var string
      */
     protected string $applicationName;
-
-    /**
-     * The path to the application's data storage directory.
-     *
-     * @var string
-     */
-    protected string $applicationDataStorageDir;
 
     /**
      * The 'slug' of the application.
@@ -73,13 +69,6 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      * @var string
      */
     protected string $configFile;
-
-    /**
-     * The path to the dockworker data storage directory.
-     *
-     * @var string
-     */
-    protected string $dockworkerDataStorageDir;
 
     /**
      * The path to the application's git repository.
@@ -226,39 +215,18 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      */
     protected function initDataStorageDirs(): void
     {
-        $this->setDockworkerDataStorageDir();
-        $this->setApplicationDataStorageDir();
-    }
-
-    /**
-     * Sets the dockworker data storage directory.
-     */
-    protected function setDockworkerDataStorageDir(): void
-    {
-        $this->dockworkerDataStorageDir = $this->initGetPathFromPathElements(
-            [
-                $this->userHomeDir,
-                self::DOCKWORKER_DATA_STORAGE_BASE_DIR,
-                $this->applicationName,
-            ]
+        $this->initApplicationLocalDataStorageDir(
+            $this->userHomeDir,
+            $this->applicationName
         );
-    }
-
-    /**
-     * Sets the application's data storage directory.
-     */
-    protected function setApplicationDataStorageDir(): void
-    {
-        $this->applicationDataStorageDir = $this->initGetPathFromPathElements(
-            [
-                $this->repoRoot,
-                self::APPLICATION_DATA_STORAGE_BASE_DIR
-            ]
-        );
+        $this->initApplicationPersistentDataStorageDir($this->repoRoot);
+        $this->initDockworkerPersistentDataStorageDir($this->userHomeDir);
     }
 
     /**
      * Sets up the lean repository git repo.
+     *
+     * @throws \Dockworker\DockworkerException
      */
     protected function setGitRepo(): void
     {

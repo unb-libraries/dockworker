@@ -86,3 +86,10 @@ Command class methods declared as hooks should be named in a standard fashion ac
 Traits should be written with no knowledge of the command classes. Any required command class properties or methods should be passed to the trait methods.
 
 Traits should not assert any annotated-command hooks.
+
+### Data storage
+3 levels of data storage are available to Dockworker commands:
+
+* Application: in-repo (DockworkerApplicationPersistentDataStorageTrait)
+* Application: local PC (DockworkerApplicationLocalDataStorageTrait)
+* Dockworker: local PC (DockworkerPersistentDataStorageTrait)

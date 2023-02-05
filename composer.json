@@ -18,7 +18,8 @@
     "ext-mbstring": "*",
     "ext-posix": "*",
     "ext-yaml": "*",
-    "ext-zip": "*"
+    "ext-zip": "*",
+    "php": "^8.2"
   },
   "license": "MIT",
   "authors": [
