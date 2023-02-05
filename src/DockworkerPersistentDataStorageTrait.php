@@ -14,7 +14,12 @@ trait DockworkerPersistentDataStorageTrait
     use FileSystemOperationsTrait;
     use PersistentConfigurationTrait;
 
-    private const DOCKWORKER_LOCAL_DATA_STORAGE_BASE_DIR = '.config/dockworker';
+    /**
+     * The path to the dockworker persistent data storage base directory.
+     *
+     * @var string
+     */
+    protected string $dockworkerPersistentDataStorageBaseDir = '.config/dockworker';
 
     /**
      * The path to the dockworker persistent data storage directory.
@@ -35,7 +40,7 @@ trait DockworkerPersistentDataStorageTrait
         $this->dockworkerPersistentDataStorageDir = $this->initGetPathFromPathElements(
             [
                 $user_home_dir,
-                self::DOCKWORKER_LOCAL_DATA_STORAGE_BASE_DIR,
+                $this->dockworkerPersistentDataStorageBaseDir,
             ]
         );
     }

@@ -14,7 +14,12 @@ trait DockworkerApplicationLocalDataStorageTrait
     use FileSystemOperationsTrait;
     use PersistentConfigurationTrait;
 
-    private const APPLICATION_LOCAL_DATA_STORAGE_BASE_DIR = '.config/dockworker';
+    /**
+     * The path to the local PC data storage base directory.
+     *
+     * @var string
+     */
+    protected string $applicationLocalDataStorageBaseDir = '.config/dockworker';
 
     /**
      * The path to the application's local PC data storage directory.
@@ -40,7 +45,7 @@ trait DockworkerApplicationLocalDataStorageTrait
         $this->applicationLocalDataStorageDir = $this->initGetPathFromPathElements(
             [
                 $user_home_dir,
-                self::APPLICATION_LOCAL_DATA_STORAGE_BASE_DIR,
+                $this->applicationLocalDataStorageBaseDir,
                 $application_id,
             ]
         );

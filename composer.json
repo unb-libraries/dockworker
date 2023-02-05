@@ -19,7 +19,7 @@
     "ext-posix": "*",
     "ext-yaml": "*",
     "ext-zip": "*",
-    "php": "^8.2"
+    "php": "^8.1"
   },
   "license": "MIT",
   "authors": [

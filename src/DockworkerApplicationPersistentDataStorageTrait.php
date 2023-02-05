@@ -14,7 +14,12 @@ trait DockworkerApplicationPersistentDataStorageTrait
     use FileSystemOperationsTrait;
     use PersistentConfigurationTrait;
 
-    private const APPLICATION_PERSISTENT_DATA_STORAGE_BASE_DIR = '.dockworker/data';
+    /**
+     * The path to the persistent data storage base directory for applications.
+     *
+     * @var string
+     */
+    protected string $applicationPersistentDataStorageBaseDir = '.dockworker/data';
 
     /**
      * The path to the application's persistent data storage directory.
@@ -35,7 +40,7 @@ trait DockworkerApplicationPersistentDataStorageTrait
         $this->applicationPersistentDataStorageDir = $this->initGetPathFromPathElements(
             [
                 $repo_root,
-                self::APPLICATION_PERSISTENT_DATA_STORAGE_BASE_DIR
+                $this->applicationPersistentDataStorageBaseDir,
             ]
         );
     }
