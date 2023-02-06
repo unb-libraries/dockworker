@@ -1,0 +1,63 @@
+# SPDX-License-Identifier: (MIT)
+%YAML 1.2
+---
+dockworker:
+  version: '6'
+  application:
+  name: The Anglo-Atlantic Slave Law Project
+  uri: https://aaslp.lib.unb.ca
+  description: >
+    The Anglo-Atlantic Slave Law Project documents laws related to slavery in the Atlantic region from the 16th to
+    the 19th centuries. The project is a collaboration between the University of New Brunswick and the University of
+    Cape Town.
+  topics:
+    - slavery
+    - law
+    - history
+    - research
+    - project
+  identifiers:
+    id: aaslp.lib.unb.ca
+    slug: aaslp-lib-unb-ca
+    short_slug: aaslp
+    uuid: 3111
+  framework:
+    name: Drupal
+    version: 9
+    startup_finished_marker: '99_zz_notify_user_URI'
+  license:
+    license: MIT
+    holder: University of New Brunswick Libraries
+  vcs:
+    remote: GitHub
+    owner: unb-libraries
+    name: aaslp.lib.unb.ca
+  jira:
+    project_keys:
+      - AASLP
+  workflows:
+    ci:
+      actions:
+        - source: dockworker-drupal
+          type: deployment-workflow
+    image:
+      parent: ghcr.io/unb-libraries/drupal:9.x-2.x-unblib
+      repositories:
+        - name: GitHub
+          push_branches:
+            - dev
+            - prod
+          image_name: ghcr.io/unb-libraries/aaslp.lib.unb.ca
+    deployment:
+      services:
+        - name: aaslp-lib-unb-ca
+          namespaces:
+            - dev
+            - prod
+      e2e_tests:
+        - id: core
+          frequency: '*/5 * * * *'
+          source_files:
+            - .dockworker/tests/e2e/aaslp.lib.unb.ca.yml
+          namespaces:
+            - prod
