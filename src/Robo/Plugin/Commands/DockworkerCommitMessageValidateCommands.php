@@ -30,6 +30,8 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
      * @command validate:git:commit-msg
      * @usage /tmp/commit_msg.txt
      *
+     * @throws \Dockworker\DockworkerException
+     *
      * @jira
      */
     public function validateCommitMsg(string $message_file): void
