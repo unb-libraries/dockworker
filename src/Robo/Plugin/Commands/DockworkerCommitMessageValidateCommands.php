@@ -2,6 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Dockworker\DockworkerException;
 use Dockworker\GitCommitMessageValidatorTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 

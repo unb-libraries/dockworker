@@ -201,7 +201,6 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     /**
      * Initializes the Jira properties for the application.
      *
-     * @throws \Dockworker\DockworkerException
      * @hook pre-init @jira
      */
     public function setJiraProperties(): void
@@ -231,7 +230,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
         string $property,
         string $config_key
     ): void {
-        $config_value = Robo::Config()->get($config_key, null);
+        $config_value = Robo::Config()->get($config_key);
         if ($config_value == null) {
             throw new DockworkerException(sprintf(
                 self::ERROR_CONFIG_ELEMENT_UNSET,

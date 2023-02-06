@@ -118,6 +118,6 @@ trait GitCommitMessageValidatorTrait
     private function getValidateProjectPrefix(array $project_keys): bool
     {
         $prefixes = '(' . implode('|', $project_keys) . ')';
-        return preg_match("/^$prefixes-[0-9]+ {1}[a-zA-Z0-9]{1}.*/", (string) $this->subjectLine);
+        return preg_match("/^$prefixes-[0-9]+ {1}[a-zA-Z0-9]{1}.*/", $this->subjectLine);
     }
 }
