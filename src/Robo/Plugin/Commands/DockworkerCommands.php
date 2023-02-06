@@ -274,15 +274,13 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     }
 
     /**
-     * Displays the command's total run time.
+     * Trigger the display of the command's total run time.
      *
      * @hook post-command
      */
-    public function displayCommandRunTime(): void
+    public function triggerDisplayCommandRunTime(): void
     {
-        if ($this->displayCommandRunTime) {
-            $this->dockworkerSay([$this->getTimeSinceCommandStart()]);
-        }
+        $this->displayCommandRunTime();
     }
 
     /**

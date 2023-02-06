@@ -3,12 +3,15 @@
 namespace Dockworker;
 
 use DateTime;
+use Dockworker\DockworkerIO;
 
 /**
  * Provides methods to track the runtime of a command.
  */
 trait CommandRuntimeTrackerTrait
 {
+    use DockworkerIO;
+
   /**
    * The timestamp the command was started.
    *
@@ -22,6 +25,23 @@ trait CommandRuntimeTrackerTrait
      * @var bool
      */
     protected bool $displayCommandRunTime = false;
+
+    /**
+     * Displays the command's total run time.
+     */
+    public function displayCommandRunTime(): void
+    {
+        if ($this->displayCommandRunTime) {
+            $this->dockworkerNote(
+                [
+                    sprintf(
+                        'Command Runtime: %s',
+                        $this->getTimeSinceCommandStart()
+                    )
+                ]
+            );
+        }
+    }
 
     /**
      * Sets the 'start time' of the current command.
