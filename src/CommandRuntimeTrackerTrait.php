@@ -2,6 +2,8 @@
 
 namespace Dockworker;
 
+use DateTime;
+
 /**
  * Provides methods to track the runtime of a command.
  */
@@ -38,8 +40,8 @@ trait CommandRuntimeTrackerTrait
     public function getTimeSinceCommandStart(): string
     {
         date_default_timezone_set('UTC');
-        $start = new \DateTime("@$this->commandStartTime");
-        $end = new \DateTime();
+        $start = new DateTime("@$this->commandStartTime");
+        $end = new DateTime();
         $diff = $start->diff($end);
         return $diff->format('%H:%I:%S');
     }

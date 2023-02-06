@@ -3,11 +3,12 @@
 namespace Dockworker;
 
 use Exception;
+use Stringable;
 
 /**
  * Provides an exception class for Dockworker commands.
  */
-class DockworkerException extends Exception implements \Stringable
+class DockworkerException extends Exception implements Stringable
 {
     /**
      * {@inheritdoc}
@@ -22,6 +23,6 @@ class DockworkerException extends Exception implements \Stringable
      */
     public function __toString(): string
     {
-        return self::class . ": [{$this->code}]: {$this->message}\n";
+        return self::class . ": [$this->code]: $this->message\n";
     }
 }

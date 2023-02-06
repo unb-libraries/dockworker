@@ -85,6 +85,20 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     protected string $configFile;
 
     /**
+     * A list of Jira project keys that apply to all projects.
+     *
+     * @var string[]
+     */
+    protected array $jiraGlobalProjectKeys = ['IN', 'DOCKW'];
+
+    /**
+     * The Jira project keys relating to this application.
+     *
+     * @var string[]
+     */
+    protected array $jiraProjectKeys = [];
+
+    /**
      * The current user's operating system home directory.
      *
      * @var string
@@ -135,7 +149,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      */
     public function updateDockworker(): void
     {
-        $this->io()->title("Updating Dockworker");
+        $this->dockworkerTitle('Updating Dockworker');
         $this->dockworkerSay(['Checking for any updates to unb-libraries/dockworker...']);
         $this->taskExec('composer')
           ->dir($this->applicationRoot)
@@ -185,6 +199,25 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     }
 
     /**
+     * Initializes the Jira properties for the application.
+     *
+     * @throws \Dockworker\DockworkerException
+     * @hook pre-init @jira
+     */
+    public function setJiraProperties(): void
+    {
+        $jira_project_keys = $this->getConfigItem(
+            'application.jira.project_keys'
+        );
+        if ($jira_project_keys != null) {
+            $this->jiraProjectKeys = array_merge(
+                $this->jiraGlobalProjectKeys,
+                $jira_project_keys
+            );
+        }
+    }
+
+    /**
      * Sets a command object property from a config element.
      *
      * @param string $property
@@ -198,8 +231,8 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
         string $property,
         string $config_key
     ): void {
-        $config_value = Robo::Config()->get($config_key);
-        if (empty($config_value)) {
+        $config_value = Robo::Config()->get($config_key, null);
+        if ($config_value == null) {
             throw new DockworkerException(sprintf(
                 self::ERROR_CONFIG_ELEMENT_UNSET,
                 $config_key,
@@ -207,6 +240,11 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
             ));
         }
         $this->$property = $config_value;
+    }
+
+    protected function getConfigItem(string $config_key, $default_value = null): mixed
+    {
+        return Robo::Config()->get($config_key, $default_value);
     }
 
     /**

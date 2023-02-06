@@ -29,7 +29,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
      * @command validate:git:commit-msg
      * @usage /tmp/commit_msg.txt
      *
-     * @throws \Dockworker\DockworkerException
+     * @jira
      */
     public function validateCommitMsg(string $message_file): void
     {
@@ -57,29 +57,13 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
             throw new DockworkerException(self::ERROR_INVALID_COMMIT_MESSAGE);
         }
 
-        // Validate optional project prefix.
-        if (!$this->getValidateProjectPrefix()) {
-            if (!$this->allowPrefixlessCommitMessages()) {
+        if (!empty($this->jiraProjectKeys)) {
+            if (!$this->getValidateProjectPrefix($this->jiraProjectKeys)) {
                 if (!$this->confirm(self::WARN_MISSING_JIRA_INFO)) {
                     $this->dockworkerSay([self::SAMPLE_VALID_COMMIT_MESSAGE]);
                     throw new DockworkerException(self::ERROR_MISSING_JIRA_INFO);
                 }
             }
         }
-    }
-
-    /**
-     * Determines if the application permits prefix-less commit messages.
-     *
-     * @return bool
-     *   True if the commit messages do not require prefixes. False otherwise.
-     */
-    protected function allowPrefixlessCommitMessages(): bool
-    {
-        $allow_prefixless_commits = Robo::Config()->get('dockworker.git.allow_prefixless_commits');
-        if (empty($upstream_image)) {
-            return false;
-        }
-        return (bool) $allow_prefixless_commits;
     }
 }

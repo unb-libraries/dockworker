@@ -66,7 +66,7 @@ trait GitCommitMessageValidatorTrait
      */
     private function getValidateSubjectLength(): void
     {
-        $length = strlen((string) $this->subjectLine);
+        $length = strlen($this->subjectLine);
         if ($length > $this->maxCommitMessageLength) {
             $this->errors[] = sprintf(
                 'Limit the subject line to %d characters, %d present',
@@ -109,16 +109,15 @@ trait GitCommitMessageValidatorTrait
     /**
      * Validates if the commit message is structured to reference a JIRA issue.
      *
-     * @param array $prefixes
+     * @param array $project_keys
      *   An array of Jira project prefixes acceptable for this message.
      *
      * @return bool
      *   True if a JIRA ticket ID is attached to the subject. False otherwise.
      */
-    private function getValidateProjectPrefix(array $prefixes): bool
+    private function getValidateProjectPrefix(array $project_keys): bool
     {
-        // Regex for all project prefixes, including IN (infrastructure) as a default.
-        $prefixes = '(' . implode('|', $prefixes) . ')';
+        $prefixes = '(' . implode('|', $project_keys) . ')';
         return preg_match("/^$prefixes-[0-9]+ {1}[a-zA-Z0-9]{1}.*/", (string) $this->subjectLine);
     }
 }
