@@ -120,7 +120,7 @@ trait DockworkerPersistentDataStorageTrait
         string $item,
         mixed $value
     ): void {
-        $this->setPersistentConfigurationItem(
+        $this->setWritePersistentConfigurationItem(
             $this->dockworkerPersistentDataStorageDir,
             $namespace,
             $item,

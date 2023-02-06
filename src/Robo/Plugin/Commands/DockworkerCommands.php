@@ -206,7 +206,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     public function setJiraProperties(): void
     {
         $jira_project_keys = $this->getConfigItem(
-            'application.jira.project_keys'
+            'dockworker.application.jira.project_keys'
         );
         if ($jira_project_keys != null) {
             $this->jiraProjectKeys = array_merge(

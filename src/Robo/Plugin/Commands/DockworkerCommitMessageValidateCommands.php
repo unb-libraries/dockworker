@@ -17,8 +17,8 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
     use GitCommitMessageValidatorTrait;
 
     protected const ERROR_INVALID_COMMIT_MESSAGE = 'Invalid commit message!';
-    protected const ERROR_MISSING_JIRA_INFO = 'JIRA project and issue missing from subject line.';
-    protected const SAMPLE_VALID_COMMIT_MESSAGE = 'Valid example: HERB-135 Add the new picture field to the article feature';
+    protected const ERROR_MISSING_JIRA_INFO = 'JIRA project and issue missing from git commit\'s subject line.';
+    protected const SAMPLE_VALID_COMMIT_MESSAGE = 'Sample: HERB-135 Add the new picture field to the article feature';
     protected const WARN_MISSING_JIRA_INFO = 'You have not specified a JIRA project and issue in your subject line. Continue Anyway?';
 
     /**
@@ -36,8 +36,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
      */
     public function validateCommitMsg(string $message_file): void
     {
-        $message_file_path = $this->applicationRoot . '/' . $message_file;
-        $message = file_get_contents($message_file_path);
+        $message = file_get_contents($message_file);
 
         $this->message = $message;
         $this->subjectLine = str_contains($message, "\n") ?
@@ -54,7 +53,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
 
         // Process universal errors.
         if (!empty($this->errors)) {
-            $this->dockworkerSubTitle('Issues with commit message');
+            $this->dockworkerSubTitle('Issues found in commit message');
             $this->dockworkerListing($this->errors);
             $this->dockworkerSay([self::SAMPLE_VALID_COMMIT_MESSAGE]);
             throw new DockworkerException(self::ERROR_INVALID_COMMIT_MESSAGE);

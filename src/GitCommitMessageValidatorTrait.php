@@ -42,8 +42,12 @@ trait GitCommitMessageValidatorTrait
     {
         $lines = explode("\n", $this->message);
         $max = max(array_map('strlen', $lines));
-        if ($max > 72) {
-            $this->errors[] = sprintf('Wrap the body at 72 characters, current max: %d', $max);
+        if ($max > $this->maxCommitMessageLength) {
+            $this->errors[] = sprintf(
+                'Body line length (%d) exceeds %d characters',
+                $max,
+                $this->maxCommitMessageLength
+            );
         }
     }
 
@@ -57,7 +61,7 @@ trait GitCommitMessageValidatorTrait
             return;
         }
         if ('' !== trim($lines[1])) {
-            $this->errors[] = 'Separate subject from body with a blank line';
+            $this->errors[] = 'Subject line is not separated from body with a blank line';
         }
     }
 
@@ -69,9 +73,9 @@ trait GitCommitMessageValidatorTrait
         $length = strlen($this->subjectLine);
         if ($length > $this->maxCommitMessageLength) {
             $this->errors[] = sprintf(
-                'Limit the subject line to %d characters, %d present',
-                $this->maxCommitMessageLength,
-                $length
+                'Subject line length (%d) exceeds %d characters',
+                $length,
+                $this->maxCommitMessageLength
             );
         }
     }
@@ -82,7 +86,7 @@ trait GitCommitMessageValidatorTrait
     private function getValidateSubjectCapital(): void
     {
         if (ucfirst($this->subjectLine) != $this->subjectLine) {
-            $this->errors[] = 'Capitalize subject line';
+            $this->errors[] = 'Message component of subject line does not start with a capital letter';
         }
     }
 
@@ -92,7 +96,7 @@ trait GitCommitMessageValidatorTrait
     private function getValidateIsEmpty(): void
     {
         if (trim($this->subjectLine) == '') {
-            $this->errors[] = 'Subject line cannot be empty';
+            $this->errors[] = 'Subject line is empty';
         }
     }
 
@@ -102,7 +106,7 @@ trait GitCommitMessageValidatorTrait
     private function getValidatePeriodEnding(): void
     {
         if (str_ends_with($this->subjectLine, '.')) {
-            $this->errors[] = 'Do not end the subject line with period';
+            $this->errors[] = 'Subject line ends with a period';
         }
     }
 

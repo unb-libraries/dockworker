@@ -88,7 +88,7 @@ trait PersistentConfigurationTrait
         if (!is_file($path)) {
             file_put_contents(
                 $path,
-                ''
+                'dockworker:'
             );
             chmod($path, 0600);
         }
@@ -104,7 +104,7 @@ trait PersistentConfigurationTrait
      * @param string $item
      *   The item to retrieve.
      *
-     * @return string
+     * @return mixed
      *   The value of the item.
      */
     protected function getPersistentConfigurationItem(
@@ -125,7 +125,7 @@ trait PersistentConfigurationTrait
      *   The configuration namespace to set in.
      * @param string $item
      *   The item to set.
-     * @param string $value
+     * @param mixed $value
      *   The value to set.
      */
     protected function setPersistentConfigurationItem(
@@ -147,14 +147,14 @@ trait PersistentConfigurationTrait
      *   The configuration namespace to set in.
      * @param string $item
      *   The item to set.
-     * @param string $value
+     * @param mixed $value
      *   The value to set.
      */
     protected function setWritePersistentConfigurationItem(
         string $path,
         string $namespace,
         string $item,
-        string $value
+        mixed $value
     ): void {
         $this->setPersistentConfigurationItem(
             $path,
