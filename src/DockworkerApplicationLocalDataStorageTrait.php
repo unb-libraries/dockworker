@@ -76,6 +76,8 @@ trait DockworkerApplicationLocalDataStorageTrait
         string $query,
         ConsoleIO $io,
         string $default = '',
+        string $description = '',
+        string $info_link = '',
         string $env_var_override_name = ''
     ): mixed {
         return $this->getSetPersistentConfigurationItem(
@@ -85,6 +87,8 @@ trait DockworkerApplicationLocalDataStorageTrait
             $query,
             $io,
             $default,
+            $description,
+            $info_link,
             $env_var_override_name
         );
     }

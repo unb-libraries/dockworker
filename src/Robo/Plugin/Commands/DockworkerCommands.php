@@ -4,11 +4,12 @@ namespace Dockworker\Robo\Plugin\Commands;
 
 use CzProject\GitPhp\GitRepository;
 use Dockworker\CommandRuntimeTrackerTrait;
+use Dockworker\CliToolTrait;
 use Dockworker\DestructiveActionTrait;
 use Dockworker\DockworkerApplicationLocalDataStorageTrait;
 use Dockworker\DockworkerApplicationPersistentDataStorageTrait;
 use Dockworker\DockworkerException;
-use Dockworker\DockworkerIO;
+use Dockworker\DockworkerIOTrait;
 use Dockworker\DockworkerPersistentDataStorageTrait;
 use Dockworker\FileSystemOperationsTrait;
 use Dockworker\GitRepoTrait;
@@ -27,13 +28,14 @@ use Robo\Tasks;
  */
 abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface, ContainerAwareInterface, IOAwareInterface, LoggerAwareInterface
 {
+    use CliToolTrait;
     use CommandRuntimeTrackerTrait;
     use ConfigAwareTrait;
     use ContainerAwareTrait;
     use DestructiveActionTrait;
     use DockworkerApplicationLocalDataStorageTrait;
     use DockworkerApplicationPersistentDataStorageTrait;
-    use DockworkerIO;
+    use DockworkerIOTrait;
     use DockworkerPersistentDataStorageTrait;
     use FileSystemOperationsTrait;
     use GitRepoTrait;
@@ -149,8 +151,14 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      */
     public function updateDockworker(): void
     {
-        $this->dockworkerTitle('Updating Dockworker');
-        $this->dockworkerSay(['Checking for any updates to unb-libraries/dockworker...']);
+        $this->dockworkerTitle(
+            $this->io(),
+            'Updating Dockworker'
+        );
+        $this->dockworkerSay(
+            $this->io()
+            ['Checking for any updates to unb-libraries/dockworker...'])
+        ;
         $this->taskExec('composer')
           ->dir($this->applicationRoot)
           ->arg('update')
@@ -214,6 +222,42 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
                 $jira_project_keys
             );
         }
+    }
+
+    /**
+     * Registers kubectl as a required CLI tool.
+     *
+     * @hook post-init @kubectl
+     */
+    public function registerKubeCtlCliTool()
+    {
+        $tool = [
+            'kubectl',
+            'kubectl, the Kubernetes command-line tool allows dockworker to run commands against Kubernetes clusters. Dockworker uses kubectl to deploy applications, manage cluster resources, and view logs. For more information:',
+            '/snap/bin/kubectl',
+            'https://stackoverflowteams.com/c/unblibsystems/questions/180/181',
+            'api-resources',
+            'Binding2',
+        ];
+        $this->registerCliTool(
+            $tool[0],
+            $tool[1],
+            $tool[2],
+            $tool[3],
+            $tool[4],
+            $tool[5],
+            $this->io()
+        );
+    }
+
+    /**
+     * Check all registered CLI tools.
+     *
+     * @hook validate
+     */
+    public function checkRegisteredTools()
+    {
+        $this->checkRegisteredCliToolCommands($this->io());
     }
 
     /**

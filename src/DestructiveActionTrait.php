@@ -2,6 +2,7 @@
 
 namespace Dockworker;
 
+use Dockworker\DockworkerIOTrait;
 use Robo\Symfony\ConsoleIO;
 
 /**
@@ -9,6 +10,8 @@ use Robo\Symfony\ConsoleIO;
  */
 trait DestructiveActionTrait
 {
+    use DockworkerIOTrait;
+
     /**
      * Warns the user that a destructive action is about to be performed.
      *
@@ -17,7 +20,7 @@ trait DestructiveActionTrait
      */
     protected function warnDestructiveAction(ConsoleIO $io): void
     {
-        $io->warning('Destructive, Irreversible Actions Ahead!');
+        $this->dockworkerWarn($io, 'Destructive, Irreversible Actions Ahead!');
     }
 
     /**
@@ -34,7 +37,7 @@ trait DestructiveActionTrait
     protected function warnConfirmDestructiveAction(ConsoleIO $io, string $prompt): bool
     {
         $this->warnDestructiveAction($io);
-        return ($io->confirm($prompt, false));
+        return ($this->dockworkerConfirm($io, $prompt, false));
     }
 
     /**

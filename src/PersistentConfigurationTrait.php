@@ -5,6 +5,7 @@ namespace Dockworker;
 use Consolidation\Config\ConfigInterface;
 use Consolidation\Config\Loader\ConfigProcessor;
 use Consolidation\Config\Loader\YamlConfigLoader;
+use Dockworker\DockworkerIOTrait;
 use Dockworker\FileSystemOperationsTrait;
 use Robo\Config\Config;
 use Robo\Symfony\ConsoleIO;
@@ -15,6 +16,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 trait PersistentConfigurationTrait
 {
+    use DockworkerIOTrait;
     use FileSystemOperationsTrait;
 
     /**
@@ -208,6 +210,8 @@ trait PersistentConfigurationTrait
         string $query,
         ConsoleIO $io,
         string $default = '',
+        string $description = '',
+        string $info_link = '',
         string $env_var_override_name = ''
     ): mixed {
         if (!empty($env_var_override_name)) {
@@ -222,7 +226,23 @@ trait PersistentConfigurationTrait
             $item
         );
         if (empty($cur_value)) {
-            $ans_value = $io->ask($query, $default);
+            if (!empty($description)) {
+                $this->dockworkerOutputBlock(
+                    $io,
+                    [$description]
+                );
+            }
+            if (!empty($info_link)) {
+                $this->dockworkerNote(
+                    $io,
+                    [$info_link]
+                );
+            }
+            $ans_value = $this->dockworkerAsk(
+                $io,
+                $query,
+                $default
+            );
             $this->setWritePersistentConfigurationItem(
                 $path,
                 $namespace,
