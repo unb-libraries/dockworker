@@ -7,6 +7,7 @@ use Dockworker\CliToolCommand;
 use Dockworker\DockworkerIOTrait;
 use Dockworker\PersistentConfigurationTrait;
 use Robo\Symfony\ConsoleIO;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Provides methods to check CLI tools for existence and functionality.
@@ -19,6 +20,21 @@ trait CliToolTrait
 
     protected array $cliTools = [];
 
+    protected function registerCliToolFromYaml($filepath, $io)
+    {
+        $tool = Yaml::parseFile($filepath);
+        $this->registerCliTool(
+            $tool['tool']['name'],
+            $tool['tool']['description'],
+            $tool['tool']['default_path'],
+            $tool['tool']['reference_uri'],
+            $tool['tool']['healthcheck']['command'],
+            $tool['tool']['healthcheck']['output-contains'],
+            $tool['tool']['healthcheck']['label'],
+            $io
+        );
+    }
+
     protected function registerCliTool(
         $basename,
         $description,
@@ -26,6 +42,7 @@ trait CliToolTrait
         $install_uri,
         $test_command,
         $test_command_expected_output,
+        $testing_label,
         ConsoleIO $io
     ): void {
         $found_tool = false;
@@ -62,11 +79,11 @@ trait CliToolTrait
 
         $this->registerCliToolCheck(
             $command,
-            $test_command_expected_output
+            $test_command_expected_output,
+            $testing_label
         );
 
         $this->cliTools[$basename] = $binpath;
     }
 
-    
 }

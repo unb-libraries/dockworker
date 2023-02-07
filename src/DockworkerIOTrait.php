@@ -24,6 +24,19 @@ trait DockworkerIOTrait
     }
 
     /**
+     * Prints an emphasized 'notice' message to the CLI.
+     *
+     * @param \Robo\Symfony\ConsoleIO $io
+     *   The IO to use.
+     * @param string $message
+     *   The message to print.
+     */
+    protected function dockworkerNotice(ConsoleIO $io, string $message): void
+    {
+        $io->say($message);
+    }
+
+    /**
      * Prints a 'note' level message to the CLI.
      *
      * @param \Robo\Symfony\ConsoleIO $io

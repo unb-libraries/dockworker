@@ -231,23 +231,8 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      */
     public function registerKubeCtlCliTool()
     {
-        $tool = [
-            'kubectl',
-            'kubectl, the Kubernetes command-line tool allows dockworker to run commands against Kubernetes clusters. Dockworker uses kubectl to deploy applications, manage cluster resources, and view logs. For more information:',
-            '/snap/bin/kubectl',
-            'https://stackoverflowteams.com/c/unblibsystems/questions/180/181',
-            'api-resources',
-            'Binding2',
-        ];
-        $this->registerCliTool(
-            $tool[0],
-            $tool[1],
-            $tool[2],
-            $tool[3],
-            $tool[4],
-            $tool[5],
-            $this->io()
-        );
+        $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/kubectl.yml";
+        $this->registerCliToolFromYaml($file_path, $this->io());
     }
 
     /**

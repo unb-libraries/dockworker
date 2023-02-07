@@ -2,6 +2,7 @@
 
 namespace Dockworker;
 
+use Dockworker\DockworkerIOTrait;
 use Dockworker\CliToolCommand;
 use Robo\Symfony\ConsoleIO;
 
@@ -10,6 +11,8 @@ use Robo\Symfony\ConsoleIO;
  */
 trait CliToolCheckerTrait
 {
+    use DockworkerIOTrait;
+
     /**
      * @var array
      */
@@ -34,6 +37,7 @@ trait CliToolCheckerTrait
             $this->checkRegisteredCliTool(
                 $command['command'],
                 $command['expect_output'],
+                $command['label'],
                 $io,
                 $command['quiet']
             );
@@ -53,10 +57,12 @@ trait CliToolCheckerTrait
     protected function registerCliToolCheck(
         CliToolCommand $command,
         string $expected_output,
+        string $label,
         bool $quiet = false
     ): void {
         $this->registeredCliCheckCommands[] = [
             'command' => $command,
+            'label' => $label,
             'expect_output' => $expected_output,
             'quiet' => $quiet,
         ];
@@ -77,15 +83,14 @@ trait CliToolCheckerTrait
     protected function checkRegisteredCliTool(
         CliToolCommand $command,
         string $expected_output,
+        string $testing_label,
         ConsoleIO $io,
         bool $quiet = false
     ): void {
         if (!$this->checkIsSilent) {
-            $this->say(
-                sprintf(
-                    'Initializing %s...',
-                    $command->description
-                )
+            $this->dockworkerNotice(
+                $io,
+                "$testing_label..."
             );
         }
         $command->execTest($expected_output, $io, $quiet);

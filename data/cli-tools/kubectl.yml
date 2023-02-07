@@ -1,0 +1,9 @@
+tool:
+  name: kubectl
+  description: kubectl, the Kubernetes command-line tool allows dockworker to run commands against Kubernetes clusters. Dockworker uses kubectl to deploy applications, manage cluster resources, and view logs.
+  default_path: /snap/bin/kubectl
+  reference_uri: https://stackoverflowteams.com/c/unblibsystems/questions/180/181
+  healthcheck:
+    command: api-resources
+    label: Initializing connection to the kubernetes API server
+    output-contains: Binding
