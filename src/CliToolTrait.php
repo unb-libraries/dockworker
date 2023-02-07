@@ -20,7 +20,7 @@ trait CliToolTrait
     protected array $cliTools = [];
 
     protected function registerCliTool(
-        $binary_file,
+        $basename,
         $description,
         $default_binpath,
         $install_uri,
@@ -28,13 +28,12 @@ trait CliToolTrait
         $test_command_expected_output,
         ConsoleIO $io
     ): void {
-
         $found_tool = false;
         while ($found_tool == false) {
             $binpath = $this->getSetDockworkerPersistentDataConfigurationItem(
                 'cli_tools',
-                "$binary_file.bin",
-                "Enter the full path to your installed $binary_file binary",
+                "$basename.bin",
+                "Enter the full path to your installed $basename binary",
                 $io,
                 $default_binpath,
                 $description,
@@ -47,7 +46,7 @@ trait CliToolTrait
                 );
                 $this->setDockworkerPersistentDataConfigurationItem(
                     'cli_tools',
-                    "$binary_file.bin",
+                    "$basename.bin",
                     null
                 );
             }
@@ -58,7 +57,7 @@ trait CliToolTrait
 
         $command = new CliToolCommand(
             "$binpath $test_command",
-            $binary_file
+            $basename
         );
 
         $this->registerCliToolCheck(
@@ -66,5 +65,8 @@ trait CliToolTrait
             $test_command_expected_output
         );
 
+        $this->cliTools[$basename] = $binpath;
     }
+
+    
 }

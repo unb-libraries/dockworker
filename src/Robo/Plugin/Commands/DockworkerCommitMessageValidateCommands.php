@@ -57,8 +57,14 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
 
         // Process universal errors.
         if (!empty($this->errors)) {
-            $this->dockworkerSubTitle('Commit Message Validation Failure(s):');
-            $this->dockworkerListing($this->errors);
+            $this->dockworkerSubTitle(
+                $this->io(),
+                'Commit Message Validation Failure(s):'
+            );
+            $this->dockworkerListing(
+                $this->io(),
+                $this->errors
+            );
             $this->showSampleCommitMessage();
             throw new DockworkerException(self::ERROR_INVALID_COMMIT_MESSAGE);
         }
@@ -78,6 +84,9 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
      */
     protected function showSampleCommitMessage(): void
     {
-        $this->dockworkerNote(self::SAMPLE_VALID_COMMIT_MESSAGE);
+        $this->dockworkerNote(
+            $this->io(),
+            self::SAMPLE_VALID_COMMIT_MESSAGE
+        );
     }
 }

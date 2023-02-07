@@ -11,7 +11,7 @@ trait DockworkerIOTrait
 {
 
     /**
-     * Prints a standard message to the CLI.
+     * Prints a standard, unstyled message to the CLI.
      *
      * @param \Robo\Symfony\ConsoleIO $io
      *   The IO to use.
@@ -77,7 +77,7 @@ trait DockworkerIOTrait
      */
     protected function dockworkerAsk(ConsoleIO $io, string $query, $default = ''): string
     {
-        return $io->ask($message, $default);
+        return $io->ask($query, $default);
     }
 
     /**
