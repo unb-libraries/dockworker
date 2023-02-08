@@ -3,7 +3,7 @@
 namespace Dockworker;
 
 use Dockworker\CliToolCheckerTrait;
-use Dockworker\CliToolCommand;
+use Dockworker\CliCommand;
 use Dockworker\DockworkerIOTrait;
 use Dockworker\PersistentConfigurationTrait;
 use Robo\Symfony\ConsoleIO;
@@ -20,8 +20,20 @@ trait CliToolTrait
 
     protected array $cliTools = [];
 
-    protected function registerCliToolFromYaml($filepath, $io)
-    {
+    /**
+     * Registers a CLI tool from a YAML file source.
+     *
+     * @param string $filepath
+     *   The path to the YAML file containing the tool definition.
+     * @param $io
+     *   The IO object to use.
+     *
+     * @return void
+     */
+    protected function registerCliToolFromYaml(
+        string $filepath,
+        ConsoleIO $io
+    ): void {
         $tool = Yaml::parseFile($filepath);
         $this->registerCliTool(
             $tool['tool']['name'],
@@ -35,31 +47,43 @@ trait CliToolTrait
         );
     }
 
+    /**
+     * @param string $basename
+     * @param string $description
+     * @param string $default_bin_path
+     * @param string $install_uri
+     * @param string $test_args
+     * @param string $expected_test_output
+     * @param string $testing_label
+     * @param \Robo\Symfony\ConsoleIO $io
+     *
+     * @return void
+     */
     protected function registerCliTool(
-        $basename,
-        $description,
-        $default_binpath,
-        $install_uri,
-        $test_command,
-        $test_command_expected_output,
-        $testing_label,
+        string $basename,
+        string $description,
+        string $default_bin_path,
+        string $install_uri,
+        string $test_args,
+        string $expected_test_output,
+        string $testing_label,
         ConsoleIO $io
     ): void {
         $found_tool = false;
         while ($found_tool == false) {
-            $binpath = $this->getSetDockworkerPersistentDataConfigurationItem(
+            $bin_path = $this->getSetDockworkerPersistentDataConfigurationItem(
                 'cli_tools',
                 "$basename.bin",
                 "Enter the full path to your installed $basename binary",
                 $io,
-                $default_binpath,
+                $default_bin_path,
                 $description,
                 $install_uri
             );
-            if (!file_exists($binpath) || !is_executable($binpath)) {
+            if (!file_exists($bin_path) || !is_executable($bin_path)) {
                 $this->dockworkerWarn(
                     $io,
-                    ["$binpath does not exist or is not executable"]
+                    ["$bin_path does not exist or is not executable"]
                 );
                 $this->setDockworkerPersistentDataConfigurationItem(
                     'cli_tools',
@@ -72,18 +96,18 @@ trait CliToolTrait
             }
         }
 
-        $command = new CliToolCommand(
-            "$binpath $test_command",
+        $command = new CliCommand(
+            "$bin_path $test_args",
             $basename
         );
 
         $this->registerCliToolCheck(
             $command,
-            $test_command_expected_output,
+            $expected_test_output,
             $testing_label
         );
 
-        $this->cliTools[$basename] = $binpath;
+        $this->cliTools[$basename] = $bin_path;
     }
 
 }

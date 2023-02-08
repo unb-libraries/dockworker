@@ -5,17 +5,30 @@ namespace Dockworker;
 use Dockworker\DockworkerIOTrait;
 use Robo\Symfony\ConsoleIO;
 
-class CliToolCommand
+class CliCommand
 {
     use DockworkerIOTrait;
 
-    protected array $cmdOutput;
-    protected bool $quiet;
-    protected int $cmdReturnCode;
-    protected int $timeout;
     protected string $command;
+    protected array $commandOutput;
+    protected int $commandReturnCode;
     public string $description;
+    protected bool $quiet;
+    protected bool $silent;
+    protected int $timeout;
 
+    /**
+     * CliCommand constructor.
+     *
+     * @param string $command
+     *   The full command to execute.
+     * @param string $description
+     *   A description of the command.
+     * @param int $timeout
+     *   The timeout for the command.
+     * @param bool $silent
+     *   True to suppress any output from this command, including errors.
+     */
     public function __construct(
         string $command,
         string $description,
@@ -38,8 +51,8 @@ class CliToolCommand
             $cmd_output,
             $cmd_return
         );
-        $this->cmdOutput = $cmd_output;
-        $this->cmdReturnCode = $cmd_return;
+        $this->commandOutput = $cmd_output;
+        $this->commandReturnCode = $cmd_return;
     }
 
     /**
@@ -47,6 +60,8 @@ class CliToolCommand
      *
      * @param string $expected_output
      *   The output expected from the command.
+     * @param ConsoleIO $io
+     *   The IO object to use.
      * @param bool $quiet
      *   True to suppress any output, including errors.
      *
@@ -56,26 +71,26 @@ class CliToolCommand
     public function execTest(
         string $expected_output,
         ConsoleIO $io,
-        $quiet = false
+        bool $quiet = false
     ): void {
         $this->quiet = $quiet;
         $this->exec();
-        if ($this->cmdReturnCode != 0) {
+        if ($this->commandReturnCode != 0) {
             if (!$this->quiet) {
-                $this->dockworkerOutputBlock($io, $this->cmdOutput);
+                $this->dockworkerOutputBlock($io, $this->commandOutput);
             }
-            throw new DockworkerException("Command [$this->command] returned error code $this->cmdReturnCode.");
+            throw new DockworkerException("Command [$this->command] returned error code $this->commandReturnCode.");
         }
         if (!$this->outputContainsExpectedOutput($expected_output)) {
             if (!$this->quiet) {
-                $this->dockworkerOutputBlock($io, $this->cmdOutput);
+                $this->dockworkerOutputBlock($io, $this->commandOutput);
             }
             throw new DockworkerException("Command [$this->command] returned unexpected output.");
         }
     }
 
     /**
-     * Checks if the command output contains the expected output.
+     * Checks if the command's output contains the expected string.
      *
      * @param string $expected_output
      *   The output expected from the command.
@@ -85,7 +100,7 @@ class CliToolCommand
      */
     protected function outputContainsExpectedOutput(string $expected_output): bool
     {
-        foreach ($this->cmdOutput as $line) {
+        foreach ($this->commandOutput as $line) {
             if (str_contains($line, $expected_output)) {
                 return true;
             }

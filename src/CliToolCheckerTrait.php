@@ -3,7 +3,7 @@
 namespace Dockworker;
 
 use Dockworker\DockworkerIOTrait;
-use Dockworker\CliToolCommand;
+use Dockworker\CliCommand;
 use Robo\Symfony\ConsoleIO;
 
 /**
@@ -21,7 +21,7 @@ trait CliToolCheckerTrait
     protected bool $checkIsSilent = false;
 
     /**
-     * Executes a series of CLI tool commands and checks their output.
+     * Executes the registered CLI tool commands and checks their output.
      *
      * @param bool $quiet
      *   True to suppress any output, including errors.
@@ -47,7 +47,7 @@ trait CliToolCheckerTrait
     /**
      * Adds a CLI tool command to the list of commands to check.
      *
-     * @param CliToolCommand $command
+     * @param CliCommand $command
      *   The command to execute.
      * @param string $expected_output
      *   The output expected from the command.
@@ -55,7 +55,7 @@ trait CliToolCheckerTrait
      *   True to suppress any output from this command, including errors.
      */
     protected function registerCliToolCheck(
-        CliToolCommand $command,
+        CliCommand $command,
         string $expected_output,
         string $label,
         bool $quiet = false
@@ -71,7 +71,7 @@ trait CliToolCheckerTrait
     /**
      * Executes a CLI tool command and checks its output.
      *
-     * @param CliToolCommand $command
+     * @param CliCommand $command
      *   The command to execute.
      * @param string $expected_output
      *   The output expected from the command.
@@ -81,7 +81,7 @@ trait CliToolCheckerTrait
      * @throws \Dockworker\DockworkerException
      */
     protected function checkRegisteredCliTool(
-        CliToolCommand $command,
+        CliCommand $command,
         string $expected_output,
         string $testing_label,
         ConsoleIO $io,

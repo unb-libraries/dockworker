@@ -310,9 +310,9 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      *
      * @hook post-command
      */
-    public function triggerDisplayCommandRunTime(): void
+    public function triggerDisplayCommandRunTime(ConsoleIO $io): void
     {
-        $this->displayCommandRunTime();
+        $this->displayCommandRunTime($io);
     }
 
     /**
