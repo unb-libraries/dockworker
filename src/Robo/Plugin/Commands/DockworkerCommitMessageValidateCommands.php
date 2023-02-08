@@ -23,8 +23,6 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
     /**
      * Validates a git commit message against this application's standards.
      *
-     * @param ConsoleIO $io
-     *   The console IO.
      * @param string $message_file
      *   The path to a file containing the git commit message.
      *

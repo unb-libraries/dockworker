@@ -48,14 +48,6 @@ trait CommandRuntimeTrackerTrait
     }
 
     /**
-     * Sets the 'start time' of the current command.
-     */
-    protected function setCommandStartTime(): void
-    {
-        $this->commandStartTime = time();
-    }
-
-    /**
      * Gets the time elapsed since the command started.
      *
      * @return string
@@ -68,6 +60,14 @@ trait CommandRuntimeTrackerTrait
         $end = new DateTime();
         $diff = $start->diff($end);
         return $diff->format('%H:%I:%S');
+    }
+
+    /**
+     * Sets the 'start time' of the current command.
+     */
+    protected function setCommandStartTime(): void
+    {
+        $this->commandStartTime = time();
     }
 
     /**

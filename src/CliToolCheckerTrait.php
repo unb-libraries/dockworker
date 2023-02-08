@@ -45,30 +45,6 @@ trait CliToolCheckerTrait
     }
 
     /**
-     * Adds a CLI tool command to the list of commands to check.
-     *
-     * @param CliCommand $command
-     *   The command to execute.
-     * @param string $expected_output
-     *   A string that is expected to appear within the command's output.
-     * @param bool $quiet
-     *   True to suppress any output from this command, including errors.
-     */
-    protected function registerCliToolCheck(
-        CliCommand $command,
-        string $expected_output,
-        string $label,
-        bool $quiet = false
-    ): void {
-        $this->registeredCliCheckCommands[] = [
-            'command' => $command,
-            'label' => $label,
-            'expect_output' => $expected_output,
-            'quiet' => $quiet,
-        ];
-    }
-
-    /**
      * Executes a CLI tool command and checks its output.
      *
      * @param ConsoleIO $io
@@ -96,5 +72,29 @@ trait CliToolCheckerTrait
             );
         }
         $command->execTest($io, $expected_output, $quiet);
+    }
+
+    /**
+     * Adds a CLI tool command to the list of commands to check.
+     *
+     * @param CliCommand $command
+     *   The command to execute.
+     * @param string $expected_output
+     *   A string that is expected to appear within the command's output.
+     * @param bool $quiet
+     *   True to suppress any output from this command, including errors.
+     */
+    protected function registerCliToolCheck(
+        CliCommand $command,
+        string $expected_output,
+        string $label,
+        bool $quiet = false
+    ): void {
+        $this->registeredCliCheckCommands[] = [
+            'command' => $command,
+            'label' => $label,
+            'expect_output' => $expected_output,
+            'quiet' => $quiet,
+        ];
     }
 }

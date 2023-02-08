@@ -12,6 +12,13 @@ class CliCommand
     use DockworkerIOTrait;
 
     /**
+     * A description of the command.
+     *
+     * @var string
+     */
+    public string $description;
+
+    /**
      * The full CLI command to execute.
      *
      * @var string
@@ -31,13 +38,6 @@ class CliCommand
      * @var int
      */
     protected int $commandReturnCode;
-
-    /**
-     * A description of the command.
-     *
-     * @var string
-     */
-    public string $description;
 
     /**
      * True to suppress any output from this command, including errors.
@@ -78,20 +78,6 @@ class CliCommand
     }
 
     /**
-     * Executes the command.
-     */
-    public function exec(): void
-    {
-        exec(
-            $this->command,
-            $cmd_output,
-            $cmd_return
-        );
-        $this->commandOutput = $cmd_output;
-        $this->commandReturnCode = $cmd_return;
-    }
-
-    /**
      * Executes the command and checks for an expected output and return code.
      *
      * @param ConsoleIO $io
@@ -126,6 +112,20 @@ class CliCommand
             }
             throw new DockworkerException("Command [$this->command] returned unexpected output.");
         }
+    }
+
+    /**
+     * Executes the command.
+     */
+    public function exec(): void
+    {
+        exec(
+            $this->command,
+            $cmd_output,
+            $cmd_return
+        );
+        $this->commandOutput = $cmd_output;
+        $this->commandReturnCode = $cmd_return;
     }
 
     /**

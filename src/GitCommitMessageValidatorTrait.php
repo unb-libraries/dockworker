@@ -47,8 +47,6 @@ trait GitCommitMessageValidatorTrait
      */
     private string $subjectLine;
 
-
-
     /**
      * Validates the commit message against a maximum width constraint.
      */
@@ -77,6 +75,20 @@ trait GitCommitMessageValidatorTrait
         if ('' !== trim($lines[1])) {
             $this->errors[] = 'Subject line is not separated from body with a blank line';
         }
+    }
+
+    /**
+     * Displays a sample valid commit message.
+     *
+     * @param ConsoleIO $io
+     *   The console IO.
+     */
+    protected function showSampleCommitMessage(ConsoleIO $io): void
+    {
+        $this->dockworkerNote(
+            $io,
+            $this->sampleCommitMessage
+        );
     }
 
     /**
@@ -137,19 +149,5 @@ trait GitCommitMessageValidatorTrait
     {
         $prefixes = '(' . implode('|', $project_keys) . ')';
         return preg_match("/^$prefixes-[0-9]+ {1}[a-zA-Z0-9]{1}.*/", $this->subjectLine);
-    }
-
-    /**
-     * Displays a sample valid commit message.
-     *
-     * @param ConsoleIO $io
-     *   The console IO.
-     */
-    protected function showSampleCommitMessage(ConsoleIO $io): void
-    {
-        $this->dockworkerNote(
-            $io,
-            $this->sampleCommitMessage
-        );
     }
 }

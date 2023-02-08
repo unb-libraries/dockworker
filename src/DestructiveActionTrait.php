@@ -12,14 +12,23 @@ trait DestructiveActionTrait
     use DockworkerIOTrait;
 
     /**
-     * Warns the user that a destructive action is about to be performed.
+     * Warns, prompts the user for and conditionally exits the script.
      *
      * @param \Robo\Symfony\ConsoleIO $io
      *   The console IO.
+     * @param string $prompt
+     *   The prompt to display to the user.
      */
-    protected function warnDestructiveAction(ConsoleIO $io): void
+    protected function warnConfirmExitDestructiveAction(ConsoleIO $io, string $prompt): void
     {
-        $this->dockworkerWarn($io, ['Destructive, Irreversible Actions Ahead!']);
+        if (
+            $this->warnConfirmDestructiveAction(
+                $io,
+                $prompt
+            ) !== true
+        ) {
+            exit(0);
+        }
     }
 
     /**
@@ -40,22 +49,13 @@ trait DestructiveActionTrait
     }
 
     /**
-     * Warns, prompts the user for and conditionally exits the script.
+     * Warns the user that a destructive action is about to be performed.
      *
      * @param \Robo\Symfony\ConsoleIO $io
      *   The console IO.
-     * @param string $prompt
-     *   The prompt to display to the user.
      */
-    protected function warnConfirmExitDestructiveAction(ConsoleIO $io, string $prompt): void
+    protected function warnDestructiveAction(ConsoleIO $io): void
     {
-        if (
-            $this->warnConfirmDestructiveAction(
-                $io,
-                $prompt
-            ) !== true
-        ) {
-            exit(0);
-        }
+        $this->dockworkerWarn($io, ['Destructive, Irreversible Actions Ahead!']);
     }
 }

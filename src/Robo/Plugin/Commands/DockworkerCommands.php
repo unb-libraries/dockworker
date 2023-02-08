@@ -212,51 +212,6 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     }
 
     /**
-     * Initializes the Jira properties for the application.
-     *
-     * @hook pre-init @jira
-     */
-    public function setJiraProperties(): void
-    {
-        $jira_project_keys = $this->getConfigItem(
-            'dockworker.application.jira.project_keys'
-        );
-        if ($jira_project_keys != null) {
-            $this->jiraProjectKeys = array_merge(
-                $this->jiraGlobalProjectKeys,
-                $jira_project_keys
-            );
-        }
-    }
-
-    /**
-     * Registers kubectl as a required CLI tool.
-     *
-     * @hook interact @kubectl
-     */
-    public function registerKubeCtlCliTool(
-        InputInterface $input,
-        OutputInterface $output,
-        AnnotationData $annotationData
-    ): void {
-        $io = new ConsoleIO($input, $output);
-        $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/kubectl.yml";
-        $this->registerCliToolFromYaml($io);
-    }
-
-    /**
-     * Check all registered CLI tools.
-     *
-     * @hook validate
-     *
-     * @throws \Dockworker\DockworkerException
-     */
-    public function checkRegisteredCliTools(CommandData $commandData): void {
-        $io = new ConsoleIO($commandData->input(), $commandData->output());
-        $this->checkRegisteredCliToolCommands($io);
-    }
-
-    /**
      * Sets a command object property from a config element.
      *
      * @param string $property
@@ -279,11 +234,6 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
             ));
         }
         $this->$property = $config_value;
-    }
-
-    protected function getConfigItem(string $config_key, $default_value = null): mixed
-    {
-        return Robo::Config()->get($config_key, $default_value);
     }
 
     /**
@@ -311,6 +261,56 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
         if (empty($this->applicationRepository)) {
             throw new DockworkerException('Could not initialize the git repository.');
         }
+    }
+
+    /**
+     * Initializes the Jira properties for the application.
+     *
+     * @hook pre-init @jira
+     */
+    public function setJiraProperties(): void
+    {
+        $jira_project_keys = $this->getConfigItem(
+            'dockworker.application.jira.project_keys'
+        );
+        if ($jira_project_keys != null) {
+            $this->jiraProjectKeys = array_merge(
+                $this->jiraGlobalProjectKeys,
+                $jira_project_keys
+            );
+        }
+    }
+
+    protected function getConfigItem(string $config_key, $default_value = null): mixed
+    {
+        return Robo::Config()->get($config_key, $default_value);
+    }
+
+    /**
+     * Registers kubectl as a required CLI tool.
+     *
+     * @hook interact @kubectl
+     */
+    public function registerKubeCtlCliTool(
+        InputInterface $input,
+        OutputInterface $output,
+        AnnotationData $annotationData
+    ): void {
+        $io = new ConsoleIO($input, $output);
+        $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/kubectl.yml";
+        $this->registerCliToolFromYaml($io, $file_path);
+    }
+
+    /**
+     * Check all registered CLI tools.
+     *
+     * @hook validate
+     *
+     * @throws \Dockworker\DockworkerException
+     */
+    public function checkRegisteredCliTools(CommandData $commandData): void {
+        $io = new ConsoleIO($commandData->input(), $commandData->output());
+        $this->checkRegisteredCliToolCommands($io);
     }
 
     /**

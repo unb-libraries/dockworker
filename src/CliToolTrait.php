@@ -37,14 +37,14 @@ trait CliToolTrait
     ): void {
         $tool = Yaml::parseFile($filepath);
         $this->registerCliTool(
+            $io,
             $tool['tool']['name'],
             $tool['tool']['description'],
             $tool['tool']['default_path'],
             $tool['tool']['reference_uri'],
             $tool['tool']['healthcheck']['command'],
             $tool['tool']['healthcheck']['output-contains'],
-            $tool['tool']['healthcheck']['label'],
-            $io
+            $tool['tool']['healthcheck']['label']
         );
     }
 
