@@ -5,8 +5,6 @@ namespace Dockworker;
 use Consolidation\Config\ConfigInterface;
 use Consolidation\Config\Loader\ConfigProcessor;
 use Consolidation\Config\Loader\YamlConfigLoader;
-use Dockworker\DockworkerIOTrait;
-use Dockworker\FileSystemOperationsTrait;
 use Robo\Config\Config;
 use Robo\Symfony\ConsoleIO;
 use Symfony\Component\Yaml\Yaml;
@@ -185,6 +183,8 @@ trait PersistentConfigurationTrait
     /**
      * Gets a configuration item's value, set and write it from a query if unset.
      *
+     * @param \Robo\Symfony\ConsoleIO $io
+     *   The console IO.
      * @param string $path
      *   The path to load the configuration from.
      * @param string $namespace
@@ -193,8 +193,6 @@ trait PersistentConfigurationTrait
      *   The item to set.
      * @param string $query
      *   The query to display if the configuration item is unset.
-     * @param \Robo\Symfony\ConsoleIO $io
-     *   The IO to use when displaying the query.
      * @param string $default
      *   Optional. The default query response, defaults to none.
      * @param string $env_var_override_name
@@ -204,11 +202,11 @@ trait PersistentConfigurationTrait
      *   The value of the configuration item.
      */
     protected function getSetPersistentConfigurationItem(
+        ConsoleIO $io,
         string $path,
         string $namespace,
         string $item,
         string $query,
-        ConsoleIO $io,
         string $default = '',
         string $description = '',
         string $info_link = '',

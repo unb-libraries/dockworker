@@ -4,7 +4,6 @@ namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\DockworkerException;
 use Dockworker\GitCommitMessageValidatorTrait;
-use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 use Robo\Symfony\ConsoleIO;
 
 /**
@@ -28,6 +27,8 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
     /**
      * Validates a git commit message against this application's standards.
      *
+     * @param ConsoleIO $io
+     *   The console IO.
      * @param string $message_file
      *   The path to a file containing the git commit message.
      *
@@ -39,8 +40,10 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
      * @jira
      * @kubectl
      */
-    public function validateCommitMsg(ConsoleIO $io, $message_file): void
-    {
+    public function validateCommitMsg(
+        ConsoleIO $io,
+        string $message_file
+    ): void {
         $message = file_get_contents($message_file);
 
         $this->message = $message;
@@ -66,7 +69,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
                 $io,
                 $this->errors
             );
-            $this->showSampleCommitMessage();
+            $this->showSampleCommitMessage($io);
             throw new DockworkerException(self::ERROR_INVALID_COMMIT_MESSAGE);
         }
 
@@ -82,6 +85,9 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
 
     /**
      * Displays a sample valid commit message.
+     *
+     * @param ConsoleIO $io
+     *   The console IO.
      *
      * @TODO: Move this to GitCommitMessageValidatorTrait.
      */

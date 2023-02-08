@@ -2,8 +2,6 @@
 
 namespace Dockworker;
 
-use Dockworker\DockworkerIOTrait;
-use Dockworker\CliCommand;
 use Robo\Symfony\ConsoleIO;
 
 /**
@@ -23,6 +21,8 @@ trait CliToolCheckerTrait
     /**
      * Executes the registered CLI tool commands and checks their output.
      *
+     * @param ConsoleIO $io
+     *   The console IO.
      * @param bool $quiet
      *   True to suppress any output, including errors.
      *
@@ -35,10 +35,10 @@ trait CliToolCheckerTrait
         $this->checkIsSilent = $quiet;
         foreach ($this->registeredCliCheckCommands as $command) {
             $this->checkRegisteredCliTool(
+                $io,
                 $command['command'],
                 $command['expect_output'],
                 $command['label'],
-                $io,
                 $command['quiet']
             );
         }
@@ -50,7 +50,7 @@ trait CliToolCheckerTrait
      * @param CliCommand $command
      *   The command to execute.
      * @param string $expected_output
-     *   The output expected from the command.
+     *   A string that is expected to appear within the command's output.
      * @param bool $quiet
      *   True to suppress any output from this command, including errors.
      */
@@ -71,20 +71,22 @@ trait CliToolCheckerTrait
     /**
      * Executes a CLI tool command and checks its output.
      *
+     * @param ConsoleIO $io
+     *   The console IO.
      * @param CliCommand $command
      *   The command to execute.
      * @param string $expected_output
-     *   The output expected from the command.
+     *   A string that is expected to appear within the command's output.
      * @param bool $quiet
      *   True to suppress any output, including errors.
      *
      * @throws \Dockworker\DockworkerException
      */
     protected function checkRegisteredCliTool(
+        ConsoleIO $io,
         CliCommand $command,
         string $expected_output,
         string $testing_label,
-        ConsoleIO $io,
         bool $quiet = false
     ): void {
         if (!$this->checkIsSilent) {
@@ -93,6 +95,6 @@ trait CliToolCheckerTrait
                 "$testing_label..."
             );
         }
-        $command->execTest($expected_output, $io, $quiet);
+        $command->execTest($io, $expected_output, $quiet);
     }
 }

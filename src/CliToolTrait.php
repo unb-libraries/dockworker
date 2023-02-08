@@ -2,10 +2,6 @@
 
 namespace Dockworker;
 
-use Dockworker\CliToolCheckerTrait;
-use Dockworker\CliCommand;
-use Dockworker\DockworkerIOTrait;
-use Dockworker\PersistentConfigurationTrait;
 use Robo\Symfony\ConsoleIO;
 use Symfony\Component\Yaml\Yaml;
 
@@ -18,21 +14,26 @@ trait CliToolTrait
     use PersistentConfigurationTrait;
     use DockworkerIOTrait;
 
+    /**
+     * The tools to check.
+     *
+     * @var array
+     */
     protected array $cliTools = [];
 
     /**
      * Registers a CLI tool from a YAML file source.
      *
+     * @param ConsoleIO $io
+     *   The console IO.
      * @param string $filepath
      *   The path to the YAML file containing the tool definition.
-     * @param $io
-     *   The IO object to use.
      *
      * @return void
      */
     protected function registerCliToolFromYaml(
-        string $filepath,
-        ConsoleIO $io
+        ConsoleIO $io,
+        string $filepath
     ): void {
         $tool = Yaml::parseFile($filepath);
         $this->registerCliTool(
@@ -48,34 +49,42 @@ trait CliToolTrait
     }
 
     /**
-     * @param string $basename
-     * @param string $description
-     * @param string $default_bin_path
-     * @param string $install_uri
-     * @param string $test_args
-     * @param string $expected_test_output
-     * @param string $testing_label
-     * @param \Robo\Symfony\ConsoleIO $io
+     * Registers a CLI tool.
      *
-     * @return void
+     * @param ConsoleIO $io
+     *   The console IO.
+     * @param string $basename
+     *   The basename of the tool.
+     * @param string $description
+     *   The description of the tool.
+     * @param string $default_bin_path
+     *   The default path to the tool.
+     * @param string $install_uri
+     *   The URI to the tool's installation instructions.
+     * @param string $test_args
+     *   The arguments to pass to the tool to test it.
+     * @param string $expected_test_output
+     *   A string that is expected to appear within the command's output.
+     * @param string $testing_label
+     *   The label to use when testing the tool.
      */
     protected function registerCliTool(
+        ConsoleIO $io,
         string $basename,
         string $description,
         string $default_bin_path,
         string $install_uri,
         string $test_args,
         string $expected_test_output,
-        string $testing_label,
-        ConsoleIO $io
+        string $testing_label
     ): void {
         $found_tool = false;
         while ($found_tool == false) {
             $bin_path = $this->getSetDockworkerPersistentDataConfigurationItem(
+                $io,
                 'cli_tools',
                 "$basename.bin",
                 "Enter the full path to your installed $basename binary",
-                $io,
                 $default_bin_path,
                 $description,
                 $install_uri

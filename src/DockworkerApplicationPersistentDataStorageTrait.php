@@ -2,8 +2,6 @@
 
 namespace Dockworker;
 
-use Dockworker\FileSystemOperationsTrait;
-use Dockworker\PersistentConfigurationTrait;
 use Robo\Symfony\ConsoleIO;
 
 /**
@@ -47,14 +45,14 @@ trait DockworkerApplicationPersistentDataStorageTrait
     /**
      * Gets the application's persistent configuration item value, set and write it from a query if unset.
      *
+     * @param \Robo\Symfony\ConsoleIO $io
+     *   The console IO.
      * @param string $namespace
      *   The configuration namespace to retrieve from.
      * @param string $item
      *   The item to retrieve.
      * @param string $query
      *   The query to display if the configuration item is unset.
-     * @param \Robo\Symfony\ConsoleIO $io
-     *   The IO to use when displaying the query.
      * @param string $default
      *   Optional. The default query response, defaults to none.
      * @param string $env_var_override_name
@@ -64,21 +62,21 @@ trait DockworkerApplicationPersistentDataStorageTrait
      *   The value of the configuration item.
      */
     protected function getSetApplicationPersistentDataConfigurationItem(
+        ConsoleIO $io,
         string $namespace,
         string $item,
         string $query,
-        ConsoleIO $io,
         string $default = '',
         string $description = '',
         string $info_link = '',
         string $env_var_override_name = ''
     ): mixed {
         return $this->getSetPersistentConfigurationItem(
+            $io,
             $this->applicationLocalDataStorageDir,
             $namespace,
             $item,
             $query,
-            $io,
             $default,
             $description,
             $info_link,

@@ -2,43 +2,79 @@
 
 namespace Dockworker;
 
-use Dockworker\DockworkerIOTrait;
 use Robo\Symfony\ConsoleIO;
 
+/**
+ * Provides methods to execute and manage CLI commands within Dockworker.
+ */
 class CliCommand
 {
     use DockworkerIOTrait;
 
+    /**
+     * The full CLI command to execute.
+     *
+     * @var string
+     */
     protected string $command;
+
+    /**
+     * The output of the command.
+     *
+     * @var string[]
+     */
     protected array $commandOutput;
+
+    /**
+     * The return code of the command.
+     *
+     * @var int
+     */
     protected int $commandReturnCode;
+
+    /**
+     * A description of the command.
+     *
+     * @var string
+     */
     public string $description;
+
+    /**
+     * True to suppress any output from this command, including errors.
+     *
+     * @var bool
+     */
     protected bool $quiet;
-    protected bool $silent;
+
+    /**
+     * The timeout for the command.
+     *
+     * @var int
+     */
     protected int $timeout;
 
     /**
-     * CliCommand constructor.
+     * Constructor.
      *
      * @param string $command
-     *   The full command to execute.
+     *   The full CLI command to execute.
      * @param string $description
      *   A description of the command.
      * @param int $timeout
      *   The timeout for the command.
-     * @param bool $silent
+     * @param bool $quiet
      *   True to suppress any output from this command, including errors.
      */
     public function __construct(
         string $command,
         string $description,
         int $timeout = 10,
-        bool $silent = false
+        bool $quiet = false
     ) {
         $this->command = $command;
         $this->description = $description;
         $this->timeout = $timeout;
-        $this->silent = $silent;
+        $this->quiet = $quiet;
     }
 
     /**
@@ -56,32 +92,35 @@ class CliCommand
     }
 
     /**
-     * Execute the command and check for expected output and return code.
+     * Executes the command and checks for an expected output and return code.
      *
-     * @param string $expected_output
-     *   The output expected from the command.
      * @param ConsoleIO $io
-     *   The IO object to use.
+     *   The console IO.
+     * @param string $output
+     *   A string that is expected to appear within the command's output.
      * @param bool $quiet
-     *   True to suppress any output, including errors.
+     *   Optional. True to suppress any output, including errors.
+     * @param int $return_code
+     *   Optional. The expected return code. Defaults to 0.
      *
      * @return void
      * @throws \Dockworker\DockworkerException
      */
     public function execTest(
-        string $expected_output,
         ConsoleIO $io,
-        bool $quiet = false
+        string $output,
+        bool $quiet = false,
+        int $return_code = 0
     ): void {
         $this->quiet = $quiet;
         $this->exec();
-        if ($this->commandReturnCode != 0) {
+        if ($this->commandReturnCode != $return_code) {
             if (!$this->quiet) {
                 $this->dockworkerOutputBlock($io, $this->commandOutput);
             }
             throw new DockworkerException("Command [$this->command] returned error code $this->commandReturnCode.");
         }
-        if (!$this->outputContainsExpectedOutput($expected_output)) {
+        if (!$this->outputContainsExpectedOutput($output)) {
             if (!$this->quiet) {
                 $this->dockworkerOutputBlock($io, $this->commandOutput);
             }
@@ -90,18 +129,18 @@ class CliCommand
     }
 
     /**
-     * Checks if the command's output contains the expected string.
+     * Checks if the command's output contains an expected string.
      *
-     * @param string $expected_output
-     *   The output expected from the command.
+     * @param string $output
+     *   A string that is expected to appear within the command's output.
      *
      * @return bool
      *   True if the output contains the expected output. False otherwise.
      */
-    protected function outputContainsExpectedOutput(string $expected_output): bool
+    protected function outputContainsExpectedOutput(string $output): bool
     {
         foreach ($this->commandOutput as $line) {
-            if (str_contains($line, $expected_output)) {
+            if (str_contains($line, $output)) {
                 return true;
             }
         }

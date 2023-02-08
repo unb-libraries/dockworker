@@ -3,7 +3,6 @@
 namespace Dockworker;
 
 use DateTime;
-use Dockworker\DockworkerIOTrait;
 use Robo\Symfony\ConsoleIO;
 
 /**
@@ -29,6 +28,9 @@ trait CommandRuntimeTrackerTrait
 
     /**
      * Displays the command's total run time.
+     *
+     * @param ConsoleIO $io
+     *   The console IO.
      */
     protected function displayCommandRunTime(ConsoleIO $io): void
     {

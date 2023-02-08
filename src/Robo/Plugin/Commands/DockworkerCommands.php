@@ -146,6 +146,9 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     /**
      * Updates the dockworker package to the latest release.
      *
+     * @param ConsoleIO $io
+     *   The console IO.
+     *
      * @command dockworker:update
      * @aliases update
      * @hidden
@@ -228,16 +231,22 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     /**
      * Registers kubectl as a required CLI tool.
      *
+     * @param ConsoleIO $io
+     *   The console IO.
+     *
      * @hook post-init @kubectl
      */
-    public function registerKubeCtlCliTool()
+    public function registerKubeCtlCliTool(ConsoleIO $io)
     {
         $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/kubectl.yml";
-        $this->registerCliToolFromYaml($file_path, $this->io());
+        $this->registerCliToolFromYaml($io, $file_path);
     }
 
     /**
      * Check all registered CLI tools.
+     *
+     * @param ConsoleIO $io
+     *   The console IO.
      *
      * @hook validate
      *
@@ -308,6 +317,9 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     /**
      * Trigger the display of the command's total run time.
      *
+     * @param ConsoleIO $io
+     *   The console IO.
+     *
      * @hook post-command
      */
     public function triggerDisplayCommandRunTime(ConsoleIO $io): void
@@ -349,6 +361,8 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      * https://github.com/consolidation/annotated-command/issues/64 is merged
      * or solved. Otherwise, hooks do not fire as expected.
      *
+     * @param ConsoleIO $io
+     *   The console IO.
      * @param string $command_string
      *   The Dockworker command to run.
      * @param string $exception_message
@@ -360,10 +374,14 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      *   The return code of the command.
      */
     public function setRunOtherCommand(
+        ConsoleIO $io,
         string $command_string,
         string $exception_message = ''
     ): int {
-        $this->dockworkerNote(["Spawning new command thread: $command_string"]);
+        $this->dockworkerNote(
+            $io,
+            ["Spawning new command thread: $command_string"]
+        );
         $bin = $_SERVER['argv'][0];
         $command = "$bin --ansi $command_string";
         passthru($command, $return);
