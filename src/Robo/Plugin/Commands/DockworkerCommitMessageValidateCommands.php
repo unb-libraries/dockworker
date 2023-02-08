@@ -5,6 +5,7 @@ namespace Dockworker\Robo\Plugin\Commands;
 use Dockworker\DockworkerException;
 use Dockworker\GitCommitMessageValidatorTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
+use Robo\Symfony\ConsoleIO;
 
 /**
  * Defines commands used to validate a git commit message.
@@ -38,7 +39,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
      * @jira
      * @kubectl
      */
-    public function validateCommitMsg(string $message_file): void
+    public function validateCommitMsg(ConsoleIO $io, $message_file): void
     {
         $message = file_get_contents($message_file);
 
@@ -58,11 +59,11 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
         // Process universal errors.
         if (!empty($this->errors)) {
             $this->dockworkerSubTitle(
-                $this->io(),
+                $io,
                 'Commit Message Validation Failure(s):'
             );
             $this->dockworkerListing(
-                $this->io(),
+                $io,
                 $this->errors
             );
             $this->showSampleCommitMessage();
@@ -72,7 +73,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
         if (!empty($this->jiraProjectKeys)) {
             if (!$this->getValidateProjectPrefix($this->jiraProjectKeys)) {
                 if (!$this->confirm(self::WARN_MISSING_JIRA_INFO)) {
-                    $this->showSampleCommitMessage();
+                    $this->showSampleCommitMessage($io);
                     throw new DockworkerException(self::ERROR_MISSING_JIRA_INFO);
                 }
             }
@@ -81,11 +82,13 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
 
     /**
      * Displays a sample valid commit message.
+     *
+     * @TODO: Move this to GitCommitMessageValidatorTrait.
      */
-    protected function showSampleCommitMessage(): void
+    protected function showSampleCommitMessage(ConsoleIO $io): void
     {
         $this->dockworkerNote(
-            $this->io(),
+            $io,
             self::SAMPLE_VALID_COMMIT_MESSAGE
         );
     }

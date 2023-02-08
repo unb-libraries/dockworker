@@ -20,6 +20,7 @@ use Psr\Log\LoggerAwareTrait;
 use Robo\Common\ConfigAwareTrait;
 use Robo\Contract\ConfigAwareInterface;
 use Robo\Contract\IOAwareInterface;
+use Robo\Symfony\ConsoleIO;
 use Robo\Robo;
 use Robo\Tasks;
 
@@ -149,14 +150,14 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      * @aliases update
      * @hidden
      */
-    public function updateDockworker(): void
+    public function updateDockworker(ConsoleIO $io): void
     {
         $this->dockworkerTitle(
-            $this->io(),
+            $io,
             'Updating Dockworker'
         );
         $this->dockworkerSay(
-            $this->io()
+            $io,
             ['Checking for any updates to unb-libraries/dockworker...'])
         ;
         $this->taskExec('composer')
@@ -239,10 +240,12 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      * Check all registered CLI tools.
      *
      * @hook validate
+     *
+     * @throws \Dockworker\DockworkerException
      */
-    public function checkRegisteredTools()
+    public function checkRegisteredCliTools(ConsoleIO $io)
     {
-        $this->checkRegisteredCliToolCommands($this->io());
+        $this->checkRegisteredCliToolCommands($io);
     }
 
     /**

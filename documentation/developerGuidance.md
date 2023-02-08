@@ -56,10 +56,6 @@ For sanity, PHP docblock annotation tags should be defined in the following orde
    * @dockerpush
 ```
 
-## I/O operations
-### Use of $this->io()
-Although the 'io()' method is deprecated in Symfony 3+ (dependency injection of the ConsoleIO object is preferred), we should still use it for console IO in Dockworker commands. drush continues to use io() control, and we should follow suit until drush migrates to using dependency injection.
-
 ## Code Organization
 ### Command Classes
 #### Limit on Hook Functions
