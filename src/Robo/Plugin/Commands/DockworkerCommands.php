@@ -162,8 +162,8 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
         );
         $this->dockworkerSay(
             $io,
-            ['Checking for any updates to unb-libraries/dockworker...'])
-        ;
+            ['Checking for any updates to unb-libraries/dockworker...']
+        );
         $this->taskExec('composer')
           ->dir($this->applicationRoot)
           ->arg('update')
@@ -281,7 +281,21 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
         }
     }
 
-    protected function getConfigItem(string $config_key, $default_value = null): mixed
+    /**
+     * Gets a configuration item from the Dockworker configuration.
+     *
+     * @param string $config_key
+     *   The configuration key to retrieve.
+     * @param mixed $default_value
+     *   The default value to return if the configuration key is not set.
+     *
+     * @return mixed
+     *   The configuration value.
+     */
+    protected function getConfigItem(
+        string $config_key,
+        mixed $default_value = null
+    ): mixed
     {
         return Robo::Config()->get($config_key, $default_value);
     }
@@ -308,7 +322,8 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      *
      * @throws \Dockworker\DockworkerException
      */
-    public function checkRegisteredCliTools(CommandData $commandData): void {
+    public function checkRegisteredCliTools(CommandData $commandData): void
+    {
         $io = new ConsoleIO($commandData->input(), $commandData->output());
         $this->checkRegisteredCliToolCommands($io);
     }
@@ -360,6 +375,8 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      * https://github.com/consolidation/annotated-command/issues/64 is merged
      * or solved. Otherwise, hooks do not fire as expected.
      *
+     * @param ConsoleIO $io
+     *   The console IO.
      * @param string $command_string
      *   The Dockworker command to run.
      * @param string $exception_message
@@ -371,10 +388,14 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      *   The return code of the command.
      */
     public function setRunOtherCommand(
+        ConsoleIO $io,
         string $command_string,
         string $exception_message = ''
     ): int {
-        $this->dockworkerNote(["Spawning new command thread: $command_string"]);
+        $this->dockworkerNote(
+            $io,
+            ["Spawning new command thread: $command_string"]
+        );
         $bin = $_SERVER['argv'][0];
         $command = "$bin --ansi $command_string";
         passthru($command, $return);

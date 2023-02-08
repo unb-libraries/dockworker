@@ -32,7 +32,6 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
      * @throws \Dockworker\DockworkerException
      *
      * @jira
-     * @kubectl
      */
     public function validateCommitMsg(
         ConsoleIO $io,
