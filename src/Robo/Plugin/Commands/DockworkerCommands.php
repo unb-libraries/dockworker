@@ -2,9 +2,11 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Consolidation\AnnotatedCommand\AnnotationData;
+use Consolidation\AnnotatedCommand\CommandData;
 use CzProject\GitPhp\GitRepository;
-use Dockworker\CommandRuntimeTrackerTrait;
 use Dockworker\CliToolTrait;
+use Dockworker\CommandRuntimeTrackerTrait;
 use Dockworker\DestructiveActionTrait;
 use Dockworker\DockworkerApplicationLocalDataStorageTrait;
 use Dockworker\DockworkerApplicationPersistentDataStorageTrait;
@@ -20,9 +22,11 @@ use Psr\Log\LoggerAwareTrait;
 use Robo\Common\ConfigAwareTrait;
 use Robo\Contract\ConfigAwareInterface;
 use Robo\Contract\IOAwareInterface;
-use Robo\Symfony\ConsoleIO;
 use Robo\Robo;
+use Robo\Symfony\ConsoleIO;
 use Robo\Tasks;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Defines a base class for all Dockworker commands.
@@ -146,9 +150,6 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     /**
      * Updates the dockworker package to the latest release.
      *
-     * @param ConsoleIO $io
-     *   The console IO.
-     *
      * @command dockworker:update
      * @aliases update
      * @hidden
@@ -231,29 +232,27 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     /**
      * Registers kubectl as a required CLI tool.
      *
-     * @param ConsoleIO $io
-     *   The console IO.
-     *
-     * @hook post-init @kubectl
+     * @hook interact @kubectl
      */
-    public function registerKubeCtlCliTool(ConsoleIO $io)
-    {
+    public function registerKubeCtlCliTool(
+        InputInterface $input,
+        OutputInterface $output,
+        AnnotationData $annotationData
+    ): void {
+        $io = new ConsoleIO($input, $output);
         $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/kubectl.yml";
-        $this->registerCliToolFromYaml($io, $file_path);
+        $this->registerCliToolFromYaml($io);
     }
 
     /**
      * Check all registered CLI tools.
      *
-     * @param ConsoleIO $io
-     *   The console IO.
-     *
      * @hook validate
      *
      * @throws \Dockworker\DockworkerException
      */
-    public function checkRegisteredCliTools(ConsoleIO $io)
-    {
+    public function checkRegisteredCliTools(CommandData $commandData): void {
+        $io = new ConsoleIO($commandData->input(), $commandData->output());
         $this->checkRegisteredCliToolCommands($io);
     }
 
@@ -317,13 +316,13 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     /**
      * Trigger the display of the command's total run time.
      *
-     * @param ConsoleIO $io
-     *   The console IO.
-     *
-     * @hook post-command
+     * @hook post-process
      */
-    public function triggerDisplayCommandRunTime(ConsoleIO $io): void
-    {
+    public function triggerDisplayCommandRunTime(
+        $result,
+        CommandData $commandData
+    ): void {
+        $io = new ConsoleIO($commandData->input(), $commandData->output());
         $this->displayCommandRunTime($io);
     }
 
@@ -361,8 +360,6 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      * https://github.com/consolidation/annotated-command/issues/64 is merged
      * or solved. Otherwise, hooks do not fire as expected.
      *
-     * @param ConsoleIO $io
-     *   The console IO.
      * @param string $command_string
      *   The Dockworker command to run.
      * @param string $exception_message
@@ -374,14 +371,10 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      *   The return code of the command.
      */
     public function setRunOtherCommand(
-        ConsoleIO $io,
         string $command_string,
         string $exception_message = ''
     ): int {
-        $this->dockworkerNote(
-            $io,
-            ["Spawning new command thread: $command_string"]
-        );
+        $this->dockworkerNote(["Spawning new command thread: $command_string"]);
         $bin = $_SERVER['argv'][0];
         $command = "$bin --ansi $command_string";
         passthru($command, $return);
