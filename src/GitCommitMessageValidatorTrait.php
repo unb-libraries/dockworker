@@ -2,6 +2,8 @@
 
 namespace Dockworker;
 
+use Robo\Symfony\ConsoleIO;
+
 /**
  * Provides methods to validate git commit messages based on standards.
  */
@@ -29,11 +31,23 @@ trait GitCommitMessageValidatorTrait
     private string $message;
 
     /**
+     * The sample valid commit message.
+     *
+     * @var string[]
+     */
+    private array $sampleCommitMessage = [
+        'Example Valid Commit Message:',
+        'HERB-135 Add the new picture field to the article feature'
+    ];
+
+    /**
      * The entire git commit message.
      *
      * @var string
      */
     private string $subjectLine;
+
+
 
     /**
      * Validates the commit message against a maximum width constraint.
@@ -123,5 +137,19 @@ trait GitCommitMessageValidatorTrait
     {
         $prefixes = '(' . implode('|', $project_keys) . ')';
         return preg_match("/^$prefixes-[0-9]+ {1}[a-zA-Z0-9]{1}.*/", $this->subjectLine);
+    }
+
+    /**
+     * Displays a sample valid commit message.
+     *
+     * @param ConsoleIO $io
+     *   The console IO.
+     */
+    protected function showSampleCommitMessage(ConsoleIO $io): void
+    {
+        $this->dockworkerNote(
+            $io,
+            $this->sampleCommitMessage
+        );
     }
 }

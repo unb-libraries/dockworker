@@ -18,10 +18,6 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
 
     protected const ERROR_INVALID_COMMIT_MESSAGE = 'Invalid commit message!';
     protected const ERROR_MISSING_JIRA_INFO = 'JIRA project and issue missing from git commit\'s subject line.';
-    protected const SAMPLE_VALID_COMMIT_MESSAGE = [
-        'Example Valid Commit Message:',
-        'HERB-135 Add the new picture field to the article feature'
-    ];
     protected const WARN_MISSING_JIRA_INFO = 'You have not specified a JIRA project and issue in your subject line. Continue Anyway?';
 
     /**
@@ -81,21 +77,5 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
                 }
             }
         }
-    }
-
-    /**
-     * Displays a sample valid commit message.
-     *
-     * @param ConsoleIO $io
-     *   The console IO.
-     *
-     * @TODO: Move this to GitCommitMessageValidatorTrait.
-     */
-    protected function showSampleCommitMessage(ConsoleIO $io): void
-    {
-        $this->dockworkerNote(
-            $io,
-            self::SAMPLE_VALID_COMMIT_MESSAGE
-        );
     }
 }
