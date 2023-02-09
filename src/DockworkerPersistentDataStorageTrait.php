@@ -69,7 +69,7 @@ trait DockworkerPersistentDataStorageTrait
         string $query,
         string $default = '',
         string $description = '',
-        string $info_link = '',
+        array $reference_uris = [],
         string $env_var_override_name = ''
     ): mixed {
         return $this->getSetPersistentConfigurationItem(
@@ -80,7 +80,7 @@ trait DockworkerPersistentDataStorageTrait
             $query,
             $default,
             $description,
-            $info_link,
+            $reference_uris,
             $env_var_override_name
         );
     }

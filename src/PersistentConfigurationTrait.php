@@ -60,7 +60,7 @@ trait PersistentConfigurationTrait
         string $query,
         string $default = '',
         string $description = '',
-        string $info_link = '',
+        array $reference_uris = [],
         string $env_var_override_name = ''
     ): mixed {
         if (!empty($env_var_override_name)) {
@@ -81,11 +81,13 @@ trait PersistentConfigurationTrait
                     [$description]
                 );
             }
-            if (!empty($info_link)) {
+            if (!empty($reference_uris)) {
+              foreach ($reference_uris as $reference_uri) {
                 $this->dockworkerNote(
-                    $io,
-                    [$info_link]
+                  $io,
+                  ["{$reference_uri['label']}: {$reference_uri['uri']}"]
                 );
+              }
             }
             $ans_value = $this->dockworkerAsk(
                 $io,

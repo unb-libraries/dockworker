@@ -41,7 +41,7 @@ trait CliToolTrait
             $tool['tool']['name'],
             $tool['tool']['description'],
             $tool['tool']['default_path'],
-            $tool['tool']['reference_uri'],
+            $tool['tool']['reference_uris'],
             $tool['tool']['healthcheck']['command'],
             $tool['tool']['healthcheck']['output-contains'],
             $tool['tool']['healthcheck']['label']
@@ -59,7 +59,7 @@ trait CliToolTrait
      *   The description of the tool.
      * @param string $default_binpath
      *   The default path to the tool.
-     * @param string $install_uri
+     * @param array $reference_uris
      *   The URI to the tool's installation instructions.
      * @param string[] $command
      *   The arguments to pass to the tool to test it.
@@ -73,7 +73,7 @@ trait CliToolTrait
         string $name,
         string $description,
         string $default_binpath,
-        string $install_uri,
+        array $reference_uris,
         array $command,
         string $expected_test_output,
         string $testing_label
@@ -87,7 +87,7 @@ trait CliToolTrait
                 "Enter the full path to your installed $name binary",
                 $default_binpath,
                 $description,
-                $install_uri
+                $reference_uris
             );
             if (!file_exists($bin) || !is_executable($bin)) {
                 $this->dockworkerWarn(
