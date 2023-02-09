@@ -53,15 +53,15 @@ trait CliToolTrait
      *
      * @param ConsoleIO $io
      *   The console IO.
-     * @param string $basename
-     *   The basename of the tool.
+     * @param string $name
+     *   The name of the tool.
      * @param string $description
      *   The description of the tool.
-     * @param string $default_bin_path
+     * @param string $default_binpath
      *   The default path to the tool.
      * @param string $install_uri
      *   The URI to the tool's installation instructions.
-     * @param string $test_args
+     * @param string[] $command
      *   The arguments to pass to the tool to test it.
      * @param string $expected_test_output
      *   A string that is expected to appear within the command's output.
@@ -70,53 +70,55 @@ trait CliToolTrait
      */
     protected function registerCliTool(
         ConsoleIO $io,
-        string $basename,
+        string $name,
         string $description,
-        string $default_bin_path,
+        string $default_binpath,
         string $install_uri,
-        string $test_args,
+        array $command,
         string $expected_test_output,
         string $testing_label
     ): void {
         $found_tool = false;
         while ($found_tool == false) {
-            $bin_path = $this->getSetDockworkerPersistentDataConfigurationItem(
+            $bin = $this->getSetDockworkerPersistentDataConfigurationItem(
                 $io,
                 'cli_tools',
-                "$basename.bin",
-                "Enter the full path to your installed $basename binary",
-                $default_bin_path,
+                "$name.bin",
+                "Enter the full path to your installed $name binary",
+                $default_binpath,
                 $description,
                 $install_uri
             );
-            if (!file_exists($bin_path) || !is_executable($bin_path)) {
+            if (!file_exists($bin) || !is_executable($bin)) {
                 $this->dockworkerWarn(
                     $io,
-                    ["$bin_path does not exist or is not executable"]
+                    ["$bin does not exist or is not executable"]
                 );
                 $this->setDockworkerPersistentDataConfigurationItem(
                     'cli_tools',
-                    "$basename.bin",
+                    "$name.bin",
                     null
                 );
-            }
-            else {
+            } else {
                 $found_tool = true;
             }
         }
 
-        $command = new CliCommand(
-            "$bin_path $test_args",
-            $basename
+        $cmd = new CliCommand(
+            array_merge(
+                [$bin],
+                $command
+            ),
+            $name
         );
 
         $this->registerCliToolCheck(
-            $command,
+            $cmd,
             $expected_test_output,
             $testing_label
         );
 
-        $this->cliTools[$basename] = $bin_path;
+        $this->cliTools[$name] = $bin;
     }
 
 }

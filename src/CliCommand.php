@@ -3,11 +3,13 @@
 namespace Dockworker;
 
 use Robo\Symfony\ConsoleIO;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 /**
  * Provides methods to execute and manage CLI commands within Dockworker.
  */
-class CliCommand
+class CliCommand extends Process
 {
     use DockworkerIOTrait;
 
@@ -16,65 +18,22 @@ class CliCommand
      *
      * @var string
      */
-    public string $description;
-
-    /**
-     * The full CLI command to execute.
-     *
-     * @var string
-     */
-    protected string $command;
-
-    /**
-     * The output of the command.
-     *
-     * @var string[]
-     */
-    protected array $commandOutput;
-
-    /**
-     * The return code of the command.
-     *
-     * @var int
-     */
-    protected int $commandReturnCode;
-
-    /**
-     * True to suppress any output from this command, including errors.
-     *
-     * @var bool
-     */
-    protected bool $quiet;
-
-    /**
-     * The timeout for the command.
-     *
-     * @var int
-     */
-    protected int $timeout;
+    protected string $description;
 
     /**
      * Constructor.
      *
-     * @param string $command
+     * @param array $command
      *   The full CLI command to execute.
      * @param string $description
      *   A description of the command.
-     * @param int $timeout
-     *   The timeout for the command.
-     * @param bool $quiet
-     *   True to suppress any output from this command, including errors.
      */
     public function __construct(
-        string $command,
+        array $command,
         string $description,
-        int $timeout = 10,
-        bool $quiet = false
     ) {
-        $this->command = $command;
+        parent::__construct($command);
         $this->description = $description;
-        $this->timeout = $timeout;
-        $this->quiet = $quiet;
     }
 
     /**
@@ -86,8 +45,6 @@ class CliCommand
      *   A string that is expected to appear within the command's output.
      * @param bool $quiet
      *   Optional. True to suppress any output, including errors.
-     * @param int $return_code
-     *   Optional. The expected return code. Defaults to 0.
      *
      * @return void
      * @throws \Dockworker\DockworkerException
@@ -95,37 +52,22 @@ class CliCommand
     public function execTest(
         ConsoleIO $io,
         string $output,
-        bool $quiet = false,
-        int $return_code = 0
+        bool $quiet = false
     ): void {
-        $this->quiet = $quiet;
-        $this->exec();
-        if ($this->commandReturnCode != $return_code) {
-            if (!$this->quiet) {
-                $this->dockworkerOutputBlock($io, $this->commandOutput);
+        try {
+            $this->mustRun();
+        } catch (ProcessFailedException $exception) {
+            if (!$quiet) {
+                $this->dockworkerOutputBlock($io, [$this->getOutput()]);
             }
-            throw new DockworkerException("Command [$this->command] returned error code $this->commandReturnCode.");
+            throw new DockworkerException("Command [$this->description] returned error code {$this->getExitCode()}.");
         }
         if (!$this->outputContainsExpectedOutput($output)) {
-            if (!$this->quiet) {
-                $this->dockworkerOutputBlock($io, $this->commandOutput);
+            if (!$quiet) {
+                $this->dockworkerOutputBlock($io, [$this->getOutput()]);
             }
-            throw new DockworkerException("Command [$this->command] returned unexpected output.");
+            throw new DockworkerException("Command [$this->description] returned unexpected output.");
         }
-    }
-
-    /**
-     * Executes the command.
-     */
-    public function exec(): void
-    {
-        exec(
-            $this->command,
-            $cmd_output,
-            $cmd_return
-        );
-        $this->commandOutput = $cmd_output;
-        $this->commandReturnCode = $cmd_return;
     }
 
     /**
@@ -139,11 +81,22 @@ class CliCommand
      */
     protected function outputContainsExpectedOutput(string $output): bool
     {
-        foreach ($this->commandOutput as $line) {
-            if (str_contains($line, $output)) {
-                return true;
-            }
-        }
-        return false;
+        return str_contains($this->getOutput(), $output);
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
     }
 }

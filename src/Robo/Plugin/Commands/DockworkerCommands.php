@@ -31,7 +31,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Defines a base class for all Dockworker commands.
  */
-abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface, ContainerAwareInterface, IOAwareInterface, LoggerAwareInterface
+class DockworkerCommands extends Tasks implements ConfigAwareInterface, ContainerAwareInterface, IOAwareInterface, LoggerAwareInterface
 {
     use CliToolTrait;
     use CommandRuntimeTrackerTrait;
@@ -122,7 +122,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     /**
      * The UNB Libraries application uuid for the application.
      *
-     * @link https://systems.lib.unb.ca/wiki/systems:docker:unique-site-uuids
+     * @link https://systems.lib.unb.ca/wiki/systems:docker:unique-site-uuids UNB Libraries UUIDs
      * @var string
      */
     protected string $uuid;
