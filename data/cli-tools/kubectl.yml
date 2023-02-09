@@ -12,5 +12,5 @@ tool:
   healthcheck:
     command:
       - api-resources
-    label: Initializing connection to the kubernetes API server
+    label: 'Initializing connection to k8s API'
     output-contains: Binding

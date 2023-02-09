@@ -85,7 +85,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
      *
      * @throws \Dockworker\DockworkerException
      */
-    public function checkRegisteredCliTools(CommandData $commandData): void
+    public function validateCommitMsgValidator(CommandData $commandData): void
     {
         $message_file = $commandData->input()->getArgument('message_file');
         $this->exceptIfFileDoesNotExist($message_file);
