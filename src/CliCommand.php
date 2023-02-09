@@ -41,7 +41,7 @@ class CliCommand extends Process
      *
      * @param ConsoleIO $io
      *   The console IO.
-     * @param string $output
+     * @param string $expected_output
      *   A string that is expected to appear within the command's output.
      * @param bool $quiet
      *   Optional. True to suppress any output, including errors.
@@ -51,7 +51,7 @@ class CliCommand extends Process
      */
     public function execTest(
         ConsoleIO $io,
-        string $output,
+        string $expected_output,
         bool $quiet = false
     ): void {
         try {
@@ -62,7 +62,7 @@ class CliCommand extends Process
             }
             throw new DockworkerException("Command [$this->description] returned error code {$this->getExitCode()}.");
         }
-        if (!$this->outputContainsExpectedOutput($output)) {
+        if (!$this->outputContainsExpectedOutput($expected_output)) {
             if (!$quiet) {
                 $this->dockworkerOutputBlock($io, [$this->getOutput()]);
             }
