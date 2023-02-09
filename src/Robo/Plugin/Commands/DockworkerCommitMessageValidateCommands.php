@@ -2,6 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Consolidation\AnnotatedCommand\CommandData;
 use Dockworker\DockworkerException;
 use Dockworker\GitCommitMessageValidatorTrait;
 use Robo\Symfony\ConsoleIO;
@@ -32,6 +33,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
      * @throws \Dockworker\DockworkerException
      *
      * @jira
+     * @kubectl
      */
     public function validateCommitMsg(
         ConsoleIO $io,
@@ -74,5 +76,16 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
                 }
             }
         }
+    }
+
+    /**
+     * Validates the commit message filepath.
+     *
+     * @hook validate validate:git:commit-msg
+     */
+    public function checkRegisteredCliTools(CommandData $commandData): void
+    {
+      $message_file = $commandData->input()->getArgument('message_file');
+      $this->exceptIfFileDoesNotExist($message_file);
     }
 }

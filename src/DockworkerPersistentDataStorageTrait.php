@@ -59,6 +59,7 @@ trait DockworkerPersistentDataStorageTrait
      * @param string $env_var_override_name
      *   Optional. An OS environment variable name whose value overrides configuration.
      *
+     * @TODO Docblock is wrong.
      * @return mixed
      *   The value of the configuration item.
      */

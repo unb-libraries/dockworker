@@ -2,7 +2,9 @@
 
 namespace Dockworker;
 
- /**
+use Dockworker\DockworkerException;
+
+/**
  * Provides methods to interact with a local filesystem.
  */
 trait FileSystemOperationsTrait
@@ -41,5 +43,20 @@ trait FileSystemOperationsTrait
     protected function getPathFromPathElements(array $path_elements): string
     {
         return implode('/', $path_elements);
+    }
+
+  /**
+   * Throws an exception if a file does not exist.
+   *
+   * @param string $path
+   *   The path to the file.
+   *
+   * @throws \Dockworker\DockworkerException
+   */
+    protected function exceptIfFileDoesNotExist(string $path): void
+    {
+        if (!file_exists($path)) {
+            throw new DockworkerException("The file $path does not exist.");
+        }
     }
 }

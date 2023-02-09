@@ -31,7 +31,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Defines a base class for all Dockworker commands.
  */
-class DockworkerCommands extends Tasks implements ConfigAwareInterface, ContainerAwareInterface, IOAwareInterface, LoggerAwareInterface
+abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface, ContainerAwareInterface, IOAwareInterface, LoggerAwareInterface
 {
     use CliToolTrait;
     use CommandRuntimeTrackerTrait;
