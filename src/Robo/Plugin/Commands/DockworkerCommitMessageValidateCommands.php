@@ -82,10 +82,12 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
      * Validates the commit message filepath.
      *
      * @hook validate validate:git:commit-msg
+     *
+     * @throws \Dockworker\DockworkerException
      */
     public function checkRegisteredCliTools(CommandData $commandData): void
     {
-      $message_file = $commandData->input()->getArgument('message_file');
-      $this->exceptIfFileDoesNotExist($message_file);
+        $message_file = $commandData->input()->getArgument('message_file');
+        $this->exceptIfFileDoesNotExist($message_file);
     }
 }

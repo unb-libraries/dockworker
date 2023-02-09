@@ -18,12 +18,12 @@ Grouped elements presented in pseudo-list style assertions:
 * constant declarations
 * property declarations
 
-Should be presented in a line-sorted alphbetical order.
+Should be presented in a line-sorted alphabetical order.
 
 ### Array indents
 PSR-12 says nothing about array indents. For our purposes, in a multi-line declaration, array elements should be indented 4 spaces from the array declaration.
 
-### Class Method Order
+### Class Ordering
 Class methods should primarily be declared in the following order sets:
 
 * constructor/language level methods
@@ -57,9 +57,14 @@ For sanity, PHP docblock annotation tags should be defined in the following orde
 ```
 
 ## Code Organization
+
+### Command Argument Validation
+Command arguments should be validated with validate hooks where possible. This allows for the validation to be tested independently of the command.
+
 ### Command Classes
 #### Limit on Hook Functions
-Commands classes should only define one hook per hook-level each. Multiple methods can be called within that hook method, but each method should be defined in a separate class. This allows for easier testing and reuse of the methods.
+Command classes should limit to defining one hook per hook-level each. Multiple methods can be called within that hook method, but each method should be defined in a separate class. This allows for easier testing and reuse of the methods.
+
 #### Hook Class Naming
 Command class methods declared as hooks should be named in a standard fashion according to the hook type and parent class name:
 
@@ -84,8 +89,9 @@ Traits should be written with no knowledge of the command classes. Any required 
 Traits should not assert any annotated-command hooks.
 
 ### Data storage
-3 levels of data storage are available to Dockworker commands:
+3 levels of data storage Traits are available to Dockworker commands:
 
-* Application: in-repo (DockworkerApplicationPersistentDataStorageTrait)
-* Application: local PC (DockworkerApplicationLocalDataStorageTrait)
-* Dockworker: local PC (DockworkerPersistentDataStorageTrait)
+* Application: stored and committed in-repo, for current dockworker project (DockworkerApplicationPersistentDataStorageTrait)
+* Application: stored on user disk, for current dockworker project (DockworkerApplicationLocalDataStorageTrait)
+* Dockworker: stored on use disk, for all dockworker projects (DockworkerPersistentDataStorageTrait)
+

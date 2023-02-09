@@ -62,6 +62,10 @@ trait DockworkerApplicationLocalDataStorageTrait
      *   The query to display if the configuration item is unset.
      * @param string $default
      *   Optional. The default query response, defaults to none.
+     * @param string $description
+     *   Optional. A description offering further information about the item.
+     * @param string[] $reference_uris
+     *   Optional. Labels and URIs to display to support describing the item.
      * @param string $env_var_override_name
      *   Optional. An OS environment variable name whose value overrides configuration.
      *
@@ -75,7 +79,7 @@ trait DockworkerApplicationLocalDataStorageTrait
         string $query,
         string $default = '',
         string $description = '',
-        string $info_link = '',
+        array $reference_uris = [],
         string $env_var_override_name = ''
     ): mixed {
         return $this->getSetPersistentConfigurationItem(
@@ -86,7 +90,7 @@ trait DockworkerApplicationLocalDataStorageTrait
             $query,
             $default,
             $description,
-            $info_link,
+            $reference_uris,
             $env_var_override_name
         );
     }

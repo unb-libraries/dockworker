@@ -120,5 +120,4 @@ trait CliToolTrait
 
         $this->cliTools[$name] = $bin;
     }
-
 }

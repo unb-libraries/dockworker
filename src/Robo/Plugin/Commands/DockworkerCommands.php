@@ -295,8 +295,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     protected function getConfigItem(
         string $config_key,
         mixed $default_value = null
-    ): mixed
-    {
+    ): mixed {
         return Robo::Config()->get($config_key, $default_value);
     }
 

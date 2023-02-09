@@ -9,7 +9,6 @@ use Robo\Symfony\ConsoleIO;
  */
 trait DockworkerIOTrait
 {
-
     /**
      * Prints a standard, un-styled message to the CLI.
      *
