@@ -99,4 +99,18 @@ class CliCommand extends Process
     {
         $this->description = $description;
     }
+
+    /**
+     * Runs the command and attaches the command TTY to the current TTY.
+     */
+    public function runTty() {
+        $this->setTty(true);
+        $this->run(function ($type, $buffer) {
+            if (self::ERR === $type) {
+                echo 'ERR > '.$buffer;
+            } else {
+                echo 'OUT > '.$buffer;
+            }
+        });
+    }
 }
