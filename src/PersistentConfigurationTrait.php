@@ -44,7 +44,7 @@ trait PersistentConfigurationTrait
      *   The item to set.
      * @param string $query
      *   The query to display if the configuration item is unset.
-     * @param string $default
+     * @param string $default_value
      *   Optional. The default query response, defaults to none.
      * @param string $description
      *   Optional. A description offering further information about the item.
@@ -62,7 +62,7 @@ trait PersistentConfigurationTrait
         string $namespace,
         string $item,
         string $query,
-        string $default = '',
+        string $default_value = '',
         string $description = '',
         array $reference_uris = [],
         string $env_var_override_name = ''
@@ -73,12 +73,12 @@ trait PersistentConfigurationTrait
                 return $env_value;
             }
         }
-        $cur_value = $this->getPersistentConfigurationItem(
+        $value = $this->getPersistentConfigurationItem(
             $path,
             $namespace,
             $item
         );
-        if (empty($cur_value)) {
+        if (empty($value)) {
             if (!empty($description)) {
                 $this->dockworkerOutputBlock(
                     $io,
@@ -96,7 +96,7 @@ trait PersistentConfigurationTrait
             $ans_value = $this->dockworkerAsk(
                 $io,
                 $query,
-                $default
+                $default_value
             );
             $this->setWritePersistentConfigurationItem(
                 $path,
@@ -106,7 +106,7 @@ trait PersistentConfigurationTrait
             );
             return $ans_value;
         }
-        return $cur_value;
+        return $value;
     }
 
     /**
