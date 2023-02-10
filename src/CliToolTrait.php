@@ -80,6 +80,7 @@ trait CliToolTrait
     ): void {
         $found_tool = false;
         while ($found_tool == false) {
+            $this->initDockworkerPersistentDataStorageDir($this->userHomeDir);
             $bin = $this->getSetDockworkerPersistentDataConfigurationItem(
                 $io,
                 'cli_tools',

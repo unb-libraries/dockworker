@@ -1,0 +1,16 @@
+tool:
+  name: docker
+  description: docker allows local deployment of dockworker services for development.
+  default_path: /usr/bin/docker
+  reference_uris:
+    -
+      label: Further Information
+      uri: https://docs.docker.com/engine/reference/run/
+    -
+      label: Installation
+      uri: https://docs.docker.com/engine/install/ubuntu/
+  healthcheck:
+    command:
+      - ps
+    label: 'Initializing connection to docker API'
+    output-contains: CREATED

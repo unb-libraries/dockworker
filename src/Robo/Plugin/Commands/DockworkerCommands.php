@@ -315,6 +315,21 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     }
 
     /**
+     * Registers docker as a required CLI tool.
+     *
+     * @hook interact @docker
+     */
+    public function registerDockerCliTool(
+        InputInterface $input,
+        OutputInterface $output,
+        AnnotationData $annotationData
+    ): void {
+        $io = new ConsoleIO($input, $output);
+        $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/docker.yml";
+        $this->registerCliToolFromYaml($io, $file_path);
+    }
+
+    /**
      * Check all registered CLI tools.
      *
      * @hook validate
