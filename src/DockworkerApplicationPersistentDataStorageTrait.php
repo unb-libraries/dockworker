@@ -27,6 +27,19 @@ trait DockworkerApplicationPersistentDataStorageTrait
     protected string $applicationPersistentDataStorageDir;
 
     /**
+     * Provides a pre-init hook that assigns persistent data storage paths.
+     *
+     * @hook pre-init
+     * @throws \Dockworker\DockworkerException
+     */
+    public function preInitApplicationPersistentDataStorageDir(): void
+    {
+        $this->initApplicationPersistentDataStorageDir(
+            $this->applicationRoot
+        );
+    }
+
+    /**
      * Initializes the application's persistent data storage directory.
      *
      * @param string $repo_root

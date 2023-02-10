@@ -2,6 +2,7 @@
 
 namespace Dockworker;
 
+use Consolidation\AnnotatedCommand\CommandData;
 use DateTime;
 use Robo\Symfony\ConsoleIO;
 
@@ -25,6 +26,29 @@ trait CommandRuntimeTrackerTrait
      * @var bool
      */
     protected bool $displayCommandRunTime = false;
+
+    /**
+     * Sets the command runtime start.
+     *
+     * @hook pre-init
+     */
+    public function initCommandStartTime(): void
+    {
+        $this->setCommandStartTime();
+    }
+
+    /**
+     * Trigger the display of the command's total run time.
+     *
+     * @hook post-process
+     */
+    public function triggerDisplayCommandRunTime(
+        $result,
+        CommandData $commandData
+    ): void {
+        $io = new ConsoleIO($commandData->input(), $commandData->output());
+        $this->displayCommandRunTime($io);
+    }
 
     /**
      * Displays the command's total run time.

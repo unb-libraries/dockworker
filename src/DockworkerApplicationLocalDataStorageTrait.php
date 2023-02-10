@@ -27,6 +27,20 @@ trait DockworkerApplicationLocalDataStorageTrait
     protected string $applicationLocalDataStorageDir;
 
     /**
+     * Provides a pre-init hook that assigns local PC data storage paths.
+     *
+     * @hook pre-init
+     * @throws \Dockworker\DockworkerException
+     */
+    public function preInitApplicationLocalDataStorageDir(): void
+    {
+        $this->initApplicationLocalDataStorageDir(
+            $this->userHomeDir,
+            $this->applicationName
+        );
+    }
+
+    /**
      * Initializes the application's local PC data storage directory.
      *
      * @param string $user_home_dir

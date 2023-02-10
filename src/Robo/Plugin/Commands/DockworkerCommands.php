@@ -50,20 +50,6 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     protected const ERROR_CONFIG_ELEMENT_UNSET = 'Error! A required configuration element [%s] does not exist in %s.';
 
     /**
-     * The name of the application.
-     *
-     * @var string
-     */
-    protected string $applicationName;
-
-    /**
-     * The application's git repository.
-     *
-     * @var \CzProject\GitPhp\GitRepository;
-     */
-    protected GitRepository $applicationRepository;
-
-    /**
      * The path to the application's git repository.
      *
      * @var string
@@ -71,39 +57,11 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     protected string $applicationRoot;
 
     /**
-    * The shortened slug of the application.
-    *
-    * @var string
-    */
-    protected string $applicationShortSlug;
-
-    /**
-     * The 'slug' of the application.
-     *
-     * @var string
-     */
-    protected string $applicationSlug;
-
-    /**
      * The full path to the application's dockworker configuration file.
      *
      * @var string
      */
     protected string $configFile;
-
-    /**
-     * A list of Jira project keys that apply to all projects.
-     *
-     * @var string[]
-     */
-    protected array $jiraGlobalProjectKeys = ['IN', 'DOCKW'];
-
-    /**
-     * The Jira project keys relating to this application.
-     *
-     * @var string[]
-     */
-    protected array $jiraProjectKeys = [];
 
     /**
      * The current user's operating system home directory.
@@ -118,6 +76,20 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      * @var string
      */
     protected string $userName;
+
+    /**
+     * The shortened slug of the application.
+     *
+     * @var string
+     */
+    protected string $applicationShortSlug;
+
+    /**
+     * The 'slug' of the application.
+     *
+     * @var string
+     */
+    protected string $applicationSlug;
 
     /**
      * The UNB Libraries application uuid for the application.
@@ -145,45 +117,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
         );
         $this->userName = get_current_user();
         $this->userHomeDir = $_SERVER['HOME'];
-    }
-
-    /**
-     * Updates the dockworker package to the latest release.
-     *
-     * @command dockworker:update
-     * @aliases update
-     * @hidden
-     */
-    public function updateDockworker(ConsoleIO $io): void
-    {
-        $this->dockworkerTitle(
-            $io,
-            'Updating Dockworker'
-        );
-        $this->dockworkerSay(
-            $io,
-            ['Checking for any updates to unb-libraries/dockworker...']
-        );
-        $this->taskExec('composer')
-          ->dir($this->applicationRoot)
-          ->arg('update')
-          ->arg('unb-libraries/dockworker')
-          ->silent(true)
-          ->run();
-    }
-
-    /**
-     * Provides a pre-init hook that assigns core properties and configuration.
-     *
-     * @hook pre-init
-     * @throws \Dockworker\DockworkerException
-     */
-    public function preInitDockworkerCommands(): void
-    {
-        $this->setCommandStartTime();
         $this->setCoreProperties();
-        $this->initDataStorageDirs();
-        $this->setGitRepo();
     }
 
     /**
@@ -191,7 +125,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      *
      * @throws \Dockworker\DockworkerException
      */
-    protected function setCoreProperties(): void
+    public function setCoreProperties(): void
     {
         $this->setPropertyFromConfigKey(
             'applicationName',
@@ -237,51 +171,6 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     }
 
     /**
-     * Initializes the data storage for dockworker and the application.
-     *
-     */
-    protected function initDataStorageDirs(): void
-    {
-        $this->initApplicationLocalDataStorageDir(
-            $this->userHomeDir,
-            $this->applicationName
-        );
-        $this->initApplicationPersistentDataStorageDir($this->applicationRoot);
-        $this->initDockworkerPersistentDataStorageDir($this->userHomeDir);
-    }
-
-    /**
-     * Sets up the lean repository git repo.
-     *
-     * @throws \Dockworker\DockworkerException
-     */
-    protected function setGitRepo(): void
-    {
-        $this->applicationRepository = $this->getGitRepoFromPath($this->applicationRoot);
-        if (empty($this->applicationRepository)) {
-            throw new DockworkerException('Could not initialize the git repository.');
-        }
-    }
-
-    /**
-     * Initializes the Jira properties for the application.
-     *
-     * @hook pre-init @jira
-     */
-    public function setJiraProperties(): void
-    {
-        $jira_project_keys = $this->getConfigItem(
-            'dockworker.application.jira.project_keys'
-        );
-        if ($jira_project_keys != null) {
-            $this->jiraProjectKeys = array_merge(
-                $this->jiraGlobalProjectKeys,
-                $jira_project_keys
-            );
-        }
-    }
-
-    /**
      * Gets a configuration item from the Dockworker configuration.
      *
      * @param string $config_key
@@ -299,88 +188,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
         return Robo::Config()->get($config_key, $default_value);
     }
 
-    /**
-     * Registers kubectl as a required CLI tool.
-     *
-     * @hook interact @kubectl
-     */
-    public function registerKubeCtlCliTool(
-        InputInterface $input,
-        OutputInterface $output,
-        AnnotationData $annotationData
-    ): void {
-        $io = new ConsoleIO($input, $output);
-        $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/kubectl.yml";
-        $this->registerCliToolFromYaml($io, $file_path);
-    }
 
-    /**
-     * Registers docker as a required CLI tool.
-     *
-     * @hook interact @docker
-     */
-    public function registerDockerCliTool(
-        InputInterface $input,
-        OutputInterface $output,
-        AnnotationData $annotationData
-    ): void {
-        $io = new ConsoleIO($input, $output);
-        $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/docker.yml";
-        $this->registerCliToolFromYaml($io, $file_path);
-    }
-
-    /**
-     * Check all registered CLI tools.
-     *
-     * @hook validate
-     *
-     * @throws \Dockworker\DockworkerException
-     */
-    public function checkRegisteredCliTools(CommandData $commandData): void
-    {
-        $io = new ConsoleIO($commandData->input(), $commandData->output());
-        $this->checkRegisteredCliToolCommands($io);
-    }
-
-    /**
-     * Trigger the display of the command's total run time.
-     *
-     * @hook post-process
-     */
-    public function triggerDisplayCommandRunTime(
-        $result,
-        CommandData $commandData
-    ): void {
-        $io = new ConsoleIO($commandData->input(), $commandData->output());
-        $this->displayCommandRunTime($io);
-    }
-
-    /**
-     * Sets up the required git hooks for dockworker.
-     *
-     * @command dockworker:git:setup-hooks
-     */
-    public function setupGitHooks(): void
-    {
-        $hooks = ['commit-msg'];
-        foreach ($hooks as $hook) {
-            $source_file = $this->getPathFromPathElements(
-                [
-                    $this->applicationRoot,
-                    'vendor/unb-libraries/dockworker/data/scripts/git-hooks',
-                    $hook,
-                ]
-            );
-            $target_file = $this->getPathFromPathElements(
-                [
-                    $this->applicationRoot,
-                    '.git/hooks',
-                    $hook,
-                ]
-            );
-            $this->_copy($source_file, $target_file);
-        }
-    }
 
     /**
      * Runs another Dockworker command.

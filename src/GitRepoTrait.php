@@ -10,6 +10,28 @@ use CzProject\GitPhp\GitRepository;
  */
 trait GitRepoTrait
 {
+    /**
+     * The application's git repository.
+     *
+     * @var \CzProject\GitPhp\GitRepository;
+     */
+    protected GitRepository $applicationRepository;
+
+    /**
+     * Sets up the lean repository git repo.
+     *
+     * @hook pre-init
+     *
+     * @throws \Dockworker\DockworkerException
+     */
+    public function initGitRepo(): void
+    {
+        $this->applicationRepository = $this->getGitRepoFromPath($this->applicationRoot);
+        if (empty($this->applicationRepository)) {
+            throw new DockworkerException('Could not initialize the git repository.');
+        }
+    }
+
   /**
    * Retrieves a git repository object from a repository path.
    *

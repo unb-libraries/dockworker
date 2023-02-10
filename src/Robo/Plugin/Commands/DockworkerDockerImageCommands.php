@@ -3,6 +3,7 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\CliCommand;
+use Dockworker\DockerTrait;
 use Dockworker\DockworkerIOTrait;
 use Dockworker\DockworkerPersistentDataStorageTrait;
 use Robo\Symfony\ConsoleIO;
@@ -13,6 +14,7 @@ use Robo\Symfony\ConsoleIO;
 class DockworkerDockerImageCommands extends DockworkerCommands
 {
     use DockworkerPersistentDataStorageTrait;
+    use DockerTrait;
     use DockworkerIOTrait;
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Dockworker;
 
+use Consolidation\AnnotatedCommand\CommandData;
 use Robo\Symfony\ConsoleIO;
 
 /**
@@ -17,6 +18,19 @@ trait CliToolCheckerTrait
     protected array $registeredCliCheckCommands = [];
 
     protected bool $checkIsSilent = false;
+
+    /**
+     * Check all registered CLI tools.
+     *
+     * @hook validate
+     *
+     * @throws \Dockworker\DockworkerException
+     */
+    public function checkRegisteredCliTools(CommandData $commandData): void
+    {
+        $io = new ConsoleIO($commandData->input(), $commandData->output());
+        $this->checkRegisteredCliToolCommands($io);
+    }
 
     /**
      * Executes the registered CLI tool commands and checks their output.

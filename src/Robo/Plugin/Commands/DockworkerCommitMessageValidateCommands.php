@@ -5,6 +5,7 @@ namespace Dockworker\Robo\Plugin\Commands;
 use Consolidation\AnnotatedCommand\CommandData;
 use Dockworker\DockworkerException;
 use Dockworker\GitCommitMessageValidatorTrait;
+use Dockworker\JiraTrait;
 use Robo\Symfony\ConsoleIO;
 
 /**
@@ -15,6 +16,7 @@ use Robo\Symfony\ConsoleIO;
  */
 class DockworkerCommitMessageValidateCommands extends DockworkerCommands
 {
+    use JiraTrait;
     use GitCommitMessageValidatorTrait;
 
     protected const ERROR_INVALID_COMMIT_MESSAGE = 'Invalid commit message!';
@@ -33,7 +35,6 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
      * @throws \Dockworker\DockworkerException
      *
      * @jira
-     * @kubectl
      */
     public function validateCommitMsg(
         ConsoleIO $io,

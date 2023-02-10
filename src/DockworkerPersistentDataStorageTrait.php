@@ -27,6 +27,19 @@ trait DockworkerPersistentDataStorageTrait
     protected string $dockworkerPersistentDataStorageDir;
 
     /**
+     * Provides a pre-init hook that assigns local PC data storage paths.
+     *
+     * @hook pre-init
+     * @throws \Dockworker\DockworkerException
+     */
+    public function preInitDockworkerPersistentDataStorageDir(): void
+    {
+        $this->initDockworkerPersistentDataStorageDir(
+            $this->userHomeDir
+        );
+    }
+
+    /**
      * Initializes the dockworker persistent data storage directory.
      *
      * @param string $user_home_dir
