@@ -16,7 +16,7 @@ use Robo\Tasks;
 /**
  * Defines a base abstract class for all Dockworker commands.
  *
- * This class should not contain any hooks or commands.
+ * This is not a command class. It should not contain any hooks or commands.
  */
 abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface, ContainerAwareInterface, IOAwareInterface, LoggerAwareInterface
 {

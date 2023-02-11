@@ -2,12 +2,12 @@
 
 namespace Dockworker\Cli;
 
-use Dockworker\CliCommand;
+use Dockworker\Cli\CliCommand;
 
 /**
  * Provides methods to execute and manage CLI commands within Dockworker.
  */
-class DockerCommand extends CliCommand
+class DockerCli extends CliCommand
 {
 
 }

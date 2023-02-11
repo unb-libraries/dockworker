@@ -2,13 +2,10 @@
 
 namespace Dockworker\Cli;
 
-use Dockworker\CliToolTrait;
-use Dockworker\Cli\DockerCommand;
-
 /**
  * Provides methods to interact with docker.
  */
-trait DockerCommandTrait
+trait DockerCliTrait
 {
     use CliToolTrait;
 
@@ -23,10 +20,10 @@ trait DockerCommandTrait
         $this->registerCliToolFromYaml($file_path);
     }
 
-    protected function dockerCommand(array $command, string $description): DockerCommand
+    protected function dockerCli(array $command, string $description): DockerCli
     {
         array_unshift($command, $this->cliTools['docker']);
-        return new DockerCommand(
+        return new DockerCli(
             $command,
             $description
         );
@@ -34,6 +31,8 @@ trait DockerCommandTrait
 
     protected function dockerRun(array $command, string $description): void
     {
-        $this->dockerCommand($command, $description)->runTty();
+        $this->dockerCli($command, $description)
+            ->setWorkingDirectory($this->applicationRoot)
+            ->runTty();
     }
 }

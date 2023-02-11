@@ -1,11 +1,11 @@
 <?php
 
-namespace Dockworker;
+namespace Dockworker\Cli;
 
 /**
  * Provides methods to interact with Jira for this dockworker application.
  */
-trait KubeCtlTrait
+trait KubectlTrait
 {
     use CliToolTrait;
 
@@ -14,10 +14,9 @@ trait KubeCtlTrait
      *
      * @hook interact @kubectl
      */
-    public function registerKubeCtlCliTool(): void
+    public function registerKubectlCliTool(): void
     {
         $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/kubectl.yml";
         $this->registerCliToolFromYaml($file_path);
     }
-
 }

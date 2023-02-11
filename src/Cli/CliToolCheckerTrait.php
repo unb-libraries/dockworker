@@ -1,6 +1,6 @@
 <?php
 
-namespace Dockworker;
+namespace Dockworker\Cli;
 
 use Dockworker\IO\DockworkerIOTrait;
 
@@ -71,9 +71,7 @@ trait CliToolCheckerTrait
         bool $quiet = false
     ): void {
         if (!$this->checkIsSilent) {
-            $this->dockworkerIO->note(
-                "$testing_label..."
-            );
+                $this->dockworkerIO->say("$testing_label...");
         }
         $command->execTest($expected_output, $quiet);
     }

@@ -31,7 +31,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
      * @param string $message_file
      *   The path to a file containing the git commit message.
      *
-     * @command validate:git:commit-msg
+     * @command git:commit:validate-message
      * @usage /tmp/commit_msg.txt
      *
      * @throws \Dockworker\DockworkerException
@@ -75,7 +75,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
     }
 
     /**
-     * Validates the commit message filepath.
+     * Validates arguments for validate:git:commit-msg.
      *
      * @hook validate validate:git:commit-msg
      *
@@ -83,6 +83,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
      */
     public function validateCommitMsgValidator(CommandData $commandData): void
     {
+        // Validates the commit message's filepath.
         $message_file = $commandData->input()->getArgument('message_file');
         $this->exceptIfFileDoesNotExist($message_file);
     }

@@ -2,7 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\Cli\DockerCommandTrait;
+use Dockworker\Cli\DockerCliTrait;
 use Dockworker\DockworkerCommands;
 use Dockworker\IO\DockworkerIOTrait;
 
@@ -11,26 +11,31 @@ use Dockworker\IO\DockworkerIOTrait;
  */
 class DockworkerDockerImageCommands extends DockworkerCommands
 {
-    use DockerCommandTrait;
+    use DockerCliTrait;
     use DockworkerIOTrait;
 
     /**
-     * Builds this application's docker image(s).
+     * Builds one of this application's docker images.
+     *
+     * @param string $tag
+     *   The tag to build.
+     * @param string $context
+     *   The context to build.
      *
      * @command docker:image:build
      *
      * @docker
      */
-    public function buildDockerImage(string $tag): void
+    public function buildDockerImage(string $tag, string $context = '.'): void
     {
-        $this->dockworkerIO->section('Building Docker Image');
+        $this->dockworkerIO->section('Building Docker Image(s)');
         $this->dockerRun(
             [
                 'build',
                 '--tag',
                 $tag,
                 '--pull',
-                '.',
+                $context,
             ],
             'Builds the docker image.'
         );

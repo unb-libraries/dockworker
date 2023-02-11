@@ -1,8 +1,9 @@
 <?php
 
-namespace Dockworker;
+namespace Dockworker\Cli;
 
 use Dockworker\IO\DockworkerIOTrait;
+use Dockworker\DockworkerPersistentDataStorageTrait;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -11,10 +12,8 @@ use Symfony\Component\Yaml\Yaml;
 trait CliToolTrait
 {
     use CliToolCheckerTrait;
-    use PersistentConfigurationTrait;
-    use DockworkerPersistentDataStorageTrait;
-    use DockworkerApplicationPersistentDataStorageTrait;
     use DockworkerIOTrait;
+    use DockworkerPersistentDataStorageTrait;
 
     /**
      * The tools to check.
