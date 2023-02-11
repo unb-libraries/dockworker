@@ -18,13 +18,15 @@ class DockworkerUpdateCommands extends DockworkerCommands
      * @aliases update
      * @hidden
      */
-    public function updateDockworker(): void
+    public function updateDockworker(ConsoleIO $io): void
     {
-        $this->dockworkerIO->title(
+        $this->dockworkerTitle(
+            $io,
             'Updating Dockworker'
         );
-        $this->dockworkerIO->say(
-            'Checking for any updates to unb-libraries/dockworker...'
+        $this->dockworkerSay(
+            $io,
+            ['Checking for any updates to unb-libraries/dockworker...']
         );
         $this->taskExec('composer')
             ->dir($this->applicationRoot)

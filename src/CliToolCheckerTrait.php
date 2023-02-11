@@ -26,30 +26,25 @@ trait CliToolCheckerTrait
      *
      * @throws \Dockworker\DockworkerException
      */
-    public function checkRegisteredCliTools(CommandData $commandData): void
+    public function checkRegisteredCliTools(): void
     {
-        $io = new ConsoleIO($commandData->input(), $commandData->output());
-        $this->checkRegisteredCliToolCommands($io);
+        $this->checkRegisteredCliToolCommands();
     }
 
     /**
      * Executes the registered CLI tool commands and checks their output.
      *
-     * @param ConsoleIO $io
-     *   The console IO.
      * @param bool $quiet
      *   True to suppress any output, including errors.
      *
      * @throws \Dockworker\DockworkerException
      */
     protected function checkRegisteredCliToolCommands(
-        ConsoleIO $io,
         bool $quiet = false
     ): void {
         $this->checkIsSilent = $quiet;
         foreach ($this->registeredCliCheckCommands as $command) {
             $this->checkRegisteredCliTool(
-                $io,
                 $command['command'],
                 $command['expect_output'],
                 $command['label'],
@@ -61,8 +56,6 @@ trait CliToolCheckerTrait
     /**
      * Executes a CLI tool command and checks its output.
      *
-     * @param ConsoleIO $io
-     *   The console IO.
      * @param CliCommand $command
      *   The command to execute.
      * @param string $expected_output
@@ -73,19 +66,17 @@ trait CliToolCheckerTrait
      * @throws \Dockworker\DockworkerException
      */
     protected function checkRegisteredCliTool(
-        ConsoleIO $io,
         CliCommand $command,
         string $expected_output,
         string $testing_label,
         bool $quiet = false
     ): void {
         if (!$this->checkIsSilent) {
-            $this->dockworkerNotice(
-                $io,
+            $this->dockworkerIO->note(
                 "$testing_label..."
             );
         }
-        $command->execTest($io, $expected_output, $quiet);
+        $command->execTest($expected_output, $quiet);
     }
 
     /**

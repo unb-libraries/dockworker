@@ -50,7 +50,6 @@ class CliCommand extends Process
      * @throws \Dockworker\DockworkerException
      */
     public function execTest(
-        ConsoleIO $io,
         string $expected_output,
         bool $quiet = false
     ): void {
@@ -58,13 +57,13 @@ class CliCommand extends Process
             $this->mustRun();
         } catch (ProcessFailedException $exception) {
             if (!$quiet) {
-                $this->dockworkerOutputBlock($io, [$this->getOutput()]);
+                $this->dockworkerIO->block([$this->getOutput()]);
             }
             throw new DockworkerException("Command [$this->description] returned error code {$this->getExitCode()}.");
         }
         if (!$this->outputContainsExpectedOutput($expected_output)) {
             if (!$quiet) {
-                $this->dockworkerOutputBlock($io, [$this->getOutput()]);
+                $this->dockworkerIO->block([$this->getOutput()]);
             }
             throw new DockworkerException("Command [$this->description] returned unexpected output.");
         }

@@ -1,8 +1,9 @@
 <?php
 
-namespace Dockworker;
+namespace Dockworker\Cli;
 
 use Consolidation\AnnotatedCommand\AnnotationData;
+use Dockworker\CliToolTrait;
 use Robo\Symfony\ConsoleIO;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -10,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Provides methods to interact with docker.
  */
-trait DockerTrait
+trait DockerCliTrait
 {
     use CliToolTrait;
 
@@ -28,6 +29,4 @@ trait DockerTrait
         $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/docker.yml";
         $this->registerCliToolFromYaml($io, $file_path);
     }
-
-
 }

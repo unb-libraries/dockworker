@@ -1,6 +1,6 @@
 <?php
 
-namespace Dockworker;
+namespace Dockworker\Cli;
 
 use Dockworker\CliCommand;
 
