@@ -2,6 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Dockworker\DockworkerCommands;
 use Dockworker\FileSystemOperationsTrait;
 
 /**

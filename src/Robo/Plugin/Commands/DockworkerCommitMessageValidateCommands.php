@@ -3,6 +3,7 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Consolidation\AnnotatedCommand\CommandData;
+use Dockworker\DockworkerCommands;
 use Dockworker\DockworkerException;
 use Dockworker\GitCommitMessageValidatorTrait;
 use Dockworker\JiraTrait;

@@ -1,21 +1,9 @@
 <?php
 
-namespace Dockworker\Robo\Plugin\Commands;
+namespace Dockworker;
 
-use Consolidation\AnnotatedCommand\AnnotationData;
-use Consolidation\AnnotatedCommand\CommandData;
-use CzProject\GitPhp\GitRepository;
-use Dockworker\CliToolTrait;
-use Dockworker\CommandRuntimeTrackerTrait;
-use Dockworker\DestructiveActionTrait;
-use Dockworker\DockworkerApplicationLocalDataStorageTrait;
-use Dockworker\DockworkerApplicationPersistentDataStorageTrait;
 use Dockworker\DockworkerException;
-use Dockworker\DockworkerIO;
-use Dockworker\DockworkerIOTrait;
-use Dockworker\DockworkerPersistentDataStorageTrait;
 use Dockworker\FileSystemOperationsTrait;
-use Dockworker\GitRepoTrait;
 use League\Container\ContainerAwareInterface;
 use League\Container\ContainerAwareTrait;
 use Psr\Log\LoggerAwareInterface;
@@ -24,26 +12,18 @@ use Robo\Common\ConfigAwareTrait;
 use Robo\Contract\ConfigAwareInterface;
 use Robo\Contract\IOAwareInterface;
 use Robo\Robo;
-use Robo\Symfony\ConsoleIO;
 use Robo\Tasks;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Defines a base class for all Dockworker commands.
+ * Defines a base abstract class for all Dockworker commands.
+ *
+ * This class should not contain any hooks or commands.
  */
 abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface, ContainerAwareInterface, IOAwareInterface, LoggerAwareInterface
 {
-    use CliToolTrait;
-    use CommandRuntimeTrackerTrait;
     use ConfigAwareTrait;
     use ContainerAwareTrait;
-    use DestructiveActionTrait;
-    use DockworkerApplicationLocalDataStorageTrait;
-    use DockworkerApplicationPersistentDataStorageTrait;
-    use DockworkerPersistentDataStorageTrait;
     use FileSystemOperationsTrait;
-    use GitRepoTrait;
     use LoggerAwareTrait;
 
     protected const DOCKWORKER_CONFIG_FILE = '.dockworker/dockworker.yml';
@@ -55,6 +35,20 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      * @var string
      */
     protected string $applicationRoot;
+
+    /**
+     * The shortened slug of the application.
+     *
+     * @var string
+     */
+    protected string $applicationShortSlug;
+
+    /**
+     * The 'slug' of the application.
+     *
+     * @var string
+     */
+    protected string $applicationSlug;
 
     /**
      * The full path to the application's dockworker configuration file.
@@ -78,20 +72,6 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     protected string $userName;
 
     /**
-     * The shortened slug of the application.
-     *
-     * @var string
-     */
-    protected string $applicationShortSlug;
-
-    /**
-     * The 'slug' of the application.
-     *
-     * @var string
-     */
-    protected string $applicationSlug;
-
-    /**
      * The UNB Libraries application uuid for the application.
      *
      * @link https://systems.lib.unb.ca/wiki/systems:docker:unique-site-uuids UNB Libraries UUIDs
@@ -104,7 +84,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      */
     public function __construct()
     {
-        $this->applicationRoot = realpath(__DIR__ . "/../../../../../../../");
+        $this->applicationRoot = realpath(__DIR__ . "/../../../../");
         $this->configFile = $this->getPathFromPathElements(
             [
                 $this->applicationRoot,
