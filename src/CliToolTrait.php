@@ -12,6 +12,8 @@ trait CliToolTrait
 {
     use CliToolCheckerTrait;
     use PersistentConfigurationTrait;
+    use DockworkerPersistentDataStorageTrait;
+    use DockworkerApplicationPersistentDataStorageTrait;
     use DockworkerIOTrait;
 
     /**
@@ -24,8 +26,6 @@ trait CliToolTrait
     /**
      * Registers a CLI tool from a YAML file source.
      *
-     * @param ConsoleIO $io
-     *   The console IO.
      * @param string $filepath
      *   The path to the YAML file containing the tool definition.
      *
@@ -37,7 +37,6 @@ trait CliToolTrait
     ): void {
         $tool = Yaml::parseFile($filepath);
         $this->registerCliTool(
-            $io,
             $tool['tool']['name'],
             $tool['tool']['description'],
             $tool['tool']['default_path'],
@@ -51,8 +50,6 @@ trait CliToolTrait
     /**
      * Registers a CLI tool.
      *
-     * @param ConsoleIO $io
-     *   The console IO.
      * @param string $name
      *   The name of the tool.
      * @param string $description
@@ -69,7 +66,6 @@ trait CliToolTrait
      *   The label to use when testing the tool.
      */
     protected function registerCliTool(
-        ConsoleIO $io,
         string $name,
         string $description,
         string $default_binpath,
@@ -80,9 +76,7 @@ trait CliToolTrait
     ): void {
         $found_tool = false;
         while ($found_tool == false) {
-            $this->initDockworkerPersistentDataStorageDir($this->userHomeDir);
             $bin = $this->getSetDockworkerPersistentDataConfigurationItem(
-                $io,
                 'cli_tools',
                 "$name.bin",
                 "Enter the full path to your installed $name binary",
@@ -91,9 +85,8 @@ trait CliToolTrait
                 $reference_uris
             );
             if (!file_exists($bin) || !is_executable($bin)) {
-                $this->dockworkerWarn(
-                    $io,
-                    ["$bin does not exist or is not executable"]
+                $this->dockworkerIO->warning(
+                    "$bin does not exist or is not executable"
                 );
                 $this->setDockworkerPersistentDataConfigurationItem(
                     'cli_tools',

@@ -2,13 +2,9 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-
-use Dockworker\Cli\DockerCliTrait;
-use Dockworker\CliCommand;
+use Dockworker\Cli\DockerCommandTrait;
 use Dockworker\DockworkerCommands;
-use Dockworker\DockerTrait;
 use Dockworker\DockworkerIOTrait;
-use Dockworker\DockworkerPersistentDataStorageTrait;
 use Robo\Symfony\ConsoleIO;
 
 /**
@@ -18,8 +14,7 @@ use Robo\Symfony\ConsoleIO;
  */
 class DockworkerDockerImageCommands extends DockworkerCommands
 {
-    use DockworkerPersistentDataStorageTrait;
-    use DockerCliTrait;
+    use DockerCommandTrait;
     use DockworkerIOTrait;
 
     /**
@@ -34,17 +29,16 @@ class DockworkerDockerImageCommands extends DockworkerCommands
     public function buildDockerImage(ConsoleIO $io, string $tag): void
     {
         $this->dockworkerIO->section('Building Docker Image');
-        $cmd = new CliCommand(
+        $this->dockerRun(
             [
-                $this->cliTools['docker'],
                 'build',
                 '--tag',
                 $tag,
+                '--pull',
                 '.',
             ],
             'Builds the docker image.'
         );
-        $cmd->runTty();
     }
 
 }

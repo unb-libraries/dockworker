@@ -59,8 +59,6 @@ trait DockworkerPersistentDataStorageTrait
     /**
      * Gets the dockworker persistent configuration item value, set and write it from a query if unset.
      *
-     * @param \Robo\Symfony\ConsoleIO $io
-     *   The console IO.
      * @param string $namespace
      *   The configuration namespace to retrieve from.
      * @param string $item
@@ -81,7 +79,6 @@ trait DockworkerPersistentDataStorageTrait
      *   The value of the configuration item.
      */
     protected function getSetDockworkerPersistentDataConfigurationItem(
-        ConsoleIO $io,
         string $namespace,
         string $item,
         string $query,
@@ -91,7 +88,6 @@ trait DockworkerPersistentDataStorageTrait
         string $env_var_override_name = ''
     ): mixed {
         return $this->getSetPersistentConfigurationItem(
-            $io,
             $this->dockworkerPersistentDataStorageDir,
             $namespace,
             $item,

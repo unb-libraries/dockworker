@@ -10,5 +10,4 @@ use Dockworker\CliCommand;
 class DockerCommand extends CliCommand
 {
 
-
 }

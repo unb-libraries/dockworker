@@ -34,8 +34,6 @@ trait PersistentConfigurationTrait
     /**
      * Gets a configuration item's value, set and write it from a query if unset.
      *
-     * @param \Robo\Symfony\ConsoleIO $io
-     *   The console IO.
      * @param string $path
      *   The path to load the configuration from.
      * @param string $namespace
@@ -57,7 +55,6 @@ trait PersistentConfigurationTrait
      *   The value of the configuration item.
      */
     protected function getSetPersistentConfigurationItem(
-        ConsoleIO $io,
         string $path,
         string $namespace,
         string $item,
@@ -80,21 +77,18 @@ trait PersistentConfigurationTrait
         );
         if (empty($value)) {
             if (!empty($description)) {
-                $this->dockworkerOutputBlock(
-                    $io,
+                $this->dockworkerIO->block(
                     [$description]
                 );
             }
             if (!empty($reference_uris)) {
                 foreach ($reference_uris as $reference_uri) {
-                    $this->dockworkerNote(
-                        $io,
-                        ["{$reference_uri['label']}: {$reference_uri['uri']}"]
+                    $this->dockworkerIO->note(
+                        "{$reference_uri['label']}: {$reference_uri['uri']}"
                     );
                 }
             }
-            $ans_value = $this->dockworkerAsk(
-                $io,
+            $ans_value = $this->dockworkerIO->ask(
                 $query,
                 $default_value
             );
