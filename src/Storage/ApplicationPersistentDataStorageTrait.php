@@ -1,61 +1,62 @@
 <?php
 
-namespace Dockworker;
+namespace Dockworker\Storage;
+
+use Dockworker\FileSystemOperationsTrait;
 
 /**
- * Provides IO methods to dockworker persistent data storage.
+ * Provides IO methods to an in-repository data storage for the application.
  */
-trait DockworkerPersistentDataStorageTrait
+trait ApplicationPersistentDataStorageTrait
 {
     use FileSystemOperationsTrait;
     use PersistentConfigurationTrait;
 
     /**
-     * The path to the dockworker persistent data storage base directory.
+     * The path to the persistent data storage base directory for applications.
      *
      * @var string
      */
-    protected string $dockworkerPersistentDataStorageBaseDir = '.config/dockworker';
+    protected string $applicationPersistentDataStorageBaseDir = '.dockworker/data';
 
     /**
-     * The path to the dockworker persistent data storage directory.
+     * The path to the application's persistent data storage directory.
      *
      * @var string
      */
-    protected string $dockworkerPersistentDataStorageDir;
+    protected string $applicationPersistentDataStorageDir;
 
     /**
-     * Provides a pre-init hook that assigns local PC data storage paths.
+     * Provides a pre-init hook that assigns persistent data storage paths.
      *
      * @hook pre-init
      * @throws \Dockworker\DockworkerException
      */
-    public function preInitDockworkerPersistentDataStorageDir(): void
+    public function preInitApplicationPersistentDataStorageDir(): void
     {
-        $this->initDockworkerPersistentDataStorageDir(
-            $this->userHomeDir
+        $this->initApplicationPersistentDataStorageDir(
+            $this->applicationRoot
         );
     }
 
     /**
-     * Initializes the dockworker persistent data storage directory.
+     * Initializes the application's persistent data storage directory.
      *
-     * @param string $user_home_dir
-     *   The home directory of the current user.
+     * @param string $repo_root
+     *   The root of the application's git repository.
      */
-    protected function initDockworkerPersistentDataStorageDir(
-        string $user_home_dir
+    protected function initApplicationPersistentDataStorageDir(
+        string $repo_root
     ): void {
-        $this->dockworkerPersistentDataStorageDir = $this->initGetPathFromPathElements(
+        $this->applicationPersistentDataStorageDir = $this->initGetPathFromPathElements(
             [
-                $user_home_dir,
-                $this->dockworkerPersistentDataStorageBaseDir,
+                $repo_root,
+                $this->applicationPersistentDataStorageBaseDir,
             ]
         );
     }
-
     /**
-     * Gets the dockworker persistent configuration item value, set and write it from a query if unset.
+     * Gets the application's persistent configuration item value, set and write it from a query if unset.
      *
      * @param string $namespace
      *   The configuration namespace to retrieve from.
@@ -72,11 +73,10 @@ trait DockworkerPersistentDataStorageTrait
      * @param string $env_var_override_name
      *   Optional. An OS environment variable name whose value overrides configuration.
      *
-     * @TODO Docblock is wrong.
      * @return mixed
      *   The value of the configuration item.
      */
-    protected function getSetDockworkerPersistentDataConfigurationItem(
+    protected function getSetApplicationPersistentDataConfigurationItem(
         string $namespace,
         string $item,
         string $query,
@@ -86,7 +86,7 @@ trait DockworkerPersistentDataStorageTrait
         string $env_var_override_name = ''
     ): mixed {
         return $this->getSetPersistentConfigurationItem(
-            $this->dockworkerPersistentDataStorageDir,
+            $this->applicationPersistentDataStorageDir,
             $namespace,
             $item,
             $query,
@@ -98,7 +98,7 @@ trait DockworkerPersistentDataStorageTrait
     }
 
     /**
-     * Gets the dockworker persistent configuration item value.
+     * Gets the application's persistent configuration item value.
      *
      * @param string $namespace
      *   The configuration namespace to retrieve from.
@@ -108,19 +108,19 @@ trait DockworkerPersistentDataStorageTrait
      * @return mixed
      *   The value of the configuration item.
      */
-    protected function getDockworkerPersistentDataConfigurationItem(
+    protected function getApplicationPersistentDataConfigurationItem(
         string $namespace,
         string $item,
     ): mixed {
         return $this->getPersistentConfigurationItem(
-            $this->dockworkerPersistentDataStorageDir,
+            $this->applicationPersistentDataStorageDir,
             $namespace,
             $item
         );
     }
 
     /**
-     * Sets a dockworker persistent configuration item value.
+     * Sets the application's persistent configuration item value.
      *
      * @param string $namespace
      *   The configuration namespace to set in.
@@ -129,13 +129,13 @@ trait DockworkerPersistentDataStorageTrait
      * @param mixed $value
      *   The value to set.
      */
-    protected function setDockworkerPersistentDataConfigurationItem(
+    protected function setApplicationPersistentDataConfigurationItem(
         string $namespace,
         string $item,
         mixed $value
     ): void {
         $this->setWritePersistentConfigurationItem(
-            $this->dockworkerPersistentDataStorageDir,
+            $this->applicationPersistentDataStorageDir,
             $namespace,
             $item,
             $value

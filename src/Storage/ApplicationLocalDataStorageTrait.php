@@ -1,60 +1,70 @@
 <?php
 
-namespace Dockworker;
+namespace Dockworker\Storage;
+
+use Dockworker\FileSystemOperationsTrait;
 
 /**
- * Provides IO methods to an in-repository data storage for the application.
+ * Provides IO methods to a local PC data storage for the application.
  */
-trait DockworkerApplicationPersistentDataStorageTrait
+trait ApplicationLocalDataStorageTrait
 {
     use FileSystemOperationsTrait;
     use PersistentConfigurationTrait;
 
     /**
-     * The path to the persistent data storage base directory for applications.
+     * The path to the local PC data storage base directory.
      *
      * @var string
      */
-    protected string $applicationPersistentDataStorageBaseDir = '.dockworker/data';
+    protected string $applicationLocalDataStorageBaseDir = '.config/dockworker';
 
     /**
-     * The path to the application's persistent data storage directory.
+     * The path to the application's local PC data storage directory.
      *
      * @var string
      */
-    protected string $applicationPersistentDataStorageDir;
+    protected string $applicationLocalDataStorageDir;
 
     /**
-     * Provides a pre-init hook that assigns persistent data storage paths.
+     * Provides a pre-init hook that assigns local PC data storage paths.
      *
      * @hook pre-init
      * @throws \Dockworker\DockworkerException
      */
-    public function preInitApplicationPersistentDataStorageDir(): void
+    public function preInitApplicationLocalDataStorageDir(): void
     {
-        $this->initApplicationPersistentDataStorageDir(
-            $this->applicationRoot
+        $this->initApplicationLocalDataStorageDir(
+            $this->userHomeDir,
+            $this->applicationName
         );
     }
 
     /**
-     * Initializes the application's persistent data storage directory.
+     * Initializes the application's local PC data storage directory.
      *
-     * @param string $repo_root
-     *   The root of the application's git repository.
+     * @param string $user_home_dir
+     *   The home directory of the current user.
+     * @param string $application_id
+     *   The application identifier.
+     *
+     * @return void
      */
-    protected function initApplicationPersistentDataStorageDir(
-        string $repo_root
+    protected function initApplicationLocalDataStorageDir(
+        string $user_home_dir,
+        string $application_id
     ): void {
-        $this->applicationPersistentDataStorageDir = $this->initGetPathFromPathElements(
+        $this->applicationLocalDataStorageDir = $this->initGetPathFromPathElements(
             [
-                $repo_root,
-                $this->applicationPersistentDataStorageBaseDir,
+                $user_home_dir,
+                $this->applicationLocalDataStorageBaseDir,
+                $application_id,
             ]
         );
     }
+
     /**
-     * Gets the application's persistent configuration item value, set and write it from a query if unset.
+     * Gets the application's local PC data configuration item value, set and write it from a query if unset.
      *
      * @param string $namespace
      *   The configuration namespace to retrieve from.
@@ -74,7 +84,7 @@ trait DockworkerApplicationPersistentDataStorageTrait
      * @return mixed
      *   The value of the configuration item.
      */
-    protected function getSetApplicationPersistentDataConfigurationItem(
+    protected function getSetApplicationLocalDataConfigurationItem(
         string $namespace,
         string $item,
         string $query,
@@ -84,7 +94,7 @@ trait DockworkerApplicationPersistentDataStorageTrait
         string $env_var_override_name = ''
     ): mixed {
         return $this->getSetPersistentConfigurationItem(
-            $this->applicationPersistentDataStorageDir,
+            $this->applicationLocalDataStorageDir,
             $namespace,
             $item,
             $query,
@@ -96,7 +106,7 @@ trait DockworkerApplicationPersistentDataStorageTrait
     }
 
     /**
-     * Gets the application's persistent configuration item value.
+     * Gets the application's local PC data configuration item value.
      *
      * @param string $namespace
      *   The configuration namespace to retrieve from.
@@ -106,19 +116,19 @@ trait DockworkerApplicationPersistentDataStorageTrait
      * @return mixed
      *   The value of the configuration item.
      */
-    protected function getApplicationPersistentDataConfigurationItem(
+    protected function getApplicationLocalDataConfigurationItem(
         string $namespace,
         string $item,
     ): mixed {
         return $this->getPersistentConfigurationItem(
-            $this->applicationPersistentDataStorageDir,
+            $this->applicationLocalDataStorageDir,
             $namespace,
             $item
         );
     }
 
     /**
-     * Sets the application's persistent configuration item value.
+     * Sets the application's local PC data configuration item value.
      *
      * @param string $namespace
      *   The configuration namespace to set in.
@@ -127,13 +137,13 @@ trait DockworkerApplicationPersistentDataStorageTrait
      * @param mixed $value
      *   The value to set.
      */
-    protected function setApplicationPersistentDataConfigurationItem(
+    protected function setApplicationLocalDataConfigurationItem(
         string $namespace,
         string $item,
         mixed $value
     ): void {
         $this->setWritePersistentConfigurationItem(
-            $this->applicationPersistentDataStorageDir,
+            $this->applicationLocalDataStorageDir,
             $namespace,
             $item,
             $value

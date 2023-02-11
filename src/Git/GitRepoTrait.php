@@ -1,9 +1,10 @@
 <?php
 
-namespace Dockworker;
+namespace Dockworker\Git;
 
 use CzProject\GitPhp\Git;
 use CzProject\GitPhp\GitRepository;
+use Dockworker\DockworkerException;
 
 /**
  * Provides methods to interact with a local git repo.

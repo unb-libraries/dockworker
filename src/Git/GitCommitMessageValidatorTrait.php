@@ -1,6 +1,6 @@
 <?php
 
-namespace Dockworker;
+namespace Dockworker\Git;
 
 use Dockworker\IO\DockworkerIOTrait;
 

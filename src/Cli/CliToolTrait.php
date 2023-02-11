@@ -3,7 +3,7 @@
 namespace Dockworker\Cli;
 
 use Dockworker\IO\DockworkerIOTrait;
-use Dockworker\DockworkerPersistentDataStorageTrait;
+use Dockworker\Storage\DockworkerPersistentDataStorageTrait;
 use Symfony\Component\Yaml\Yaml;
 
 /**
