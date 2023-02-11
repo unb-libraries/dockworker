@@ -2,7 +2,7 @@
 
 namespace Dockworker;
 
-use Dockworker\DockworkerException;
+use Dockworker\System\FileSystemOperationsTrait;
 use League\Container\ContainerAwareInterface;
 use League\Container\ContainerAwareTrait;
 use Psr\Log\LoggerAwareInterface;

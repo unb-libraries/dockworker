@@ -35,7 +35,7 @@ And declared alphabetically within those sets.
 
 ## Annotations
 ### Annotation Style
-Although consolidation/annotated-command now supports PHP attributes to define command functionality, we should use PHP annotation tags. drush continues to use the annotation tag style, and we should follow suit until drush migrates to PHP attributes.  
+Although consolidation/annotated-command now supports PHP attributes to define command functionality, we should continue to use PHP annotation tags. drush continues to use the annotation tag style, and we should follow suit until drush migrates to PHP attributes.  
 
 ### Annotation Tag Order
 For sanity, PHP docblock annotation tags should be defined in the following order:
@@ -57,41 +57,25 @@ For sanity, PHP docblock annotation tags should be defined in the following orde
 ```
 
 ## Code Organization
-
 ### Command Argument Validation
-Command arguments should be validated with validate hooks where possible. This allows for the validation to be tested independently of the command.
+Command arguments should be validated with ```validate``` hooks where possible.
 
 ### Command Classes
-#### Limit on Hook Functions
-Command classes should limit to defining one hook per hook-level each. Multiple methods can be called within that hook method, but each method should be defined in a separate class. This allows for easier testing and reuse of the methods.
+Command classes should extend DockworkerCommands, an abstract class. All classes in the ```Dockworker\Robo\Plugin\Commands``` namespace will be auto-discovered.
 
-#### Hook Class Naming
-Command class methods declared as hooks should be named in a standard fashion according to the hook type and parent class name:
+Command classes should not extend other command classes, as parent classes containing commands and hooks appears to be a mortal sin with annotated-command applications - leading to recursion while bootstrapping, firing hooks multiple times.
 
-```
-      /**
-       * Provides a pre-init hook that assigns core properties and configuration.
-       *
-       * @hook pre-init
-       * @throws \Dockworker\DockworkerException
-       */
-      public function preInitDockworkerCommands() : void {
-        $this->setCommandStartTime();
-        $this->setCoreProperties();
-        $this->setDockworkerDataDirs();
-        $this->setGitRepo();
-      }
-```
-
-### Traits
-Parent classes containing commands and hooks appears to be a mortal sin with annotated-command applications, and leads to recursion while bootstrapping.
-
-This leaves us with a design issue. Since commands cannot inherit other commands, the functionality must come from traits. Although traits should be written with no knowledge of the command classes, the abovementioned issue forces us to ignore this.
+This leaves us with a design wart. Since commands cannot inherit other commands, reusable functionality must come from traits. Although traits SHOULD be written with no knowledge of the command classes, nor should traits assert annotated-command hooks, the aforementioned issue dictates we do so.
 
 ### Data storage
-3 levels of data storage Traits are available to Dockworker commands:
+3 classes of data storage Traits are available to Dockworker commands:
 
-* Application: stored and committed in-repo, for current dockworker project (ApplicationPersistentDataStorageTrait)
-* Application: stored on user disk, for current dockworker project (ApplicationLocalDataStorageTrait)
-* Dockworker: stored on use disk, for all dockworker projects (DockworkerPersistentDataStorageTrait)
+* ```ApplicationPersistentDataStorageTrait``` Application Level, stored and committed to repository. Used if application data should be shared between all Dockworker users.
+* ```ApplicationLocalDataStorageTrait``` Application Level, stored on user disk. Used if application data is for one Dockworker user only.
+* ```DockworkerPersistentDataStorageTrait``` Dockworker Level, stored on user disk. Used if application data is for one Dockworker user but all Applications.
+
+All classes support configuration and will also support binary storage.
+
+### IO
+Commands wishing user IO should implement the ```DockworkerIOTrait```. It creates an instance of the ```DockworkerIO``` class at ```$this->dockworkerIO``` in a pre-init hook. ```DockworkerIO``` is a ```ConsoleIO```, which in turn is a ```SymfonyStyle```. It therefore has access to all the Robo and Symfony styling methods.
 

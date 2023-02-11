@@ -1,7 +1,8 @@
 <?php
 
-namespace Dockworker;
+namespace Dockworker\Core;
 
+use Dockworker\DockworkerException;
 use Dockworker\IO\DockworkerIOTrait;
 
 /**

@@ -3,7 +3,7 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\DockworkerCommands;
-use Dockworker\FileSystemOperationsTrait;
+use Dockworker\System\FileSystemOperationsTrait;
 
 /**
  * Provides commands for interacting with Docker images.

@@ -2,7 +2,7 @@
 
 namespace Dockworker\Storage;
 
-use Dockworker\FileSystemOperationsTrait;
+use Dockworker\System\FileSystemOperationsTrait;
 
 /**
  * Provides IO methods to a local PC data storage for the application.

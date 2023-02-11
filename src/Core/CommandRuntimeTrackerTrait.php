@@ -1,6 +1,6 @@
 <?php
 
-namespace Dockworker;
+namespace Dockworker\Core;
 
 use DateTime;
 use Dockworker\IO\DockworkerIOTrait;

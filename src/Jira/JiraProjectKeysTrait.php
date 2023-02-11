@@ -1,11 +1,11 @@
 <?php
 
-namespace Dockworker;
+namespace Dockworker\Jira;
 
 /**
  * Provides methods to interact with Jira for this dockworker application.
  */
-trait JiraTrait
+trait JiraProjectKeysTrait
 {
     /**
      * A list of Jira project keys that apply to all projects.

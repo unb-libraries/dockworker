@@ -5,8 +5,8 @@ namespace Dockworker\Storage;
 use Consolidation\Config\ConfigInterface;
 use Consolidation\Config\Loader\ConfigProcessor;
 use Consolidation\Config\Loader\YamlConfigLoader;
-use Dockworker\FileSystemOperationsTrait;
 use Dockworker\IO\DockworkerIOTrait;
+use Dockworker\System\FileSystemOperationsTrait;
 use Robo\Config\Config;
 use Symfony\Component\Yaml\Yaml;
 

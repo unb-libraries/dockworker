@@ -7,7 +7,7 @@ use Dockworker\DockworkerCommands;
 use Dockworker\DockworkerException;
 use Dockworker\Git\GitCommitMessageValidatorTrait;
 use Dockworker\IO\DockworkerIOTrait;
-use Dockworker\JiraTrait;
+use Dockworker\Jira\JiraProjectKeysTrait;
 
 /**
  * Defines commands used to validate a git commit message.
@@ -19,7 +19,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
 {
     use DockworkerIOTrait;
     use GitCommitMessageValidatorTrait;
-    use JiraTrait;
+    use JiraProjectKeysTrait;
 
     protected const ERROR_INVALID_COMMIT_MESSAGE = 'Invalid commit message!';
     protected const ERROR_MISSING_JIRA_INFO = 'JIRA project and issue missing from git commit\'s subject line.';
