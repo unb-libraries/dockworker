@@ -7,7 +7,6 @@ namespace Dockworker;
  */
 trait JiraTrait
 {
-
     /**
      * A list of Jira project keys that apply to all projects.
      *
@@ -39,5 +38,4 @@ trait JiraTrait
             );
         }
     }
-
 }

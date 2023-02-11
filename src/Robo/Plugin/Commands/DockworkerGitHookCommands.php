@@ -38,5 +38,4 @@ class DockworkerGitHookCommands extends DockworkerCommands
             $this->_copy($source_file, $target_file);
         }
     }
-
 }

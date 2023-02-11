@@ -3,7 +3,6 @@
 namespace Dockworker;
 
 use Dockworker\DockworkerException;
-use Dockworker\FileSystemOperationsTrait;
 use League\Container\ContainerAwareInterface;
 use League\Container\ContainerAwareTrait;
 use Psr\Log\LoggerAwareInterface;
@@ -81,6 +80,8 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
 
     /**
      * DockworkerCommands constructor.
+     *
+     * @throws \Dockworker\DockworkerException
      */
     public function __construct()
     {

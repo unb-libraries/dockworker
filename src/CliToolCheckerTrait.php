@@ -2,8 +2,7 @@
 
 namespace Dockworker;
 
-use Consolidation\AnnotatedCommand\CommandData;
-use Robo\Symfony\ConsoleIO;
+use Dockworker\IO\DockworkerIOTrait;
 
 /**
  * Provides methods to check CLI tools for existence and functionality.

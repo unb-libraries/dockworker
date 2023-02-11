@@ -2,13 +2,15 @@
 
 namespace Dockworker;
 
-use Robo\Symfony\ConsoleIO;
+use Dockworker\IO\DockworkerIOTrait;
 
 /**
  * Provides methods to validate git commit messages based on standards.
  */
 trait GitCommitMessageValidatorTrait
 {
+    use DockworkerIOTrait;
+
     /**
      * Any errors thrown during the validation.
      *
@@ -79,14 +81,10 @@ trait GitCommitMessageValidatorTrait
 
     /**
      * Displays a sample valid commit message.
-     *
-     * @param ConsoleIO $io
-     *   The console IO.
      */
-    protected function showSampleCommitMessage(ConsoleIO $io): void
+    protected function showSampleCommitMessage(): void
     {
-        $this->dockworkerNote(
-            $io,
+        $this->dockworkerIO->note(
             $this->sampleCommitMessage
         );
     }

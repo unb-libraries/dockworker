@@ -2,9 +2,8 @@
 
 namespace Dockworker;
 
-use Consolidation\AnnotatedCommand\CommandData;
 use DateTime;
-use Robo\Symfony\ConsoleIO;
+use Dockworker\IO\DockworkerIOTrait;
 
 /**
  * Provides methods to track the runtime of a command.
@@ -42,25 +41,18 @@ trait CommandRuntimeTrackerTrait
      *
      * @hook post-process
      */
-    public function triggerDisplayCommandRunTime(
-        $result,
-        CommandData $commandData
-    ): void {
-        $io = new ConsoleIO($commandData->input(), $commandData->output());
-        $this->displayCommandRunTime($io);
+    public function triggerDisplayCommandRunTime(): void
+    {
+        $this->displayCommandRunTime();
     }
 
     /**
      * Displays the command's total run time.
-     *
-     * @param ConsoleIO $io
-     *   The console IO.
      */
-    protected function displayCommandRunTime(ConsoleIO $io): void
+    protected function displayCommandRunTime(): void
     {
         if ($this->displayCommandRunTime) {
-            $this->dockworkerNote(
-                $io,
+            $this->dockworkerIO->note(
                 [
                     sprintf(
                         'Command Runtime: %s',

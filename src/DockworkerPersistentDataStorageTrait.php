@@ -2,8 +2,6 @@
 
 namespace Dockworker;
 
-use Robo\Symfony\ConsoleIO;
-
 /**
  * Provides IO methods to dockworker persistent data storage.
  */

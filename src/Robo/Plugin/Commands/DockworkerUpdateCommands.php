@@ -3,7 +3,7 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\DockworkerCommands;
-use Dockworker\DockworkerIOTrait;
+use Dockworker\IO\DockworkerIOTrait;
 
 /**
  * Provides commands for interacting with Docker images.

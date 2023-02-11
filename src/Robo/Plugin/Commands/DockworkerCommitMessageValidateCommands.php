@@ -6,8 +6,8 @@ use Consolidation\AnnotatedCommand\CommandData;
 use Dockworker\DockworkerCommands;
 use Dockworker\DockworkerException;
 use Dockworker\GitCommitMessageValidatorTrait;
+use Dockworker\IO\DockworkerIOTrait;
 use Dockworker\JiraTrait;
-use Robo\Symfony\ConsoleIO;
 
 /**
  * Defines commands used to validate a git commit message.
@@ -17,8 +17,9 @@ use Robo\Symfony\ConsoleIO;
  */
 class DockworkerCommitMessageValidateCommands extends DockworkerCommands
 {
-    use JiraTrait;
+    use DockworkerIOTrait;
     use GitCommitMessageValidatorTrait;
+    use JiraTrait;
 
     protected const ERROR_INVALID_COMMIT_MESSAGE = 'Invalid commit message!';
     protected const ERROR_MISSING_JIRA_INFO = 'JIRA project and issue missing from git commit\'s subject line.';
@@ -38,7 +39,6 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
      * @jira
      */
     public function validateCommitMsg(
-        ConsoleIO $io,
         string $message_file
     ): void {
         $message = file_get_contents($message_file);
@@ -58,22 +58,16 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
 
         // Process universal errors.
         if (!empty($this->errors)) {
-            $this->dockworkerSubTitle(
-                $io,
-                'Commit Message Validation Failure(s):'
-            );
-            $this->dockworkerListing(
-                $io,
-                $this->errors
-            );
-            $this->showSampleCommitMessage($io);
+            $this->dockworkerIO->section('Commit Message Validation Failure(s):');
+            $this->dockworkerIO->listing($this->errors);
+            $this->showSampleCommitMessage();
             throw new DockworkerException(self::ERROR_INVALID_COMMIT_MESSAGE);
         }
 
         if (!empty($this->jiraProjectKeys)) {
             if (!$this->getValidateProjectPrefix($this->jiraProjectKeys)) {
                 if (!$this->confirm(self::WARN_MISSING_JIRA_INFO)) {
-                    $this->showSampleCommitMessage($io);
+                    $this->showSampleCommitMessage();
                     throw new DockworkerException(self::ERROR_MISSING_JIRA_INFO);
                 }
             }

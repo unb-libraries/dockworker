@@ -2,8 +2,6 @@
 
 namespace Dockworker;
 
-use Robo\Symfony\ConsoleIO;
-
 /**
  * Provides IO methods to a local PC data storage for the application.
  */
@@ -66,8 +64,6 @@ trait DockworkerApplicationLocalDataStorageTrait
     /**
      * Gets the application's local PC data configuration item value, set and write it from a query if unset.
      *
-     * @param \Robo\Symfony\ConsoleIO $io
-     *   The console IO.
      * @param string $namespace
      *   The configuration namespace to retrieve from.
      * @param string $item
@@ -87,7 +83,6 @@ trait DockworkerApplicationLocalDataStorageTrait
      *   The value of the configuration item.
      */
     protected function getSetApplicationLocalDataConfigurationItem(
-        ConsoleIO $io,
         string $namespace,
         string $item,
         string $query,
@@ -97,7 +92,6 @@ trait DockworkerApplicationLocalDataStorageTrait
         string $env_var_override_name = ''
     ): mixed {
         return $this->getSetPersistentConfigurationItem(
-            $io,
             $this->applicationLocalDataStorageDir,
             $namespace,
             $item,

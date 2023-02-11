@@ -2,7 +2,7 @@
 
 namespace Dockworker;
 
-use Robo\Symfony\ConsoleIO;
+use Dockworker\IO\DockworkerIOTrait;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -39,8 +39,6 @@ class CliCommand extends Process
     /**
      * Executes the command and checks for an expected output and return code.
      *
-     * @param ConsoleIO $io
-     *   The console IO.
      * @param string $expected_output
      *   A string that is expected to appear within the command's output.
      * @param bool $quiet
@@ -102,13 +100,14 @@ class CliCommand extends Process
     /**
      * Runs the command and attaches the command TTY to the current TTY.
      */
-    public function runTty() {
+    public function runTty()
+    {
         $this->setTty(true);
         $this->run(function ($type, $buffer) {
             if (self::ERR === $type) {
-                echo 'ERR > '.$buffer;
+                echo 'ERR > ' . $buffer;
             } else {
-                echo 'OUT > '.$buffer;
+                echo 'OUT > ' . $buffer;
             }
         });
     }

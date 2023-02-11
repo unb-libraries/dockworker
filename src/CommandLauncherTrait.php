@@ -2,6 +2,8 @@
 
 namespace Dockworker;
 
+use Dockworker\IO\DockworkerIOTrait;
+
 /**
  * Provides methods to interact with Jira for this dockworker application.
  */

@@ -2,7 +2,7 @@
 
 namespace Dockworker;
 
-use Robo\Symfony\ConsoleIO;
+use Dockworker\IO\DockworkerIOTrait;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -32,7 +32,6 @@ trait CliToolTrait
      * @return void
      */
     protected function registerCliToolFromYaml(
-        ConsoleIO $io,
         string $filepath
     ): void {
         $tool = Yaml::parseFile($filepath);

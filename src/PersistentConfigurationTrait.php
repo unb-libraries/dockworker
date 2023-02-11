@@ -5,8 +5,8 @@ namespace Dockworker;
 use Consolidation\Config\ConfigInterface;
 use Consolidation\Config\Loader\ConfigProcessor;
 use Consolidation\Config\Loader\YamlConfigLoader;
+use Dockworker\IO\DockworkerIOTrait;
 use Robo\Config\Config;
-use Robo\Symfony\ConsoleIO;
 use Symfony\Component\Yaml\Yaml;
 
 /**

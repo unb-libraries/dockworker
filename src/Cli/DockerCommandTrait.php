@@ -2,13 +2,8 @@
 
 namespace Dockworker\Cli;
 
-use Consolidation\AnnotatedCommand\AnnotationData;
-use Dockworker\CliCommand;
-use Dockworker\DockerCommand;
 use Dockworker\CliToolTrait;
-use Robo\Symfony\ConsoleIO;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Dockworker\Cli\DockerCommand;
 
 /**
  * Provides methods to interact with docker.
@@ -22,20 +17,16 @@ trait DockerCommandTrait
      *
      * @hook interact @docker
      */
-    public function registerDockerAsCliTool(
-        InputInterface $input,
-        OutputInterface $output,
-        AnnotationData $annotationData
-    ): void {
-        $io = new ConsoleIO($input, $output);
+    public function registerDockerAsCliTool(): void
+    {
         $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/docker.yml";
-        $this->registerCliToolFromYaml($io, $file_path);
+        $this->registerCliToolFromYaml($file_path);
     }
 
-    protected function dockerCommand(array $command, string $description): CliCommand
+    protected function dockerCommand(array $command, string $description): DockerCommand
     {
         array_unshift($command, $this->cliTools['docker']);
-        return new CliCommand(
+        return new DockerCommand(
             $command,
             $description
         );
