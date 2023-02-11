@@ -28,4 +28,6 @@ trait DockerTrait
         $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/docker.yml";
         $this->registerCliToolFromYaml($io, $file_path);
     }
+
+
 }

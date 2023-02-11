@@ -11,6 +11,7 @@ use Dockworker\DestructiveActionTrait;
 use Dockworker\DockworkerApplicationLocalDataStorageTrait;
 use Dockworker\DockworkerApplicationPersistentDataStorageTrait;
 use Dockworker\DockworkerException;
+use Dockworker\DockworkerIO;
 use Dockworker\DockworkerIOTrait;
 use Dockworker\DockworkerPersistentDataStorageTrait;
 use Dockworker\FileSystemOperationsTrait;
@@ -57,11 +58,32 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     protected string $applicationRoot;
 
     /**
+     * The shortened slug of the application.
+     *
+     * @var string
+     */
+    protected string $applicationShortSlug;
+
+    /**
+     * The 'slug' of the application.
+     *
+     * @var string
+     */
+    protected string $applicationSlug;
+
+    /**
      * The full path to the application's dockworker configuration file.
      *
      * @var string
      */
     protected string $configFile;
+
+    /**
+     * The application's IO interface point.
+     *
+     * @var \Dockworker\DockworkerIO
+     */
+    protected DockworkerIO $dockworkerIO;
 
     /**
      * The current user's operating system home directory.
@@ -76,20 +98,6 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      * @var string
      */
     protected string $userName;
-
-    /**
-     * The shortened slug of the application.
-     *
-     * @var string
-     */
-    protected string $applicationShortSlug;
-
-    /**
-     * The 'slug' of the application.
-     *
-     * @var string
-     */
-    protected string $applicationSlug;
 
     /**
      * The UNB Libraries application uuid for the application.
@@ -127,19 +135,19 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      */
     public function setCoreProperties(): void
     {
-        $this->setPropertyFromConfigKey(
+        $this->setCommandPropertyFromConfigKey(
             'applicationName',
             'dockworker.application.identifiers.id'
         );
-        $this->setPropertyFromConfigKey(
+        $this->setCommandPropertyFromConfigKey(
             'applicationSlug',
             'dockworker.application.identifiers.slug'
         );
-        $this->setPropertyFromConfigKey(
+        $this->setCommandPropertyFromConfigKey(
             'applicationShortSlug',
             'dockworker.application.identifiers.short_slug'
         );
-        $this->setPropertyFromConfigKey(
+        $this->setCommandPropertyFromConfigKey(
             'uuid',
             'dockworker.application.identifiers.uuid'
         );
@@ -155,7 +163,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      *
      * @throws \Dockworker\DockworkerException
      */
-    protected function setPropertyFromConfigKey(
+    protected function setCommandPropertyFromConfigKey(
         string $property,
         string $config_key
     ): void {
@@ -187,8 +195,6 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     ): mixed {
         return Robo::Config()->get($config_key, $default_value);
     }
-
-
 
     /**
      * Runs another Dockworker command.
