@@ -77,7 +77,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
     /**
      * Validates arguments for validate:git:commit-msg.
      *
-     * @hook validate validate:git:commit-msg
+     * @hook validate git:commit:validate-message
      *
      * @throws \Dockworker\DockworkerException
      */

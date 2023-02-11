@@ -91,7 +91,7 @@ This leaves us with a design issue. Since commands cannot inherit other commands
 ### Data storage
 3 levels of data storage Traits are available to Dockworker commands:
 
-* Application: stored and committed in-repo, for current dockworker project (DockworkerApplicationPersistentDataStorageTrait)
-* Application: stored on user disk, for current dockworker project (DockworkerApplicationLocalDataStorageTrait)
+* Application: stored and committed in-repo, for current dockworker project (ApplicationPersistentDataStorageTrait)
+* Application: stored on user disk, for current dockworker project (ApplicationLocalDataStorageTrait)
 * Dockworker: stored on use disk, for all dockworker projects (DockworkerPersistentDataStorageTrait)
 
