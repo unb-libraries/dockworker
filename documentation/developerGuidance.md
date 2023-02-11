@@ -84,9 +84,9 @@ Command class methods declared as hooks should be named in a standard fashion ac
 ```
 
 ### Traits
-Traits should be written with no knowledge of the command classes. Any required command class properties or methods should be passed to the trait methods.
+Parent classes containing commands and hooks appears to be a mortal sin with annotated-command applications, and leads to recursion while bootstrapping.
 
-Traits should not assert any annotated-command hooks.
+This leaves us with a design issue. Since commands cannot inherit other commands, the functionality must come from traits. Although traits should be written with no knowledge of the command classes, the abovementioned issue forces us to ignore this.
 
 ### Data storage
 3 levels of data storage Traits are available to Dockworker commands:
