@@ -71,7 +71,7 @@ trait CliToolCheckerTrait
         bool $quiet = false
     ): void {
         if (!$this->checkIsSilent) {
-                $this->dockworkerIO->say("$testing_label...");
+            $this->dockworkerIO->say("$testing_label...");
         }
         $command->execTest($expected_output, $quiet);
     }

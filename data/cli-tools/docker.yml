@@ -5,10 +5,10 @@ tool:
   reference_uris:
     -
       label: Further Information
-      uri: https://docs.docker.com/engine/reference/run/
+      uri: https://docs.docker.com/get-started/
     -
       label: Installation
-      uri: https://docs.docker.com/engine/install/ubuntu/
+      uri: https://docs.docker.com/engine/install/
   healthcheck:
     command:
       - ps

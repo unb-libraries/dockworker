@@ -12,72 +12,91 @@ $runner
   ->setEnvConfigPrefix('DOCKWORKER')
   ->setClassLoader($classLoader);
 
-$statusCode = $runner->execute($_SERVER['argv']);
+$statusCode = $runner->execute($_SERVER['argv'], 'Dockworker', '6');
 exit($statusCode);
 
 /**
  * Finds the root directory for the repository.
  *
+ * Inspired by BLT.
+ * @link https://github.com/acquia/blt Acquia BLT
+ *
  * @return string
+ *   The root directory for the repository.
  */
-function find_repo_root() {
-  $possible_repo_roots = [
-    $_SERVER['PWD'],
-    getcwd(),
-    realpath(__DIR__ . '/../'),
-    realpath(__DIR__ . '/../../../'),
-  ];
-  foreach ($possible_repo_roots as $possible_repo_root) {
-    if ($repo_root = find_directory_containing_files($possible_repo_root, ['vendor/bin/dockworker', 'vendor/autoload.php'])) {
-      return $repo_root;
+function find_repo_root(): string
+{
+    $possible_repo_roots = [
+        $_SERVER['PWD'],
+        getcwd(),
+        realpath(__DIR__ . '/../'),
+        realpath(__DIR__ . '/../../../'),
+    ];
+    foreach ($possible_repo_roots as $possible_repo_root) {
+        if ($repo_root = find_directory_containing_files(
+            $possible_repo_root,
+                [
+                    'vendor/bin/dockworker',
+                    'vendor/autoload.php',
+                ]
+            )
+        ) {
+            return $repo_root;
+        }
     }
-  }
-  return '';
+    return '';
 }
 
 /**
  * Traverses file system upwards in search of a given file.
  *
  * Begins searching for $file in $working_directory and climbs up directories
- * $max_height times, repeating search.
+ * $max_height times, repeating search. Inspired by BLT.
+ * @link https://github.com/acquia/blt Acquia BLT
  *
  * @param string $working_directory
+ *  The directory to begin searching in.
  * @param string[] $files
+ *  The files to search for.
  * @param int $max_height
+ *  The maximum number of directories to traverse.
  *
  * @return bool|string
  *   FALSE if file was not found. Otherwise, the directory path containing the
  *   file.
  */
-function find_directory_containing_files($working_directory, array $files, $max_height = 10) {
-  // Find the root directory of the git repository containing BLT.
-  // We traverse the file tree upwards $max_height times until we find
-  // vendor/bin/blt.
-  $file_path = $working_directory;
-  for ($i = 0; $i <= $max_height; $i++) {
-    if (files_exist($file_path, $files)) {
-      return $file_path;
+function find_directory_containing_files(
+    string $working_directory,
+    array $files,
+    int $max_height = 10
+): mixed {
+    $file_path = $working_directory;
+    for ($i = 0; $i <= $max_height; $i++) {
+        if (files_exist($file_path, $files)) {
+            return $file_path;
+        }
+        else {
+            $file_path = realpath($file_path . '/..');
+        }
     }
-    else {
-      $file_path = realpath($file_path . '/..');
-    }
-  }
-  return FALSE;
+    return false;
 }
 
 /**
  * Determines if an array of files exist in a particular directory.
  *
  * @param string $dir
+ *  The directory to search in.
  * @param string[] $files
+ *  The files to search for.
  *
  * @return bool
  */
-function files_exist($dir, array $files) {
-  foreach ($files as $file) {
-    if (!file_exists($dir . '/' . $file)) {
-      return FALSE;
+function files_exist(string $dir, array $files) {
+    foreach ($files as $file) {
+        if (!file_exists($dir . '/' . $file)) {
+            return false;
+        }
     }
-  }
-  return TRUE;
+    return true;
 }

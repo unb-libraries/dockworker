@@ -77,9 +77,9 @@ trait CliToolTrait
             $bin = $this->getSetDockworkerPersistentDataConfigurationItem(
                 'cli_tools',
                 "$name.bin",
-                "Enter the full path to your installed $name binary",
+                "Enter the full path to the installed $name binary on this PC",
                 $default_binpath,
-                $description,
+                $this->getWarningMessageFromTool($name, $description),
                 $reference_uris
             );
             if (!file_exists($bin) || !is_executable($bin)) {
@@ -112,4 +112,12 @@ trait CliToolTrait
 
         $this->cliTools[$name] = $bin;
     }
+
+    private function getWarningMessageFromTool(
+        string $name,
+        string $description
+    ): string {
+        return "The cli application '$name' has not been configured for use in Dockworker. $description";
+    }
+
 }
