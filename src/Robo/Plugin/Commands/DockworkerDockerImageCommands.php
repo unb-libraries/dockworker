@@ -17,28 +17,45 @@ class DockworkerDockerImageCommands extends DockworkerCommands
     /**
      * Builds one of this application's docker images.
      *
-     * @param string $tag
-     *   The tag to build.
-     * @param string $context
-     *   The context to build.
+     * @param string $image_tag
+     *   The docker image tag to build.
+     * @param string $build_context
+     *   The context to build. Defaults to the root of the application.
      *
      * @command docker:image:build
-     *
-     * @docker
+     * @usage unb-libraries/dockworker:latest .
      */
-    public function buildDockerImage(string $tag, string $context = '.'): void
+    public function buildDockerImage(string $image_tag, string $build_context = ''): void
     {
-        $this->dockworkerIO->section('Building Docker Image(s)');
+        $build_context = empty($build_context) ? $this->applicationRoot : $build_context;
+        $this->dockworkerIO->section("Building [$image_tag] from [$build_context/Dockerfile]");
         $this->dockerRun(
             [
                 'build',
                 '--tag',
-                $tag,
+                $image_tag,
                 '--pull',
-                $context,
+                $build_context,
             ],
             'Builds the docker image.'
         );
     }
 
+    /**
+     * Builds one of this application's docker images.
+     *
+     * @command application:build
+     * @aliases build
+     */
+    public function buildDockerComposeImage(): void
+    {
+        $this->dockworkerIO->section("Building Application");
+        $this->dockerComposeRun(
+            [
+                'build',
+                '--pull',
+            ],
+            'Builds the docker image.'
+        );
+    }
 }

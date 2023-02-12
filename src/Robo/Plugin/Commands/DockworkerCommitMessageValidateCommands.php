@@ -26,7 +26,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
     protected const WARN_MISSING_JIRA_INFO = 'You have not specified a JIRA project and issue in your subject line. Continue Anyway?';
 
     /**
-     * Validates a git commit message against this application's standards.
+     * Validates a git commit message for this application.
      *
      * @param string $message_file
      *   The path to a file containing the git commit message.
@@ -35,8 +35,6 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
      * @usage /tmp/commit_msg.txt
      *
      * @throws \Dockworker\DockworkerException
-     *
-     * @jira
      */
     public function validateCommitMsg(
         string $message_file

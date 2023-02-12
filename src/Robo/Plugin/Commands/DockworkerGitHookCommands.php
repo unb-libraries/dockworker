@@ -16,7 +16,6 @@ class DockworkerGitHookCommands extends DockworkerCommands
      * Sets up the required git hooks for dockworker.
      *
      * @command git:setup-hooks
-     *
      * @hidden
      */
     public function setupGitHooks(): void

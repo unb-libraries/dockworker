@@ -17,7 +17,6 @@ class DockworkerUpdateCommands extends DockworkerCommands
      *
      * @command dockworker:update
      * @aliases update
-     *
      * @hidden
      */
     public function updateDockworker(): void

@@ -12,7 +12,7 @@ trait DockerCliTrait
     /**
      * Registers docker as a required CLI tool.
      *
-     * @hook interact @docker
+     * @hook interact
      */
     public function registerDockerAsCliTool(): void
     {
@@ -32,6 +32,26 @@ trait DockerCliTrait
     protected function dockerRun(array $command, string $description): void
     {
         $this->dockerCli($command, $description)
+            ->setWorkingDirectory($this->applicationRoot)
+            ->runTty();
+    }
+
+    protected function dockerComposeCli(array $command, string $description): DockerCli
+    {
+        array_unshift(
+            $command,
+            $this->cliTools['docker'],
+            'compose'
+        );
+        return new DockerCli(
+            $command,
+            $description
+        );
+    }
+
+    protected function dockerComposeRun(array $command, string $description): void
+    {
+        $this->dockerComposeCli($command, $description)
             ->setWorkingDirectory($this->applicationRoot)
             ->runTty();
     }

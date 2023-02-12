@@ -12,10 +12,11 @@ trait KubectlTrait
     /**
      * Registers kubectl as a required CLI tool.
      *
-     * @hook interact @kubectl
+     * @hook interact
      */
     public function registerKubectlCliTool(): void
     {
+
         $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/kubectl.yml";
         $this->registerCliToolFromYaml($file_path);
     }

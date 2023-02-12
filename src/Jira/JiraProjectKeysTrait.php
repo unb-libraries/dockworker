@@ -24,7 +24,7 @@ trait JiraProjectKeysTrait
     /**
      * Initializes the Jira properties for the application.
      *
-     * @hook pre-init @jira
+     * @hook pre-init
      */
     public function setJiraProperties(): void
     {
