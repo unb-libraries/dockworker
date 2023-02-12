@@ -69,7 +69,7 @@ function find_directory_containing_files(
     string $working_directory,
     array $files,
     int $max_height = 10
-): mixed {
+): bool|string {
     $file_path = $working_directory;
     for ($i = 0; $i <= $max_height; $i++) {
         if (files_exist($file_path, $files)) {
@@ -92,7 +92,8 @@ function find_directory_containing_files(
  *
  * @return bool
  */
-function files_exist(string $dir, array $files) {
+function files_exist(string $dir, array $files): bool
+{
     foreach ($files as $file) {
         if (!file_exists($dir . '/' . $file)) {
             return false;

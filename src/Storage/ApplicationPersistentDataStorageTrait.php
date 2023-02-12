@@ -30,7 +30,6 @@ trait ApplicationPersistentDataStorageTrait
      * Provides a pre-init hook that assigns persistent data storage paths.
      *
      * @hook pre-init
-     * @throws \Dockworker\DockworkerException
      */
     public function preInitApplicationPersistentDataStorageDir(): void
     {

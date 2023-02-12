@@ -12,14 +12,21 @@ trait CliToolCheckerTrait
     use DockworkerIOTrait;
 
     /**
+     * The currently registered CLI tool commands to check.
+     *
      * @var array
      */
     protected array $registeredCliCheckCommands = [];
 
+    /**
+     * Whether to suppress output in the check.
+     *
+     * @var bool
+     */
     protected bool $checkIsSilent = false;
 
     /**
-     * Check all registered CLI tools.
+     * Checks all registered CLI tools.
      *
      * @hook validate
      *

@@ -30,7 +30,6 @@ trait DockworkerPersistentDataStorageTrait
      * Provides a pre-init hook that assigns local PC data storage paths.
      *
      * @hook pre-init
-     * @throws \Dockworker\DockworkerException
      */
     public function preInitDockworkerPersistentDataStorageDir(): void
     {
