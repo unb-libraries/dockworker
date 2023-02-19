@@ -3,7 +3,7 @@
 namespace Dockworker\Cli;
 
 use Dockworker\DockworkerException;
-use Dockworker\IO\DockworkerIOTrait;
+use Dockworker\IO\DockworkerIO;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -12,8 +12,6 @@ use Symfony\Component\Process\Process;
  */
 class CliCommand extends Process
 {
-    use DockworkerIOTrait;
-
     /**
      * A description of the command.
      *
@@ -31,7 +29,7 @@ class CliCommand extends Process
      */
     public function __construct(
         array $command,
-        string $description,
+        string $description = '',
     ) {
         parent::__construct($command);
         $this->description = $description;
@@ -111,5 +109,32 @@ class CliCommand extends Process
                 echo 'OUT > ' . $buffer;
             }
         });
+    }
+
+    /**
+     * Announces and runs a command, throwing an exception if the command fails.
+     *
+     * @param array $command
+     *   The full CLI command to execute.
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The Dockworker IO object to use for the announcement.
+     * @param string $description
+     *   A description of the command.
+     *
+     * @throws \Dockworker\DockworkerException
+     */
+    public static function sayRunTestExcept(
+        array $command,
+        DockworkerIO $io,
+        string $description = '',
+    ): void {
+        $obj = new static($command, $description);
+        if (!empty($description)) {
+            $io->say($description);
+        }
+        $obj->run();
+        if (!$obj->isSuccessful()) {
+            throw new DockworkerException("Error {$obj->getErrorOutput()}");
+        }
     }
 }
