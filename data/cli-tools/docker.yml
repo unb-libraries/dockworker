@@ -12,5 +12,5 @@ tool:
   healthcheck:
     command:
       - ps
-    label: 'Initializing connection to docker API'
+    label: '[local] Initializing a connection to the docker API'
     output-contains: CREATED

@@ -80,7 +80,7 @@ trait CliToolCheckerTrait
         if (!$this->checkIsSilent) {
             $this->dockworkerIO->say("$testing_label...");
         }
-        $command->execTest($expected_output, $quiet);
+        $command->execTest($expected_output, $this->dockworkerIO, $quiet);
     }
 
     /**

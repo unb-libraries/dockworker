@@ -48,19 +48,20 @@ class CliCommand extends Process
      */
     public function execTest(
         string $expected_output,
+        DockworkerIO $io,
         bool $quiet = false
     ): void {
         try {
             $this->mustRun();
         } catch (ProcessFailedException $exception) {
             if (!$quiet) {
-                $this->dockworkerIO->block([$this->getOutput()]);
+                $io->block([$this->getOutput()]);
             }
             throw new DockworkerException("Command [$this->description] returned error code {$this->getExitCode()}.");
         }
         if (!$this->outputContainsExpectedOutput($expected_output)) {
             if (!$quiet) {
-                $this->dockworkerIO->block([$this->getOutput()]);
+                $io->block([$this->getOutput()]);
             }
             throw new DockworkerException("Command [$this->description] returned unexpected output.");
         }
@@ -99,8 +100,10 @@ class CliCommand extends Process
     /**
      * Runs the command and attaches the command TTY to the current TTY.
      */
-    public function runTty()
-    {
+    public function runTty(
+      DockworkerIO $io,
+      $new_line = true
+    ): void {
         $this->setTty(true);
         $this->run(function ($type, $buffer) {
             if (self::ERR === $type) {
@@ -109,6 +112,9 @@ class CliCommand extends Process
                 echo 'OUT > ' . $buffer;
             }
         });
+        if ($new_line) {
+            $io->newLine();
+        }
     }
 
     /**

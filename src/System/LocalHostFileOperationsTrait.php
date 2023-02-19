@@ -23,13 +23,13 @@ trait LocalHostFileOperationsTrait
   protected string $localHostFilePath = '/etc/hosts';
 
   /**
-   * Adds this application's information into the local PC hostfile.
+   * Adds this application's information into the local development computer's hostfile. Requires sudo.
    *
    * @throws \Dockworker\DockworkerException
    */
   protected function setLocalHostFileEntries(): void
   {
-    $this->dockworkerIO->section("Configuring Local PC Hostfile");
+    $this->dockworkerIO->section("[local] Configuring HostFile");
     foreach ($this->getLocalApplicationHostNames() as $hostname) {
       $this->removeLocalHostFileEntry($hostname, true);
       $this->addLocalHostFileEntry($hostname);

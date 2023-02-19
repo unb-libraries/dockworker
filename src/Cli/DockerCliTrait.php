@@ -33,7 +33,7 @@ trait DockerCliTrait
     {
         $this->dockerCli($command, $description)
             ->setWorkingDirectory($this->applicationRoot)
-            ->runTty();
+            ->runTty($this->dockworkerIO);
     }
 
     protected function dockerComposeCli(array $command, string $description): DockerCli
@@ -53,6 +53,6 @@ trait DockerCliTrait
     {
         $this->dockerComposeCli($command, $description)
             ->setWorkingDirectory($this->applicationRoot)
-            ->runTty();
+            ->runTty($this->dockworkerIO);
     }
 }

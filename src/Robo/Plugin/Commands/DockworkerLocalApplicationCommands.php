@@ -23,31 +23,31 @@ class DockworkerLocalApplicationCommands extends DockworkerCommands
      */
     public function buildComposeApplication(): void
     {
-        $this->dockworkerIO->section("Building Application");
+        $this->dockworkerIO->section("[local] Building Application");
         $this->dockerComposeRun(
             [
                 'build',
                 '--pull',
             ],
-            'Builds the docker image.'
+            'Building the docker image.'
         );
     }
 
     /**
-     * Builds this application's docker images.
+     * Starts the local docker compose application.
      *
      * @command local:start
      * @hidden
      */
     public function startComposeApplication(): void
     {
-        $this->dockworkerIO->section("Starting Application");
+        $this->dockworkerIO->section("[local] Starting Application");
         $this->dockerComposeRun(
             [
                 'up',
                 '-d',
             ],
-            'Starts the docker container.'
+            'Starting the local application.'
         );
     }
 
@@ -59,8 +59,30 @@ class DockworkerLocalApplicationCommands extends DockworkerCommands
      */
     public function deployComposeApplication(): void
     {
+        $this->dockworkerIO->title("Dockworker: Deploying $this->applicationName");
+        $this->stopRemoveComposeApplicationData();
         $this->setLocalHostFileEntries();
         $this->buildComposeApplication();
         $this->startComposeApplication();
+    }
+
+    /**
+     * Deletes any persistent data from this application's stopped local deployment.
+     *
+     * @command rm
+     * @hidden
+     */
+    public function stopRemoveComposeApplicationData(): void
+    {
+      $this->dockworkerIO->section("[local] Removing existing application data");
+      $this->dockerComposeRun(
+        [
+          'down',
+          '--rmi',
+          'local',
+          '-v',
+        ],
+        'Stopping he compose application and removing its data.'
+      );
     }
 }
