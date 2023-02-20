@@ -64,6 +64,7 @@ class DockworkerLocalApplicationCommands extends DockworkerCommands
         $this->setLocalHostFileEntries();
         $this->buildComposeApplication();
         $this->startComposeApplication();
+        $this->followComposeApplicationLogs();
     }
 
     /**
@@ -85,4 +86,23 @@ class DockworkerLocalApplicationCommands extends DockworkerCommands
         'Stopping he compose application and removing its data.'
       );
     }
+
+  /**
+   * Deletes any persistent data from this application's stopped local deployment.
+   *
+   * @command logs
+   * @hidden
+   */
+  public function followComposeApplicationLogs(): void
+  {
+    $this->dockworkerIO->section("[local] Displaying application logs");
+    $this->dockerComposeRun(
+      [
+        'logs',
+        '-f',
+        $this->applicationName
+      ],
+      'Display logs for the docker compose application.'
+    );
+  }
 }
