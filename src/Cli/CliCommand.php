@@ -26,30 +26,43 @@ class CliCommand extends Process
      *   The full CLI command to execute.
      * @param string $description
      *   A description of the command.
+     * @param string|null $cwd
+     *   The working directory or null to use the working dir of the current PHP process
+     * @param array|null $env
+     *   The environment variables or null to use the same environment as the current PHP process
+     * @param mixed $input
+     *   The input as stream resource, scalar or \Traversable, or null for no input
+     * @param ?float $timeout
+     *   The timeout in seconds or null to disable
      */
     public function __construct(
         array $command,
         string $description = '',
+        string $cwd = null,
+        array $env = null,
+        mixed $input = null,
+        ?float $timeout = null
     ) {
-        parent::__construct($command);
+        parent::__construct($command, $cwd, $env, $input, $timeout);
         $this->description = $description;
     }
 
-    /**
-     * Executes the command and checks for an expected output and return code.
-     *
-     * @param string $expected_output
-     *   A string that is expected to appear within the command's output.
-     * @param bool $quiet
-     *   Optional. True to suppress any output, including errors.
-     *
-     * @return void
-     * @throws \Dockworker\DockworkerException
-     */
+  /**
+   * Executes the command and checks for an expected output and return code.
+   *
+   * @param string $expected_output
+   *   A string that is expected to appear within the command's output.
+   * @param \Dockworker\IO\DockworkerIO $io
+   *   The DockworkerIO object to use for output.
+   * @param bool $quiet
+   *   Optional. True to suppress any output, including errors.
+   *
+   * @throws \Dockworker\DockworkerException
+   */
     public function execTest(
         string $expected_output,
         DockworkerIO $io,
-        bool $quiet = false
+        bool $quiet = false,
     ): void {
         try {
             $this->mustRun();
@@ -82,6 +95,8 @@ class CliCommand extends Process
     }
 
     /**
+     * Gets the description of this command.
+     *
      * @return string
      */
     public function getDescription(): string
@@ -90,6 +105,8 @@ class CliCommand extends Process
     }
 
     /**
+     * Sets the description of this command.
+     *
      * @param string $description
      */
     public function setDescription(string $description): void
@@ -99,10 +116,15 @@ class CliCommand extends Process
 
     /**
      * Runs the command and attaches the command TTY to the current TTY.
+     *
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The DockworkerIO object to use for output.
+     * @param bool $new_line
+     *   True to output a newline after the output.
      */
     public function runTty(
       DockworkerIO $io,
-      $new_line = true
+      bool $new_line = true,
     ): void {
         $this->setTty(true);
         $this->run(function ($type, $buffer) {
@@ -126,6 +148,14 @@ class CliCommand extends Process
      *   The Dockworker IO object to use for the announcement.
      * @param string $description
      *   A description of the command.
+     * @param string|null $cwd
+     *   The working directory or null to use the working dir of the current PHP process
+     * @param array|null $env
+     *   The environment variables or null to use the same environment as the current PHP process
+     * @param mixed $input
+     *   The input as stream resource, scalar or \Traversable, or null for no input
+     * @param ?float $timeout
+     *   The timeout in seconds or null to disable
      *
      * @throws \Dockworker\DockworkerException
      */
@@ -133,8 +163,19 @@ class CliCommand extends Process
         array $command,
         DockworkerIO $io,
         string $description = '',
+        string $cwd = null,
+        array $env = null,
+        mixed $input = null,
+        ?float $timeout = null
     ): void {
-        $obj = new static($command, $description);
+        $obj = new static(
+          $command,
+          $description,
+          $cwd,
+          $env,
+          $input,
+          $timeout
+        );
         if (!empty($description)) {
             $io->say($description);
         }

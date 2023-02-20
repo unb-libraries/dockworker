@@ -62,6 +62,8 @@ trait CliToolTrait
      *   A string that is expected to appear within the command's output.
      * @param string $testing_label
      *   The label to use when testing the tool.
+     * @param ?float $timeout
+     *   The timeout in seconds or null to disable
      */
     protected function registerCliTool(
         string $name,
@@ -70,7 +72,8 @@ trait CliToolTrait
         array $reference_uris,
         array $command,
         string $expected_test_output,
-        string $testing_label
+        string $testing_label,
+        ?float $timeout = null
     ): void {
         $found_tool = false;
         while ($found_tool == false) {
@@ -101,7 +104,11 @@ trait CliToolTrait
                 [$bin],
                 $command
             ),
-            $name
+            $name,
+            null,
+            null,
+            null,
+            $timeout
         );
 
         $this->registerCliToolCheck(

@@ -20,38 +20,112 @@ trait DockerCliTrait
         $this->registerCliToolFromYaml($file_path);
     }
 
-    protected function dockerCli(array $command, string $description): DockerCli
-    {
+  /**
+   * Constructs a docker command.
+   *
+   * @param array $command
+   *   The full CLI command to execute.
+   * @param string $description
+   *   A description of the command.
+   * @param ?float $timeout
+   *   The timeout in seconds or null to disable
+   *
+   * @return \Dockworker\Cli\DockerCli
+   */
+    protected function dockerCli(
+      array $command,
+      string $description,
+      ?float $timeout = null
+    ): DockerCli {
         array_unshift($command, $this->cliTools['docker']);
         return new DockerCli(
             $command,
-            $description
+            $description,
+            null,
+            null,
+            null,
+            $timeout
         );
     }
 
-    protected function dockerRun(array $command, string $description): void
-    {
-        $this->dockerCli($command, $description)
+  /**
+   * Runs a docker command.
+   *
+   * @param array $command
+   *   The full CLI command to execute.
+   * @param string $description
+   *   A description of the command.
+   * @param ?float $timeout
+   *   The timeout in seconds or null to disable
+   */
+    protected function dockerRun(
+      array $command,
+      string $description,
+      ?float $timeout = null
+    ): void {
+        $this->dockerCli($command, $description, $timeout)
             ->setWorkingDirectory($this->applicationRoot)
             ->runTty($this->dockworkerIO);
     }
 
-    protected function dockerComposeCli(array $command, string $description): DockerCli
-    {
+  /**
+   * Constructs a 'docker compose' command.
+   *
+   * @param array $command
+   *   The full CLI command to execute.
+   * @param string $description
+   *   A description of the command.
+   * @param ?float $timeout
+   *   The timeout in seconds or null to disable
+   *
+   * @return \Dockworker\Cli\DockerCli
+   */
+    protected function dockerComposeCli(
+      array $command,
+      string $description,
+      array $profiles,
+      ?float $timeout = null
+    ): DockerCli {
         array_unshift(
             $command,
             $this->cliTools['docker'],
             'compose'
         );
+        if (!empty($profiles)) {
+            $env = [
+                'COMPOSE_PROFILES' => implode(',', $profiles),
+            ];
+        }
+        else {
+            $env = null;
+        }
         return new DockerCli(
             $command,
-            $description
+            $description,
+            null,
+            $env,
+            null,
+            $timeout
         );
     }
 
-    protected function dockerComposeRun(array $command, string $description): void
-    {
-        $this->dockerComposeCli($command, $description)
+  /**
+   * Runs a 'docker compose' command.
+   *
+   * @param array $command
+   *   The full CLI command to execute.
+   * @param string $description
+   *   A description of the command.
+   * @param ?float $timeout
+   *   The timeout in seconds or null to disable
+   */
+    protected function dockerComposeRun(
+      array $command,
+      string $description,
+      array $profiles,
+      ?float $timeout = null
+    ): void {
+        $this->dockerComposeCli($command, $description, $profiles, $timeout)
             ->setWorkingDirectory($this->applicationRoot)
             ->runTty($this->dockworkerIO);
     }
