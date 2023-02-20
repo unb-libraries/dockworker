@@ -77,14 +77,16 @@ trait DockerCliTrait
    *   A description of the command.
    * @param ?float $timeout
    *   The timeout in seconds or null to disable
+   * @param string[] $profiles
+   *   The compose profiles to target with this command.
    *
    * @return \Dockworker\Cli\DockerCli
    */
     protected function dockerComposeCli(
       array $command,
-      string $description,
-      array $profiles,
-      ?float $timeout = null
+      string $description = '',
+      ?float $timeout = null,
+      array $profiles = []
     ): DockerCli {
         array_unshift(
             $command,
@@ -118,14 +120,16 @@ trait DockerCliTrait
    *   A description of the command.
    * @param ?float $timeout
    *   The timeout in seconds or null to disable
+   * @param string[] $profiles
+   *   The compose profiles to target with this command.
    */
     protected function dockerComposeRun(
       array $command,
-      string $description,
-      array $profiles,
-      ?float $timeout = null
+      string $description = '',
+      ?float $timeout = null,
+      array $profiles = []
     ): void {
-        $this->dockerComposeCli($command, $description, $profiles, $timeout)
+        $this->dockerComposeCli($command, $description, $timeout, $profiles)
             ->setWorkingDirectory($this->applicationRoot)
             ->runTty($this->dockworkerIO);
     }
