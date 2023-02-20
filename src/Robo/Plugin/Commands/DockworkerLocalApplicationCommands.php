@@ -3,6 +3,7 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\Cli\DockerCliTrait;
+use Dockworker\Cli\KubectlCliTrait;
 use Dockworker\DockworkerCommands;
 use Dockworker\IO\DockworkerIOTrait;
 use Dockworker\System\LocalHostFileOperationsTrait;
@@ -13,8 +14,20 @@ use Dockworker\System\LocalHostFileOperationsTrait;
 class DockworkerLocalApplicationCommands extends DockworkerCommands
 {
     use DockerCliTrait;
+    use KubectlCliTrait;
     use DockworkerIOTrait;
     use LocalHostFileOperationsTrait;
+
+  /**
+   * @hook post-init
+   * @throws \Dockworker\DockworkerException
+   */
+    public function initRequirements(): void
+    {
+        $this->registerDockerCliTool();
+        $this->registerKubectlCliTool();
+        $this->checkRegisteredCliCommands();
+    }
 
     /**
      * Builds this application's docker images.
@@ -59,7 +72,6 @@ class DockworkerLocalApplicationCommands extends DockworkerCommands
      */
     public function deployComposeApplication(): void
     {
-        $this->dockworkerIO->title("Dockworker: Deploying $this->applicationName");
         $this->stopRemoveComposeApplicationData();
         $this->setLocalHostFileEntries();
         $this->buildComposeApplication();

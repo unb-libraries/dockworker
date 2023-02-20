@@ -11,10 +11,8 @@ trait DockerCliTrait
 
     /**
      * Registers docker as a required CLI tool.
-     *
-     * @hook interact
      */
-    public function registerDockerAsCliTool(): void
+    public function registerDockerCliTool(): void
     {
         $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/docker.yml";
         $this->registerCliToolFromYaml($file_path);

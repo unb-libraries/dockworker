@@ -46,6 +46,7 @@ class DockworkerDockerImageCommands extends DockworkerCommands
      *
      * @command application:build
      * @aliases build
+     * @hidden
      */
     public function buildDockerComposeImage(): void
     {

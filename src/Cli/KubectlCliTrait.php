@@ -5,14 +5,12 @@ namespace Dockworker\Cli;
 /**
  * Provides methods to interact with Jira for this dockworker application.
  */
-trait KubectlTrait
+trait KubectlCliTrait
 {
     use CliToolTrait;
 
     /**
      * Registers kubectl as a required CLI tool.
-     *
-     * @hook interact
      */
     public function registerKubectlCliTool(): void
     {

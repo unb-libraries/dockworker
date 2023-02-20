@@ -5,6 +5,7 @@ namespace Dockworker\Cli;
 use Dockworker\DockworkerException;
 use Dockworker\IO\DockworkerIO;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
 
 /**
@@ -54,6 +55,8 @@ class CliCommand extends Process
    *   A string that is expected to appear within the command's output.
    * @param \Dockworker\IO\DockworkerIO $io
    *   The DockworkerIO object to use for output.
+   * @param array|string $fail_message
+   *   A message to display if the command fails.
    * @param bool $quiet
    *   Optional. True to suppress any output, including errors.
    *
@@ -62,21 +65,21 @@ class CliCommand extends Process
     public function execTest(
         string $expected_output,
         DockworkerIO $io,
+        array|string $fail_message,
         bool $quiet = false,
     ): void {
         try {
             $this->mustRun();
-        } catch (ProcessFailedException $exception) {
-            if (!$quiet) {
-                $io->block([$this->getOutput()]);
-            }
-            throw new DockworkerException("Command [$this->description] returned error code {$this->getExitCode()}.");
+        } catch (ProcessFailedException | ProcessTimedOutException $exception) {
+            $io->error($fail_message);
+            exit(1);
         }
         if (!$this->outputContainsExpectedOutput($expected_output)) {
             if (!$quiet) {
                 $io->block([$this->getOutput()]);
             }
-            throw new DockworkerException("Command [$this->description] returned unexpected output.");
+            $io->error("Command [$this->description] returned an unexpected output.");
+            exit(1);
         }
     }
 

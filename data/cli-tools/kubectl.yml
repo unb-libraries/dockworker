@@ -12,5 +12,11 @@ tool:
   healthcheck:
     command:
       - api-resources
-    label: 'Initializing connection to k8s API'
+    label: 'Initializing connection to the kubernetes API'
+    timeout: 5
     output-contains: Binding
+    fail-message:
+      - 'Unable to connect to the kubernetes API. Common reasons for this error:'
+      - ' * A VPN is required to connect to the API, but it is not connected'
+      - ' * There is a general networking problem'
+      - ' * kubectl is incorrectly or not configured'

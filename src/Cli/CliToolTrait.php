@@ -11,7 +11,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 trait CliToolTrait
 {
-    use CliToolCheckerTrait;
+    use CliCommandCheckerTrait;
     use DockworkerIOTrait;
     use DockworkerPersistentDataStorageTrait;
 
@@ -41,7 +41,9 @@ trait CliToolTrait
             $tool['tool']['reference_uris'],
             $tool['tool']['healthcheck']['command'],
             $tool['tool']['healthcheck']['output-contains'],
-            $tool['tool']['healthcheck']['label']
+            $tool['tool']['healthcheck']['label'],
+            $tool['tool']['healthcheck']['timeout'],
+            $tool['tool']['healthcheck']['fail-message'],
         );
     }
 
@@ -64,6 +66,8 @@ trait CliToolTrait
      *   The label to use when testing the tool.
      * @param ?float $timeout
      *   The timeout in seconds or null to disable
+     * @param array|string $fail_message
+     *   The message to display if the command fails.
      */
     protected function registerCliTool(
         string $name,
@@ -73,7 +77,8 @@ trait CliToolTrait
         array $command,
         string $expected_test_output,
         string $testing_label,
-        ?float $timeout = null
+        ?float $timeout,
+        array|string $fail_message,
     ): void {
         $found_tool = false;
         while ($found_tool == false) {
@@ -111,10 +116,11 @@ trait CliToolTrait
             $timeout
         );
 
-        $this->registerCliToolCheck(
+        $this->registerCliCommandCheck(
             $cmd,
             $expected_test_output,
-            $testing_label
+            $testing_label,
+            $fail_message
         );
 
         $this->cliTools[$name] = $bin;

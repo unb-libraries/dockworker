@@ -7,7 +7,7 @@ use Dockworker\IO\DockworkerIOTrait;
 /**
  * Provides methods to check CLI tools for existence and functionality.
  */
-trait CliToolCheckerTrait
+trait CliCommandCheckerTrait
 {
     use DockworkerIOTrait;
 
@@ -26,83 +26,98 @@ trait CliToolCheckerTrait
     protected bool $checkIsSilent = false;
 
     /**
-     * Checks all registered CLI tools.
-     *
-     * @hook validate
+     * Checks all registered CLI commands.
      *
      * @throws \Dockworker\DockworkerException
      */
-    public function checkRegisteredCliTools(): void
+    public function checkRegisteredCommands(): void
     {
-        $this->checkRegisteredCliToolCommands();
+        $this->checkRegisteredCliCommands();
     }
 
     /**
-     * Executes the registered CLI tool commands and checks their output.
+     * Executes the registered CLI commands and checks their output.
      *
      * @param bool $quiet
      *   True to suppress any output, including errors.
      *
      * @throws \Dockworker\DockworkerException
      */
-    protected function checkRegisteredCliToolCommands(
+    protected function checkRegisteredCliCommands(
         bool $quiet = false
     ): void {
         $this->checkIsSilent = $quiet;
         foreach ($this->registeredCliCheckCommands as $command) {
-            $this->checkRegisteredCliTool(
+            $this->checkRegisteredCliCommand(
                 $command['command'],
                 $command['expect_output'],
                 $command['label'],
+                $command['fail_message'],
                 $command['quiet']
             );
         }
     }
 
     /**
-     * Executes a CLI tool command and checks its output.
+     * Executes a CLI command and checks its output.
      *
      * @param CliCommand $command
      *   The command to execute.
      * @param string $expected_output
      *   A string that is expected to appear within the command's output.
+     * @param string $testing_label
+     *   A label to use when checking the command's output.
+     * @param array|string $fail_message
+     *   A message to display if the command fails.
      * @param bool $quiet
      *   True to suppress any output, including errors.
      *
      * @throws \Dockworker\DockworkerException
      */
-    protected function checkRegisteredCliTool(
+    protected function checkRegisteredCliCommand(
         CliCommand $command,
         string $expected_output,
         string $testing_label,
+        array|string $fail_message,
         bool $quiet = false
     ): void {
         if (!$this->checkIsSilent) {
             $this->dockworkerIO->say("$testing_label...");
         }
-        $command->execTest($expected_output, $this->dockworkerIO, $quiet);
+        $command->execTest(
+          $expected_output,
+          $this->dockworkerIO,
+          $fail_message,
+          $quiet
+        );
     }
 
     /**
-     * Adds a CLI tool command to the list of commands to check.
+     * Adds a CLI command to the list of commands to check.
      *
      * @param CliCommand $command
      *   The command to execute.
      * @param string $expected_output
      *   A string that is expected to appear within the command's output.
+     * @param string $label
+     *   A label to use when checking the command's output.
+     * @param array|string $fail_message
+     *   A message to display if the command fails.
      * @param bool $quiet
      *   True to suppress any output from this command, including errors.
      */
-    protected function registerCliToolCheck(
+    protected function registerCliCommandCheck(
         CliCommand $command,
         string $expected_output,
         string $label,
+        array|string $fail_message,
         bool $quiet = false
     ): void {
         $this->registeredCliCheckCommands[] = [
             'command' => $command,
             'label' => $label,
             'expect_output' => $expected_output,
+            'fail_message' => $fail_message,
             'quiet' => $quiet,
         ];
     }

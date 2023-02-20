@@ -12,5 +12,7 @@ tool:
   healthcheck:
     command:
       - ps
-    label: '[local] Initializing a connection to the docker API'
+    label: 'Initializing connection to the docker API'
+    timeout: 51
     output-contains: CREATED
+    fail-message: 'Unable to connect to the docker API. Please ensure that docker is installed and running.'
