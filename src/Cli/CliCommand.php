@@ -119,8 +119,8 @@ class CliCommand extends Process
      *   True to output a newline after the output.
      */
     public function runTty(
-      DockworkerIO $io,
-      bool $new_line = true,
+        DockworkerIO $io,
+        bool $new_line = true,
     ): void {
         $this->setTty(true);
         $this->run(function ($type, $buffer) {
@@ -165,12 +165,12 @@ class CliCommand extends Process
         ?float $timeout = null
     ): void {
         $obj = new static(
-          $command,
-          $description,
-          $cwd,
-          $env,
-          $input,
-          $timeout
+            $command,
+            $description,
+            $cwd,
+            $env,
+            $input,
+            $timeout
         );
         if (!empty($description)) {
             $io->say($description);

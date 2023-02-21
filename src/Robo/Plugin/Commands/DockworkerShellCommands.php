@@ -1,4 +1,3 @@
-
 <?php
 
 namespace Dockworker\Robo\Plugin\Commands;
@@ -12,8 +11,8 @@ use Dockworker\DockworkerCommands;
  */
 class DockworkerShellCommands extends DockworkerCommands
 {
-  use DockerCliTrait;
-  use KubectlCliTrait;
+    use DockerCliTrait;
+    use KubectlCliTrait;
 
     /**
      * Opens a shell into the application.
@@ -25,12 +24,11 @@ class DockworkerShellCommands extends DockworkerCommands
     public function buildComposeApplication($env = 'local'): void
     {
         if ($env === 'local') {
-          $this->registerDockerCliTool();
-          $this->checkRegisteredCommands();
+            $this->registerDockerCliTool();
+            $this->checkRegisteredCommands();
         } else {
-          $this->registerKubectlCliTool();
-          $this->checkRegisteredCommands();
+            $this->registerKubectlCliTool();
+            $this->checkRegisteredCommands();
         }
     }
-
 }

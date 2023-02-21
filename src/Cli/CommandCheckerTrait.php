@@ -43,7 +43,6 @@ trait CommandCheckerTrait
                 $command['expect_output'],
                 $command['label'],
                 $command['fail_message'],
-                $command['quiet']
             );
         }
     }
@@ -59,8 +58,6 @@ trait CommandCheckerTrait
      *   A label to use when checking the command's output.
      * @param array|string $fail_message
      *   A message to display if the command fails.
-     * @param bool $quiet
-     *   True to suppress any output, including errors.
      *
      * @throws \Dockworker\DockworkerException
      */
@@ -69,16 +66,14 @@ trait CommandCheckerTrait
         string $expected_output,
         string $testing_label,
         array|string $fail_message,
-        bool $quiet = false
     ): void {
         if (!$this->checkIsSilent) {
             $this->dockworkerIO->say("$testing_label...");
         }
         $command->execTest(
-          $expected_output,
-          $this->dockworkerIO,
-          $fail_message,
-          $quiet
+            $expected_output,
+            $this->dockworkerIO,
+            $fail_message,
         );
     }
 
@@ -93,22 +88,18 @@ trait CommandCheckerTrait
      *   A label to use when checking the command's output.
      * @param array|string $fail_message
      *   A message to display if the command fails.
-     * @param bool $quiet
-     *   True to suppress any output from this command, including errors.
      */
     protected function registerNewCommandCheck(
         CliCommand $command,
         string $expected_output,
         string $label,
         array|string $fail_message,
-        bool $quiet = false
     ): void {
         $this->registeredCliCheckCommands[] = [
             'command' => $command,
             'label' => $label,
             'expect_output' => $expected_output,
             'fail_message' => $fail_message,
-            'quiet' => $quiet,
         ];
     }
 }

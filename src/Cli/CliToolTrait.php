@@ -80,8 +80,8 @@ trait CliToolTrait
         ?float $timeout,
         array|string $fail_message,
     ): void {
-        $found_tool = false;
-        while ($found_tool == false) {
+        $tool_bin_exists = false;
+        while ($tool_bin_exists == false) {
             $bin = $this->getSetDockworkerPersistentDataConfigurationItem(
                 'cli_tools',
                 "$name.bin",
@@ -100,7 +100,7 @@ trait CliToolTrait
                     null
                 );
             } else {
-                $found_tool = true;
+                $tool_bin_exists = true;
             }
         }
 
@@ -126,11 +126,21 @@ trait CliToolTrait
         $this->cliTools[$name] = $bin;
     }
 
+    /**
+     * Generates a warning message for an unconfigured CLI tool.
+     *
+     * @param string $name
+     *   The name of the tool.
+     * @param string $description
+     *   The description of the tool.
+     *
+     * @return string
+     *   The complete warning message.
+     */
     private function getWarningMessageFromTool(
         string $name,
         string $description
     ): string {
         return "The cli application '$name' has not been configured for use in Dockworker. $description";
     }
-
 }

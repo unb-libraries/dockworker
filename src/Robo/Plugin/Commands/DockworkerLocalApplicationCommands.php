@@ -89,16 +89,16 @@ class DockworkerLocalApplicationCommands extends DockworkerCommands
      */
     public function stopRemoveComposeApplicationData(): void
     {
-      $this->dockworkerIO->section("[local] Removing existing application data");
-      $this->dockerComposeRun(
-        [
-          'down',
-          '--rmi',
-          'local',
-          '-v',
-        ],
-        'Stopping he compose application and removing its data.'
-      );
+        $this->dockworkerIO->section("[local] Removing existing application data");
+        $this->dockerComposeRun(
+            [
+                'down',
+                '--rmi',
+                'local',
+                '-v',
+            ],
+            'Stopping he compose application and removing its data.'
+        );
     }
 
   /**
@@ -107,16 +107,16 @@ class DockworkerLocalApplicationCommands extends DockworkerCommands
    * @command logs
    * @hidden
    */
-  public function followComposeApplicationLogs(): void
-  {
-    $this->dockworkerIO->section("[local] Displaying application logs");
-    $this->dockerComposeRun(
-      [
-        'logs',
-        '-f',
-        $this->applicationName
-      ],
-      'Display logs for the docker compose application.'
-    );
-  }
+    public function followComposeApplicationLogs(): void
+    {
+        $this->dockworkerIO->section("[local] Displaying application logs");
+        $this->dockerComposeRun(
+            [
+                'logs',
+                '-f',
+                $this->applicationName,
+            ],
+            'Display logs for the docker compose application.'
+        );
+    }
 }

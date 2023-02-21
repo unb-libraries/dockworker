@@ -31,9 +31,9 @@ trait DockerCliTrait
    * @return \Dockworker\Cli\DockerCli
    */
     protected function dockerCli(
-      array $command,
-      string $description,
-      ?float $timeout = null
+        array $command,
+        string $description,
+        ?float $timeout = null
     ): DockerCli {
         array_unshift($command, $this->cliTools['docker']);
         return new DockerCli(
@@ -57,9 +57,9 @@ trait DockerCliTrait
    *   The timeout in seconds or null to disable
    */
     protected function dockerRun(
-      array $command,
-      string $description,
-      ?float $timeout = null
+        array $command,
+        string $description,
+        ?float $timeout = null
     ): void {
         $this->dockerCli($command, $description, $timeout)
             ->setWorkingDirectory($this->applicationRoot)
@@ -81,10 +81,10 @@ trait DockerCliTrait
    * @return \Dockworker\Cli\DockerCli
    */
     protected function dockerComposeCli(
-      array $command,
-      string $description = '',
-      ?float $timeout = null,
-      array $profiles = []
+        array $command,
+        string $description = '',
+        ?float $timeout = null,
+        array $profiles = []
     ): DockerCli {
         array_unshift(
             $command,
@@ -95,8 +95,7 @@ trait DockerCliTrait
             $env = [
                 'COMPOSE_PROFILES' => implode(',', $profiles),
             ];
-        }
-        else {
+        } else {
             $env = null;
         }
         return new DockerCli(
@@ -122,10 +121,10 @@ trait DockerCliTrait
    *   The docker compose profiles to target with this command.
    */
     protected function dockerComposeRun(
-      array $command,
-      string $description = '',
-      ?float $timeout = null,
-      array $profiles = []
+        array $command,
+        string $description = '',
+        ?float $timeout = null,
+        array $profiles = []
     ): void {
         $this->dockerComposeCli($command, $description, $timeout, $profiles)
             ->setWorkingDirectory($this->applicationRoot)
