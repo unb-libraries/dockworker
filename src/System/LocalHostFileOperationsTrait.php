@@ -16,7 +16,7 @@ trait LocalHostFileOperationsTrait
   use OperatingSystemConfigurationTrait;
 
   /**
-   * The path to the local OS hostfile.
+   * The path to the local OS host file.
    *
    * @var string
    */

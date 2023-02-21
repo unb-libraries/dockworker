@@ -57,16 +57,11 @@ class CliCommand extends Process
    *   The DockworkerIO object to use for output.
    * @param array|string $fail_message
    *   A message to display if the command fails.
-   * @param bool $quiet
-   *   Optional. True to suppress any output, including errors.
-   *
-   * @throws \Dockworker\DockworkerException
    */
     public function execTest(
         string $expected_output,
         DockworkerIO $io,
         array|string $fail_message,
-        bool $quiet = false,
     ): void {
         try {
             $this->mustRun();
@@ -75,9 +70,7 @@ class CliCommand extends Process
             exit(1);
         }
         if (!$this->outputContainsExpectedOutput($expected_output)) {
-            if (!$quiet) {
-                $io->block([$this->getOutput()]);
-            }
+            $io->block([$this->getOutput()]);
             $io->error("Command [$this->description] returned an unexpected output.");
             exit(1);
         }
@@ -118,7 +111,7 @@ class CliCommand extends Process
     }
 
     /**
-     * Runs the command and attaches the command TTY to the current TTY.
+     * Runs the command and attaches to the current TTY.
      *
      * @param \Dockworker\IO\DockworkerIO $io
      *   The DockworkerIO object to use for output.

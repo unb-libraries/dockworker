@@ -76,7 +76,7 @@ trait DockerCliTrait
    * @param ?float $timeout
    *   The timeout in seconds or null to disable
    * @param string[] $profiles
-   *   The compose profiles to target with this command.
+   *   The docker compose profiles to target with this command.
    *
    * @return \Dockworker\Cli\DockerCli
    */
@@ -119,7 +119,7 @@ trait DockerCliTrait
    * @param ?float $timeout
    *   The timeout in seconds or null to disable
    * @param string[] $profiles
-   *   The compose profiles to target with this command.
+   *   The docker compose profiles to target with this command.
    */
     protected function dockerComposeRun(
       array $command,

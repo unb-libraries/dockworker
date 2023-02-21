@@ -7,7 +7,7 @@ use Dockworker\IO\DockworkerIOTrait;
 /**
  * Provides methods to check CLI tools for existence and functionality.
  */
-trait CliCommandCheckerTrait
+trait CommandCheckerTrait
 {
     use DockworkerIOTrait;
 
@@ -26,16 +26,6 @@ trait CliCommandCheckerTrait
     protected bool $checkIsSilent = false;
 
     /**
-     * Checks all registered CLI commands.
-     *
-     * @throws \Dockworker\DockworkerException
-     */
-    public function checkRegisteredCommands(): void
-    {
-        $this->checkRegisteredCliCommands();
-    }
-
-    /**
      * Executes the registered CLI commands and checks their output.
      *
      * @param bool $quiet
@@ -43,12 +33,12 @@ trait CliCommandCheckerTrait
      *
      * @throws \Dockworker\DockworkerException
      */
-    protected function checkRegisteredCliCommands(
+    protected function checkRegisteredCommands(
         bool $quiet = false
     ): void {
         $this->checkIsSilent = $quiet;
         foreach ($this->registeredCliCheckCommands as $command) {
-            $this->checkRegisteredCliCommand(
+            $this->checkRegisteredCommand(
                 $command['command'],
                 $command['expect_output'],
                 $command['label'],
@@ -74,7 +64,7 @@ trait CliCommandCheckerTrait
      *
      * @throws \Dockworker\DockworkerException
      */
-    protected function checkRegisteredCliCommand(
+    protected function checkRegisteredCommand(
         CliCommand $command,
         string $expected_output,
         string $testing_label,
@@ -106,7 +96,7 @@ trait CliCommandCheckerTrait
      * @param bool $quiet
      *   True to suppress any output from this command, including errors.
      */
-    protected function registerCliCommandCheck(
+    protected function registerNewCommandCheck(
         CliCommand $command,
         string $expected_output,
         string $label,

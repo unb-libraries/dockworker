@@ -11,7 +11,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 trait CliToolTrait
 {
-    use CliCommandCheckerTrait;
+    use CommandCheckerTrait;
     use DockworkerIOTrait;
     use DockworkerPersistentDataStorageTrait;
 
@@ -116,7 +116,7 @@ trait CliToolTrait
             $timeout
         );
 
-        $this->registerCliCommandCheck(
+        $this->registerNewCommandCheck(
             $cmd,
             $expected_test_output,
             $testing_label,

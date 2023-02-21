@@ -26,7 +26,7 @@ class DockworkerLocalApplicationCommands extends DockworkerCommands
     {
         $this->registerDockerCliTool();
         $this->registerKubectlCliTool();
-        $this->checkRegisteredCliCommands();
+        $this->checkRegisteredCommands();
     }
 
     /**
@@ -69,6 +69,8 @@ class DockworkerLocalApplicationCommands extends DockworkerCommands
      *
      * @command deploy
      * @aliases start-over redeploy
+     *
+     * @throws \Dockworker\DockworkerException
      */
     public function deployComposeApplication(): void
     {
