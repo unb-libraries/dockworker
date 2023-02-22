@@ -62,9 +62,10 @@ class PreFlightCheck
      * @param string $test_method
      *   The method within the command to execute.
      * @param string $output_method
-     *   The method within the command that retrieves the output.
+     *   The method within the command that retrieves $test_method's output.
+     *   If empty, the output from $test_method is ignored and not tested.
      * @param string $expected_output
-     *   A string that is expected to appear within the command's output.
+     *   A string expected to appear within the $output_method's return.
      * @param array|string $fail_message
      *   A message to display if the command fails.
      */
@@ -94,9 +95,10 @@ class PreFlightCheck
      * @param string $test_method
      *   The method within the command to execute.
      * @param string $output_method
-     *   The method within the command that retrieves the output.
+     *   The method within the command that retrieves $test_method's output.
+     *   If empty, the output from $test_method is ignored and not tested.
      * @param string $expected_output
-     *   A string that is expected to appear within the command's output.
+     *   A string expected to appear within the $output_method's return.
      * @param array|string $fail_message
      *   A message to display if the command fails.
      */
@@ -135,7 +137,9 @@ class PreFlightCheck
                 $io->say("$this->label...");
             }
             $this->command->{$this->testMethod}();
-            $this->checkOutput($io);
+            if (!empty($this->outputMethod)) {
+                $this->checkOutput($io);
+            }
         } catch (\Exception $e) {
             $io->error($this->failMessage);
             exit(1);

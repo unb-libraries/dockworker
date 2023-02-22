@@ -29,6 +29,20 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     protected const ERROR_CONFIG_ELEMENT_UNSET = 'Error! A required configuration element [%s] does not exist in %s.';
 
     /**
+     * The application's GitHub repository owner.
+     *
+     * @var string
+     */
+    protected string $applicationGitHubRepoOwner = '';
+
+    /**
+     * The application's GitHub repository name.
+     *
+     * @var string
+     */
+    protected string $applicationGitHubRepoName = '';
+
+    /**
      * The path to the application's git repository.
      *
      * @var string
@@ -124,6 +138,22 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
             'uuid',
             'dockworker.application.identifiers.uuid'
         );
+        if ($this->getConfigItem('dockworker.application.workflows.vcs.type') != 'github') {
+            throw new DockworkerException(sprintf(
+                'Error! Dockworker only supports GitHub as a VCS. The VCS type [%s] is not currently supported.',
+                $this->getConfigItem('dockworker.workflows.vcs.type')
+            ));
+        } else {
+            $this->setPropertyFromConfigKey(
+              'applicationGitHubRepoOwner',
+              'dockworker.application.workflows.vcs.owner'
+            );
+            $this->setPropertyFromConfigKey(
+              'applicationGitHubRepoName',
+              'dockworker.application.workflows.vcs.name'
+            );
+        }
+
     }
 
     /**

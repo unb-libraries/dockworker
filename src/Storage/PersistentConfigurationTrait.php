@@ -76,6 +76,7 @@ trait PersistentConfigurationTrait
             $namespace,
             $item
         );
+
         if (empty($value)) {
             if (!empty($description)) {
                 $this->dockworkerIO->block(
@@ -147,9 +148,7 @@ trait PersistentConfigurationTrait
                 "$namespace.yml",
             ]
         );
-        if ($force_reload || empty($this->persistentConfiguration)) {
-            $this->loadPersistentConfiguration();
-        }
+        $this->loadPersistentConfiguration();
     }
 
     /**
