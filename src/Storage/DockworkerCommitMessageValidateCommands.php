@@ -1,6 +1,6 @@
 <?php
 
-namespace Dockworker\Robo\Plugin\Commands;
+namespace Dockworker\Storage;
 
 use Consolidation\AnnotatedCommand\CommandData;
 use Dockworker\DockworkerCommands;

@@ -25,14 +25,23 @@ class DockworkerShellCommands extends DockworkerCommands
      */
     public function buildComposeApplication($env = 'local'): void
     {
+        $this->initShellCommands($env);
+    }
+
+    /**
+     * Initializes the command and executes all preflight checks.
+     *
+     * @param string $env
+     *   The environment to initialize the command for.
+     */
+    protected function initShellCommands(string $env)
+    {
         if ($env === 'local') {
             $this->registerDockerCliTool($this->dockworkerIO);
-            $this->initGitHubClient();
-            $this->checkPreflightChecks($this->dockworkerIO);
+            $this->initGitHubClientApplicationRepo();
         } else {
-            $this->registerDockerCliTool($this->dockworkerIO);
             $this->registerKubectlCliTool($this->dockworkerIO);
-            $this->checkPreflightChecks($this->dockworkerIO);
         }
+        $this->checkPreflightChecks($this->dockworkerIO);
     }
 }
