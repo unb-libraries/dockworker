@@ -24,9 +24,8 @@ class DockworkerLocalApplicationCommands extends DockworkerCommands
    */
     public function initRequirements(): void
     {
-        $this->registerDockerCliTool();
-        $this->registerKubectlCliTool();
-        $this->checkRegisteredCommands();
+        $this->registerDockerCliTool($this->dockworkerIO);
+        $this->checkPreflightChecks();
     }
 
     /**

@@ -24,11 +24,12 @@ class DockworkerShellCommands extends DockworkerCommands
     public function buildComposeApplication($env = 'local'): void
     {
         if ($env === 'local') {
-            $this->registerDockerCliTool();
-            $this->checkRegisteredCommands();
+            $this->registerDockerCliTool($this->dockworkerIO);
+            $this->checkPreflightChecks($this->dockworkerIO);
         } else {
-            $this->registerKubectlCliTool();
-            $this->checkRegisteredCommands();
+            $this->registerDockerCliTool($this->dockworkerIO);
+            $this->registerKubectlCliTool($this->dockworkerIO);
+            $this->checkPreflightChecks($this->dockworkerIO);
         }
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Dockworker\Cli;
 
+use Dockworker\IO\DockworkerIO;
+
 /**
  * Provides methods to interact with docker.
  */
@@ -12,10 +14,10 @@ trait DockerCliTrait
     /**
      * Registers docker as a required CLI tool.
      */
-    public function registerDockerCliTool(): void
+    public function registerDockerCliTool(DockworkerIO $io): void
     {
         $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/docker.yml";
-        $this->registerCliToolFromYaml($file_path);
+        $this->registerCliToolFromYaml($file_path, $io);
     }
 
   /**

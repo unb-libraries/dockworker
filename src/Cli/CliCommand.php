@@ -48,34 +48,6 @@ class CliCommand extends Process
         $this->description = $description;
     }
 
-  /**
-   * Executes the command and checks for an expected output and return code.
-   *
-   * @param string $expected_output
-   *   A string that is expected to appear within the command's output.
-   * @param \Dockworker\IO\DockworkerIO $io
-   *   The DockworkerIO object to use for output.
-   * @param array|string $fail_message
-   *   A message to display if the command fails.
-   */
-    public function execTest(
-        string $expected_output,
-        DockworkerIO $io,
-        array|string $fail_message,
-    ): void {
-        try {
-            $this->mustRun();
-        } catch (ProcessFailedException | ProcessTimedOutException $exception) {
-            $io->error($fail_message);
-            exit(1);
-        }
-        if (!$this->outputContainsExpectedOutput($expected_output)) {
-            $io->block([$this->getOutput()]);
-            $io->error("Command [$this->description] returned an unexpected output.");
-            exit(1);
-        }
-    }
-
     /**
      * Checks if the command's output contains an expected string.
      *

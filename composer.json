@@ -19,6 +19,7 @@
     "ext-posix": "*",
     "ext-yaml": "*",
     "ext-zip": "*",
+    "grasmash/symfony-console-spinner": "dev-main",
     "php": "^8.1"
   },
   "license": "MIT",
