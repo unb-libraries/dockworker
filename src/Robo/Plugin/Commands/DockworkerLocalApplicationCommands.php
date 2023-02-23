@@ -25,7 +25,7 @@ class DockworkerLocalApplicationCommands extends DockworkerCommands
     public function initRequirements(): void
     {
         $this->registerDockerCliTool($this->dockworkerIO);
-        $this->checkPreflightChecks();
+        $this->checkPreflightChecks($this->dockworkerIO);
     }
 
     /**
@@ -73,6 +73,7 @@ class DockworkerLocalApplicationCommands extends DockworkerCommands
      */
     public function deployComposeApplication(): void
     {
+        $this->dockworkerIO->title("Deploying $this->applicationName Locally");
         $this->stopRemoveComposeApplicationData();
         $this->setLocalHostFileEntries();
         $this->buildComposeApplication();

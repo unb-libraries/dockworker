@@ -65,10 +65,14 @@ trait PreFlightCheckTrait
     protected function checkPreflightChecks(DockworkerIO $io): void
     {
         $checklist = new Checklist($io->output());
-        foreach ($this->preFlightChecks as $check) {
-            $checklist->addItem($check->getLabel());
-            $check->check($this->dockworkerIO, true);
-            $checklist->completePreviousItem();
+        if (!empty($this->preFlightChecks)) {
+            $io->title('PreFlight Checks');
+            foreach ($this->preFlightChecks as $check) {
+                $checklist->addItem($check->getLabel());
+                $check->check($io, true);
+                $checklist->completePreviousItem();
+            }
+            $io->newLine();
         }
     }
 }
