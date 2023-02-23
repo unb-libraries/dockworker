@@ -42,7 +42,7 @@ class DockworkerShellCommands extends DockworkerCommands
             $this->registerDockerCliTool($this->dockworkerIO);
             // $this->initGitHubClientApplicationRepo();
         } else {
-            $this->registerKubectlCliTool($this->dockworkerIO);
+            $this->registerKubectlCliTools($this->dockworkerIO);
             $this->setDeployedK8sServiceProperties($env);
         }
         $this->checkPreflightChecks($this->dockworkerIO);
