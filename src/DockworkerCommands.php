@@ -2,6 +2,7 @@
 
 namespace Dockworker;
 
+use Dockworker\Core\RoboConfigTrait;
 use Dockworker\System\FileSystemOperationsTrait;
 use League\Container\ContainerAwareInterface;
 use League\Container\ContainerAwareTrait;
@@ -24,6 +25,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     use ContainerAwareTrait;
     use FileSystemOperationsTrait;
     use LoggerAwareTrait;
+    use RoboConfigTrait;
 
     protected const DOCKWORKER_CONFIG_FILE = '.dockworker/dockworker.yml';
     protected const ERROR_CONFIG_ELEMENT_UNSET = 'Error! A required configuration element [%s] does not exist in %s.';
@@ -131,80 +133,49 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      */
     public function setCoreProperties(): void
     {
+        $config = Robo::config();
         $this->setPropertyFromConfigKey(
+            $config,
             'applicationName',
             'dockworker.application.identifiers.id'
         );
         $this->setPropertyFromConfigKey(
+            $config,
             'applicationSlug',
             'dockworker.application.identifiers.slug'
         );
         $this->setPropertyFromConfigKey(
+            $config,
             'applicationShortSlug',
             'dockworker.application.identifiers.short_slug'
         );
         $this->setPropertyFromConfigKey(
+            $config,
             'applicationUuid',
             'dockworker.application.identifiers.uuid'
         );
-        if ($this->getConfigItem('dockworker.application.workflows.vcs.type') != 'github') {
+        if ($this->getConfigItem(
+          $config,
+          'dockworker.application.workflows.vcs.type'
+          ) != 'github') {
             throw new DockworkerException(sprintf(
                 'Error! Dockworker only supports GitHub as a VCS. The VCS type [%s] is not currently supported.',
-                $this->getConfigItem('dockworker.workflows.vcs.type')
+                $this->getConfigItem(
+                  $config,
+                  'dockworker.workflows.vcs.type'
+                )
             ));
         } else {
             $this->setPropertyFromConfigKey(
+              $config,
               'applicationGitHubRepoOwner',
               'dockworker.application.workflows.vcs.owner'
             );
             $this->setPropertyFromConfigKey(
+              $config,
               'applicationGitHubRepoName',
               'dockworker.application.workflows.vcs.name'
             );
         }
-
-    }
-
-    /**
-     * Sets a command object property from a config element.
-     *
-     * @param string $property
-     *  The property to set.
-     * @param string $config_key
-     *  The namespace to obtain the configuration value from.
-     *
-     * @throws \Dockworker\DockworkerException
-     */
-    protected function setPropertyFromConfigKey(
-        string $property,
-        string $config_key
-    ): void {
-        $config_value = Robo::Config()->get($config_key);
-        if ($config_value == null) {
-            throw new DockworkerException(sprintf(
-                self::ERROR_CONFIG_ELEMENT_UNSET,
-                $config_key,
-                $this->configFile
-            ));
-        }
-        $this->$property = $config_value;
-    }
-
-    /**
-     * Gets a configuration item from the Dockworker configuration.
-     *
-     * @param string $config_key
-     *   The configuration key to retrieve.
-     * @param mixed $default_value
-     *   The default value to return if the configuration key is not set.
-     *
-     * @return mixed
-     *   The configuration value.
-     */
-    protected function getConfigItem(
-        string $config_key,
-        mixed $default_value = null
-    ): mixed {
-        return Robo::Config()->get($config_key, $default_value);
     }
 }

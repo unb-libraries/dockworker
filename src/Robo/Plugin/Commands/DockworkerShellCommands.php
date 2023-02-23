@@ -6,6 +6,7 @@ use Dockworker\Cli\DockerCliTrait;
 use Dockworker\Cli\KubectlCliTrait;
 use Dockworker\DockworkerCommands;
 use Dockworker\GitHub\GitHubClientTrait;
+use Dockworker\K8s\DeployedK8sServiceTrait;
 
 /**
  * Provides commands for building and deploying the application locally.
@@ -15,6 +16,7 @@ class DockworkerShellCommands extends DockworkerCommands
     use DockerCliTrait;
     use KubectlCliTrait;
     use GitHubClientTrait;
+    use DeployedK8sServiceTrait;
 
     /**
      * Opens a shell into the application.
@@ -38,10 +40,12 @@ class DockworkerShellCommands extends DockworkerCommands
     {
         if ($env === 'local') {
             $this->registerDockerCliTool($this->dockworkerIO);
-            $this->initGitHubClientApplicationRepo();
+            // $this->initGitHubClientApplicationRepo();
         } else {
             $this->registerKubectlCliTool($this->dockworkerIO);
+            $this->setDeployedK8sServiceProperties($env);
         }
         $this->checkPreflightChecks($this->dockworkerIO);
+        print_r($this->deployedK8sDeploymentNames);
     }
 }

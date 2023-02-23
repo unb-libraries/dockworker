@@ -4,6 +4,7 @@ namespace Dockworker\System;
 
 use Dockworker\Cli\CliCommand;
 use Dockworker\IO\DockworkerIOTrait;
+use Robo\Robo;
 
 /**
  * Provides methods to interact with a local filesystem.
@@ -114,7 +115,10 @@ trait LocalHostFileOperationsTrait
         $hostnames = [
             "local-$this->applicationName",
         ];
-        $additional_hostnames = $this->getConfigItem('dockworker.workflows.local.additional_hostnames');
+        $additional_hostnames = $this->getConfigItem(
+          Robo::Config(),
+          'dockworker.workflows.local.additional_hostnames'
+        );
         if (!empty($additional_hostnames)) {
             $hostnames = array_merge($hostnames, $additional_hostnames);
         }

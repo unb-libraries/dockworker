@@ -57,15 +57,26 @@ trait DockerCliTrait
    *   A description of the command.
    * @param ?float $timeout
    *   The timeout in seconds or null to disable
+   * @param bool $use_tty
+   *   Whether to use a TTY for the command. Defaults to TRUE.
+   *
+   * @return \Dockworker\Cli\DockerCli
    */
     protected function dockerRun(
         array $command,
         string $description,
-        ?float $timeout = null
-    ): void {
-        $this->dockerCli($command, $description, $timeout)
-            ->setWorkingDirectory($this->applicationRoot)
-            ->runTty($this->dockworkerIO);
+        ?float $timeout = null,
+        bool $use_tty = true
+    ): DockerCli {
+      $cmd = $this->dockerCli($command, $description, $timeout)
+            ->setWorkingDirectory($this->applicationRoot);
+      if ($use_tty) {
+        $cmd->runTty($this->dockworkerIO);
+      }
+      else {
+        $cmd->mustRun();
+      }
+      return $cmd;
     }
 
   /**
@@ -121,15 +132,26 @@ trait DockerCliTrait
    *   The timeout in seconds or null to disable
    * @param string[] $profiles
    *   The docker compose profiles to target with this command.
+   * @param bool $use_tty
+   *   Whether to use a TTY for the command. Defaults to TRUE.
+   *
+   * @return \Dockworker\Cli\DockerCli
    */
     protected function dockerComposeRun(
         array $command,
         string $description = '',
         ?float $timeout = null,
-        array $profiles = []
-    ): void {
-        $this->dockerComposeCli($command, $description, $timeout, $profiles)
-            ->setWorkingDirectory($this->applicationRoot)
-            ->runTty($this->dockworkerIO);
+        array $profiles = [],
+        bool $use_tty = true
+    ): DockerCli {
+        $cmd = $this->dockerComposeCli($command, $description, $timeout, $profiles)
+            ->setWorkingDirectory($this->applicationRoot);
+      if ($use_tty) {
+        $cmd->runTty($this->dockworkerIO);
+      }
+      else {
+        $cmd->mustRun();
+      }
+        return $cmd;
     }
 }
