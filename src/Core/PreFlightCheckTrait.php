@@ -66,7 +66,7 @@ trait PreFlightCheckTrait
     {
         $checklist = new Checklist($io->output());
         if (!empty($this->preFlightChecks)) {
-            $io->title('PreFlight Checks');
+            $io->title('Pre-Flight Checks');
             foreach ($this->preFlightChecks as $check) {
                 $checklist->addItem($check->getLabel());
                 $check->check($io, true);

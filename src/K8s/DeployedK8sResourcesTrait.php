@@ -2,14 +2,14 @@
 
 namespace Dockworker\K8s;
 
-use Dockworker\Docker\DeployedContainersTrait;
+use Dockworker\Docker\DeployedResourcesTrait;
 use Dockworker\Docker\DockerContainer;
 use Dockworker\Storage\DockworkerPersistentDataStorageTrait;
 use Dockworker\IO\DockworkerIO;
 
 trait DeployedK8sResourcesTrait
 {
-    use DeployedContainersTrait;
+    use DeployedResourcesTrait;
 
     protected function enableK8sResourceDiscovery(): void
     {

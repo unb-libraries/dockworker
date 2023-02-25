@@ -3,13 +3,13 @@
 namespace Dockworker\Docker;
 
 use Dockworker\Cli\DockerCliTrait;
-use Dockworker\Docker\DeployedContainersTrait;
+use Dockworker\Docker\DeployedResourcesTrait;
 use Dockworker\Docker\DockerContainer;
 use Dockworker\IO\DockworkerIO;
 
 trait DeployedLocalResourcesTrait
 {
-    use DeployedContainersTrait;
+    use DeployedResourcesTrait;
     use DockerCliTrait;
 
     protected function enableLocalResourceDiscovery(): void

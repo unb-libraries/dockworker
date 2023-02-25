@@ -88,6 +88,11 @@ class DockerContainer
     {
         return $this->containerName;
     }
-
-
+    /**
+     * @return string
+     */
+    public function getContainerNamespace(): string
+    {
+        return $this->containerNamespace;
+    }
 }

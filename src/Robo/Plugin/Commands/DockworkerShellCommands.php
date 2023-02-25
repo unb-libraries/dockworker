@@ -31,14 +31,15 @@ class DockworkerShellCommands extends DockworkerCommands
     public function openApplicationShell($env = 'local'): void
     {
         $this->initShellCommand($env);
-        $this->discoverDeployedContainers(
-          $this->dockworkerIO,
-          Robo::config(),
-          $env
+        $container = $this->getDeployedContainer($env);
+
+        $this->dockworkerIO->title('Creating Shell');
+        $this->dockworkerIO->info(
+          "Creating shell in $env/{$container->getContainerName()}. Type 'exit' to close."
         );
-        $this->dockworkerIO->title('Opening Shell');
-        $this->deployedDockerContainers[0]->run(
-          ['/bin/sh'],
+
+        $container->run(
+          [$this->getApplicationShell()],
           $this->dockworkerIO
         );
     }
@@ -60,5 +61,19 @@ class DockworkerShellCommands extends DockworkerCommands
             $this->enableK8sResourceDiscovery();
         }
         $this->checkPreflightChecks($this->dockworkerIO);
+        $this->discoverDeployedResources(
+          $this->dockworkerIO,
+          Robo::config(),
+          $env
+        );
     }
+
+    protected function getApplicationShell() {
+        return $this->getConfigItem(
+          Robo::config(),
+          'dockworker.application.shell.shell',
+          '/bin/sh'
+        );
+    }
+
 }

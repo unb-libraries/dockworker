@@ -4,60 +4,67 @@
 dockworker:
   version: '6'
   application:
-  name: The Anglo-Atlantic Slave Law Project
-  uri: https://aaslp.lib.unb.ca
-  description: >
-    The Anglo-Atlantic Slave Law Project documents laws related to slavery in the Atlantic region from the 16th to
-    the 19th centuries. The project is a collaboration between the University of New Brunswick and the University of
-    Cape Town.
-  topics:
-    - slavery
-    - law
-    - history
-    - research
-    - project
-  identifiers:
-    id: aaslp.lib.unb.ca
-    slug: aaslp-lib-unb-ca
-    short_slug: aaslp
-    uuid: 3111
-  framework:
-    name: Drupal
-    version: 9
-    startup_finished_marker: '99_zz_notify_user_URI'
-  license:
-    license: MIT
-    holder: University of New Brunswick Libraries
-  vcs:
-    remote: GitHub
-    owner: unb-libraries
-    name: aaslp.lib.unb.ca
-  jira:
-    project_keys:
-      - AASLP
-  workflows:
-    ci:
-      actions:
-        - source: dockworker-drupal
-          type: deployment-workflow
-    image:
-      parent: ghcr.io/unb-libraries/drupal:9.x-2.x-unblib
-      repositories:
-        - name: GitHub
-          push_branches:
-            - dev
-            - prod
-          image_name: ghcr.io/unb-libraries/aaslp.lib.unb.ca
-    deployment:
-      services:
-        - name: aaslp-lib-unb-ca
-          namespaces:
-            - dev
-            - prod
-      e2e_tests:
-        - id: core
-          frequency: '*/5 * * * *'
-          source_files:
-            - .dockworker/tests/e2e/aaslp.lib.unb.ca.yml
-          namespaces:
-            - prod
+    name: History of Information Technology at The University of New Brunswick
+    uri: https://hit.lib.unb.ca
+    description: >
+      This site tells the story of how group of visionary believers in the transformative power of information
+      technology at UNB (a small Eastern Canadian University deep in the great North Woods of Outer Canada) led their
+      university, city (Fredericton), province (New Brunswick), region (the Maritimes and Atlantic Provinces) and
+      occasionally even Canada and the whole world into the information age.
+    topics:
+      - information technology
+      - history
+      - research
+    identifiers:
+      id: hit.lib.unb.ca
+      slug: hit-lib-unb-ca
+      short_slug: hit
+      uuid: 3094
+    framework:
+      name: Drupal
+      version: 10
+      startup_finished_marker: '99_zz_notify_user_URI'
+    license:
+      license: MIT
+      holder: University of New Brunswick Libraries
+    shell:
+      shell: /bin/sh
+    workflows:
+      vcs:
+        type: github
+        owner: unb-libraries
+        name: hit.lib.unb.ca
+      jira:
+        project_keys:
+          - HIT
+      ci:
+        actions:
+          - source: dockworker-drupal
+            type: deployment-workflow
+      image:
+        parent: ghcr.io/unb-libraries/drupal:9.x-2.x-unblib
+        repositories:
+          - name: GitHub
+            push_branches:
+              - dev
+              - prod
+            image_name: ghcr.io/unb-libraries/hit.lib.unb.ca
+      k8s:
+        deployments:
+          - name: hit-lib-unb-ca
+            namespaces:
+              - dev
+              - prod
+        e2e_tests:
+          - id: core
+            frequency: '*/5 * * * *'
+            source_files:
+              - .dockworker/tests/e2e/hit.lib.unb.ca.yml
+            namespaces:
+              - prod
+      local:
+        deployments:
+          - name: hit.lib.unb.ca
+        additional_hostnames:
+          - hit.lib.unb.ca
+          - hit.lib.unb.ca.local
