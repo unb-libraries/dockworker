@@ -3,6 +3,7 @@
 namespace Dockworker\Cli;
 
 use Dockworker\IO\DockworkerIO;
+use Dockworker\Cli\CliCommand;
 
 /**
  * Provides methods to interact with Jira for this dockworker application.
@@ -14,22 +15,10 @@ trait KubectlCliTrait
     /**
      * Registers kubectl as a required CLI tool.
      */
-    public function registerKubectlCliTools(DockworkerIO $io): void
+    public function registerKubectlCliTool(DockworkerIO $io): void
     {
-        $this->registerJqTool($io);
-        $this->registerKubectlTool($io);
-    }
-
-    protected function registerJqTool(DockworkerIO $io): void
-    {
-      $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/jq.yml";
-      $this->registerCliToolFromYaml($file_path, $io);
-    }
-
-    protected function registerKubectlTool(DockworkerIO $io): void
-    {
-      $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/kubectl.yml";
-      $this->registerCliToolFromYaml($file_path, $io);
+        $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/kubectl.yml";
+        $this->registerCliToolFromYaml($file_path, $io);
     }
 
   /**
@@ -42,23 +31,22 @@ trait KubectlCliTrait
    * @param ?float $timeout
    *   The timeout in seconds or null to disable
    *
-   * @return \Dockworker\Cli\KubectlCli
+   * @return \Dockworker\Cli\CliCommand
    */
   protected function kubeCtlCli(
     array $command,
     string $description = '',
     ?float $timeout = null
-  ): DockerCli {
+  ): CliCommand {
     array_unshift(
       $command,
-      $this->cliTools['kubectl'],
-      'compose'
+      $this->cliTools['kubectl']
     );
-    return new KubectlCli(
+    return new CliCommand(
       $command,
       $description,
       null,
-      $env,
+      [],
       null,
       $timeout
     );
@@ -76,14 +64,14 @@ trait KubectlCliTrait
    * @param bool $use_tty
    *   Whether to use a TTY for the command. Defaults to TRUE.
    *
-   * @return \Dockworker\Cli\KubectlCli
+   * @return \Dockworker\Cli\CliCommand
    */
   protected function kubeCtlRun(
     array $command,
     string $description = '',
     ?float $timeout = null,
     bool $use_tty = true
-  ): KubectlCli {
+  ): CliCommand {
     $cmd = $this->kubeCtlCli($command, $description, $timeout)
       ->setWorkingDirectory($this->applicationRoot);
     if ($use_tty) {

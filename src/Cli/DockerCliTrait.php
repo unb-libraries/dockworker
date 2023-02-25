@@ -2,6 +2,7 @@
 
 namespace Dockworker\Cli;
 
+use Dockworker\Cli\CliCommand;
 use Dockworker\IO\DockworkerIO;
 
 /**
@@ -30,15 +31,15 @@ trait DockerCliTrait
    * @param ?float $timeout
    *   The timeout in seconds or null to disable
    *
-   * @return \Dockworker\Cli\DockerCli
+   * @return \Dockworker\Cli\CliCommand
    */
     protected function dockerCli(
         array $command,
         string $description,
         ?float $timeout = null
-    ): DockerCli {
+    ): CliCommand {
         array_unshift($command, $this->cliTools['docker']);
-        return new DockerCli(
+        return new CliCommand(
             $command,
             $description,
             null,
@@ -60,14 +61,14 @@ trait DockerCliTrait
    * @param bool $use_tty
    *   Whether to use a TTY for the command. Defaults to TRUE.
    *
-   * @return \Dockworker\Cli\DockerCli
+   * @return \Dockworker\Cli\CliCommand
    */
     protected function dockerRun(
         array $command,
         string $description,
         ?float $timeout = null,
         bool $use_tty = true
-    ): DockerCli {
+    ): CliCommand {
       $cmd = $this->dockerCli($command, $description, $timeout)
             ->setWorkingDirectory($this->applicationRoot);
       if ($use_tty) {
@@ -91,14 +92,14 @@ trait DockerCliTrait
    * @param string[] $profiles
    *   The docker compose profiles to target with this command.
    *
-   * @return \Dockworker\Cli\DockerCli
+   * @return \Dockworker\Cli\CliCommand
    */
     protected function dockerComposeCli(
         array $command,
         string $description = '',
         ?float $timeout = null,
         array $profiles = []
-    ): DockerCli {
+    ): CliCommand {
         array_unshift(
             $command,
             $this->cliTools['docker'],
@@ -111,7 +112,7 @@ trait DockerCliTrait
         } else {
             $env = null;
         }
-        return new DockerCli(
+        return new CliCommand(
             $command,
             $description,
             null,
@@ -135,7 +136,7 @@ trait DockerCliTrait
    * @param bool $use_tty
    *   Whether to use a TTY for the command. Defaults to TRUE.
    *
-   * @return \Dockworker\Cli\DockerCli
+   * @return \Dockworker\Cli\CliCommand
    */
     protected function dockerComposeRun(
         array $command,
@@ -143,7 +144,7 @@ trait DockerCliTrait
         ?float $timeout = null,
         array $profiles = [],
         bool $use_tty = true
-    ): DockerCli {
+    ): CliCommand {
         $cmd = $this->dockerComposeCli($command, $description, $timeout, $profiles)
             ->setWorkingDirectory($this->applicationRoot);
       if ($use_tty) {
