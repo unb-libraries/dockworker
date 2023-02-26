@@ -6,7 +6,7 @@ use Dockworker\Cli\CliCommand;
 use Dockworker\IO\DockworkerIO;
 
 /**
- * Provides methods to interact with docker.
+ * Provides methods to interact with the docker CLI application.
  */
 trait DockerCliTrait
 {
@@ -22,7 +22,37 @@ trait DockerCliTrait
     }
 
   /**
-   * Constructs a docker command.
+   * Runs a docker command.
+   *
+   * @param array $command
+   *   The full CLI command to execute.
+   * @param string $description
+   *   A description of the command.
+   * @param ?float $timeout
+   *   The timeout in seconds or null to disable
+   * @param bool $use_tty
+   *   Whether to use a TTY for the command. Defaults to TRUE.
+   *
+   * @return \Dockworker\Cli\CliCommand
+   */
+    protected function dockerRun(
+        array $command,
+        string $description,
+        ?float $timeout = null,
+        bool $use_tty = true
+    ): CliCommand {
+        $cmd = $this->dockerCli($command, $description, $timeout)
+          ->setWorkingDirectory($this->applicationRoot);
+        if ($use_tty) {
+            $cmd->runTty($this->dockworkerIO);
+        } else {
+            $cmd->mustRun();
+        }
+        return $cmd;
+    }
+
+  /**
+   * Constructs a docker command object.
    *
    * @param array $command
    *   The full CLI command to execute.
@@ -50,7 +80,7 @@ trait DockerCliTrait
     }
 
   /**
-   * Runs a docker command.
+   * Runs a 'docker compose' command.
    *
    * @param array $command
    *   The full CLI command to execute.
@@ -58,30 +88,32 @@ trait DockerCliTrait
    *   A description of the command.
    * @param ?float $timeout
    *   The timeout in seconds or null to disable
+   * @param string[] $profiles
+   *   The docker compose profiles to target with this command.
    * @param bool $use_tty
    *   Whether to use a TTY for the command. Defaults to TRUE.
    *
    * @return \Dockworker\Cli\CliCommand
    */
-    protected function dockerRun(
+    protected function dockerComposeRun(
         array $command,
-        string $description,
+        string $description = '',
         ?float $timeout = null,
+        array $profiles = [],
         bool $use_tty = true
     ): CliCommand {
-      $cmd = $this->dockerCli($command, $description, $timeout)
+        $cmd = $this->dockerComposeCli($command, $description, $timeout, $profiles)
             ->setWorkingDirectory($this->applicationRoot);
-      if ($use_tty) {
-        $cmd->runTty($this->dockworkerIO);
-      }
-      else {
-        $cmd->mustRun();
-      }
-      return $cmd;
+        if ($use_tty) {
+            $cmd->runTty($this->dockworkerIO);
+        } else {
+            $cmd->mustRun();
+        }
+        return $cmd;
     }
 
   /**
-   * Constructs a 'docker compose' command.
+   * Constructs a 'docker compose' command object.
    *
    * @param array $command
    *   The full CLI command to execute.
@@ -120,39 +152,5 @@ trait DockerCliTrait
             null,
             $timeout
         );
-    }
-
-  /**
-   * Runs a 'docker compose' command.
-   *
-   * @param array $command
-   *   The full CLI command to execute.
-   * @param string $description
-   *   A description of the command.
-   * @param ?float $timeout
-   *   The timeout in seconds or null to disable
-   * @param string[] $profiles
-   *   The docker compose profiles to target with this command.
-   * @param bool $use_tty
-   *   Whether to use a TTY for the command. Defaults to TRUE.
-   *
-   * @return \Dockworker\Cli\CliCommand
-   */
-    protected function dockerComposeRun(
-        array $command,
-        string $description = '',
-        ?float $timeout = null,
-        array $profiles = [],
-        bool $use_tty = true
-    ): CliCommand {
-        $cmd = $this->dockerComposeCli($command, $description, $timeout, $profiles)
-            ->setWorkingDirectory($this->applicationRoot);
-      if ($use_tty) {
-        $cmd->runTty($this->dockworkerIO);
-      }
-      else {
-        $cmd->mustRun();
-      }
-        return $cmd;
     }
 }

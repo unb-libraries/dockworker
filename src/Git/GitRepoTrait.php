@@ -8,6 +8,9 @@ use Dockworker\DockworkerException;
 
 /**
  * Provides methods to interact with a local git repo.
+ *
+ * @INTERNAL This trait is intended only to be used by Dockworker commands. It
+ * references the Dockworker application root, which is not in its own scope.
  */
 trait GitRepoTrait
 {

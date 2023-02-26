@@ -37,6 +37,14 @@ trait CommandRuntimeTrackerTrait
     }
 
     /**
+     * Sets the 'start time' of the current command.
+     */
+    protected function setCommandStartTime(): void
+    {
+        $this->commandStartTime = time();
+    }
+
+    /**
      * Trigger the display of the command's total run time.
      *
      * @hook post-process
@@ -76,14 +84,6 @@ trait CommandRuntimeTrackerTrait
         $end = new DateTime();
         $diff = $start->diff($end);
         return $diff->format('%H:%I:%S');
-    }
-
-    /**
-     * Sets the 'start time' of the current command.
-     */
-    protected function setCommandStartTime(): void
-    {
-        $this->commandStartTime = time();
     }
 
     /**

@@ -5,7 +5,10 @@ namespace Dockworker\Storage;
 use Dockworker\System\FileSystemOperationsTrait;
 
 /**
- * Provides IO methods to a local PC data storage for the application.
+ * Provides R/W methods to local PC data storage for the application.
+ *
+ * @INTERNAL This trait is intended only to be used by Dockworker commands. It
+ * references user properties which are not in its own scope.
  */
 trait ApplicationLocalDataStorageTrait
 {

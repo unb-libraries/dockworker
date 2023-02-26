@@ -6,7 +6,7 @@ use Dockworker\DockworkerException;
 use Dockworker\IO\DockworkerIOTrait;
 
 /**
- * Provides methods to interact with Jira for this dockworker application.
+ * Provides methods to launch another dockworker command from the application.
  */
 trait CommandLauncherTrait
 {

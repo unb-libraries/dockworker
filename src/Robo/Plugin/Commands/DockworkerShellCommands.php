@@ -11,22 +11,20 @@ use Dockworker\K8s\DeployedK8sResourcesTrait;
 use Robo\Robo;
 
 /**
- * Provides commands for building and deploying the application locally.
+ * Provides commands for opening a shell into the application's deployed resources.
  */
 class DockworkerShellCommands extends DockworkerCommands
 {
-    use DockerCliTrait;
-    use KubectlCliTrait;
-    use GitHubClientTrait;
     use DeployedK8sResourcesTrait;
     use DeployedLocalResourcesTrait;
+    use DockerCliTrait;
+    use GitHubClientTrait;
+    use KubectlCliTrait;
 
     /**
      * Opens a shell into the application.
      *
      * @command shell
-     *
-     * @throws \Dockworker\DockworkerException
      */
     public function openApplicationShell($env = 'local'): void
     {
@@ -35,12 +33,16 @@ class DockworkerShellCommands extends DockworkerCommands
 
         $this->dockworkerIO->title('Creating Shell');
         $this->dockworkerIO->info(
-          "Creating shell in $env/{$container->getContainerName()}. Type 'exit' to close."
+            sprintf(
+                'Creating shell in %s/%s. Type \'exit\' to close.',
+                $env,
+                $container->getContainerName()
+            )
         );
 
         $container->run(
-          [$this->getApplicationShell()],
-          $this->dockworkerIO
+            [$this->getApplicationShell()],
+            $this->dockworkerIO
         );
     }
 
@@ -50,7 +52,7 @@ class DockworkerShellCommands extends DockworkerCommands
      * @param string $env
      *   The environment to initialize the command for.
      */
-    protected function initShellCommand(string $env)
+    protected function initShellCommand(string $env): void
     {
         if ($env === 'local') {
             // $this->initGitHubClientApplicationRepo();
@@ -62,18 +64,24 @@ class DockworkerShellCommands extends DockworkerCommands
         }
         $this->checkPreflightChecks($this->dockworkerIO);
         $this->discoverDeployedResources(
-          $this->dockworkerIO,
-          Robo::config(),
-          $env
+            $this->dockworkerIO,
+            Robo::config(),
+            $env
         );
     }
 
-    protected function getApplicationShell() {
+    /**
+     * Gets the application's shell from configuration.
+     *
+     * @return string
+     *   The application shell to use.
+     */
+    protected function getApplicationShell(): string
+    {
         return $this->getConfigItem(
-          Robo::config(),
-          'dockworker.application.shell.shell',
-          '/bin/sh'
+            Robo::config(),
+            'dockworker.application.shell.shell',
+            '/bin/sh'
         );
     }
-
 }

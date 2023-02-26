@@ -4,8 +4,17 @@ namespace Dockworker\IO;
 
 use Robo\Symfony\ConsoleIO;
 
+/**
+ * Provides IO methods for Dockworker applications.
+ */
 class DockworkerIO extends ConsoleIO
 {
+    /**
+     * Displays a warning that a destructive action is about to be performed.
+     *
+     * @param string $prompt
+     *   The prompt to display to the user.
+     */
     protected function warnConfirmExitDestructiveAction(string $prompt): void
     {
         if (

@@ -4,7 +4,6 @@ namespace Dockworker\Cli;
 
 use Dockworker\Core\PreFlightCheckTrait;
 use Dockworker\IO\DockworkerIO;
-use Dockworker\IO\DockworkerIOTrait;
 use Dockworker\Storage\DockworkerPersistentDataStorageTrait;
 use Symfony\Component\Yaml\Yaml;
 
@@ -132,7 +131,7 @@ trait CliToolTrait
         array $command,
         string $name,
         ?float $timeout
-    ) {
+    ): CliCommand {
         return new CliCommand(
             array_merge(
                 [$tool_bin_path],

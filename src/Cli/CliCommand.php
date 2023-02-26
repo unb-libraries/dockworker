@@ -4,8 +4,6 @@ namespace Dockworker\Cli;
 
 use Dockworker\DockworkerException;
 use Dockworker\IO\DockworkerIO;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
 
 /**
@@ -49,71 +47,12 @@ class CliCommand extends Process
     }
 
     /**
-     * Checks if the command's output contains an expected string.
-     *
-     * @param string $output
-     *   A string that is expected to appear within the command's output.
-     *
-     * @return bool
-     *   True if the output contains the expected output. False otherwise.
-     */
-    protected function outputContainsExpectedOutput(string $output): bool
-    {
-        return str_contains($this->getOutput(), $output);
-    }
-
-    /**
-     * Gets the description of this command.
-     *
-     * @return string
-     */
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
-
-    /**
-     * Sets the description of this command.
-     *
-     * @param string $description
-     */
-    public function setDescription(string $description): void
-    {
-        $this->description = $description;
-    }
-
-    /**
-     * Runs the command and attaches to the current TTY.
-     *
-     * @param \Dockworker\IO\DockworkerIO $io
-     *   The DockworkerIO object to use for output.
-     * @param bool $new_line
-     *   True to output a newline after the output.
-     */
-    public function runTty(
-        DockworkerIO $io,
-        bool $new_line = true,
-    ): void {
-        $this->setTty(true);
-        $this->run(function ($type, $buffer) {
-            if (self::ERR === $type) {
-                echo 'ERR > ' . $buffer;
-            } else {
-                echo 'OUT > ' . $buffer;
-            }
-        });
-        if ($new_line) {
-            $io->newLine();
-        }
-    }
-
-    /**
      * Announces and runs a command, throwing an exception if the command fails.
      *
      * @param array $command
      *   The full CLI command to execute.
      * @param \Dockworker\IO\DockworkerIO $io
-     *   The Dockworker IO object to use for the announcement.
+     *   The IO to use for input and output.
      * @param string $description
      *   A description of the command.
      * @param string|null $cwd
@@ -151,5 +90,64 @@ class CliCommand extends Process
         if (!$obj->isSuccessful()) {
             throw new DockworkerException("Error {$obj->getErrorOutput()}");
         }
+    }
+
+    /**
+     * Gets the description of this command.
+     *
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    /**
+     * Sets the description of this command.
+     *
+     * @param string $description
+     */
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * Runs the command and attaches to the current TTY.
+     *
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output.
+     * @param bool $new_line
+     *   True to output a newline after the output.
+     */
+    public function runTty(
+        DockworkerIO $io,
+        bool $new_line = true,
+    ): void {
+        $this->setTty(true);
+        $this->run(function ($type, $buffer) {
+            if (self::ERR === $type) {
+                echo 'ERR > ' . $buffer;
+            } else {
+                echo 'OUT > ' . $buffer;
+            }
+        });
+        if ($new_line) {
+            $io->newLine();
+        }
+    }
+
+    /**
+     * Checks if the command's output contains an expected string.
+     *
+     * @param string $output
+     *   A string that is expected to appear within the command's output.
+     *
+     * @return bool
+     *   True if the output contains the expected output. False otherwise.
+     */
+    protected function outputContainsExpectedOutput(string $output): bool
+    {
+        return str_contains($this->getOutput(), $output);
     }
 }

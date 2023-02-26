@@ -8,6 +8,8 @@ use Dockworker\IO\DockworkerIOTrait;
 
 /**
  * Provides commands for interacting with Docker images.
+ *
+ * @TODO This should be moved to a trait.
  */
 class DockworkerDockerImageCommands extends DockworkerCommands
 {

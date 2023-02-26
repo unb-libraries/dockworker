@@ -2,11 +2,16 @@
 
 namespace Dockworker\Jira;
 
+use Dockworker\Core\RoboConfigTrait;
+use Robo\Robo;
+
 /**
  * Provides methods to interact with Jira for this dockworker application.
  */
 trait JiraProjectKeysTrait
 {
+    use RoboConfigTrait;
+
     /**
      * A list of Jira project keys that apply to all projects.
      *
@@ -29,6 +34,7 @@ trait JiraProjectKeysTrait
     public function setJiraProperties(): void
     {
         $jira_project_keys = $this->getConfigItem(
+            Robo::config(),
             'dockworker.application.jira.project_keys'
         );
         if ($jira_project_keys != null) {

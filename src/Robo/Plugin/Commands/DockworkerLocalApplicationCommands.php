@@ -14,13 +14,12 @@ use Dockworker\System\LocalHostFileOperationsTrait;
 class DockworkerLocalApplicationCommands extends DockworkerCommands
 {
     use DockerCliTrait;
-    use KubectlCliTrait;
     use DockworkerIOTrait;
+    use KubectlCliTrait;
     use LocalHostFileOperationsTrait;
 
   /**
    * @hook post-init
-   * @throws \Dockworker\DockworkerException
    */
     public function initRequirements(): void
     {

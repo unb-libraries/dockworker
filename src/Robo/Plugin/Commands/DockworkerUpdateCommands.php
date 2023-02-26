@@ -32,5 +32,4 @@ class DockworkerUpdateCommands extends DockworkerCommands
             ->silent(true)
             ->run();
     }
-
 }

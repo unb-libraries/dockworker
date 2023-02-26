@@ -101,8 +101,6 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
      */
     protected string $userName;
 
-
-
     /**
      * DockworkerCommands constructor.
      *
@@ -154,27 +152,29 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
             'applicationUuid',
             'dockworker.application.identifiers.uuid'
         );
-        if ($this->getConfigItem(
-          $config,
-          'dockworker.application.workflows.vcs.type'
-          ) != 'github') {
+        if (
+            $this->getConfigItem(
+                $config,
+                'dockworker.application.workflows.vcs.type'
+            ) != 'github'
+        ) {
             throw new DockworkerException(sprintf(
                 'Error! Dockworker only supports GitHub as a VCS. The VCS type [%s] is not currently supported.',
                 $this->getConfigItem(
-                  $config,
-                  'dockworker.workflows.vcs.type'
+                    $config,
+                    'dockworker.workflows.vcs.type'
                 )
             ));
         } else {
             $this->setPropertyFromConfigKey(
-              $config,
-              'applicationGitHubRepoOwner',
-              'dockworker.application.workflows.vcs.owner'
+                $config,
+                'applicationGitHubRepoOwner',
+                'dockworker.application.workflows.vcs.owner'
             );
             $this->setPropertyFromConfigKey(
-              $config,
-              'applicationGitHubRepoName',
-              'dockworker.application.workflows.vcs.name'
+                $config,
+                'applicationGitHubRepoName',
+                'dockworker.application.workflows.vcs.name'
             );
         }
     }

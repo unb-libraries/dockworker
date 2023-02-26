@@ -2,15 +2,16 @@
 
 namespace Dockworker\GitHub;
 
-use Dockworker\DockworkerException;
 use Dockworker\Storage\DockworkerPersistentDataStorageTrait;
+use Exception;
+use Github\AuthMethod;
 use Github\Client as GitHubClient;
-use Robo\Robo;
 
 /**
  * Provides methods to authentical and interact with GitHub.
  *
- * @internal Not intended for use by anything other than a Dockworker command.
+ * @INTERNAL This trait is intended only to be used by Dockworker commands. It
+ * references the Dockworker application root, which is not in its own scope.
  */
 trait GitHubClientTrait
 {
@@ -21,7 +22,18 @@ trait GitHubClientTrait
      *
      * @var \Github\Client
      */
-    protected $gitHubClient = null;
+    protected GitHubClient $gitHubClient;
+
+    /**
+     * Tests the GitHub client's connectivity to the current application's repository.
+     */
+    public function testApplicationCurrentRepoGitHubAccess(): void
+    {
+        $this->gitHubClient->api('repo')->show(
+            $this->applicationGitHubRepoOwner,
+            $this->applicationGitHubRepoName
+        );
+    }
 
     /**
      * Initializes, sets up the GitHub client for the current application's repository.
@@ -80,7 +92,7 @@ trait GitHubClientTrait
                     $this->gitHubClient->authenticate(
                         $gh_token,
                         null,
-                        GitHubClient::AUTH_ACCESS_TOKEN
+                        AuthMethod::ACCESS_TOKEN
                     );
 
                     # Test the client
@@ -93,7 +105,7 @@ trait GitHubClientTrait
                         $gh_token
                     );
                     $client_credentials_valid = true;
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $this->dockworkerIO->warning(
                         "Invalid GitHub personal access token detected. Please enter a valid token."
                     );
@@ -114,16 +126,5 @@ trait GitHubClientTrait
     protected function testGitHubClientConnectivity(): void
     {
         $this->gitHubClient->api('user')->repositories('unb-libraries');
-    }
-
-    /**
-     * Tests the GitHub client's connectivity to the current application's repository.
-     */
-    public function testApplicationCurrentRepoGitHubAccess(): void
-    {
-        $this->gitHubClient->api('repo')->show(
-            $this->applicationGitHubRepoOwner,
-            $this->applicationGitHubRepoName
-        );
     }
 }

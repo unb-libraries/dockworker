@@ -21,5 +21,4 @@ trait DockworkerIOTrait
             $this->io()->output()
         );
     }
-
 }

@@ -116,8 +116,8 @@ trait LocalHostFileOperationsTrait
             "local-$this->applicationName",
         ];
         $additional_hostnames = $this->getConfigItem(
-          Robo::Config(),
-          'dockworker.workflows.local.additional_hostnames'
+            Robo::Config(),
+            'dockworker.workflows.local.additional_hostnames'
         );
         if (!empty($additional_hostnames)) {
             $hostnames = array_merge($hostnames, $additional_hostnames);

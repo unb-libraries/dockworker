@@ -2,34 +2,52 @@
 
 namespace Dockworker\Docker;
 
+use Consolidation\Config\ConfigInterface;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Dockworker\Cli\DockerCliTrait;
 use Dockworker\Docker\DeployedResourcesTrait;
 use Dockworker\Docker\DockerContainer;
 use Dockworker\IO\DockworkerIO;
 
+/**
+ * Provides methods to access deployed local resources.
+ */
 trait DeployedLocalResourcesTrait
 {
     use DeployedResourcesTrait;
     use DockerCliTrait;
 
+    /**
+     * Registers the local docker container discovery method.
+     */
     protected function enableLocalResourceDiscovery(): void
     {
         $this->deployedContainerDiscoveryMethods[] = [
-          'name' => 'local docker containers',
-          'method' => 'discoverDeployedLocalContainers',
+            'name' => 'local docker containers',
+            'method' => 'discoverDeployedLocalContainers',
         ];
     }
 
+    /**
+     * Discovers deployed local containers.
+     *
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output.
+     * @param \Consolidation\Config\ConfigInterface $config
+     *   The configuration object.
+     *
+     * @return void
+     */
     private function discoverDeployedLocalContainers(
-      DockworkerIO $io,
-      $config,
-      $env
-    ) {
+        DockworkerIO $io,
+        ConfigInterface $config
+    ): void {
         foreach (
-          $this->getConfigItem(
-            $config,
-            'dockworker.application.workflows.local.deployments'
-          ) as $service
+            $this->getConfigItem(
+                $config,
+                'dockworker.application.workflows.local.deployments'
+            ) as $service
         ) {
             if (!empty($service['name'])) {
                 $this->deployedDockerContainers[] = $this->getContainerObjectFromLocalContainer($service['name']);
@@ -37,47 +55,79 @@ trait DeployedLocalResourcesTrait
         }
     }
 
-    private function getContainerObjectFromLocalContainer($name) {
+    /**
+     * Gets a docker container object from a local container.
+     *
+     * @param string $name
+     *   The name of the container.
+     *
+     * @return \Dockworker\Docker\DockerContainer
+     *   The container object.
+     */
+    private function getContainerObjectFromLocalContainer(
+        string $name
+    ): DockerContainer {
         $container_details = $this->getLocalContainerDetails($name);
         return DockerContainer::create(
-          $name,
-          'local',
-          'Local',
-          $container_details[0]['State']['Status'],
-          \DateTimeImmutable::createFromFormat(
-            \DateTimeInterface::RFC3339,
-            preg_replace(
-              '~\.\d+~',
-              '',
-              $container_details[0]['Created']
-            )
-          ),
-          [],
-          $this->getContainerExecEntryPointFromLocalContainer($name)
+            $name,
+            'local',
+            'Local',
+            $container_details[0]['State']['Status'],
+            DateTimeImmutable::createFromFormat(
+                DateTimeInterface::RFC3339,
+                preg_replace(
+                    '~\.\d+~',
+                    '',
+                    $container_details[0]['Created']
+                )
+            ),
+            [],
+            $this->getContainerExecEntryPointFromLocalContainer($name)
         );
     }
 
-    private function getLocalContainerDetails($name) {
+    /**
+     * Gets the details of a local container.
+     *
+     * @param string $name
+     *   The name of the container.
+     *
+     * @return array
+     *   The details of the container.
+     */
+    private function getLocalContainerDetails(string $name): array
+    {
         $cmd = $this->dockerRun(
-          [
-            'inspect',
-            '--format',
-            'json',
-            $name,
-          ],
-          'Discover local container details',
-          null,
-          false
+            [
+                'inspect',
+                '--format',
+                'json',
+                $name,
+            ],
+            'Discover local container details',
+            null,
+            false
         );
          return json_decode($cmd->getOutput(), true);
     }
 
-    private function getContainerExecEntryPointFromLocalContainer($pod_name) {
+    /**
+     * Gets the exec entry point for a local container.
+     *
+     * @param string $pod_name
+     *   The name of the container.
+     *
+     * @return array
+     *   The exec entry point.
+     */
+    private function getContainerExecEntryPointFromLocalContainer(
+        string $pod_name
+    ): array {
         return [
-          $this->cliTools['docker'],
-          'exec',
-          '-it',
-          $pod_name,
+            $this->cliTools['docker'],
+            'exec',
+            '-it',
+            $pod_name,
         ];
     }
 }

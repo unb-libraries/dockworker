@@ -5,7 +5,10 @@ namespace Dockworker\Storage;
 use Dockworker\System\FileSystemOperationsTrait;
 
 /**
- * Provides IO methods to an in-repository data storage for the application.
+ * Provides R/W methods to an in-repository data storage for the application.
+ *
+ * @INTERNAL This trait is intended only to be used by Dockworker commands. It
+ * references the Dockworker application root, which is not in its own scope.
  */
 trait ApplicationPersistentDataStorageTrait
 {
