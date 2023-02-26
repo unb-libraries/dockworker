@@ -38,7 +38,6 @@ class DockworkerShellCommands extends DockworkerCommands
                 $container->getContainerName()
             )
         );
-
         $container->run(
             [$this->getApplicationShell()],
             $this->dockworkerIO
