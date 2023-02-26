@@ -41,37 +41,4 @@ trait DockerImageBuilderTrait
           'Builds the docker image.'
         );
     }
-
-    /**
-     * Builds this application's docker images.
-     */
-    public function buildComposeApplication(): void
-    {
-        $this->dockworkerIO->section("[local] Building Application");
-        $this->dockerComposeRun(
-          [
-            'build',
-            '--pull',
-          ],
-          'Building the docker image.'
-        );
-    }
-
-    /**
-     * Starts the local docker compose application.
-     *
-     * @command local:start
-     * @hidden
-     */
-    public function startComposeApplication(): void
-    {
-        $this->dockworkerIO->section("[local] Starting Application");
-        $this->dockerComposeRun(
-          [
-            'up',
-            '-d',
-          ],
-          'Starting the local application.'
-        );
-    }
 }
