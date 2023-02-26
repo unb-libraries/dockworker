@@ -30,7 +30,6 @@ class DockworkerShellCommands extends DockworkerCommands
     {
         $this->initShellCommand($env);
         $container = $this->getDeployedContainer($env);
-
         $this->dockworkerIO->title('Creating Shell');
         $this->dockworkerIO->info(
             sprintf(

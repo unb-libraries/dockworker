@@ -35,15 +35,24 @@ trait DeployedResourcesTrait
      *   The configuration object.
      * @param string $env
      *   The environment to discover in.
+     * @param bool $exit_on_empty
+     *   TRUE if the application should exit on failure to discover containers.
      */
     protected function discoverDeployedResources(
         DockworkerIO $io,
         ConfigInterface $config,
-        string $env
+        string $env,
+        bool $exit_on_error = true
     ): void {
         if (!empty($this->deployedContainerDiscoveryMethods)) {
             $io->title('Resource Discovery');
             $this->discoverDeployedContainers($io, $config, $env);
+            if (empty($this->deployedDockerContainers)) {
+                $io->error("No containers were found in $env. Is the service running?");
+                if ($exit_on_empty) {
+                    exit(1);
+                }
+            }
         }
     }
 

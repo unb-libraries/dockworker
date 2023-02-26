@@ -50,7 +50,10 @@ trait DeployedLocalResourcesTrait
             ) as $service
         ) {
             if (!empty($service['name'])) {
-                $this->deployedDockerContainers[] = $this->getContainerObjectFromLocalContainer($service['name']);
+                $container = $this->getContainerObjectFromLocalContainer($service['name']);
+                if (!empty($container)) {
+                    $this->deployedDockerContainers[] = $container;
+                }
             }
         }
     }
@@ -61,29 +64,32 @@ trait DeployedLocalResourcesTrait
      * @param string $name
      *   The name of the container.
      *
-     * @return \Dockworker\Docker\DockerContainer
+     * @return \Dockworker\Docker\DockerContainer|null
      *   The container object.
      */
     private function getContainerObjectFromLocalContainer(
         string $name
-    ): DockerContainer {
+    ): DockerContainer|null {
         $container_details = $this->getLocalContainerDetails($name);
-        return DockerContainer::create(
-            $name,
-            'local',
-            'Local',
-            $container_details[0]['State']['Status'],
-            DateTimeImmutable::createFromFormat(
+        if (!empty($container_details[0]['State']['Status'])) {
+            return DockerContainer::create(
+                $name,
+                'local',
+                'Local',
+                $container_details[0]['State']['Status'],
+                DateTimeImmutable::createFromFormat(
                 DateTimeInterface::RFC3339,
                 preg_replace(
-                    '~\.\d+~',
-                    '',
-                    $container_details[0]['Created']
+                  '~\.\d+~',
+                  '',
+                  $container_details[0]['Created']
                 )
-            ),
-            [],
-            $this->getContainerExecEntryPointFromLocalContainer($name)
-        );
+                ),
+                [],
+                $this->getContainerExecEntryPointFromLocalContainer($name)
+            );
+        }
+        return null;
     }
 
     /**
