@@ -104,7 +104,9 @@ trait CliToolTrait
                 $timeout
             ),
             'mustRun',
+            [],
             'getOutput',
+            [],
             $expected_test_output,
             $fail_message
         );

@@ -29,8 +29,13 @@ trait PreFlightCheckTrait
      *   The command object.
      * @param string $test_method
      *   The method within the command to execute.
+     * @param array $test_method_args
+     *   The arguments to pass to the test method.
      * @param string $output_method
-     *   The method within the command that retrieves the output.
+     *   The method within the command that retrieves $test_method's output.
+     *   If empty, the output from $test_method is ignored and not tested.
+     * @param array $output_method_args
+     *   The arguments to pass to the output retrieval method.
      * @param string $expected_output
      *   A string that is expected to appear within the command's output.
      * @param array|string $fail_message
@@ -40,7 +45,9 @@ trait PreFlightCheckTrait
         string $label,
         object $command,
         string $test_method,
+        array $test_method_args,
         string $output_method,
+        array $output_method_args,
         string $expected_output,
         array|string $fail_message,
     ): void {
@@ -48,7 +55,9 @@ trait PreFlightCheckTrait
             $label,
             $command,
             $test_method,
+            $test_method_args,
             $output_method,
+            $output_method_args,
             $expected_output,
             $fail_message
         );

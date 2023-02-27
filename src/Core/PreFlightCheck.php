@@ -46,11 +46,25 @@ class PreFlightCheck
     private string $outputMethod;
 
     /**
+     * The arguments to pass to the output retrieval method.
+     *
+     * @var string[]
+     */
+    private array $outputMethodArgs;
+
+    /**
      * The method within the command to run as a test.
      *
      * @var string
      */
     private string $testMethod;
+
+    /**
+     * The arguments to pass to the test method.
+     *
+     * @var string[]
+     */
+    private array $testMethodArgs;
 
     /**
      * Constructor
@@ -61,9 +75,13 @@ class PreFlightCheck
      *   The command object to use in the check.
      * @param string $test_method
      *   The method within the command to execute.
+     * @param array $test_method_args
+     *   The arguments to pass to the test method.
      * @param string $output_method
      *   The method within the command that retrieves $test_method's output.
      *   If empty, the output from $test_method is ignored and not tested.
+     * @param array $output_method_args
+     *   The arguments to pass to the output retrieval method.
      * @param string $expected_output
      *   A string expected to appear within the $output_method's return.
      * @param array|string $fail_message
@@ -73,7 +91,9 @@ class PreFlightCheck
         string $label,
         object $command,
         string $test_method,
+        array $test_method_args,
         string $output_method,
+        array $output_method_args,
         string $expected_output,
         array|string $fail_message
     ) {
@@ -82,7 +102,9 @@ class PreFlightCheck
         $this->failMessage = $fail_message;
         $this->label = $label;
         $this->outputMethod = $output_method;
+        $this->outputMethodArgs = $output_method_args;
         $this->testMethod = $test_method;
+        $this->testMethodArgs = $test_method_args;
     }
 
     /**
@@ -94,9 +116,13 @@ class PreFlightCheck
      *   The command object to use in the check.
      * @param string $test_method
      *   The method within the command to execute.
+     * @param array $test_method_args
+     *   The arguments to pass to the test method.
      * @param string $output_method
      *   The method within the command that retrieves $test_method's output.
      *   If empty, the output from $test_method is ignored and not tested.
+     * @param array $output_method_args
+     *   The arguments to pass to the output retrieval method.
      * @param string $expected_output
      *   A string expected to appear within the $output_method's return.
      * @param array|string $fail_message
@@ -106,7 +132,9 @@ class PreFlightCheck
         string $label,
         object $command,
         string $test_method,
+        array $test_method_args,
         string $output_method,
+        array $output_method_args,
         string $expected_output,
         array|string $fail_message
     ): self {
@@ -114,7 +142,9 @@ class PreFlightCheck
             $label,
             $command,
             $test_method,
+            $test_method_args,
             $output_method,
+            $output_method_args,
             $expected_output,
             $fail_message
         );
@@ -136,7 +166,10 @@ class PreFlightCheck
             if (!$quiet) {
                 $io->say("$this->label...");
             }
-            $this->command->{$this->testMethod}();
+            call_user_func_array(
+              [$this->command, $this->testMethod],
+              $this->testMethodArgs
+            );
             if (!empty($this->outputMethod)) {
                 $this->checkOutput($io);
             }
@@ -157,7 +190,10 @@ class PreFlightCheck
      */
     private function checkOutput(DockworkerIO $io): void
     {
-        $output = $this->command->{$this->outputMethod}();
+        $output = call_user_func_array(
+          [$this->command, $this->outputMethod],
+          $this->outputMethodArgs
+        );
         if (
             !str_contains(
                 $output,

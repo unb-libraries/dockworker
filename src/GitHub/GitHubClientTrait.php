@@ -27,16 +27,18 @@ trait GitHubClientTrait
     /**
      * Tests the GitHub client's connectivity to the current application's repository.
      */
-    public function testApplicationCurrentRepoGitHubAccess(): void
-    {
+    public function testGitHubRepoAccess(
+      string $owner,
+      string $name
+    ): void {
         $this->gitHubClient->api('repo')->show(
-            $this->applicationGitHubRepoOwner,
-            $this->applicationGitHubRepoName
+            $owner,
+            $name
         );
     }
 
     /**
-     * Initializes, sets up the GitHub client for the current application's repository.
+     * Initializes, sets up a GitHub client for the application's repository.
      */
     protected function initGitHubClientApplicationRepo(): void
     {
@@ -48,8 +50,13 @@ trait GitHubClientTrait
                 $this->applicationGitHubRepoName
             ),
             $this,
-            'testApplicationCurrentRepoGitHubAccess',
+            'testGitHubRepoAccess',
+            [
+                $this->applicationGitHubRepoOwner,
+                $this->applicationGitHubRepoName,
+            ],
             '',
+            [],
             '',
             sprintf(
                 "Unable to access github://%s/%s. Please check your credentials and try again.",
