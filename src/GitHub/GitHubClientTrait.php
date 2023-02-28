@@ -27,7 +27,7 @@ trait GitHubClientTrait
     /**
      * Tests the GitHub client's connectivity to the current application's repository.
      */
-    public function testGitHubRepoAccess(
+    protected function testGitHubRepoAccess(
       string $owner,
       string $name
     ): void {

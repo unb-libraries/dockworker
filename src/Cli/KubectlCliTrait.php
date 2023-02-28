@@ -15,7 +15,7 @@ trait KubectlCliTrait
     /**
      * Registers kubectl as a required CLI tool.
      */
-    public function registerKubectlCliTool(DockworkerIO $io): void
+    protected function registerKubectlCliTool(DockworkerIO $io): void
     {
         $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/kubectl.yml";
         $this->registerCliToolFromYaml($file_path, $io);

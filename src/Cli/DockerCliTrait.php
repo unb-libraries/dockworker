@@ -15,7 +15,7 @@ trait DockerCliTrait
     /**
      * Registers docker as a required CLI tool.
      */
-    public function registerDockerCliTool(DockworkerIO $io): void
+    protected function registerDockerCliTool(DockworkerIO $io): void
     {
         $file_path = "$this->applicationRoot/vendor/unb-libraries/dockworker/data/cli-tools/docker.yml";
         $this->registerCliToolFromYaml($file_path, $io);
