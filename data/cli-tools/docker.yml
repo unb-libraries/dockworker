@@ -9,6 +9,7 @@ tool:
     -
       label: Installation
       uri: https://docs.docker.com/engine/install/
+  env_override: DOCKER_PATH
   healthcheck:
     command:
       - ps

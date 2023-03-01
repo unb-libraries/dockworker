@@ -47,6 +47,7 @@ trait CliToolTrait
             $tool['tool']['healthcheck']['label'],
             $tool['tool']['healthcheck']['timeout'],
             $tool['tool']['healthcheck']['fail-message'],
+            $tool['tool']['env_override'],
             $io
         );
     }
@@ -72,6 +73,8 @@ trait CliToolTrait
      *   The timeout in seconds or null to disable
      * @param array|string $fail_message
      *   The message to display if the command fails.
+     * @param string $env_override
+     *   The environment variable that overrides the config path to the tool.
      * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
      */
@@ -85,6 +88,7 @@ trait CliToolTrait
         string $testing_label,
         ?float $timeout,
         array|string $fail_message,
+        string $env_override,
         DockworkerIO $io
     ): void {
         $tool_bin_path = $this->getCliToolBinaryPath(
@@ -92,6 +96,7 @@ trait CliToolTrait
             $description,
             $default_binpath,
             $reference_uris,
+            $env_override,
             $io
         );
 
@@ -158,6 +163,8 @@ trait CliToolTrait
      *   The default path to the tool.
      * @param array $reference_uris
      *   The URI to the tool's installation instructions.
+     * @param string $env_override
+     *   The environment variable that overrides the config path to the tool.
      * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
      *
@@ -169,6 +176,7 @@ trait CliToolTrait
         string $description,
         string $default_binpath,
         array $reference_uris,
+        string $env_override,
         DockworkerIO $io
     ): string {
         $bin = '';
@@ -180,7 +188,8 @@ trait CliToolTrait
                 "Enter the full path to the installed $name binary on this PC",
                 $default_binpath,
                 $this->getWarningMessageFromTool($name, $description),
-                $reference_uris
+                $reference_uris,
+                $env_override,
             );
             if (!file_exists($bin) || !is_executable($bin)) {
                 $this->dockworkerIO->warning(

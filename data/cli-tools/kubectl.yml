@@ -9,6 +9,7 @@ tool:
     -
       label: Installation
       uri: https://stackoverflowteams.com/c/unblibsystems/questions/180/181
+  env_override: KUBECTL_PATH
   healthcheck:
     command:
       - api-resources
