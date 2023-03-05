@@ -26,6 +26,7 @@
     "knplabs/github-api": "^3",
     "nyholm/psr7": "^1.5",
     "php": "^8.1",
+    "sendgrid/php-http-client": "^3",
     "symfony/http-client": "^6.2"
   },
   "license": "MIT",

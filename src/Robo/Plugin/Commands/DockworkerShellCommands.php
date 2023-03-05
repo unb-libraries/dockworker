@@ -8,6 +8,7 @@ use Dockworker\Docker\DeployedLocalResourcesTrait;
 use Dockworker\DockworkerCommands;
 use Dockworker\GitHub\GitHubClientTrait;
 use Dockworker\K8s\DeployedK8sResourcesTrait;
+use Dockworker\StackExchange\StackExchangeTeamClientTrait;
 use Robo\Robo;
 
 /**
@@ -20,11 +21,13 @@ class DockworkerShellCommands extends DockworkerCommands
     use DockerCliTrait;
     use GitHubClientTrait;
     use KubectlCliTrait;
+    use StackExchangeTeamClientTrait;
 
     /**
      * Opens a shell into the application.
      *
-     * @command shell
+     * @command application:shell
+     * @aliases shell
      */
     public function openApplicationShell($env = 'local'): void
     {
@@ -56,6 +59,7 @@ class DockworkerShellCommands extends DockworkerCommands
             // $this->initGitHubClientApplicationRepo();
             $this->registerDockerCliTool($this->dockworkerIO);
             $this->enableLocalResourceDiscovery();
+            $this->setStackTeamsClient('unblibsystems');
         } else {
             $this->registerKubectlCliTool($this->dockworkerIO);
             $this->enableK8sResourceDiscovery();

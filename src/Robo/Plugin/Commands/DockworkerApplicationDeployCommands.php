@@ -13,7 +13,7 @@ use Dockworker\System\LocalHostFileOperationsTrait;
 /**
  * Provides commands for building and deploying the application locally.
  */
-class DockworkerLocalApplicationCommands extends DockworkerCommands
+class DockworkerApplicationDeployCommands extends DockworkerCommands
 {
     use DockerCliTrait;
     use DockerComposeTrait;
@@ -24,7 +24,7 @@ class DockworkerLocalApplicationCommands extends DockworkerCommands
   /**
    * @hook post-init
    */
-    public function initRequirements(): void
+    public function initDeployRequirements(): void
     {
         $this->registerDockerCliTool($this->dockworkerIO);
         $this->checkPreflightChecks($this->dockworkerIO);
@@ -33,12 +33,12 @@ class DockworkerLocalApplicationCommands extends DockworkerCommands
     /**
      * Deploys the application locally.
      *
-     * @command deploy
-     * @aliases start-over redeploy
+     * @command application:deploy
+     * @aliases deploy redeploy start-over
      *
      * @throws \Dockworker\DockworkerException
      */
-    public function deployComposeApplication(): void
+    public function deployApplication(): void
     {
         $this->dockworkerIO->title("Deploying $this->applicationName Locally");
         $this->stopRemoveComposeApplicationData();
