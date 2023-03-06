@@ -59,4 +59,22 @@ trait FileSystemOperationsTrait
             throw new DockworkerException("The file $path does not exist.");
         }
     }
+
+    protected function setTreeGroupOwnershipToCurrentUser(string $path): void
+    {
+        $this->exceptIfFileDoesNotExist($path);
+        $finder = new Finder();
+        $finder->files()->in(__DIR__);
+        foreach ($finder as $file) {
+            $this->setFileGroupOwnershipToCurrentUser($file->getRealPath());
+        }
+        $this->setDirectoryGroupOwnershipToCurrentUser($path);
+    }
+
+    protected function setFileGroupOwnershipToCurrentUser(string $path): void
+    {
+        $this->exceptIfFileDoesNotExist($path);
+        chgrp($path, posix_getgid());
+    }
+
 }
