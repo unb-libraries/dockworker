@@ -106,7 +106,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-image]
     if:
-      contains(fromJSON(${{ inputs.deploy-branches }}), github.ref)
+      contains(fromJSON(inputs.deploy-branches), github.ref_name)
     steps:
       - uses: FranzDiebold/github-env-vars-action@v2
       -
