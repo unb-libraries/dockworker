@@ -13,14 +13,14 @@ trait RoboConfigTrait
   /**
    * Sets a property from a config element.
    *
-   * @param \Consolidation\Config\ConfigInterface $config
+   * @param ConfigInterface $config
    *   The configuration object.
    * @param string $property
    *  The property to set.
    * @param string $config_key
    *  The namespace to obtain the configuration value from.
    *
-   * @throws \Dockworker\DockworkerException
+   * @throws DockworkerException
    */
     protected function setPropertyFromConfigKey(
         ConfigInterface $config,
@@ -43,7 +43,7 @@ trait RoboConfigTrait
     /**
     * Gets a configuration item from the Dockworker configuration.
     *
-    * @param \Consolidation\Config\ConfigInterface $config
+    * @param ConfigInterface $config
     *   The configuration object.
     * @param string $key
     *   The configuration key to retrieve.

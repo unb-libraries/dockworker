@@ -16,7 +16,7 @@ trait PreFlightCheckTrait
     /**
      * The currently registered preflight checks.
      *
-     * @var \Dockworker\Core\PreFlightCheck[]
+     * @var PreFlightCheck[]
      */
     protected array $preFlightChecks = [];
 
@@ -66,10 +66,8 @@ trait PreFlightCheckTrait
     /**
      * Checks all registered preflight checks.
      *
-     * @param \Dockworker\IO\DockworkerIO $io
+     * @param DockworkerIO $io
      *   The IO to use for input and output.
-     *
-     * @return void
      */
     protected function checkPreflightChecks(DockworkerIO $io): void
     {

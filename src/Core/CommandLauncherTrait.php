@@ -24,7 +24,7 @@ trait CommandLauncherTrait
      * @param string $exception_message
      *   The message to display if a non-zero code is returned.
      *
-     * @throws \Dockworker\DockworkerException
+     * @throws DockworkerException
      *
      * @return int
      *   The return code of the command.

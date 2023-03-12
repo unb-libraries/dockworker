@@ -3,6 +3,7 @@
 namespace Dockworker\System;
 
 use Dockworker\DockworkerException;
+use Symfony\Component\Finder\Finder;
 
 /**
  * Provides methods to interact with a local filesystem.
@@ -51,7 +52,7 @@ trait FileSystemOperationsTrait
    * @param string $path
    *   The path to the file.
    *
-   * @throws \Dockworker\DockworkerException
+   * @throws DockworkerException
    */
     protected function exceptIfFileDoesNotExist(string $path): void
     {
@@ -60,6 +61,11 @@ trait FileSystemOperationsTrait
         }
     }
 
+    /**
+     * @param string $path
+     * @return void
+     * @throws DockworkerException
+     */
     protected function setTreeGroupOwnershipToCurrentUser(string $path): void
     {
         $this->exceptIfFileDoesNotExist($path);
@@ -68,13 +74,17 @@ trait FileSystemOperationsTrait
         foreach ($finder as $file) {
             $this->setFileGroupOwnershipToCurrentUser($file->getRealPath());
         }
-        $this->setDirectoryGroupOwnershipToCurrentUser($path);
+        $this->setFileGroupOwnershipToCurrentUser($path);
     }
 
+    /**
+     * @param string $path
+     * @return void
+     * @throws DockworkerException
+     */
     protected function setFileGroupOwnershipToCurrentUser(string $path): void
     {
         $this->exceptIfFileDoesNotExist($path);
         chgrp($path, posix_getgid());
     }
-
 }

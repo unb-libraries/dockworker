@@ -32,7 +32,7 @@ class DockerContainer
     /**
      * The time the container was created.
      *
-     * @var \DateTimeImmutable
+     * @var DateTimeImmutable
      */
     protected DateTimeImmutable $containerCreationTimestamp;
 
@@ -75,7 +75,7 @@ class DockerContainer
      *   The image used to create the container.
      * @param string $status
      *   The state/status of the container.
-     * @param \DateTimeImmutable $creation_timestamp
+     * @param DateTimeImmutable $creation_timestamp
      *   The time the container was created.
      * @param array $controlled_by
      *   The entities controlling the container.
@@ -111,14 +111,14 @@ class DockerContainer
      *   The image used to create the container.
      * @param string $status
      *   The state/status of the container.
-     * @param \DateTimeImmutable $creation_timestamp
+     * @param DateTimeImmutable $creation_timestamp
      *   The time the container was created.
      * @param array $controlled_by
      *   The entities controlling the container.
      * @param array $exec_entry_point
      *   The CLI execution entry point for the container.
      *
-     * @return \Dockworker\Docker\DockerContainer
+     * @return DockerContainer
      *   The new DockerContainer object.
      */
     public static function create(
@@ -146,7 +146,7 @@ class DockerContainer
      *
      * @param array $command
      *   The command to run in the container.
-     * @param \Dockworker\IO\DockworkerIO $io
+     * @param DockworkerIO $io
      *   The IO to use for input and output.
      * @param bool $use_tty
      *   TRUE to attach to a TTY for the command.

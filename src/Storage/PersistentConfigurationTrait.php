@@ -28,7 +28,7 @@ trait PersistentConfigurationTrait
     /**
      * The persistent configuration.
      *
-     * @var \Consolidation\Config\ConfigInterface
+     * @var ConfigInterface
      */
     protected ConfigInterface $persistentConfiguration;
 
@@ -134,13 +134,10 @@ trait PersistentConfigurationTrait
      *   The path to load the configuration from.
      * @param string $namespace
      *   The configuration namespace to initialize in.
-     * @param bool $force_reload
-     *   If TRUE, config is always loaded from disk regardless of the state.
      */
     protected function initPersistentConfiguration(
         string $path,
-        string $namespace,
-        bool $force_reload = false
+        string $namespace
     ): void {
         $this->persistentConfigurationFilePath = $this->getPathFromPathElements(
             [

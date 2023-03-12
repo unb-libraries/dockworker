@@ -27,10 +27,8 @@ trait CliToolTrait
      *
      * @param string $filepath
      *   The path to the YAML file containing the tool definition.
-     * @param \Dockworker\IO\DockworkerIO $io
+     * @param DockworkerIO $io
      *   The IO to use for input and output.
-     *
-     * @return void
      */
     protected function registerCliToolFromYaml(
         string $filepath,
@@ -75,7 +73,7 @@ trait CliToolTrait
      *   The message to display if the command fails.
      * @param string $env_override
      *   The environment variable that overrides the config path to the tool.
-     * @param \Dockworker\IO\DockworkerIO $io
+     * @param DockworkerIO $io
      *   The IO to use for input and output.
      */
     protected function registerCliTool(
@@ -131,7 +129,7 @@ trait CliToolTrait
      * @param float|null $timeout
      *   The timeout in seconds or null to disable
      *
-     * @return \Dockworker\Cli\CliCommand
+     * @return CliCommand
      */
     private function getCliToolPreflightCheckCommand(
         string $tool_bin_path,
@@ -165,7 +163,7 @@ trait CliToolTrait
      *   The URI to the tool's installation instructions.
      * @param string $env_override
      *   The environment variable that overrides the config path to the tool.
-     * @param \Dockworker\IO\DockworkerIO $io
+     * @param DockworkerIO $io
      *   The IO to use for input and output.
      *
      * @return string
@@ -192,7 +190,7 @@ trait CliToolTrait
                 $env_override,
             );
             if (!file_exists($bin) || !is_executable($bin)) {
-                $this->dockworkerIO->warning(
+                $io->warning(
                     "$bin does not exist or is not executable"
                 );
                 $this->setDockworkerPersistentDataConfigurationItem(

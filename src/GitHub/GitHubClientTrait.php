@@ -2,25 +2,24 @@
 
 namespace Dockworker\GitHub;
 
+use Dockworker\Core\PreFlightCheckTrait;
 use Dockworker\Storage\DockworkerPersistentDataStorageTrait;
 use Exception;
 use Github\AuthMethod;
 use Github\Client as GitHubClient;
 
 /**
- * Provides methods to authentical and interact with GitHub.
- *
- * @INTERNAL This trait is intended only to be used by Dockworker commands. It
- * references the Dockworker application root, which is not in its own scope.
+ * Provides methods to authenticate and interact with a GitHub repo.
  */
 trait GitHubClientTrait
 {
     use DockworkerPersistentDataStorageTrait;
+    use PreFlightCheckTrait;
 
     /**
      * The GitHub Client.
      *
-     * @var \Github\Client
+     * @var GitHubClient
      */
     protected GitHubClient $gitHubClient;
 
@@ -28,8 +27,8 @@ trait GitHubClientTrait
      * Tests the GitHub client's connectivity to the current application's repository.
      */
     protected function testGitHubRepoAccess(
-      string $owner,
-      string $name
+        string $owner,
+        string $name
     ): void {
         $this->gitHubClient->api('repo')->show(
             $owner,
@@ -40,28 +39,30 @@ trait GitHubClientTrait
     /**
      * Initializes, sets up a GitHub client for the application's repository.
      */
-    protected function initGitHubClientApplicationRepo(): void
-    {
-        $this->setGitHubClient();
+    protected function initGitHubClientApplicationRepo(
+        string $owner,
+        string $name
+    ): void {
+        $this->setGitHubClient($owner);
         $this->registerNewPreflightCheck(
             sprintf(
                 "Testing GitHub API connectivity for %s/%s",
-                $this->applicationGitHubRepoOwner,
-                $this->applicationGitHubRepoName
+                $owner,
+                $name
             ),
             $this,
             'testGitHubRepoAccess',
             [
-                $this->applicationGitHubRepoOwner,
-                $this->applicationGitHubRepoName,
+                $owner,
+                $name,
             ],
             '',
             [],
             '',
             sprintf(
                 "Unable to access github://%s/%s. Please check your credentials and try again.",
-                $this->applicationGitHubRepoOwner,
-                $this->applicationGitHubRepoName
+                $owner,
+                $name
             )
         );
     }
@@ -69,7 +70,7 @@ trait GitHubClientTrait
     /**
      * Configures and sets up the GitHub client, registering any credentials.
      */
-    protected function setGitHubClient(): void
+    protected function setGitHubClient($owner): void
     {
         $client_credentials_valid = false;
         $namespace = 'github';
@@ -103,7 +104,7 @@ trait GitHubClientTrait
                     );
 
                     # Test the client
-                    $this->testGitHubClientConnectivity();
+                    $this->testGitHubClientConnectivity($owner);
 
                     # Credentials were valid, write them.
                     $this->setDockworkerPersistentDataConfigurationItem(
@@ -130,8 +131,8 @@ trait GitHubClientTrait
     /**
      * Tests the GitHub client's connectivity to the GitHub API.
      */
-    protected function testGitHubClientConnectivity(): void
+    protected function testGitHubClientConnectivity($owner): void
     {
-        $this->gitHubClient->api('user')->repositories('unb-libraries');
+        $this->gitHubClient->api('user')->repositories($owner);
     }
 }

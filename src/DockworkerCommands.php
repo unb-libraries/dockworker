@@ -19,7 +19,11 @@ use Robo\Tasks;
  *
  * This is not a command class. It should not contain any hooks or commands.
  */
-abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface, ContainerAwareInterface, IOAwareInterface, LoggerAwareInterface
+abstract class DockworkerCommands extends Tasks implements
+    ConfigAwareInterface,
+    ContainerAwareInterface,
+    IOAwareInterface,
+    LoggerAwareInterface
 {
     use ConfigAwareTrait;
     use ContainerAwareTrait;
@@ -104,7 +108,7 @@ abstract class DockworkerCommands extends Tasks implements ConfigAwareInterface,
     /**
      * DockworkerCommands constructor.
      *
-     * @throws \Dockworker\DockworkerException
+     * @throws DockworkerException
      */
     public function __construct()
     {

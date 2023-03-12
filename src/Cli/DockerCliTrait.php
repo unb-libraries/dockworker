@@ -7,6 +7,9 @@ use Dockworker\IO\DockworkerIO;
 
 /**
  * Provides methods to interact with the docker CLI application.
+ *
+ * @INTERNAL This trait is intended only to be used by Dockworker commands. It
+ * references user properties which are not in its own scope.
  */
 trait DockerCliTrait
 {

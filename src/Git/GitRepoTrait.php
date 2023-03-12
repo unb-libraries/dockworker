@@ -3,6 +3,7 @@
 namespace Dockworker\Git;
 
 use CzProject\GitPhp\Git;
+use CzProject\GitPhp\GitException;
 use CzProject\GitPhp\GitRepository;
 use Dockworker\DockworkerException;
 
@@ -17,7 +18,7 @@ trait GitRepoTrait
     /**
      * The application's git repository.
      *
-     * @var \CzProject\GitPhp\GitRepository;
+     * @var GitRepository;
      */
     protected GitRepository $applicationRepository;
 
@@ -26,7 +27,7 @@ trait GitRepoTrait
      *
      * @hook pre-init
      *
-     * @throws \Dockworker\DockworkerException
+     * @throws DockworkerException
      */
     public function initGitRepo(): void
     {
@@ -42,7 +43,7 @@ trait GitRepoTrait
    * @param string $path
    *   The path to the git repository.
    *
-   * @return \CzProject\GitPhp\GitRepository
+   * @return GitRepository
    *   The git repository object.
    */
     protected function getGitRepoFromPath(string $path): GitRepository
@@ -56,14 +57,14 @@ trait GitRepoTrait
      *
      * 'Inspired' by https://github.com/czproject/git-php/pull/42/files
      *
-     * @param \CzProject\GitPhp\GitRepository $repository
+     * @param GitRepository $repository
      *   The repository to query for changed files.
      * @param string $file_mask
      *   The regex pattern to search for, as a string.
      *
      * @return string[]
      *   The changed files, keyed by file path and values indicating status.
-     * @throws \CzProject\GitPhp\GitException
+     * @throws GitException
      */
     protected function getGitRepoChanges(
         GitRepository $repository,

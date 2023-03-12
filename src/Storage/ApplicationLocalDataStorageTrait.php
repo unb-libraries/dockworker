@@ -49,8 +49,6 @@ trait ApplicationLocalDataStorageTrait
      *   The home directory of the current user.
      * @param string $application_id
      *   The application identifier.
-     *
-     * @return void
      */
     protected function initApplicationLocalDataStorageDir(
         string $user_home_dir,

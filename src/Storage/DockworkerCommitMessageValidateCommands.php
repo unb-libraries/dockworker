@@ -34,7 +34,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
      * @command git:commit:validate-message
      * @usage /tmp/commit_msg.txt
      *
-     * @throws \Dockworker\DockworkerException
+     * @throws DockworkerException
      */
     public function validateCommitMsg(
         string $message_file
@@ -77,7 +77,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
      *
      * @hook validate git:commit:validate-message
      *
-     * @throws \Dockworker\DockworkerException
+     * @throws DockworkerException
      */
     public function validateCommitMsgValidator(CommandData $commandData): void
     {

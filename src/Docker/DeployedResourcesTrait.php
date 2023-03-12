@@ -5,7 +5,6 @@ namespace Dockworker\Docker;
 use Consolidation\Config\ConfigInterface;
 use Dockworker\IO\DockworkerIO;
 use Grasmash\SymfonyConsoleSpinner\Checklist;
-use Robo\Config\Config;
 
 /**
  * Provides methods to access deployed docker and kubernetes resources.
@@ -15,7 +14,7 @@ trait DeployedResourcesTrait
     /**
      * The currently deployed containers.
      *
-     * @var \Dockworker\Docker\DockerContainer[]
+     * @var DockerContainer[]
      */
     protected array $deployedDockerContainers = [];
 
@@ -29,13 +28,13 @@ trait DeployedResourcesTrait
     /**
      * Discovers the currently deployed kubernetes pods.
      *
-     * @param \Dockworker\IO\DockworkerIO $io
+     * @param DockworkerIO $io
      *   The IO to use for input and output.
-     * @param \Consolidation\Config\ConfigInterface $config
+     * @param ConfigInterface $config
      *   The configuration object.
      * @param string $env
      *   The environment to discover in.
-     * @param bool $exit_on_empty
+     * @param bool $exit_on_error
      *   TRUE if the application should exit on failure to discover containers.
      */
     protected function discoverDeployedResources(
@@ -49,7 +48,7 @@ trait DeployedResourcesTrait
             $this->discoverDeployedContainers($io, $config, $env);
             if (empty($this->deployedDockerContainers)) {
                 $io->error("No containers were found in $env. Is the service running?");
-                if ($exit_on_empty) {
+                if ($exit_on_error) {
                     exit(1);
                 }
             }
@@ -59,9 +58,9 @@ trait DeployedResourcesTrait
     /**
      * Discovers the currently deployed containers.
      *
-     * @param \Dockworker\IO\DockworkerIO $io
+     * @param DockworkerIO $io
      *   The IO to use for input and output.
-     * @param \Consolidation\Config\ConfigInterface $config
+     * @param ConfigInterface $config
      *   The configuration object.
      * @param string $env
      *   The environment to discover in.
@@ -97,7 +96,7 @@ trait DeployedResourcesTrait
      *   If multiple containers are available, should one be picked? If false,
      *   the first container will be returned.
      *
-     * @return \Dockworker\Docker\DockerContainer|null
+     * @return DockerContainer|null
      *   The container object, or null if none are available.
      */
     protected function getDeployedContainer(
@@ -121,7 +120,7 @@ trait DeployedResourcesTrait
      * @param string $env
      *   The environment to retrieve the containers from.
      *
-     * @return \Dockworker\Docker\DockerContainer[]
+     * @return DockerContainer[]
      *   The container objects.
      */
     private function getDeployedContainers(string $env): array

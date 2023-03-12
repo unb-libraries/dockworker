@@ -6,9 +6,10 @@ use Dockworker\Cli\DockerCliTrait;
 use Dockworker\IO\DockworkerIOTrait;
 
 /**
- * Provides commands for interacting with Docker images.
+ * Provides methods for interacting with Docker compose stacks.
  *
- * @TODO This should be moved to a trait.
+ * @INTERNAL This trait is intended only to be used by Dockworker commands. It
+ * references user properties which are not in its own scope.
  */
 trait DockerComposeTrait
 {
@@ -22,11 +23,11 @@ trait DockerComposeTrait
     {
         $this->dockworkerIO->section("[local] Building Application");
         $this->dockerComposeRun(
-          [
-            'build',
-            '--pull',
-          ],
-          'Building the docker image.'
+            [
+                'build',
+                '--pull',
+            ],
+            'Building the docker image.'
         );
     }
 
@@ -37,11 +38,11 @@ trait DockerComposeTrait
     {
         $this->dockworkerIO->section("[local] Starting Application");
         $this->dockerComposeRun(
-          [
-            'up',
-            '-d',
-          ],
-          'Starting the local application.'
+            [
+                'up',
+                '-d',
+            ],
+            'Starting the local application.'
         );
     }
 
@@ -53,13 +54,13 @@ trait DockerComposeTrait
     {
         $this->dockworkerIO->section("[local] Removing existing application data");
         $this->dockerComposeRun(
-          [
-            'down',
-            '--rmi',
-            'local',
-            '-v',
-          ],
-          'Stopping he compose application and removing its data.'
+            [
+                'down',
+                '--rmi',
+                'local',
+                '-v',
+            ],
+            'Stopping he compose application and removing its data.'
         );
     }
 
@@ -70,12 +71,12 @@ trait DockerComposeTrait
     {
         $this->dockworkerIO->section("[local] Displaying application logs");
         $this->dockerComposeRun(
-          [
-            'logs',
-            '-f',
-            $this->applicationName,
-          ],
-          'Display logs for the docker compose application.'
+            [
+                'logs',
+                '-f',
+                $this->applicationName,
+            ],
+            'Display logs for the docker compose application.'
         );
     }
 }

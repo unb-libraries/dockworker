@@ -32,17 +32,11 @@ trait DeployedLocalResourcesTrait
     /**
      * Discovers deployed local containers.
      *
-     * @param \Dockworker\IO\DockworkerIO $io
-     *   The IO to use for input and output.
-     * @param \Consolidation\Config\ConfigInterface $config
+     * @param ConfigInterface $config
      *   The configuration object.
-     *
-     * @return void
      */
-    private function discoverDeployedLocalContainers(
-        DockworkerIO $io,
-        ConfigInterface $config
-    ): void {
+    private function discoverDeployedLocalContainers(ConfigInterface $config): void
+    {
         foreach (
             $this->getConfigItem(
                 $config,
@@ -78,12 +72,12 @@ trait DeployedLocalResourcesTrait
                 'Local',
                 $container_details[0]['State']['Status'],
                 DateTimeImmutable::createFromFormat(
-                DateTimeInterface::RFC3339,
-                preg_replace(
-                  '~\.\d+~',
-                  '',
-                  $container_details[0]['Created']
-                )
+                    DateTimeInterface::RFC3339,
+                    preg_replace(
+                        '~\.\d+~',
+                        '',
+                        $container_details[0]['Created']
+                    )
                 ),
                 [],
                 $this->getContainerExecEntryPointFromLocalContainer($name)

@@ -11,6 +11,9 @@ use Dockworker\IO\DockworkerIO;
 
 /**
  * Provides methods to access deployed kubernetes resources.
+ *
+ * @INTERNAL This trait is intended only to be used by Dockworker commands. It
+ * references user properties which are not in its own scope.
  */
 trait DeployedK8sResourcesTrait
 {
@@ -30,18 +33,10 @@ trait DeployedK8sResourcesTrait
     /**
      * Discovers the currently deployed kubernetes pods.
      *
-     * @param \Dockworker\IO\DockworkerIO $io
-     *   The IO to use for input and output.
-     * @param \Consolidation\Config\ConfigInterface $config
+     * @param ConfigInterface $config
      *   The configuration object.
-     * @param string $env
-     *   The environment to discover in.
      */
-    private function discoverDeployedK8sContainers(
-        DockworkerIO $io,
-        ConfigInterface $config,
-        string $env
-    ): void {
+    private function discoverDeployedK8sContainers(ConfigInterface $config): void {
         foreach (
             $this->getConfigItem(
                 $config,
@@ -113,7 +108,7 @@ trait DeployedK8sResourcesTrait
         );
         $output = $cmd->getOutput();
         if (!empty($output)) {
-            return $this->getReplicaSetsFromDeploymentDescribeOutput($output);
+            return $this->getReplicaSetsFromDeploymentDescribeOutput($output, $type);
         }
         return [];
     }
@@ -228,7 +223,7 @@ trait DeployedK8sResourcesTrait
      * @param string[] $parents
      *   The replica controllers of the container.
      *
-     * @return \Dockworker\Docker\DockerContainer
+     * @return DockerContainer
      *   The container object.
      */
     private function getContainerObjectFromK8sPod(

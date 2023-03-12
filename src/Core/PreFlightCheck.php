@@ -153,7 +153,7 @@ class PreFlightCheck
     /**
      * Checks the command operates and returns as expected.
      *
-     * @param \Dockworker\IO\DockworkerIO $io
+     * @param DockworkerIO $io
      *   The IO to use for input and output.
      * @param bool $quiet
      *   TRUE if the check should avoid non-error output.
@@ -167,8 +167,8 @@ class PreFlightCheck
                 $io->say("$this->label...");
             }
             call_user_func_array(
-              [$this->command, $this->testMethod],
-              $this->testMethodArgs
+                [$this->command, $this->testMethod],
+                $this->testMethodArgs
             );
             if (!empty($this->outputMethod)) {
                 $this->checkOutput($io);
@@ -182,7 +182,7 @@ class PreFlightCheck
     /**
      * Checks the command's output for the expected output.
      *
-     * @param \Dockworker\IO\DockworkerIO $io
+     * @param DockworkerIO $io
      *   The IO to use for input and output.
      *
      * @throws \Exception
@@ -191,8 +191,8 @@ class PreFlightCheck
     private function checkOutput(DockworkerIO $io): void
     {
         $output = call_user_func_array(
-          [$this->command, $this->outputMethod],
-          $this->outputMethodArgs
+            [$this->command, $this->outputMethod],
+            $this->outputMethodArgs
         );
         if (
             !str_contains(

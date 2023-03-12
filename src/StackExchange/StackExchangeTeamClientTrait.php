@@ -31,9 +31,14 @@ trait StackExchangeTeamClientTrait
             $sot_token = $this->getSetDockworkerPersistentDataConfigurationItem(
                 $namespace,
                 $auth_token_key,
-                "Enter the personal access token (PAT) that Dockworker should use to authenticate [$team_slug] in StackOverflowTeams",
+                sprintf(
+                    'Enter the Stack Overflow Teams Personal Access Token (PAT) for %s',
+                    $team_slug
+                ),
                 '',
-                'Dockworker authenticates to Stack Overflow Teams using a Personal Access Token (PAT). This allows all Dockworker actions to be performed as your GitHub user. Personal access tokens are an alternative to using a traditional user/password authentication.',
+                'Dockworker authenticates to Stack Overflow Teams using a Personal Access Token (PAT). This
+                    allows all Dockworker actions to be performed as your GitHub user. Personal access tokens are an
+                    alternative to using a traditional user/password authentication.',
                 [
                     [
                         'label' => 'HOWTO',
@@ -49,13 +54,11 @@ trait StackExchangeTeamClientTrait
             } else {
                 try {
                     $client = StackExchangeClient::createClient(
-                      $team_slug,
-                      $sot_token
+                        $team_slug,
+                        $sot_token
                     );
                     $this->testStackTeamsClientConnectivity(
-                      $client,
-                      $team_slug,
-                      $sot_token
+                        $client,
                     );
 
                     # Credentials were valid, write them.
@@ -68,7 +71,10 @@ trait StackExchangeTeamClientTrait
                     $client_credentials_valid = true;
                 } catch (Exception $e) {
                     $this->dockworkerIO->warning(
-                        "Invalid Stack Overflow personal access token (PAT) detected for $team_slug. Please enter a valid token."
+                        sprintf(
+                            'Invalid Stack Overflow personal access token (PAT) detected for %s.',
+                            $team_slug
+                        )
                     );
                     # Token was invalid, clear it.
                     $this->setDockworkerPersistentDataConfigurationItem(
@@ -82,9 +88,9 @@ trait StackExchangeTeamClientTrait
     }
 
     protected function testStackTeamsClientConnectivity(
-      StackExchangeClient $client
+        StackExchangeClient $client
     ): void {
         $response = $client->getArticle('192');
-        die(print_r($response, TRUE));
+        die(print_r($response, true));
     }
 }
