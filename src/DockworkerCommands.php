@@ -99,6 +99,13 @@ abstract class DockworkerCommands extends Tasks implements
     protected string $userHomeDir;
 
     /**
+     * The current user's primary gid.
+     *
+     * @var string
+     */
+    protected string $userGid;
+
+    /**
      * The current user's operating system username.
      *
      * @var string
@@ -124,6 +131,7 @@ abstract class DockworkerCommands extends Tasks implements
             $this->config
         );
         $this->userName = get_current_user();
+        $this->userGid = posix_getgid();
         $this->userHomeDir = $_SERVER['HOME'];
         $this->setCoreProperties();
     }

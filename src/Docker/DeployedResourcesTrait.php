@@ -80,7 +80,7 @@ trait DeployedResourcesTrait
                         $discovery['name']
                     )
                 );
-                $this->{$discovery['method']}($io, $config, $env);
+                $this->{$discovery['method']}($config);
                 $checklist->completePreviousItem();
             }
             $io->newLine();
