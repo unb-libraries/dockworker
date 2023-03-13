@@ -22,6 +22,12 @@ trait StackExchangeTeamClientTrait
      */
     protected array $stackExchangeTeamClients = [];
 
+  /**
+   * Sets up a Stack Exchange Teams client.
+   *
+   * @param string $team_slug
+   *   The Stack Exchange Teams slug to set the client for.
+   */
     protected function setStackTeamsClient(string $team_slug): void
     {
         $client_credentials_valid = false;
@@ -87,10 +93,21 @@ trait StackExchangeTeamClientTrait
         }
     }
 
+  /**
+   * Tests the connectivity of a Stack Exchange Teams client.
+   *
+   * @param StackExchangeClient $client
+   *   The Stack Exchange Teams client to test.
+   *
+   * @return void
+   * @throws \Exception
+   */
     protected function testStackTeamsClientConnectivity(
         StackExchangeClient $client
     ): void {
-        $response = $client->getArticle('192');
-        die(print_r($response, true));
+        $response = $client->getQuestions();
+        if ($response->getStatusCode() != 200) {
+            throw new Exception();
+        }
     }
 }
