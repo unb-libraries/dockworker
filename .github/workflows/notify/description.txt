@@ -1,0 +1,1 @@
+This workflow is used to notify common endpoints from multiple other workflows.

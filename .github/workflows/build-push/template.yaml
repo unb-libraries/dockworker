@@ -1,0 +1,14 @@
+name: build.push.only.lib.unb.ca
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    uses: unb-libraries/dockworker/.github/workflows/build-push/workflow.yaml@6.x
+    with:
+      push-branches: '["prod"]'
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

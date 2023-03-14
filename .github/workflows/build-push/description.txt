@@ -1,0 +1,2 @@
+This workflow is used to build a docker image and push it to GHCR (GitHub Container Registry). It does not deploy the
+image to the cluster.

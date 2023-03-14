@@ -1,0 +1,35 @@
+name: Send Notifications Announcing Workflow Conclusion
+
+on:
+  workflow_call:
+    secrets:
+      SLACK_WEBHOOK_URL:
+        required: true
+
+jobs:
+  slack-results:
+    name: Notify of Conclusion
+    runs-on: ubuntu-latest
+    steps:
+      - uses: FranzDiebold/github-env-vars-action@v2
+      - uses: technote-space/workflow-conclusion-action@v3
+      - name: Set environment variables
+        run: |
+          if [[ ${{ env.WORKFLOW_CONCLUSION }} == success ]]; then
+            echo 'DEPLOY_EMOJI=:rocket:' >> $GITHUB_ENV
+          else
+            echo 'DEPLOY_EMOJI=:boom:' >> $GITHUB_ENV
+          fi
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          fields: workflow,job,commit,repo,ref,author,action,message
+          custom_payload: |
+            {
+              attachments: [{
+                color: '${{ env.WORKFLOW_CONCLUSION }}' === 'success' ? 'good' : '${{ env.WORKFLOW_CONCLUSION }}' === 'failure' ? 'danger' : 'warning',
+                text: `${process.env.AS_REPO} ${process.env.CI_REF_NAME} - ${{ env.WORKFLOW_CONCLUSION }} ${{ env.DEPLOY_EMOJI }} (${process.env.AS_WORKFLOW})\n${process.env.AS_COMMIT} ${process.env.AS_MESSAGE}\n${process.env.AS_AUTHOR}`,
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
