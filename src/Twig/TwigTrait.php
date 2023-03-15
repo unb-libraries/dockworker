@@ -29,7 +29,7 @@ trait TwigTrait {
     array $template_paths,
     array $variables
   ) {
-    $loader = new FilesystemLoader($this->readMeTemplatePaths);
+    $loader = new FilesystemLoader($template_paths);
     $readme_twig = new Environment($loader);
     $this->readMeTemplate = $readme_twig->load($template_name);
     return $this->readMeTemplate->render($variables);
