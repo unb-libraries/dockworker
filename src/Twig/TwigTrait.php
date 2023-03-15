@@ -4,7 +4,6 @@ namespace Dockworker\Twig;
 
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
-use Twi
 
 /**
  * Provides methods to interact with a local filesystem.
