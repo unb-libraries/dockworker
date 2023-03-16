@@ -79,4 +79,27 @@ trait DockerComposeTrait
             'Display logs for the docker compose application.'
         );
     }
+
+    /**
+     * Copies a file between the local filesystem and the application container.
+     *
+     * @param string $source_path
+     *   The path of the source file.
+     * @param string $target_path
+     *   The path of the target file.
+     */
+    protected function composeApplicationCopyFile(
+        string $source_path,
+        string $target_path
+    ): void {
+        $this->dockworkerIO->section("[local] Copying application file");
+        $this->dockerComposeRun(
+            [
+                'cp',
+                $source_path,
+                $target_path,
+            ],
+            'Copy file.'
+        );
+    }
 }
