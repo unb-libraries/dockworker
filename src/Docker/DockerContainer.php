@@ -146,7 +146,7 @@ class DockerContainer
      *
      * @param array $command
      *   The command to run in the container.
-     * @param DockworkerIO $io
+     * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
      * @param bool $use_tty
      *   TRUE to attach to a TTY for the command.

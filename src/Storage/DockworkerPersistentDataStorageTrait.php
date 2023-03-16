@@ -7,7 +7,7 @@ use Dockworker\System\FileSystemOperationsTrait;
 /**
  * Provides R/W methods to Dockworker's persistent data storage.
  *
- * @INTERNAL This trait is intended only to be used by Dockworker commands. It
+ * @internal This trait is intended only to be used by Dockworker commands. It
  * references user properties which are not in its own scope.
  */
 trait DockworkerPersistentDataStorageTrait

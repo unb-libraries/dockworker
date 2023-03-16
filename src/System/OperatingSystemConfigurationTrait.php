@@ -3,7 +3,7 @@
 namespace Dockworker\System;
 
 /**
- * Provides methods to interact with a local filesystem.
+ * Provides methods to interact with a local operating system.
  */
 trait OperatingSystemConfigurationTrait
 {

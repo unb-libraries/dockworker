@@ -2,7 +2,6 @@
 
 namespace Dockworker\Cli;
 
-use Dockworker\Cli\CliCommand;
 use Dockworker\IO\DockworkerIO;
 
 /**
@@ -25,7 +24,7 @@ trait DockerCliTrait
     }
 
   /**
-   * Runs a docker command.
+   * Executes a docker command.
    *
    * @param array $command
    *   The full CLI command to execute.
@@ -37,6 +36,7 @@ trait DockerCliTrait
    *   Whether to use a TTY for the command. Defaults to TRUE.
    *
    * @return \Dockworker\Cli\CliCommand
+   *   The executed command object.
    */
     protected function dockerRun(
         array $command,

@@ -2,7 +2,6 @@
 
 namespace Dockworker\Cli;
 
-use Dockworker\Cli\CliCommand;
 use Dockworker\IO\DockworkerIO;
 
 /**

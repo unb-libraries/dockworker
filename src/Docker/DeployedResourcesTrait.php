@@ -28,7 +28,7 @@ trait DeployedResourcesTrait
     /**
      * Discovers the currently deployed kubernetes pods.
      *
-     * @param DockworkerIO $io
+     * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
      * @param ConfigInterface $config
      *   The configuration object.
@@ -58,7 +58,7 @@ trait DeployedResourcesTrait
     /**
      * Discovers the currently deployed containers.
      *
-     * @param DockworkerIO $io
+     * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
      * @param ConfigInterface $config
      *   The configuration object.

@@ -21,7 +21,7 @@ trait DockerImageBuilderTrait
      *   The context to build. Defaults to the root of the application.
      * @param string $image_tag
      *   The docker image tag to build.
-     * @param DockworkerIO $io
+     * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
      */
     public function buildDockerImage(

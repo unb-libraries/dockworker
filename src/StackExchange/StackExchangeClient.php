@@ -4,7 +4,6 @@ namespace Dockworker\StackExchange;
 
 use Dockworker\Storage\DockworkerPersistentDataStorageTrait;
 use GuzzleHttp\Client as GuzzleClient;
-use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -90,7 +89,7 @@ class StackExchangeClient extends GuzzleClient
      * @return ResponseInterface
      *   The response from the API.
      *
-     * @throws GuzzleException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getArticle(string $id): ResponseInterface
     {
@@ -143,7 +142,7 @@ class StackExchangeClient extends GuzzleClient
      * @return ResponseInterface
      *   The response from the API.
      *
-     * @throws GuzzleException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getQuestions(): ResponseInterface
     {

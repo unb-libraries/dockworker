@@ -153,7 +153,7 @@ class PreFlightCheck
     /**
      * Checks the command operates and returns as expected.
      *
-     * @param DockworkerIO $io
+     * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
      * @param bool $quiet
      *   TRUE if the check should avoid non-error output.
@@ -182,7 +182,7 @@ class PreFlightCheck
     /**
      * Checks the command's output for the expected output.
      *
-     * @param DockworkerIO $io
+     * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
      *
      * @throws \Exception

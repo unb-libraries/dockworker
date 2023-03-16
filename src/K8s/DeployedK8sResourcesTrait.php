@@ -36,7 +36,8 @@ trait DeployedK8sResourcesTrait
      * @param ConfigInterface $config
      *   The configuration object.
      */
-    private function discoverDeployedK8sContainers(ConfigInterface $config): void {
+    private function discoverDeployedK8sContainers(ConfigInterface $config): void
+    {
         foreach (
             $this->getConfigItem(
                 $config,

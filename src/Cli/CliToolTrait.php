@@ -27,7 +27,7 @@ trait CliToolTrait
      *
      * @param string $filepath
      *   The path to the YAML file containing the tool definition.
-     * @param DockworkerIO $io
+     * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
      */
     protected function registerCliToolFromYaml(
@@ -73,7 +73,7 @@ trait CliToolTrait
      *   The message to display if the command fails.
      * @param string $env_override
      *   The environment variable that overrides the config path to the tool.
-     * @param DockworkerIO $io
+     * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
      */
     protected function registerCliTool(
@@ -129,7 +129,7 @@ trait CliToolTrait
      * @param float|null $timeout
      *   The timeout in seconds or null to disable
      *
-     * @return CliCommand
+     * @return \Dockworker\Cli\CliCommand
      */
     private function getCliToolPreflightCheckCommand(
         string $tool_bin_path,
@@ -163,7 +163,7 @@ trait CliToolTrait
      *   The URI to the tool's installation instructions.
      * @param string $env_override
      *   The environment variable that overrides the config path to the tool.
-     * @param DockworkerIO $io
+     * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
      *
      * @return string

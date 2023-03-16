@@ -20,7 +20,7 @@ trait RoboConfigTrait
    * @param string $config_key
    *  The namespace to obtain the configuration value from.
    *
-   * @throws DockworkerException
+   * @throws \Dockworker\DockworkerException
    */
     protected function setPropertyFromConfigKey(
         ConfigInterface $config,

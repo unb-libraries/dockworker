@@ -4,12 +4,11 @@ namespace Dockworker\System;
 
 use Dockworker\Cli\CliCommand;
 use Dockworker\Core\RoboConfigTrait;
-use Dockworker\DockworkerException;
 use Dockworker\IO\DockworkerIOTrait;
 use Robo\Robo;
 
 /**
- * Provides methods to interact with a local filesystem.
+ * Provides methods to interact with a local hostfile.
  *
  * @INTERNAL This trait is intended only to be used by Dockworker commands. It
  * references user properties which are not in its own scope..
@@ -30,7 +29,7 @@ trait LocalHostFileOperationsTrait
   /**
    * Adds this application's information into the local development computer's hostfile. Requires sudo.
    *
-   * @throws DockworkerException
+   * @throws \Dockworker\DockworkerException
    */
     protected function setLocalHostFileEntries(): void
     {
@@ -44,7 +43,7 @@ trait LocalHostFileOperationsTrait
   /**
    * Removes this application's information from the local development system's hostfile. Requires sudo.
    *
-   * @throws DockworkerException
+   * @throws \Dockworker\DockworkerException
    */
     protected function unSetLocalHostFileEntries(): void
     {
@@ -58,7 +57,7 @@ trait LocalHostFileOperationsTrait
      * @param string $hostname
      * @param bool $quiet
      *
-     * @throws DockworkerException
+     * @throws \Dockworker\DockworkerException
      */
     protected function addLocalHostFileEntry(
         string $hostname,
@@ -85,7 +84,7 @@ trait LocalHostFileOperationsTrait
      * @param string $hostname
      * @param bool $quiet
      *
-     * @throws DockworkerException
+     * @throws \Dockworker\DockworkerException
      */
     protected function removeLocalHostFileEntry(
         string $hostname,

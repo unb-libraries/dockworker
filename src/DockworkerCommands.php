@@ -115,7 +115,7 @@ abstract class DockworkerCommands extends Tasks implements
     /**
      * DockworkerCommands constructor.
      *
-     * @throws DockworkerException
+     * @throws \Dockworker\DockworkerException
      */
     public function __construct()
     {

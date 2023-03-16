@@ -51,7 +51,7 @@ class CliCommand extends Process
      *
      * @param array $command
      *   The full CLI command to execute.
-     * @param DockworkerIO $io
+     * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
      * @param string $description
      *   A description of the command.
@@ -64,7 +64,7 @@ class CliCommand extends Process
      * @param ?float $timeout
      *   The timeout in seconds or null to disable
      *
-     * @throws DockworkerException
+     * @throws \Dockworker\DockworkerException
      */
     public static function sayRunTestExcept(
         array $command,
@@ -115,7 +115,7 @@ class CliCommand extends Process
     /**
      * Runs the command and attaches to the current TTY.
      *
-     * @param DockworkerIO $io
+     * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
      * @param bool $new_line
      *   True to output a newline after the output.

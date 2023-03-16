@@ -52,7 +52,7 @@ trait FileSystemOperationsTrait
    * @param string $path
    *   The path to the file.
    *
-   * @throws DockworkerException
+   * @throws \Dockworker\DockworkerException
    */
     protected function exceptIfFileDoesNotExist(string $path): void
     {
@@ -64,7 +64,7 @@ trait FileSystemOperationsTrait
     /**
      * @param string $path
      * @return void
-     * @throws DockworkerException
+     * @throws \Dockworker\DockworkerException
      */
     protected function setTreeGroupOwnershipToCurrentUser(string $path): void
     {
@@ -80,7 +80,7 @@ trait FileSystemOperationsTrait
     /**
      * @param string $path
      * @return void
-     * @throws DockworkerException
+     * @throws \Dockworker\DockworkerException
      */
     protected function setFileGroupOwnershipToCurrentUser(string $path): void
     {

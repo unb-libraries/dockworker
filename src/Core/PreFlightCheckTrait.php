@@ -66,7 +66,7 @@ trait PreFlightCheckTrait
     /**
      * Checks all registered preflight checks.
      *
-     * @param DockworkerIO $io
+     * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
      */
     protected function checkPreflightChecks(DockworkerIO $io): void

@@ -16,18 +16,21 @@ trait StackExchangeTeamClientTrait
     use DockworkerPersistentDataStorageTrait;
 
     /**
-     * The Stack Exchange Teams Cients.
+     * The Stack Exchange Teams Clients.
      *
      * @var object[]
      */
     protected array $stackExchangeTeamClients = [];
 
-  /**
-   * Sets up a Stack Exchange Teams client.
-   *
-   * @param string $team_slug
-   *   The Stack Exchange Teams slug to set the client for.
-   */
+    /**
+    * Sets up a Stack Exchange Teams client.
+    *
+    * @param string $team_slug
+    *   The Stack Exchange Teams slug to set the client for.
+    *
+    * @throws \Exception
+    * @throws \GuzzleHttp\Exception\GuzzleException
+    */
     protected function setStackTeamsClient(string $team_slug): void
     {
         $client_credentials_valid = false;
@@ -93,15 +96,15 @@ trait StackExchangeTeamClientTrait
         }
     }
 
-  /**
-   * Tests the connectivity of a Stack Exchange Teams client.
-   *
-   * @param StackExchangeClient $client
-   *   The Stack Exchange Teams client to test.
-   *
-   * @return void
-   * @throws \Exception
-   */
+    /**
+     * Tests the connectivity of a Stack Exchange Teams client.
+     *
+     * @param StackExchangeClient $client
+     *   The Stack Exchange Teams client to test.
+     *
+     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     protected function testStackTeamsClientConnectivity(
         StackExchangeClient $client
     ): void {

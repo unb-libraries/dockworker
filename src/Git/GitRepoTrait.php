@@ -27,7 +27,7 @@ trait GitRepoTrait
      *
      * @hook pre-init
      *
-     * @throws DockworkerException
+     * @throws \Dockworker\DockworkerException
      */
     public function initGitRepo(): void
     {
