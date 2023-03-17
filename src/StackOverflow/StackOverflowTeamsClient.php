@@ -1,6 +1,6 @@
 <?php
 
-namespace Dockworker\StackExchange;
+namespace Dockworker\StackOverflow;
 
 use Dockworker\IO\DockworkerIO;
 use Dockworker\Storage\DockworkerPersistentDataStorageTrait;
@@ -8,9 +8,9 @@ use GuzzleHttp\Client as GuzzleClient;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Provides a client to interface with Stack Exchange Teams.
+ * Provides a client to interface with StackOverflow Teams.
  */
-class StackExchangeClient extends GuzzleClient
+class StackOverflowTeamsClient extends GuzzleClient
 {
     use DockworkerPersistentDataStorageTrait;
 
@@ -31,7 +31,7 @@ class StackExchangeClient extends GuzzleClient
     protected array $stackParams = [];
 
     /**
-     * Creates a new Stack Exchange Teams API client.
+     * Creates a new StackOverflow Teams API client.
      *
      * @param string $team_slug
      *   The team slug to use.
@@ -41,7 +41,7 @@ class StackExchangeClient extends GuzzleClient
      * @return static|null
      *   The new client, or NULL if the client could not be created.
      */
-    public static function createClient(
+    public static function setCreateClient(
         string $team_slug,
         string $api_key
     ): self|null {
@@ -82,7 +82,7 @@ class StackExchangeClient extends GuzzleClient
     }
 
     /**
-     * Gets an article from the Stack Exchange Teams API.
+     * Gets an article from the StackOverflow Teams API.
      *
      * @param int[] $id
      *   The ID of the article to get.
@@ -99,7 +99,7 @@ class StackExchangeClient extends GuzzleClient
         if ($response->getStatusCode() != 200) {
             throw new Exception(
                 sprintf(
-                    'Error retrieving article %s from Stack Exchange Teams API. Status code: %s',
+                    'Error retrieving article %s from StackOverflow Teams API. Status code: %s',
                     $id_string,
                     $response->getStatusCode()
                 )
@@ -124,7 +124,7 @@ class StackExchangeClient extends GuzzleClient
     }
 
     /**
-     * Retrieves a GET response from the Stack Exchange Teams API.
+     * Retrieves a GET response from the StackOverflow Teams API.
      *
      * @param string $path
      *   The path within the API endpoint.
@@ -146,7 +146,7 @@ class StackExchangeClient extends GuzzleClient
     }
 
   /**
-   * POSTs a request to the Stack Exchange Teams API.
+   * POSTs a request to the StackOverflow Teams API.
    *
    * @param string $path
    *   The path within the API endpoint.
@@ -189,7 +189,7 @@ class StackExchangeClient extends GuzzleClient
     }
 
     /**
-     * Gets a list of questions from the Stack Exchange Teams API.
+     * Gets a list of questions from the StackOverflow Teams API.
      *
      * @return ResponseInterface
      *   The response from the API.
@@ -202,7 +202,7 @@ class StackExchangeClient extends GuzzleClient
     }
 
   /**
-   * Updates an existing article's content in the Stack Exchange Teams API.
+   * Updates an existing article's content in the StackOverflow Teams API.
    *
    * @param int $id
    *   The ID of the article to update.
@@ -241,7 +241,7 @@ class StackExchangeClient extends GuzzleClient
   }
 
   /**
-   * Updates an existing article's body in the Stack Exchange Teams API.
+   * Updates an existing article's body in the StackOverflow Teams API.
    *
    * @param $id
    *   The ID of the article to update.
@@ -267,12 +267,12 @@ class StackExchangeClient extends GuzzleClient
       if ($response->getStatusCode() != 200) {
         throw new Exception(
           sprintf(
-            'Error updating article %s in Stack Exchange Teams API. Status code: %s',
+            'Error updating article %s in StackOverflow Teams API. Status code: %s',
             $id,
             $response->getStatusCode()
           )
         );
       }
-      $io->say(sprintf('Updated StackTeams Article ID#%s', $id));
+      $io->say(sprintf('Updated StackOverflow Teams Article ID#%s', $id));
   }
 }

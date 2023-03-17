@@ -26,7 +26,7 @@ trait GitHubClientTrait
     /**
      * Tests the GitHub client's connectivity to the current application's repository.
      */
-    public function testGitHubRepoAccess(
+    public function setTestGitHubRepoAccess(
         string $owner,
         string $name
     ): void {
@@ -45,13 +45,9 @@ trait GitHubClientTrait
     ): void {
         $this->setGitHubClient($owner);
         $this->registerNewPreflightCheck(
-            sprintf(
-                "Testing GitHub API connectivity for %s/%s",
-                $owner,
-                $name
-            ),
+          "Testing GitHub API connectivity",
             $this,
-            'testGitHubRepoAccess',
+            'setTestGitHubRepoAccess',
             [
                 $owner,
                 $name,
@@ -104,7 +100,7 @@ trait GitHubClientTrait
                     );
 
                     # Test the client
-                    $this->testGitHubClientConnectivity($owner);
+                    $this->setTestGitHubClientConnectivity($owner);
 
                     # Credentials were valid, write them.
                     $this->setDockworkerPersistentDataConfigurationItem(
@@ -131,7 +127,7 @@ trait GitHubClientTrait
     /**
      * Tests the GitHub client's connectivity to the GitHub API.
      */
-    protected function testGitHubClientConnectivity($owner): void
+    public function setTestGitHubClientConnectivity($owner): void
     {
         $this->gitHubClient->api('user')->repositories($owner);
     }
