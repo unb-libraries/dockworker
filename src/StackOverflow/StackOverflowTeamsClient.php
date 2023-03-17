@@ -82,10 +82,10 @@ class StackOverflowTeamsClient extends GuzzleClient
     }
 
     /**
-     * Gets an article from the StackOverflow Teams API.
+     * Gets a list of articles from the StackOverflow Teams API.
      *
      * @param int[] $id
-     *   The ID of the article to get.
+     *   The IDs of the articles to get.
      *
      * @return object[]
      *   An array of article objects.
@@ -114,6 +114,15 @@ class StackOverflowTeamsClient extends GuzzleClient
         return null;
     }
 
+  /**
+   * Gets an article from the StackOverflow Teams API.
+   *
+   * @param int $id
+   *   The article ID to retrieve.
+   *
+   * @return mixed
+   * @throws \GuzzleHttp\Exception\GuzzleException
+   */
     public function getArticle(int $id): mixed
     {
       $article_list = $this->getArticles([$id]);
