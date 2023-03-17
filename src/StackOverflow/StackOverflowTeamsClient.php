@@ -94,7 +94,7 @@ class StackOverflowTeamsClient extends GuzzleClient
      */
     public function getArticles(array $ids): mixed
     {
-        $id_string = implode(',', $ids);
+        $id_string = implode(';', $ids);
         $response = $this->stackGetRequest("articles/$id_string");
         if ($response->getStatusCode() != 200) {
             throw new Exception(
@@ -261,7 +261,7 @@ class StackOverflowTeamsClient extends GuzzleClient
         $id,
         $article->title,
         $body,
-        implode(',', $article->tags),
+        implode(';`', $article->tags),
         $article->article_type
       );
       if ($response->getStatusCode() != 200) {
