@@ -28,9 +28,9 @@ trait PersistentConfigurationTrait
     /**
      * The persistent configuration.
      *
-     * @var ConfigInterface
+     * @var \Robo\Config\Config
      */
-    protected ConfigInterface $persistentConfiguration;
+    protected Config $persistentConfiguration;
 
     /**
      * Gets a configuration item's value, set and write it from a query if unset.

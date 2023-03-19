@@ -30,19 +30,20 @@ trait StackOverflowTeamsClientTrait
    * @param \Dockworker\StackOverflow\StackOverflowTeamsClient $client
    *   The client to check connectivity for.
    */
-    public function setStackTeamsClientPreflightCheck($client): void {
-      $this->registerNewPreflightCheck(
-        "Testing StackOverflow Teams API connectivity",
-        $this,
-        'setTestStackTeamsClientConnectivity',
-        [
-          $client,
-        ],
-        '',
-        [],
-        '',
-        "Unable to access the StackOverflow Teams API. Please check your credentials and try again."
-      );
+    public function setStackTeamsClientPreflightCheck(StackOverflowTeamsClient $client): void
+    {
+        $this->registerNewPreflightCheck(
+            "Testing StackOverflow Teams API connectivity",
+            $this,
+            'setTestStackTeamsClientConnectivity',
+            [
+                $client,
+            ],
+            '',
+            [],
+            '',
+            "Unable to access the StackOverflow Teams API. Please check your credentials and try again."
+        );
     }
 
     /**
@@ -136,6 +137,4 @@ trait StackOverflowTeamsClientTrait
             throw new Exception();
         }
     }
-
-
 }

@@ -45,7 +45,7 @@ trait GitHubClientTrait
     ): void {
         $this->setGitHubClient($owner);
         $this->registerNewPreflightCheck(
-          "Testing GitHub API connectivity",
+            "Testing GitHub API connectivity",
             $this,
             'setTestGitHubRepoAccess',
             [

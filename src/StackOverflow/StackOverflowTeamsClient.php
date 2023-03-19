@@ -82,54 +82,16 @@ class StackOverflowTeamsClient extends GuzzleClient
     }
 
     /**
-     * Gets a list of articles from the StackOverflow Teams API.
+     * Gets a list of questions from the StackOverflow Teams API.
      *
-     * @param int[] $id
-     *   The IDs of the articles to get.
-     *
-     * @return object[]
-     *   An array of article objects.
+     * @return ResponseInterface
+     *   The response from the API.
      *
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getArticles(array $ids): mixed
+    public function getQuestions(): ResponseInterface
     {
-        $id_string = implode(';', $ids);
-        $response = $this->stackGetRequest("articles/$id_string");
-        if ($response->getStatusCode() != 200) {
-            throw new Exception(
-                sprintf(
-                    'Error retrieving article %s from StackOverflow Teams API. Status code: %s',
-                    $id_string,
-                    $response->getStatusCode()
-                )
-            );
-        }
-        $response_data = json_decode(
-          $response->getBody()->getContents()
-        );
-        if (!empty($response_data->items)) {
-          return $response_data->items;
-        }
-        return null;
-    }
-
-  /**
-   * Gets an article from the StackOverflow Teams API.
-   *
-   * @param int $id
-   *   The article ID to retrieve.
-   *
-   * @return mixed
-   * @throws \GuzzleHttp\Exception\GuzzleException
-   */
-    public function getArticle(int $id): mixed
-    {
-      $article_list = $this->getArticles([$id]);
-      if (!empty($article_list[0])) {
-        return $article_list[0];
-      }
-      return null;
+        return $this->stackGetRequest("questions");
     }
 
     /**
@@ -154,31 +116,6 @@ class StackOverflowTeamsClient extends GuzzleClient
         );
     }
 
-  /**
-   * POSTs a request to the StackOverflow Teams API.
-   *
-   * @param string $path
-   *   The path within the API endpoint.
-   *
-   * @return ResponseInterface
-   *   The response from the API.
-   *
-   * @throws \GuzzleHttp\Exception\GuzzleException
-   */
-  private function stackPostRequest(
-    string $path,
-    array $data
-  ): ResponseInterface {
-    return $this->request(
-      'POST',
-      $this->constructRequestUri($path),
-      [
-        'headers' => $this->stackHeaders,
-        'form_params' => $data,
-      ]
-    );
-  }
-
     /**
      * Constructs the full request URI.
      *
@@ -198,16 +135,89 @@ class StackOverflowTeamsClient extends GuzzleClient
     }
 
     /**
-     * Gets a list of questions from the StackOverflow Teams API.
+     * Updates an existing article's body in the StackOverflow Teams API.
      *
-     * @return ResponseInterface
-     *   The response from the API.
+     * @param $id
+     *   The ID of the article to update.
+     * @param $body
+     *   The new body to set.
      *
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getQuestions(): ResponseInterface
+    public function updateArticleBody(
+        DockworkerIO $io,
+        int $id,
+        string $body
+    ): void {
+        $article = $this->getArticle($id);
+        $response = $this->writeArticle(
+            $id,
+            $article->title,
+            $body,
+            implode(';`', $article->tags),
+            $article->article_type
+        );
+        if ($response->getStatusCode() != 200) {
+            throw new Exception(
+                sprintf(
+                    'Error updating article %s in StackOverflow Teams API. Status code: %s',
+                    $id,
+                    $response->getStatusCode()
+                )
+            );
+        }
+        $io->say(sprintf('Updated StackOverflow Teams Article ID#%s', $id));
+    }
+
+  /**
+   * Gets an article from the StackOverflow Teams API.
+   *
+   * @param int $id
+   *   The article ID to retrieve.
+   *
+   * @return mixed
+   * @throws \GuzzleHttp\Exception\GuzzleException
+   */
+    public function getArticle(int $id): mixed
     {
-        return $this->stackGetRequest("questions");
+        $article_list = $this->getArticles([$id]);
+        if (!empty($article_list[0])) {
+            return $article_list[0];
+        }
+        return null;
+    }
+
+    /**
+     * Gets a list of articles from the StackOverflow Teams API.
+     *
+     * @param int[] $ids
+     *   The IDs of the articles to get.
+     *
+     * @return object[]
+     *   An array of article objects.
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function getArticles(array $ids): mixed
+    {
+        $id_string = implode(';', $ids);
+        $response = $this->stackGetRequest("articles/$id_string");
+        if ($response->getStatusCode() != 200) {
+            throw new Exception(
+                sprintf(
+                    'Error retrieving article %s from StackOverflow Teams API. Status code: %s',
+                    $id_string,
+                    $response->getStatusCode()
+                )
+            );
+        }
+        $response_data = json_decode(
+            $response->getBody()->getContents()
+        );
+        if (!empty($response_data->items)) {
+            return $response_data->items;
+        }
+        return null;
     }
 
   /**
@@ -230,58 +240,46 @@ class StackOverflowTeamsClient extends GuzzleClient
    *
    * @throws \GuzzleHttp\Exception\GuzzleException
    */
-  public function writeArticle(
-    int $id,
-    string $title,
-    string $body,
-    string $tags,
-    string $article_type
-  ): ResponseInterface {
-    return $this->stackPostRequest(
-      "articles/$id/edit",
-      [
-
-        'title' => $title,
-        'body' => $body,
-        'tags' => $tags,
-        'article_type' => $article_type,
-      ]
-    );
-  }
+    public function writeArticle(
+        int $id,
+        string $title,
+        string $body,
+        string $tags,
+        string $article_type
+    ): ResponseInterface {
+        return $this->stackPostRequest(
+            "articles/$id/edit",
+            [
+                'title' => $title,
+                'body' => $body,
+                'tags' => $tags,
+                'article_type' => $article_type,
+            ]
+        );
+    }
 
   /**
-   * Updates an existing article's body in the StackOverflow Teams API.
+   * POSTs a request to the StackOverflow Teams API.
    *
-   * @param $id
-   *   The ID of the article to update.
-   * @param $body
-   *   The new body to set.
+   * @param string $path
+   *   The path within the API endpoint.
    *
-   * @return \Psr\Http\Message\ResponseInterface
+   * @return ResponseInterface
+   *   The response from the API.
+   *
    * @throws \GuzzleHttp\Exception\GuzzleException
    */
-  public function updateArticleBody(
-    DockworkerIO $io,
-    int $id,
-    string $body
-  ): void {
-      $article = $this->getArticle($id);
-      $response = $this->writeArticle(
-        $id,
-        $article->title,
-        $body,
-        implode(';`', $article->tags),
-        $article->article_type
-      );
-      if ($response->getStatusCode() != 200) {
-        throw new Exception(
-          sprintf(
-            'Error updating article %s in StackOverflow Teams API. Status code: %s',
-            $id,
-            $response->getStatusCode()
-          )
+    private function stackPostRequest(
+        string $path,
+        array $data
+    ): ResponseInterface {
+        return $this->request(
+            'POST',
+            $this->constructRequestUri($path),
+            [
+                'headers' => $this->stackHeaders,
+                'form_params' => $data,
+            ]
         );
-      }
-      $io->say(sprintf('Updated StackOverflow Teams Article ID#%s', $id));
-  }
+    }
 }

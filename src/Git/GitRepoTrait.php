@@ -96,7 +96,7 @@ trait GitRepoTrait
      *
      * @throws GitException
      */
-    protected function repoFileHasChanges($file_path): bool
+    protected function repoFileHasChanges(string $file_path): bool
     {
         $changes = $this->getGitRepoChanges($this->applicationRepository);
         return array_key_exists($file_path, $changes);
