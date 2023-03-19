@@ -156,6 +156,11 @@ class DockerContainer
         DockworkerIO $io,
         bool $use_tty = true,
     ): void {
+        if (!$use_tty) {
+            $this->containerExecEntryPoint[2] = '-i';
+        } else {
+            $this->containerExecEntryPoint[2] = '-it';
+        }
         $command = array_merge(
             $this->containerExecEntryPoint,
             $command
