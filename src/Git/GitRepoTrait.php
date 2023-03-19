@@ -84,4 +84,21 @@ trait GitRepoTrait
         }
         return $files;
     }
+
+    /**
+     * Checks if a file has changes in the repository.
+     *
+     * @param string $file_path
+     *   The path to the file to check.
+     *
+     * @return bool
+     *   TRUE if the file has changes, FALSE otherwise.
+     *
+     * @throws GitException
+     */
+    protected function repoFileHasChanges($file_path): bool
+    {
+        $changes = $this->getGitRepoChanges($this->applicationRepository);
+        return array_key_exists($file_path, $changes);
+    }
 }
