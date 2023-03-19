@@ -18,7 +18,8 @@ class DockworkerThemeCommands extends DockworkerCommands
      * @command theme:build-all
      * @aliases build-themes
      */
-    public function buildThemes() {
+    public function buildThemes(): void
+    {
         return;
     }
 }

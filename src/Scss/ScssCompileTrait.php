@@ -2,16 +2,22 @@
 
 namespace Dockworker\Scss;
 
-use Dockworker\DockworkerException;
+use Dockworker\Cli\CliCommandTrait;
+use Dockworker\IO\DockworkerIO;
 
 /**
  * Provides methods to compile SCSS files into CSS.
- *
- * @TODO: Needs review, was migrated from Dockworker 5.x.
  */
-trait ScssCompileTrait {
+trait ScssCompileTrait
+{
+    use CliCommandTrait;
 
-    private $scssCompiler;
+    /**
+     * The path to the SCSS compiler.
+     *
+     * @var string
+     */
+    private string $scssCompiler;
 
     /**
      * Compiles a SCSS file to CSS.
@@ -20,28 +26,40 @@ trait ScssCompileTrait {
      *   The SCSS source file.
      * @param string $target_path
      *   The CSS target path.
-     *
-     * @return int
-     *   The return code of the compile command.
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output.
+     * @param string|null $cwd
+     *   The working directory to use for the command.
      */
-    protected function compileScss($source_path, $target_path) {
-        $cmd = "$this->scssCompiler --style=compressed $source_path > $target_path";
-
-        system($cmd, $return_code);
-        if ($return_code != 0) {
-            throw new DockworkerException("Compile of $source_path to $target_path failed!");
-        }
-
-        return $return_code;
+    protected function compileScss(
+        string $source_path,
+        string $target_path,
+        DockworkerIO $io,
+        string|null $cwd
+    ): void {
+        $this->executeCliCommand(
+            [
+                $this->scssCompiler,
+                '--style=compressed',
+                $source_path,
+                $target_path
+            ],
+            $io,
+            $cwd,
+            '',
+            "Compiling $source_path to $target_path...",
+            false
+        );
     }
 
     /**
-     * Sets the binary to the SCSS compiler.
+     * Sets the path to the SCSS compiler.
      *
      * @param string $path
      *   The path to the compiler.
      */
-    protected function setScssCompiler($path) {
+    protected function setScssCompiler(string $path): void
+    {
         $this->scssCompiler = $path;
     }
 }

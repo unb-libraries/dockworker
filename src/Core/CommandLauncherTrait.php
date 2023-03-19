@@ -2,15 +2,18 @@
 
 namespace Dockworker\Core;
 
-use Dockworker\DockworkerException;
-use Dockworker\IO\DockworkerIOTrait;
+use Dockworker\Cli\CliCommandTrait;
+use Dockworker\IO\DockworkerIO;
 
 /**
- * Provides methods to launch another dockworker command from the application.
+ * Provides methods to launch another dockworker command from another.
+ *
+ * @INTERNAL This trait is intended only to be used by Dockworker commands. It
+ * references user properties which are not in its own scope.
  */
 trait CommandLauncherTrait
 {
-    use DockworkerIOTrait;
+    use CliCommandTrait;
 
     /**
      * Runs another Dockworker command.
@@ -19,30 +22,25 @@ trait CommandLauncherTrait
      * https://github.com/consolidation/annotated-command/issues/64 is merged
      * or solved. Otherwise, hooks do not fire as expected.
      *
-     * @param string $command_string
-     *   The Dockworker command to run.
-     * @param string $exception_message
-     *   The message to display if a non-zero code is returned.
-     *
-     * @throws \Dockworker\DockworkerException
-     *
-     * @return int
-     *   The return code of the command.
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output.
+     * @param array $command
      */
     public function setRunOtherCommand(
-        string $command_string,
-        string $exception_message = ''
-    ): int {
-        $this->dockworkerIO->note(
-            ["Spawning new command thread: $command_string"]
+        DockworkerIO $io,
+        array $command,
+    ): void {
+        $cmd_launch = [
+            $_SERVER['argv'][0],
+            '--ansi',
+        ];
+        $cmd = array_merge($cmd_launch, $command);
+        $this->executeCliCommand(
+            $cmd,
+            $io,
+            $this->applicationRoot,
+            '',
+            ''
         );
-        $bin = $_SERVER['argv'][0];
-        $command = "$bin --ansi $command_string";
-        passthru($command, $return);
-
-        if ($return > 0) {
-            throw new DockworkerException($exception_message);
-        }
-        return $return;
     }
 }
