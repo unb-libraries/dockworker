@@ -65,7 +65,10 @@ trait DeployedLocalResourcesTrait
         string $name
     ): DockerContainer|null {
         $container_details = $this->getLocalContainerDetails($name);
-        if (!empty($container_details[0]['State']['Status'])) {
+        if (
+            !empty($container_details[0]['State']['Status'])
+            && $container_details[0]['State']['Status'] != 'exited'
+        ) {
             return DockerContainer::create(
                 $name,
                 'local',

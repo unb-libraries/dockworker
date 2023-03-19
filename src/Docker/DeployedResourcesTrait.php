@@ -90,18 +90,24 @@ trait DeployedResourcesTrait
     /**
      * Retrieves a currently deployed container object.
      *
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output.
      * @param string $env
      *   The environment to retrieve the container from.
      * @param bool $pick
      *   If multiple containers are available, should one be picked? If false,
      *   the first container will be returned.
+     * @param bool $exit_on_empty
+     *   TRUE if the application should exit if no containers are found.
      *
      * @return DockerContainer|null
      *   The container object, or null if none are available.
      */
     protected function getDeployedContainer(
+        DockworkerIO $io,
         string $env,
-        bool $pick = false
+        bool $pick = false,
+        bool $exit_on_empty = true
     ): DockerContainer|null {
         $containers = $this->getDeployedContainers($env);
         if (!empty($containers)) {
@@ -110,6 +116,15 @@ trait DeployedResourcesTrait
             } else {
                 // @TODO: Implement a way to pick a container.
             }
+        }
+        if ($exit_on_empty) {
+            $io->error(
+                sprintf(
+                    "No containers were found in %s. Is the service running?",
+                    $env
+                )
+            );
+            exit(1);
         }
         return null;
     }
