@@ -156,11 +156,7 @@ class DockerContainer
         DockworkerIO $io,
         bool $use_tty = true,
     ): void {
-        if (!$use_tty) {
-            $this->containerExecEntryPoint[2] = '-i';
-        } else {
-            $this->containerExecEntryPoint[2] = '-it';
-        }
+        $this->setTtyInContainerEntryPoint($use_tty);
         $command = array_merge(
             $this->containerExecEntryPoint,
             $command
@@ -177,6 +173,24 @@ class DockerContainer
             $cmd->runTty($io);
         } else {
             $cmd->mustRun();
+        }
+    }
+
+    /**
+     * Sets the appropriate TTY flag in the container entry point.
+     *
+     * @param bool $use_tty
+     *   TRUE to attach to a TTY for the command.
+     */
+    private function setTtyInContainerEntryPoint(bool $use_tty): void
+    {
+        if (!$use_tty) {
+            foreach ($this->containerExecEntryPoint as $key => $value) {
+                if ($value == '-it') {
+                    $this->containerExecEntryPoint[$key] = '-i';
+                    break;
+                }
+            }
         }
     }
 
