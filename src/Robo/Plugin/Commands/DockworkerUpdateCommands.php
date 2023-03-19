@@ -3,33 +3,24 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\DockworkerCommands;
-use Dockworker\IO\DockworkerIOTrait;
 
 /**
- * Provides commands for interacting with Docker images.
+ * Provides commands for updating the application.
  */
 class DockworkerUpdateCommands extends DockworkerCommands
 {
-    use DockworkerIOTrait;
-
     /**
-     * Updates the dockworker package to the latest release.
+     * Updates the application and its dependencies.
+     *
+     * This command is a placeholder for framework-specific update commands that
+     * can be implemented by extensions of this package.
      *
      * @command dockworker:update
      * @aliases update
      * @hidden
      */
-    public function updateDockworker(): void
+    public function updateApplication(): void
     {
-        $this->dockworkerIO->title('Updating Dockworker');
-        $this->dockworkerIO->say(
-            'Checking for any updates to unb-libraries/dockworker...'
-        );
-        $this->taskExec('composer')
-            ->dir($this->applicationRoot)
-            ->arg('update')
-            ->arg('unb-libraries/dockworker')
-            ->silent(true)
-            ->run();
+        return;
     }
 }
