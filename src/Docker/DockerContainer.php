@@ -30,6 +30,13 @@ class DockerContainer
     protected array $containerExecEntryPoint;
 
     /**
+     * The file copy entry point for the container.
+     *
+     * @var string[]
+     */
+    protected array $containerCopyEntryPoint;
+
+    /**
      * The time the container was created.
      *
      * @var DateTimeImmutable
@@ -81,6 +88,8 @@ class DockerContainer
      *   The entities controlling the container.
      * @param array $exec_entry_point
      *   The CLI execution entry point for the container.
+     * @param array $copy_entry_point
+     *   The file copy entry point for the container.
      */
     private function __construct(
         string $name,
@@ -89,7 +98,8 @@ class DockerContainer
         string $status,
         DateTimeImmutable $creation_timestamp,
         array $controlled_by,
-        array $exec_entry_point
+        array $exec_entry_point,
+        array $copy_entry_point
     ) {
         $this->containerName = $name;
         $this->containerNamespace = $namespace;
@@ -98,6 +108,7 @@ class DockerContainer
         $this->containerCreationTimestamp = $creation_timestamp;
         $this->containerControlledBy = $controlled_by;
         $this->containerExecEntryPoint = $exec_entry_point;
+        $this->containerCopyEntryPoint = $copy_entry_point;
     }
 
     /**
@@ -117,6 +128,8 @@ class DockerContainer
      *   The entities controlling the container.
      * @param array $exec_entry_point
      *   The CLI execution entry point for the container.
+     * @param array $copy_entry_point
+     *   The file copy entry point for the container.
      *
      * @return DockerContainer
      *   The new DockerContainer object.
@@ -128,7 +141,8 @@ class DockerContainer
         string $status,
         DateTimeImmutable $creation_timestamp,
         array $controlled_by,
-        array $exec_entry_point
+        array $exec_entry_point,
+        array $copy_entry_point
     ): DockerContainer {
         return new static(
             $name,
@@ -137,7 +151,8 @@ class DockerContainer
             $status,
             $creation_timestamp,
             $controlled_by,
-            $exec_entry_point
+            $exec_entry_point,
+            $copy_entry_point
         );
     }
 
@@ -204,6 +219,7 @@ class DockerContainer
     {
         return $this->containerName;
     }
+
     /**
      * Gets the container namespace.
      *
@@ -213,5 +229,86 @@ class DockerContainer
     public function getContainerNamespace(): string
     {
         return $this->containerNamespace;
+    }
+
+    /**
+     * Copies a local filesystem file or directory to the container.
+     *
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output.
+     * @param string $source
+     *   The full path to the local filesystem file or directory.
+     * @param string $target
+     *   The full path to the target in the container.
+     */
+    public function copyTo(
+        DockworkerIO $io,
+        string $source,
+        string $target
+    ): void
+    {
+        $target_uri = "$this->containerName:$target";
+        $this->copyCmd(
+            $io,
+            $source,
+            $target_uri
+        );
+    }
+
+    /**
+     * Copies a container file or directory to the local filesystem.
+     *
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output.
+     * @param string $source
+     *   The full path to the file or directory in the container.
+     * @param string $target
+     *   The full path to local target.
+     */
+    public function copyFrom(
+        DockworkerIO $io,
+        string $source,
+        string $target
+    ): void
+    {
+        $source_uri = "$this->containerName:$source";
+        $this->copyCmd(
+            $io,
+            $source_uri,
+            $target
+        );
+    }
+
+    /**
+     * Copies files to/from the container.
+     *
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output.
+     * @param string $source_uri
+     *   The full uri of the source file.
+     * @param string $target_uri
+     *   The full uri of the target file.
+     */
+    protected function copyCmd(
+        DockworkerIO $io,
+        string $source_uri,
+        string $target_uri
+    ): void {
+        $command = array_merge(
+            $this->containerCopyEntryPoint,
+            [
+                $source_uri,
+                $target_uri,
+            ]
+        );
+        $cmd = new CliCommand(
+            $command,
+            "Copying $source_uri to $target_uri",
+            null,
+            [],
+            null,
+            null
+        );
+        $cmd->runTty($io);
     }
 }

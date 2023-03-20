@@ -83,7 +83,8 @@ trait DeployedLocalResourcesTrait
                     )
                 ),
                 [],
-                $this->getContainerExecEntryPointFromLocalContainer($name)
+                $this->getContainerExecEntryPointFromLocalContainer($name),
+                $this->getContainerCopyEntryPointFromLocalContainer()
             );
         }
         return null;
@@ -120,8 +121,8 @@ trait DeployedLocalResourcesTrait
      * @param string $pod_name
      *   The name of the container.
      *
-     * @return array
-     *   The exec entry point.
+     * @return string[]
+     *   The exec entry point for the container.
      */
     private function getContainerExecEntryPointFromLocalContainer(
         string $pod_name
@@ -131,6 +132,20 @@ trait DeployedLocalResourcesTrait
             'exec',
             '-it',
             $pod_name,
+        ];
+    }
+
+    /**
+     * Gets the copy entry point for a local container.
+     *
+     * @return string[]
+     *   The copy entry point for the container.
+     */
+    private function getContainerCopyEntryPointFromLocalContainer(): array {
+        return [
+            $this->cliTools['docker'],
+            'cp',
+            '-r',
         ];
     }
 }

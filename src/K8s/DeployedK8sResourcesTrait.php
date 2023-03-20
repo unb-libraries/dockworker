@@ -243,7 +243,8 @@ trait DeployedK8sResourcesTrait
                 $pod_details['metadata']['creationTimestamp']
             ),
             $parents,
-            $this->getContainerExecEntryPointFromK8sPod($pod_name, $env)
+            $this->getContainerExecEntryPointFromK8sPod($pod_name, $env),
+            $this->getContainerCopyEntryPointFromK8sPod($env)
         );
     }
 
@@ -304,6 +305,22 @@ trait DeployedK8sResourcesTrait
             '-it',
             $pod_name,
             '--',
+        ];
+    }
+
+    /**
+     * Gets the copy entry point for a Kubernetes pod.
+     *
+     * @return string[]
+     *   The copy entry point for the pod.
+     */
+    private function getContainerCopyEntryPointFromK8sPod(
+        string $env
+    ): array {
+        return [
+            $this->cliTools['kubectl'],
+            'cp',
+            "--namespace=$env",
         ];
     }
 }
