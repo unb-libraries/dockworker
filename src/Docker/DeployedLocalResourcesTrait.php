@@ -141,7 +141,8 @@ trait DeployedLocalResourcesTrait
      * @return string[]
      *   The copy entry point for the container.
      */
-    private function getContainerCopyEntryPointFromLocalContainer(): array {
+    private function getContainerCopyEntryPointFromLocalContainer(): array
+    {
         return [
             $this->cliTools['docker'],
             'cp',

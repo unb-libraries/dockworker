@@ -245,8 +245,7 @@ class DockerContainer
         DockworkerIO $io,
         string $source,
         string $target
-    ): void
-    {
+    ): void {
         $target_uri = "$this->containerName:$target";
         $this->copyCmd(
             $io,
@@ -269,8 +268,7 @@ class DockerContainer
         DockworkerIO $io,
         string $source,
         string $target
-    ): void
-    {
+    ): void {
         $source_uri = "$this->containerName:$source";
         $this->copyCmd(
             $io,
