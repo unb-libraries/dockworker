@@ -1,0 +1,14 @@
+name: OS Support Tests
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test-install:
+    uses: unb-libraries/dockworker/.github/workflows/install-test.yaml@6.x
+    with:
+      test-command: 'bootstrap'
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -1,9 +1,15 @@
 name: Dockworker OS Support Tests
 
 on:
-  pull_request:
-  push:
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      test-command:
+        description: 'The test command to execute in dockworker'
+        required: true
+        type: string
+    secrets:
+      SLACK_WEBHOOK_URL:
+        required: true
 
 jobs:
   notify-start:
@@ -36,7 +42,7 @@ jobs:
         shell: bash
       -
         name: Test dockworker bootstrap
-        run: vendor/bin/dockworker bootstrap
+        run: vendor/bin/dockworker ${{ inputs.test-command }}
         shell: bash
 
   notify-conclusion:
