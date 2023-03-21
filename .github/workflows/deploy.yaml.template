@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    uses: unb-libraries/dockworker/.github/workflows/deploy/workflow.yaml@6.x
+    uses: unb-libraries/dockworker/.github/workflows/deploy.yaml@6.x
     with:
       branch-env-map: '{"prod":"prod"}'
       deploy-branches: '["prod"]'

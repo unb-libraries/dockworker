@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    uses: unb-libraries/dockworker/.github/workflows/build-push/workflow.yaml@6.x
+    uses: unb-libraries/dockworker/.github/workflows/build-push.yaml@6.x
     with:
       push-branches: '["prod"]'
     secrets:
