@@ -6,7 +6,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  install_run_test:
+  notify-start:
+    uses: unb-libraries/dockworker/.github/workflows/notify/start/workflow.yaml@6.x
+    if: always()
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  install-run-test:
     strategy:
       matrix:
         os: [ ubuntu-latest, macos-12 ]
@@ -32,3 +37,9 @@ jobs:
         name: Test dockworker bootstrap
         run: vendor/bin/dockworker bootstrap
         shell: bash
+  notify-conclusion:
+    uses: unb-libraries/dockworker/.github/workflows/notify/start/workflow.yaml@6.x
+    needs: [ install-run-test ]
+    if: always()
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
