@@ -39,7 +39,7 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   build-push-images:
-    uses: unb-libraries/dockworker/.github/workflows/build-push/workflow.yaml@6.x
+    uses: unb-libraries/dockworker/.github/workflows/build-push.yaml@6.x
     with:
       notify: false
       push-branches: ${{ inputs.push-branches }}
