@@ -12,6 +12,9 @@ jobs:
         os: [ ubuntu-latest, macos-12, windows-latest ]
         php-version: [ 8.1, 8.0 ]
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: ./test
     steps:
       - uses: actions/checkout@v3
       -
@@ -22,10 +25,6 @@ jobs:
           coverage: none
           tools: composer:v2
           extensions: curl,dom,gd,mbstring,posix,yaml,zip
-      -
-        name: Change to testing context
-        run: cd test
-        shell: bash
       -
         name: Install dockworker
         run: composer install
