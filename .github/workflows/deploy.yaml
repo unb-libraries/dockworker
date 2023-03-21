@@ -34,11 +34,9 @@ jobs:
   notify-start:
     name: Notify of Start
     if: always() && ${{ inputs.notify }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: unb-libraries/dockworker/.github/workflows/notify-start.yaml@6.x
-        secrets:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    uses: unb-libraries/dockworker/.github/workflows/notify-start.yaml@6.x
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   build-push-images:
     uses: unb-libraries/dockworker/.github/workflows/build-push/workflow.yaml@6.x
@@ -96,11 +94,10 @@ jobs:
           DEPLOYMENT_NAME: ${{ inputs.k8s-deployment-name }}
           DEPLOYMENT_NAMESPACE: ${{ env.DEPLOYMENT_NAMESPACE }}
 
-  notify-end:
-    name: Notify of Completion
+  notify-conclusion:
+    name: Notify of Conclusion
+    uses: unb-libraries/dockworker/.github/workflows/notify-conclusion.yaml@6.x
+    needs: [ deploy-image-to-k8s ]
     if: always() && ${{ inputs.notify }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: unb-libraries/dockworker/.github/workflows/notify-conclusion.yaml@6.x
-        secrets:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

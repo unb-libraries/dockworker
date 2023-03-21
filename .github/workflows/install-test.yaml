@@ -11,6 +11,7 @@ jobs:
     if: always()
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
   install-run-test:
     strategy:
       matrix:
@@ -37,6 +38,7 @@ jobs:
         name: Test dockworker bootstrap
         run: vendor/bin/dockworker bootstrap
         shell: bash
+
   notify-conclusion:
     uses: unb-libraries/dockworker/.github/workflows/notify-conclusion.yaml@6.x
     needs: [ install-run-test ]
