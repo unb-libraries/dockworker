@@ -13,6 +13,7 @@ jobs:
         php-version: [ 8.1, 8.0 ]
     runs-on: ${{ matrix.os }}
     steps:
+      - uses: actions/checkout@v3
       -
         name: Install PHP
         uses: shivammathur/setup-php@v2
@@ -22,8 +23,12 @@ jobs:
           tools: composer:v2
           extensions: curl,dom,gd,mbstring,posix,yaml,zip
       -
+        name: Change to testing context
+        run: cd test
+        shell: bash
+      -
         name: Install dockworker
-        run: composer install --prefer-dist --no-progress --no-suggest
+        run: composer install
         shell: bash
       -
         name: Test dockworker bootstrap

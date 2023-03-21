@@ -3,6 +3,7 @@
 namespace Dockworker;
 
 use Dockworker\Core\RoboConfigTrait;
+use Dockworker\RepoFinder;
 use Dockworker\System\FileSystemOperationsTrait;
 use League\Container\ContainerAwareInterface;
 use League\Container\ContainerAwareTrait;
@@ -119,7 +120,7 @@ abstract class DockworkerCommands extends Tasks implements
      */
     public function __construct()
     {
-        $this->applicationRoot = realpath(__DIR__ . "/../../../../");
+        $this->applicationRoot = RepoFinder::findRepoRoot();
         $this->configFile = $this->getPathFromPathElements(
             [
                 $this->applicationRoot,

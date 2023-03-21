@@ -1,0 +1,18 @@
+{
+  "name": "unb-libraries/test-dockworker",
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../"
+    }
+  ],
+  "require": {
+    "unb-libraries/dockworker": "*"
+  },
+  "minimum-stability": "dev",
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
+  }
+}
