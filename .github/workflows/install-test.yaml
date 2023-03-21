@@ -1,0 +1,31 @@
+name: Dockworker OS Support Tests
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+jobs:
+  install_run_test:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-12, windows-latest ]
+        php-version: [ 8.1, 8.0 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      -
+        name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: none
+          tools: composer:v2
+          extensions: curl,dom,gd,mbstring,posix,yaml,zip
+      -
+        name: Install dockworker
+        run: composer install --prefer-dist --no-progress --no-suggest
+        shell: bash
+      -
+        name: Test dockworker bootstrap
+        run: vendor/bin/dockworker bootstrap
+        shell: bash
