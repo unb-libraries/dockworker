@@ -101,18 +101,23 @@ trait DeployedLocalResourcesTrait
      */
     private function getLocalContainerDetails(string $name): array
     {
-        $cmd = $this->dockerRun(
-            [
-                'inspect',
-                '--format',
-                'json',
-                $name,
-            ],
-            'Discover local container details',
-            null,
-            false
-        );
-         return json_decode($cmd->getOutput(), true);
+        try {
+            $cmd = $this->dockerRun(
+                [
+                    'inspect',
+                    '--format',
+                    'json',
+                    $name,
+                ],
+                'Discover local container details',
+                null,
+                false
+            );
+            return json_decode($cmd->getOutput(), true);
+        }
+        catch (\Exception $e) {
+            return [];
+        }
     }
 
     /**
