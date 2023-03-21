@@ -7,7 +7,7 @@ on:
 
 jobs:
   notify-start:
-    uses: unb-libraries/dockworker/.github/workflows/notify/start/workflow.yaml@6.x
+    uses: unb-libraries/dockworker/.github/workflows/notify-start.yaml@6.x
     if: always()
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -38,7 +38,7 @@ jobs:
         run: vendor/bin/dockworker bootstrap
         shell: bash
   notify-conclusion:
-    uses: unb-libraries/dockworker/.github/workflows/notify/start/workflow.yaml@6.x
+    uses: unb-libraries/dockworker/.github/workflows/notify-conclusion.yaml@6.x
     needs: [ install-run-test ]
     if: always()
     secrets:
