@@ -68,7 +68,7 @@ trait CliCommandTrait
         string $title = '',
         string $message = '',
         bool $use_tty = true
-    ): void {
+    ): CliCommand|null {
         if (!empty($title)) {
             $io->title($title);
         }
@@ -88,5 +88,6 @@ trait CliCommandTrait
         } else {
             $cmd->mustRun();
         }
+        return $cmd;
     }
 }

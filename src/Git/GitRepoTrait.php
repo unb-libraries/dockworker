@@ -77,12 +77,81 @@ trait GitRepoTrait
             $line = trim($line);
             $file = explode(" ", $line, 2);
             if (count($file) >= 2) {
+
                 if (empty($file_mask) || preg_match($file_mask, $file[1])) {
-                    $files[$file[1]] = $file[0];
+                    $files[trim($file[1])] = $file[0];
                 }
             }
         }
         return $files;
+    }
+
+    /**
+     * Retrieves a list of files staged for commit in the repository.
+     *
+     * @param \CzProject\GitPhp\GitRepository $repository
+     *   The repository to query for staged files.
+     * @param string $file_mask
+     *   An optional regex pattern for files to include in the list.
+     *
+     * @return array
+     *   The staged files, keyed by file path and values indicating status.
+     *
+     * @throws \CzProject\GitPhp\GitException
+     */
+    protected function getGitRepoStagedFiles(
+        GitRepository $repository,
+        string $file_mask = ''
+    ): array {
+        $staged_changes = [];
+        $changes = $this->getGitRepoChanges(
+            $repository,
+            $file_mask
+        );
+        foreach ($changes as $file => $status) {
+            if (str_contains($status, 'A')) {
+                $staged_changes[] = $file;
+            }
+        }
+        return $staged_changes;
+    }
+
+    /**
+     * Retrieves files staged for commit in the current application repository.
+     *
+     * @param string $file_mask
+     *   An optional regex pattern for files to include in the list.
+     *
+     * @return array
+     * @throws \CzProject\GitPhp\GitException
+     */
+    protected function getApplicationGitRepoStagedFiles(
+        string $file_mask = ''
+    ): array {
+        return $this->getGitRepoStagedFiles(
+            $this->applicationRepository,
+            $file_mask
+        );
+    }
+
+    /**
+     * Retrieves changed files in the current application repository.
+     *
+     * @param string $file_mask
+     *   An optional regex pattern for files to include in the list.
+     *
+     * @return array
+     *   The changed files.
+     *
+     * @throws \CzProject\GitPhp\GitException
+     */
+    protected function getApplicationGitRepoChangedFiles(
+        string $file_mask = ''
+    ): array {
+        return array_keys($this->getGitRepoChanges(
+            $this->applicationRepository,
+            $file_mask
+        ));
     }
 
     /**
