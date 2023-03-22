@@ -151,7 +151,7 @@ trait DeployedLocalResourcesTrait
         return [
             $this->cliTools['docker'],
             'cp',
-            '-r',
+            '-q',
         ];
     }
 }
