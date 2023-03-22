@@ -8,7 +8,6 @@ use DateTimeInterface;
 use Dockworker\Cli\DockerCliTrait;
 use Dockworker\Docker\DeployedResourcesTrait;
 use Dockworker\Docker\DockerContainer;
-use Dockworker\IO\DockworkerIO;
 
 /**
  * Provides methods to access deployed local resources.

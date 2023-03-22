@@ -7,7 +7,7 @@ use Dockworker\Cli\CliCommandTrait;
 use Dockworker\IO\DockworkerIO;
 
 /**
- * Provides methods to validate YAML vs yaml-lint.
+ * Provides methods to validate YAML via yaml-lint.
  */
 trait YamlLintTrait
 {
@@ -16,7 +16,9 @@ trait YamlLintTrait
     /**
      * Validates files using yaml-lint.
      *
-     * @param string $files
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output.
+     * @param string[] $files
      *   The files to validate.
      *
      * @return \Dockworker\Cli\CliCommand|null
@@ -35,11 +37,9 @@ trait YamlLintTrait
             return $this->executeCliCommand(
                 $cmd,
                 $io,
-                null,
-                '',
-                '',
-                true
+                null
             );
         }
+        return null;
     }
 }

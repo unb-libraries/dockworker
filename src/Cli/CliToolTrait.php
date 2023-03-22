@@ -28,7 +28,7 @@ trait CliToolTrait
      * @param string $filepath
      *   The path to the YAML file containing the tool definition.
      * @param \Dockworker\IO\DockworkerIO $io
-     *   The IO to use for input and output.`
+     *   The IO to use for input and output.
      */
     protected function registerCliToolFromYaml(
         string $filepath,

@@ -25,13 +25,14 @@ class RepoFinder
             realpath(__DIR__ . '/../../../'),
         ];
         foreach ($possible_repo_roots as $possible_repo_root) {
-            if ($repo_root = self::findDirectoryContainingFiles(
-                $possible_repo_root,
-                [
-                    'vendor/bin/dockworker',
-                    'vendor/autoload.php',
-                ]
-            )
+            if (
+                $repo_root = self::findDirectoryContainingFiles(
+                    $possible_repo_root,
+                    [
+                        'vendor/bin/dockworker',
+                        'vendor/autoload.php',
+                    ]
+                )
             ) {
                 return $repo_root;
             }
@@ -66,8 +67,7 @@ class RepoFinder
         for ($i = 0; $i <= $max_height; $i++) {
             if (self::filesExist($file_path, $files)) {
                 return $file_path;
-            }
-            else {
+            } else {
                 $file_path = realpath($file_path . '/..');
             }
         }

@@ -16,7 +16,7 @@ class DockworkerYamlValidateCommands extends DockworkerCommands
     use GitRepoTrait;
     use YamlLintTrait;
 
-    const YAML_EXTENSIONS = [
+    private const YAML_EXTENSIONS = [
         'yaml',
         'yml',
     ];
