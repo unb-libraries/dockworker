@@ -4,6 +4,7 @@ namespace Dockworker\Jira;
 
 use Dockworker\Storage\DockworkerPersistentDataStorageTrait;
 use JiraRestApi\Configuration\ArrayConfiguration;
+use JiraRestApi\Issue\IssueField;
 use JiraRestApi\Issue\IssueSearchResult;
 use JiraRestApi\Issue\IssueService;
 use JiraRestApi\Project\ProjectService;
@@ -58,6 +59,37 @@ trait JiraConnectorTrait
     protected $jiraIssueService;
 
     /**
+     * Displays a list of open JIRA issues.
+     *
+     * @throws \Exception
+     */
+    protected function displayOpenJiraIssues() {
+        $this->initJiraConnection();
+        $headers = ['ID', 'Summary', 'Last Updated'];
+        foreach ($this->jiraProjectKeys as $project_key) {
+            $rows = [];
+            $jql = "project in ($project_key) and status not in (Resolved, closed)";
+            $result = $this->getIssuesJql($jql);
+            if (!empty($result->issues)) {
+                foreach ($result->issues as $issue) {
+                    $rows[] = [
+                        $issue->key,
+                        $issue->fields->summary,
+                        $issue->fields->updated->format('Y-m-d H:i:s'),
+                    ];
+                }
+                $this->dockworkerIO->setDisplayTable(
+                    $headers,
+                    $rows
+                );
+            }
+            else {
+                $this->dockworkerIO->writeln('No open issues found.');
+            }
+        }
+    }
+
+    /**
      * Sets up the JIRA configuration.
      *
      * @throws \Exception
@@ -87,17 +119,6 @@ trait JiraConnectorTrait
             [],
             'DOCKWORKER_JIRA_URI'
         );
-    }
-
-    /**
-     * Sets the JIRA service object.
-     *
-     * @throws \Exception
-     */
-    protected function setJiraServices(): void
-    {
-        $this->jiraProjectService = new ProjectService($this->jiraConfig);
-        $this->jiraIssueService = new IssueService($this->jiraConfig);
     }
 
     /**
@@ -155,11 +176,63 @@ trait JiraConnectorTrait
         );
     }
 
-    protected function getIssuesJql($jql): IssueSearchResult|null {
+    /**
+     * Sets the JIRA service object.
+     *
+     * @throws \Exception
+     */
+    protected function setJiraServices(): void
+    {
+        $this->jiraProjectService = new ProjectService($this->jiraConfig);
+        $this->jiraIssueService = new IssueService($this->jiraConfig);
+    }
+
+    /**
+     * Retrieves a list of JIRA issues matching a JQL query.
+     *
+     * @param string $jql
+     *   The JQL query to execute.
+     *
+     * @return \JiraRestApi\Issue\IssueSearchResult|null
+     */
+    protected function getIssuesJql(string $jql): IssueSearchResult|null {
         try {
             return $this->jiraIssueService->search($jql);
         } catch (\Exception $e) {
             return null;
         }
     }
+
+    /**
+     * Creates a new stub issue in JIRA.
+     *
+     * @throws \Exception
+     */
+    protected function createNewJiraStubIssue() {
+        $this->initJiraConnection();
+        $this->dockworkerIO->section('Creating new JIRA issue');
+        $project_key = $this->dockworkerIO->ask(
+            'Enter the Issue\'s JIRA project key',
+            $this->getFirstJiraProjectKey()
+        );
+        $issue_type = $this->dockworkerIO->askRestricted(
+            "Enter the Issue type ('Bug', 'Task', 'Story')",
+            ['Bug', 'Task', 'Story'],
+            'Task'
+        );
+        $issue_summary = $this->dockworkerIO->ask('Enter a Short Issue Summary (Title)');
+        try {
+            $issue_field = new IssueField();
+            $issue_field->setProjectKey($project_key)
+                ->setSummary($issue_summary)
+                ->setIssueTypeAsString($issue_type);
+            $ret = $this->jiraIssueService->create($issue_field);
+            $this->dockworkerIO->say('Issue created: ' . $ret->key);
+        }
+        catch (JiraException $e) {
+            $this->dockworkerIO->error($e->getMessage());
+            exit(1);
+        }
+    }
+
 }

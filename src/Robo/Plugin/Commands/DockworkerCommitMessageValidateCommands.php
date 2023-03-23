@@ -9,7 +9,6 @@ use Dockworker\Git\GitCommitMessageValidatorTrait;
 use Dockworker\IO\DockworkerIOTrait;
 use Dockworker\Jira\JiraConnectorTrait;
 use Dockworker\Jira\JiraProjectKeysTrait;
-use JiraRestApi\Issue\IssueField;
 
 /**
  * Defines commands used to validate a git commit message.
@@ -72,6 +71,9 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
         exit(1);
     }
 
+    /**
+     * Validates the Jira project prefix in the commit message.
+     */
     protected function validateJiraProjectPrefix() {
         $valid_keys = array_merge(
             $this->jiraGlobalProjectKeys,
@@ -80,6 +82,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
         if (!empty($valid_keys)) {
             if (!$this->getValidateProjectPrefix($valid_keys)) {
                 $this->dockworkerIO->warning(self::WARN_MISSING_JIRA_INFO);
+                $this->showSampleCommitMessage();
                 $action = $this->dockworkerIO->ask(self::ASK_MISSING_JIRA_INFO_ACTION);
                 switch($action) {
                     case 'i':
@@ -98,69 +101,6 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
                         exit(1);
                 }
             }
-        }
-    }
-
-    /**
-     * Displays a list of open JIRA issues.
-     *
-     * @throws \Exception
-     */
-    protected function displayOpenJiraIssues() {
-        $this->initJiraConnection();
-        $headers = ['ID', 'Summary', 'Last Updated'];
-        foreach ($this->jiraProjectKeys as $project_key) {
-            $rows = [];
-            $jql = "project in ($project_key) and status not in (Resolved, closed)";
-            $result = $this->getIssuesJql($jql);
-            if (!empty($result->issues)) {
-                foreach ($result->issues as $issue) {
-                    $rows[] = [
-                        $issue->key,
-                        $issue->fields->summary,
-                        $issue->fields->updated->format('Y-m-d H:i:s'),
-                    ];
-                }
-                $this->dockworkerIO->setDisplayTable(
-                    $headers,
-                    $rows
-                );
-            }
-            else {
-                $this->dockworkerIO->writeln('No open issues found.');
-            }
-        }
-    }
-
-    /**
-     * Creates a new stub issue in JIRA.
-     *
-     * @throws \Exception
-     */
-    protected function createNewJiraStubIssue() {
-        $this->initJiraConnection();
-        $this->dockworkerIO->section('Creating new JIRA issue');
-        $project_key = $this->dockworkerIO->ask(
-            'Enter the Issue\'s JIRA project key',
-            $this->getFirstJiraProjectKey()
-        );
-        $issue_type = $this->dockworkerIO->askRestricted(
-            "Enter the Issue type ('Bug', 'Task', 'Story')",
-            ['Bug', 'Task', 'Story'],
-            'Task'
-        );
-        $issue_summary = $this->dockworkerIO->ask('Enter a Short Issue Summary (Title)');
-        try {
-            $issue_field = new IssueField();
-            $issue_field->setProjectKey($project_key)
-                ->setSummary($issue_summary)
-                ->setIssueTypeAsString($issue_type);
-            $ret = $this->jiraIssueService->create($issue_field);
-            $this->dockworkerIO->say('Issue created: ' . $ret->key);
-        }
-        catch (JiraException $e) {
-            $this->dockworkerIO->error($e->getMessage());
-            exit(1);
         }
     }
 
