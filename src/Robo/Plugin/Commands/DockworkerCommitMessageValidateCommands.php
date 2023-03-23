@@ -67,8 +67,6 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
         }
 
         $this->validateJiraProjectPrefix();
-        print_r('About to actually commit');
-        exit(1);
     }
 
     /**
