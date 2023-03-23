@@ -50,6 +50,42 @@ class DockworkerIO extends ConsoleIO
     }
 
     /**
+     * Displays a table.
+     *
+     * @param string $headers
+     *   The table headers.
+     * @param string $rows
+     *   The table rows.
+     * @param string $title
+     *   The title to display before the table.
+     * @param string $section
+     *   A section header to display before the table.
+     * @param string $description
+     *   A description to display after the table.
+     */
+    protected function displayTable(
+        string $headers,
+        string $rows,
+        string $title = '',
+        string $section = '',
+        string $description = ''
+    ) : void {
+        if (!empty($title)) {
+            $this->title($title);
+        }
+        if (!empty($section)) {
+            $this->section($section);
+        }
+        $this->table(
+            $headers,
+            $rows
+        );
+        if (!empty($description)) {
+            $this->block($description);
+        }
+    }
+
+    /**
      * Displays a table and prompts the user to select one of the rows.
      *
      * @param string $headers
@@ -60,6 +96,10 @@ class DockworkerIO extends ConsoleIO
      *   The key of the row array whose value you wish to return.
      * @param string $title
      *   The title to display before the table.
+     * @param string $section
+     *   A section header to display before the table.
+     * @param string $description
+     *   A description to display after the table.
      * @param string $prompt
      *   The prompt to display to the user.
      * @param int|null $default
@@ -73,16 +113,19 @@ class DockworkerIO extends ConsoleIO
         string $rows,
         string $return_column_key,
         string $title = '',
+        string $section = '',
+        string $description = '',
         string $prompt = 'Enter the ID of the item you wish to select:',
         ?int $default = null
-    ) {
+    ) : string {
         array_unshift($headers, 'ID');
-        if (!empty($title))) {
-            $this->title($title);
-        }
-        $this->table(
+        $this->addIdColumnToRows($rows);
+        $this->displayTable(
             $headers,
-            $this->addIdColumnToRows($rows)
+            $rows,
+            $title,
+            $section,
+            $description
         );
         $chosen_item = null;
         while (!isset($rows[$chosen_item - 1])) {
