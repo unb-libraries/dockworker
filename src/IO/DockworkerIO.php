@@ -63,9 +63,9 @@ class DockworkerIO extends ConsoleIO
      * @param string $description
      *   A description to display after the table.
      */
-    protected function displayTable(
-        string $headers,
-        string $rows,
+    public function setDisplayTable(
+        array $headers,
+        array $rows,
         string $title = '',
         string $section = '',
         string $description = ''
@@ -108,9 +108,9 @@ class DockworkerIO extends ConsoleIO
      * @return string
      *   The value of the selected row's $return_column_key column.
      */
-    protected function chooseOptionTable(
-        string $headers,
-        string $rows,
+    public function setChooseOptionTable(
+        array $headers,
+        array $rows,
         string $return_column_key,
         string $title = '',
         string $section = '',
@@ -153,5 +153,37 @@ class DockworkerIO extends ConsoleIO
             array_unshift($row, $id);
             $id++;
         }
+    }
+
+    /**
+     * Asks the user for a value, but only permit answers from a list of values.
+     *
+     * @param string $prompt
+     *   The prompt to display to the user.
+     * @param array $allowed_values
+     *   The list of permitted values.
+     * @param string|null $default_value
+     *   The default value to use in the prompt.
+     *
+     * @return string
+     *   The value entered by the user.
+     */
+    public function askRestricted(
+        string $prompt,
+        array $allowed_values = [],
+        ?string $default_value = null
+    ): string
+    {
+        $value = null;
+        while (!in_array($value, $allowed_values)) {
+            $value = $this->ask($prompt, $default_value);
+            if (!in_array($value, $allowed_values)) {
+                $this->warning(
+                    'Invalid value selected. Permitted values are: ' .
+                    implode(', ', $allowed_values) . '.'
+                );
+            }
+        }
+        return $value;
     }
 }

@@ -33,15 +33,14 @@ trait JiraProjectKeysTrait
      */
     public function setJiraProperties(): void
     {
-        $jira_project_keys = $this->getConfigItem(
+        $this->jiraProjectKeys = $this->getConfigItem(
             Robo::config(),
-            'dockworker.application.jira.project_keys'
+            'dockworker.application.workflows.jira.project_keys'
         );
-        if ($jira_project_keys != null) {
-            $this->jiraProjectKeys = array_merge(
-                $this->jiraGlobalProjectKeys,
-                $jira_project_keys
-            );
-        }
+    }
+
+    protected function getFirstJiraProjectKey(): string
+    {
+        return $this->jiraProjectKeys[0];
     }
 }
