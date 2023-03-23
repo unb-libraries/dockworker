@@ -104,8 +104,6 @@ trait DeployedLocalResourcesTrait
             $cmd = $this->dockerRun(
                 [
                     'inspect',
-                    '--format',
-                    'json',
                     $name,
                 ],
                 'Discover local container details',
