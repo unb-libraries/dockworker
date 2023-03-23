@@ -77,7 +77,6 @@ trait GitRepoTrait
             $line = trim($line);
             $file = explode(" ", $line, 2);
             if (count($file) >= 2) {
-
                 if (empty($file_mask) || preg_match($file_mask, $file[1])) {
                     $files[trim($file[1])] = $file[0];
                 }

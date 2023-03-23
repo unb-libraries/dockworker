@@ -52,9 +52,9 @@ class DockworkerIO extends ConsoleIO
     /**
      * Displays a table.
      *
-     * @param string $headers
+     * @param array $headers
      *   The table headers.
-     * @param string $rows
+     * @param array $rows
      *   The table rows.
      * @param string $title
      *   The title to display before the table.
@@ -69,7 +69,7 @@ class DockworkerIO extends ConsoleIO
         string $title = '',
         string $section = '',
         string $description = ''
-    ) : void {
+    ): void {
         if (!empty($title)) {
             $this->title($title);
         }
@@ -88,9 +88,9 @@ class DockworkerIO extends ConsoleIO
     /**
      * Displays a table and prompts the user to select one of the rows.
      *
-     * @param string $headers
+     * @param array $headers
      *   The table headers.
-     * @param string $rows
+     * @param array $rows
      *   The table rows.
      * @param string $return_column_key
      *   The key of the row array whose value you wish to return.
@@ -117,7 +117,7 @@ class DockworkerIO extends ConsoleIO
         string $description = '',
         string $prompt = 'Enter the ID of the item you wish to select:',
         ?int $default = null
-    ) : string {
+    ): string {
         array_unshift($headers, 'ID');
         $this->addIdColumnToRows($rows);
         $this->displayTable(
@@ -172,8 +172,7 @@ class DockworkerIO extends ConsoleIO
         string $prompt,
         array $allowed_values = [],
         ?string $default_value = null
-    ): string
-    {
+    ): string {
         $value = null;
         while (!in_array($value, $allowed_values)) {
             $value = $this->ask($prompt, $default_value);

@@ -21,49 +21,50 @@ trait JiraConnectorTrait
      *
      * @var \JiraRestApi\Configuration\ArrayConfiguration
      */
-    protected $jiraConfig;
+    protected ArrayConfiguration $jiraConfig;
 
     /**
      * The jira server hostname.
      *
      * @var string
      */
-    protected $jiraEndpointUri;
+    protected string $jiraEndpointUri;
 
     /**
      * The jira server user name to authenticate with.
      *
      * @var string
      */
-    protected $jiraUserName;
+    protected string $jiraUserName;
 
     /**
      * The jira server user password to authenticate with.
      *
      * @var string
      */
-    protected $jiraUserPassword;
+    protected string $jiraUserPassword;
 
     /**
      * The jira project service.
      *
-     * @var object
+     * @var \JiraRestApi\Project\ProjectService
      */
-    protected $jiraProjectService;
+    protected ProjectService $jiraProjectService;
 
     /**
      * The jira issue service.
      *
-     * @var object
+     * @var \JiraRestApi\Issue\IssueService
      */
-    protected $jiraIssueService;
+    protected IssueService $jiraIssueService;
 
     /**
      * Displays a list of open JIRA issues.
      *
      * @throws \Exception
      */
-    protected function displayOpenJiraIssues() {
+    protected function displayOpenJiraIssues(): void
+    {
         $this->initJiraConnection();
         $headers = ['ID', 'Summary', 'Last Updated'];
         foreach ($this->jiraProjectKeys as $project_key) {
@@ -82,8 +83,7 @@ trait JiraConnectorTrait
                     $headers,
                     $rows
                 );
-            }
-            else {
+            } else {
                 $this->dockworkerIO->writeln('No open issues found.');
             }
         }
@@ -195,7 +195,8 @@ trait JiraConnectorTrait
      *
      * @return \JiraRestApi\Issue\IssueSearchResult|null
      */
-    protected function getIssuesJql(string $jql): IssueSearchResult|null {
+    protected function getIssuesJql(string $jql): IssueSearchResult|null
+    {
         try {
             return $this->jiraIssueService->search($jql);
         } catch (\Exception $e) {
@@ -208,7 +209,8 @@ trait JiraConnectorTrait
      *
      * @throws \Exception
      */
-    protected function createNewJiraStubIssue() {
+    protected function createNewJiraStubIssue(): void
+    {
         $this->initJiraConnection();
         $this->dockworkerIO->section('Creating new JIRA issue');
         $project_key = $this->dockworkerIO->ask(
@@ -228,11 +230,9 @@ trait JiraConnectorTrait
                 ->setIssueTypeAsString($issue_type);
             $ret = $this->jiraIssueService->create($issue_field);
             $this->dockworkerIO->say('Issue created: ' . $ret->key);
-        }
-        catch (JiraException $e) {
+        } catch (JiraException $e) {
             $this->dockworkerIO->error($e->getMessage());
             exit(1);
         }
     }
-
 }

@@ -11,6 +11,7 @@ use Dockworker\IO\DockworkerIOTrait;
 class DockworkerBootstrapCommands extends DockworkerCommands
 {
     use DockworkerIOTrait;
+
     /**
      * A simple command to test framework bootstrapping.
      *

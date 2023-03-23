@@ -113,8 +113,7 @@ trait DeployedLocalResourcesTrait
                 false
             );
             return json_decode($cmd->getOutput(), true);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             return [];
         }
     }

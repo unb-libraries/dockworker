@@ -39,6 +39,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
      * @hidden
      *
      * @throws \Dockworker\DockworkerException
+     * @throws \Exception
      */
     public function validateCommitMsg(
         string $message_file
@@ -71,8 +72,11 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
 
     /**
      * Validates the Jira project prefix in the commit message.
+     *
+     * @throws \Exception
      */
-    protected function validateJiraProjectPrefix() {
+    protected function validateJiraProjectPrefix(): void
+    {
         $valid_keys = array_merge(
             $this->jiraGlobalProjectKeys,
             $this->jiraProjectKeys
@@ -82,7 +86,7 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
                 $this->dockworkerIO->warning(self::WARN_MISSING_JIRA_INFO);
                 $this->showSampleCommitMessage();
                 $action = $this->dockworkerIO->ask(self::ASK_MISSING_JIRA_INFO_ACTION);
-                switch($action) {
+                switch ($action) {
                     case 'i':
                         break;
                     case 'l':
