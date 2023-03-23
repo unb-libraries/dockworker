@@ -94,7 +94,6 @@ class DockworkerCommitMessageValidateCommands extends DockworkerCommands
                         $this->createNewJiraStubIssue();
                         exit(1);
                     default:
-                        $this->showSampleCommitMessage();
                         $this->dockworkerIO->error(self::ERROR_MISSING_JIRA_INFO);
                         exit(1);
                 }
