@@ -22,7 +22,12 @@ class YamlValidateCommands extends DockworkerCommands
     ];
 
     /**
-     * Validates YAML files.
+     * Validates this application's YAML.
+     *
+     * @option bool $staged
+     *   Only validate files staged for commit.
+     * @option bool $changed
+     *   Only validate files changed since last commit.
      *
      * @command validate:yaml
      */
