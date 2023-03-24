@@ -4,7 +4,6 @@ namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\Cli\CliCommandTrait;
 use Dockworker\DockworkerCommands;
-use Dockworker\IO\DockworkerIOTrait;
 use Dockworker\System\FileSystemOperationsTrait;
 
 /**
@@ -13,7 +12,6 @@ use Dockworker\System\FileSystemOperationsTrait;
 class GitHookInstallCommands extends DockworkerCommands
 {
     use CliCommandTrait;
-    use DockworkerIOTrait;
 
     /**
      * Sets up the required git hooks for dockworker.
@@ -42,7 +40,7 @@ class GitHookInstallCommands extends DockworkerCommands
         ];
         $this->executeCliCommand(
             $cmd,
-            $this->dockworkerIO,
+            null,
             null,
             '',
             '',
