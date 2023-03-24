@@ -7,7 +7,7 @@ use Dockworker\DockworkerCommands;
 /**
  * Provides commands for building the application's theme assets.
  */
-class DockworkerThemeCommands extends DockworkerCommands
+class ThemeCommands extends DockworkerCommands
 {
     /**
      * Builds this application's theme assets into a distributable state.

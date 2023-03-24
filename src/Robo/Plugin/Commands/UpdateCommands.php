@@ -7,7 +7,7 @@ use Dockworker\DockworkerCommands;
 /**
  * Provides commands for updating the application.
  */
-class DockworkerUpdateCommands extends DockworkerCommands
+class UpdateCommands extends DockworkerCommands
 {
     /**
      * Updates the application and its dependencies.

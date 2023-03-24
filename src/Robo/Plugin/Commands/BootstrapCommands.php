@@ -8,7 +8,7 @@ use Dockworker\IO\DockworkerIOTrait;
 /**
  * Provides commands to test bootstrapping in CI.
  */
-class DockworkerBootstrapCommands extends DockworkerCommands
+class BootstrapCommands extends DockworkerCommands
 {
     use DockworkerIOTrait;
 

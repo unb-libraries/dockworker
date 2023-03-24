@@ -10,7 +10,7 @@ use Dockworker\System\FileSystemOperationsTrait;
 /**
  * Provides commands to copy git hooks into an application repository.
  */
-class DockworkerGitHookCommands extends DockworkerCommands
+class GitHookInstallCommands extends DockworkerCommands
 {
     use CliCommandTrait;
     use DockworkerIOTrait;

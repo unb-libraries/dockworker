@@ -16,7 +16,7 @@ use Dockworker\Jira\JiraProjectKeysTrait;
  * @link https://github.com/acquia/blt Acquia BLT
  * @link https://github.com/mleko/validate-commit Commit Validation
  */
-class DockworkerCommitMessageValidateCommands extends DockworkerCommands
+class CommitMessageValidateCommands extends DockworkerCommands
 {
     use DockworkerIOTrait;
     use GitCommitMessageValidatorTrait;

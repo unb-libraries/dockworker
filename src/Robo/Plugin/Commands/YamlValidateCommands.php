@@ -10,7 +10,7 @@ use Dockworker\Yaml\YamlLintTrait;
 /**
  * Provides commands for validating YAML within an application.
  */
-class DockworkerYamlValidateCommands extends DockworkerCommands
+class YamlValidateCommands extends DockworkerCommands
 {
     use DockworkerIOTrait;
     use GitRepoTrait;
