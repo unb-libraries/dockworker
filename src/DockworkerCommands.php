@@ -78,14 +78,6 @@ abstract class DockworkerCommands extends Tasks implements
     protected string $applicationSlug;
 
     /**
-     * The UNB Libraries application uuid for the application.
-     *
-     * @link https://systems.lib.unb.ca/wiki/systems:docker:unique-site-uuids UNB Libraries UUIDs
-     * @var string
-     */
-    protected string $applicationUuid;
-
-    /**
      * The full path to the application's dockworker configuration file.
      *
      * @var string
@@ -159,11 +151,6 @@ abstract class DockworkerCommands extends Tasks implements
             $config,
             'applicationShortSlug',
             'dockworker.application.identifiers.short_slug'
-        );
-        $this->setPropertyFromConfigKey(
-            $config,
-            'applicationUuid',
-            'dockworker.application.identifiers.uuid'
         );
         if (
             $this->getConfigItem(
