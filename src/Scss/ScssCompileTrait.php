@@ -2,22 +2,15 @@
 
 namespace Dockworker\Scss;
 
-use Dockworker\Cli\CliCommandTrait;
 use Dockworker\IO\DockworkerIO;
+use Dockworker\Cli\SassCliTrait;
 
 /**
  * Provides methods to compile SCSS files into CSS.
  */
 trait ScssCompileTrait
 {
-    use CliCommandTrait;
-
-    /**
-     * The path to the SCSS compiler.
-     *
-     * @var string
-     */
-    private string $scssCompiler;
+    use SassCliTrait;
 
     /**
      * Compiles a SCSS file to CSS.
@@ -37,29 +30,13 @@ trait ScssCompileTrait
         DockworkerIO $io,
         string|null $cwd
     ): void {
-        $this->executeCliCommand(
+        $this->sassRun(
             [
-                $this->scssCompiler,
                 '--style=compressed',
                 $source_path,
                 $target_path
             ],
-            $io,
-            $cwd,
-            '',
             "Compiling $source_path to $target_path...",
-            false
         );
-    }
-
-    /**
-     * Sets the path to the SCSS compiler.
-     *
-     * @param string $path
-     *   The path to the compiler.
-     */
-    protected function setScssCompiler(string $path): void
-    {
-        $this->scssCompiler = $path;
     }
 }

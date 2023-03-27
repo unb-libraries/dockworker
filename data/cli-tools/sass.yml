@@ -1,0 +1,20 @@
+tool:
+  name: sass
+  description: Dart Sass is the primary implementation of Sass, and it allows dockworker to compile scss files inside themes to distributable css.
+  default_path: /usr/local/bin/sass
+  reference_uris:
+    -
+      label: Further Information
+      uri: https://sass-lang.com/dart-sass
+    -
+      label: Installation
+      uri: https://sass-lang.com/install
+  env_override: SASS_PATH
+  healthcheck:
+    command:
+      - '--version'
+    label: 'Checking sass version'
+    timeout: 3
+    output-contains: '1.'
+    fail-message:
+      - 'The dart sass binary must installed, and be at least version 1.0'
