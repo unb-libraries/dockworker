@@ -170,7 +170,7 @@ class DockerContainer
         array $command,
         DockworkerIO $io,
         bool $use_tty = true,
-    ): void {
+    ): CliCommand {
         $this->setTtyInContainerEntryPoint($use_tty);
         $command = array_merge(
             $this->containerExecEntryPoint,
@@ -189,6 +189,7 @@ class DockerContainer
         } else {
             $cmd->mustRun();
         }
+        return $cmd;
     }
 
     /**

@@ -67,13 +67,12 @@ trait DockerComposeTrait
     /**
      * Deletes any persistent data from this application's stopped local deployment.
      */
-    protected function followComposeApplicationLogs(): void
+    protected function showComposeApplicationLogs(): void
     {
         $this->dockworkerIO->section("[local] Displaying application logs");
         $this->dockerComposeRun(
             [
                 'logs',
-                '-f',
                 $this->applicationName,
             ],
             'Display logs for the docker compose application.'
