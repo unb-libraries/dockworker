@@ -46,7 +46,10 @@ trait SassCliTrait
         $cmd = $this->sassCli($command, $description, $timeout)
             ->setWorkingDirectory($this->applicationRoot);
         if ($use_tty) {
-            $cmd->runTty($this->dockworkerIO);
+            $cmd->runTty(
+                $this->dockworkerIO,
+                false
+            );
         } else {
             $cmd->mustRun();
         }

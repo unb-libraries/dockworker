@@ -13,7 +13,7 @@ tool:
   healthcheck:
     command:
       - '--version'
-    label: 'Checking sass version'
+    label: 'Checking Dart Sass version'
     timeout: 3
     output-contains: '1.'
     fail-message:
