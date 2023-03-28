@@ -40,6 +40,7 @@ jobs:
 
   deploy-image-to-k8s:
     uses: unb-libraries/dockworker/.github/workflows/deploy.yaml@6.x
+    needs: [ build-push-images ]
     with:
       branch-env-map: ${{ inputs.branch-env-map }}
       deploy-branches: ${{ inputs.deploy-branches }}
