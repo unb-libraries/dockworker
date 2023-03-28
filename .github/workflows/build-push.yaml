@@ -18,7 +18,7 @@ on:
 jobs:
   notify-start:
     name: Notify of Start
-    if: always() && ${{ inputs.notify }}
+    if: always() && inputs.notify
     uses: unb-libraries/dockworker/.github/workflows/notify-start.yaml@6.x
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -134,6 +134,6 @@ jobs:
     name: Notify of Conclusion
     uses: unb-libraries/dockworker/.github/workflows/notify-conclusion.yaml@6.x
     needs: [ push-branch-tag-image-repository ]
-    if: always() && ${{ inputs.notify }}
+    if: always() && inputs.notify
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
