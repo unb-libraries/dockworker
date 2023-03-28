@@ -43,6 +43,8 @@ jobs:
     with:
       notify: false
       push-branches: ${{ inputs.push-branches }}
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   deploy-image-to-k8s:
     if:
