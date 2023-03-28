@@ -21,6 +21,6 @@ class UpdateCommands extends DockworkerCommands
      */
     public function updateApplication(): void
     {
-        return;
+        // Pass.
     }
 }

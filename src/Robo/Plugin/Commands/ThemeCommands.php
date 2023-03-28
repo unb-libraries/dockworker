@@ -20,6 +20,6 @@ class ThemeCommands extends DockworkerCommands
      */
     public function buildThemes(): void
     {
-        return;
+        // Pass.
     }
 }

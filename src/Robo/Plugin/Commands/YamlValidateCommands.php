@@ -30,6 +30,8 @@ class YamlValidateCommands extends DockworkerCommands
      *   Only validate files changed since last commit.
      *
      * @command validate:yaml
+     *
+     * @throws \CzProject\GitPhp\GitException
      */
     public function validateYaml(
         array $options = [

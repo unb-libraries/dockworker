@@ -3,6 +3,7 @@
 namespace Dockworker\Jira;
 
 use Dockworker\Storage\DockworkerPersistentDataStorageTrait;
+use Exception;
 use JiraRestApi\Configuration\ArrayConfiguration;
 use JiraRestApi\Issue\IssueField;
 use JiraRestApi\Issue\IssueSearchResult;
@@ -199,7 +200,7 @@ trait JiraConnectorTrait
     {
         try {
             return $this->jiraIssueService->search($jql);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return null;
         }
     }

@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Dockworker\Cli\DockerCliTrait;
 use Dockworker\Docker\DeployedResourcesTrait;
 use Dockworker\Docker\DockerContainer;
+use Exception;
 
 /**
  * Provides methods to access deployed local resources.
@@ -111,7 +112,7 @@ trait DeployedLocalResourcesTrait
                 false
             );
             return json_decode($cmd->getOutput(), true);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [];
         }
     }

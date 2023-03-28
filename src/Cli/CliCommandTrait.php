@@ -69,8 +69,7 @@ trait CliCommandTrait
         string $message = '',
         bool $use_tty = true
     ): CliCommand|null {
-        if ($io !== null)
-        {
+        if ($io !== null) {
             if (!empty($title)) {
                 $io->title($title);
             }

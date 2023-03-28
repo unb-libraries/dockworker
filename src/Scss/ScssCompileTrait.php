@@ -2,8 +2,8 @@
 
 namespace Dockworker\Scss;
 
-use Dockworker\IO\DockworkerIO;
 use Dockworker\Cli\SassCliTrait;
+use Dockworker\IO\DockworkerIO;
 
 /**
  * Provides methods to compile SCSS files into CSS.
@@ -21,14 +21,11 @@ trait ScssCompileTrait
      *   The CSS target path.
      * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
-     * @param string|null $cwd
-     *   The working directory to use for the command.
      */
     protected function compileScss(
         string $source_path,
         string $target_path,
-        DockworkerIO $io,
-        string|null $cwd
+        DockworkerIO $io
     ): void {
         $io->say("Compiling $source_path to $target_path...");
         $this->sassRun(
