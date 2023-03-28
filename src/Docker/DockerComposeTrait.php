@@ -22,13 +22,17 @@ trait DockerComposeTrait
     protected function buildComposeApplication(): void
     {
         $this->dockworkerIO->section("[local] Building Application");
-        $this->dockerComposeRun(
+        $cmd = $this->dockerComposeRun(
             [
                 'build',
                 '--pull',
             ],
             'Building the docker image.'
         );
+        if ($cmd->getExitCode() !== 0) {
+            $this->dockworkerIO->error('Failed to build the docker image.');
+            exit (1);
+        }
     }
 
     /**
@@ -37,13 +41,17 @@ trait DockerComposeTrait
     protected function startComposeApplication(): void
     {
         $this->dockworkerIO->section("[local] Starting Application");
-        $this->dockerComposeRun(
+        $cmd = $this->dockerComposeRun(
             [
                 'up',
                 '-d',
             ],
             'Starting the local application.'
         );
+        if ($cmd->getExitCode() !== 0) {
+            $this->dockworkerIO->error('Failed to start the docker container.');
+            exit (1);
+        }
     }
 
 
@@ -60,7 +68,7 @@ trait DockerComposeTrait
                 'local',
                 '-v',
             ],
-            'Stopping he compose application and removing its data.'
+            'Stopping the compose application and removing its data.'
         );
     }
 
