@@ -15,37 +15,11 @@ on:
         description: 'The name of the kubernetes deployment to update.'
         required: true
         type: string
-      notify:
-        description: 'Whether or not to send notifications within this workflow.'
-        type: boolean
-        default: true
-        required: false
-      push-branches:
-        description: 'A list of branches that should be pushed to the container registry. JSON list format.'
-        required: true
-        type: string
     secrets:
       KUBE_CONFIG:
         required: true
-      SLACK_WEBHOOK_URL:
-        required: true
 
 jobs:
-  notify-start:
-    name: Notify of Start
-    if: always() && inputs.notify
-    uses: unb-libraries/dockworker/.github/workflows/notify-start.yaml@6.x
-    secrets:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-  build-push-images:
-    uses: unb-libraries/dockworker/.github/workflows/build-push.yaml@6.x
-    with:
-      notify: false
-      push-branches: ${{ inputs.push-branches }}
-    secrets:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
   deploy-image-to-k8s:
     if:
       contains(fromJSON(inputs.deploy-branches), github.ref_name)
@@ -95,11 +69,3 @@ jobs:
         env:
           DEPLOYMENT_NAME: ${{ inputs.k8s-deployment-name }}
           DEPLOYMENT_NAMESPACE: ${{ env.DEPLOYMENT_NAMESPACE }}
-
-  notify-conclusion:
-    name: Notify of Conclusion
-    uses: unb-libraries/dockworker/.github/workflows/notify-conclusion.yaml@6.x
-    needs: [ deploy-image-to-k8s ]
-    if: always() && inputs.notify
-    secrets:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

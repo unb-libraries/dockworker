@@ -3,26 +3,12 @@ name: Build Image and Push To Registry
 on:
   workflow_call:
     inputs:
-      notify:
-        description: 'Whether or not to send notifications within this workflow.'
-        type: boolean
-        default: true
-        required: false
       push-branches:
         description: 'A list of branches that should be pushed to the container registry. JSON list format.'
         required: true
         type: string
-    secrets:
-      SLACK_WEBHOOK_URL:
-        required: true
-jobs:
-  notify-start:
-    name: Notify of Start
-    if: always() && inputs.notify
-    uses: unb-libraries/dockworker/.github/workflows/notify-start.yaml@6.x
-    secrets:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
+jobs:
   set-deployment-image-tag:
     name: Set deployment image tags
     runs-on: ubuntu-latest
@@ -129,11 +115,3 @@ jobs:
       -
         name: Push Branch Tag
         run: docker push "$BUILD_IMAGE_BRANCH_NAME"
-
-  notify-conclusion:
-    name: Notify of Conclusion
-    uses: unb-libraries/dockworker/.github/workflows/notify-conclusion.yaml@6.x
-    needs: [ push-branch-tag-image-repository ]
-    if: always() && inputs.notify
-    secrets:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

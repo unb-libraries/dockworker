@@ -1,0 +1,56 @@
+name: Build Image and Push, then Deploy to Kubernetes
+
+on:
+  workflow_call:
+    inputs:
+      branch-env-map:
+        description: 'A mapping of branches-to-k8s-namespaces. JSON dictionary format.'
+        required: true
+        type: string
+      deploy-branches:
+        description: 'A list of branches that should be deployed to kubernetes cluster. JSON list format.'
+        required: true
+        type: string
+      k8s-deployment-name:
+        description: 'The name of the kubernetes deployment to update.'
+        required: true
+        type: string
+      push-branches:
+        description: 'A list of branches that should be pushed to the container registry. JSON list format.'
+        required: true
+        type: string
+    secrets:
+      KUBE_CONFIG:
+        required: true
+      SLACK_WEBHOOK_URL:
+        required: true
+
+jobs:
+  notify-start:
+    name: Notify of Start
+    if: always()
+    uses: unb-libraries/dockworker/.github/workflows/notify-start.yaml@6.x
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  build-push-images:
+    uses: unb-libraries/dockworker/.github/workflows/build-push.yaml@6.x
+    with:
+      push-branches: ${{ inputs.push-branches }}
+
+  deploy-image-to-k8s:
+    uses: unb-libraries/dockworker/.github/workflows/deploy.yaml@6.x
+    with:
+      branch-env-map: ${{ inputs.branch-env-map }}
+      deploy-branches: ${{ inputs.deploy-branches }}
+      k8s-deployment-name: ${{ inputs.k8s-deployment-name }}
+    secrets:
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+
+  notify-conclusion:
+    name: Notify of Conclusion
+    uses: unb-libraries/dockworker/.github/workflows/notify-conclusion.yaml@6.x
+    needs: [ deploy-image-to-k8s ]
+    if: always()
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
