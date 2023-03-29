@@ -31,7 +31,7 @@ trait CommandLauncherTrait
         array $command,
     ): void {
         $cmd_launch = [
-            $_SERVER['argv'][0],
+           $this->applicationRoot . '/vendor/bin/dockworker',
             '--ansi',
         ];
         $cmd = array_merge($cmd_launch, $command);
