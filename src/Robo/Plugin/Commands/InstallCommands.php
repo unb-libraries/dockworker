@@ -34,4 +34,20 @@ class InstallCommands extends DockworkerCommands {
     // Pass
   }
 
+  /**
+   * Uninstall one or more dependencies.
+   *
+   * @param array $dependencies
+   *   A list of dependencies to uninstall.
+   *
+   * @command dockworker:uninstall
+   * @aliases uninstall remove
+   *
+   * @usage dockworker uninstall dep1 dep2
+   */
+  public function uninstallDependencies(array $dependencies): void
+  {
+    // Pass
+  }
+
 }
