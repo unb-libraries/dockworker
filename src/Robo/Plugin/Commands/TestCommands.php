@@ -44,10 +44,19 @@ class TestCommands extends DockworkerCommands
    * This command is a placeholder for framework-specific e2e-test commands that
    * can be implemented by extensions of this package.
    *
+   * @param string[] $options
+   *   An array of options to pass to the command.
+   *
+   * @option bool $headless Whether to run the tests in headless mode.
+   * @default $headless FALSE
+   *
    * @command test:e2e
    * @aliases test-e2e
+   *
    */
-  public function runE2eTests(): void
+  public function runE2eTests(
+    array $options = ['headless' => FALSE]
+  ): void
   {
     // Pass.
   }
