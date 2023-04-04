@@ -27,13 +27,27 @@ class TestCommands extends DockworkerCommands
   /**
    * Execute this application's unit tests.
    *
-   * This command is a placeholder for framework-specific test commands that
+   * This command is a placeholder for framework-specific unit-test commands that
    * can be implemented by extensions of this package.
    *
    * @command test:unit
    * @aliases test-unit
    */
   public function runUnitTests(): void
+  {
+    // Pass.
+  }
+
+  /**
+   * Execute this application's e2e tests.
+   *
+   * This command is a placeholder for framework-specific e2e-test commands that
+   * can be implemented by extensions of this package.
+   *
+   * @command test:e2e
+   * @aliases test-e2e
+   */
+  public function runE2eTests(): void
   {
     // Pass.
   }
