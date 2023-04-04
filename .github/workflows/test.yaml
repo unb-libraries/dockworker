@@ -1,0 +1,38 @@
+name: Run unit tests
+
+on:
+  workflow_call:
+    inputs:
+      type:
+        description: The type of tests to run
+        required: false
+        default: all
+        type: string
+
+jobs:
+  test-unit:
+    name: Run unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - 
+        name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - 
+        name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+          coverage: none
+          tools: composer:v2
+          extensions: curl,dom,gd,mbstring,posix,yaml,zip
+      - 
+        name: Install dockworker
+        run: composer install
+        shell: bash
+      - 
+        name: Run tests
+        run: vendor/bin/dockworker test:${{ inputs.type }}
+        shell: bash
