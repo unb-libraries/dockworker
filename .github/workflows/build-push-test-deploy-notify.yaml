@@ -33,10 +33,24 @@ jobs:
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
+  test-unit:
+    name: Unit tests
+    uses: unb-libraries/dockworker/.github/workflows/test-unit.yaml@6.x
+
   build-push-images:
     uses: unb-libraries/dockworker/.github/workflows/build-push.yaml@6.x
     with:
       push-branches: ${{ inputs.push-branches }}
+
+  update-docker-compose:
+    name: Update docker-compose
+    uses: unb-libraries/dockworker/.github/workflows/update-docker-compose.yaml@6.x
+    needs: [ build-push-images ]
+
+  test-e2e:
+    name: End-to-end tests
+    uses: unb-libraries/dockworker/.github/workflows/test-e2e.yaml@6.x
+    needs: [ update-docker-compose ]
 
   deploy-image-to-k8s:
     uses: unb-libraries/dockworker/.github/workflows/deploy.yaml@6.x
