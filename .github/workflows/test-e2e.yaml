@@ -1,0 +1,70 @@
+name: Run end-to-end tests
+
+on:
+  workflow_call:
+    secrets:
+      DOCKER_CLOUD_USER_NAME:
+        required: true
+      DOCKER_CLOUD_ACCESS_TOKEN:
+        required: true
+      GH_CONTAINER_REGISTRY_USER:
+        required: true
+      GH_CONTAINER_REGISTRY_TOKEN:
+        required: true
+
+jobs:
+  test-unit:
+    name: Run end-to-end tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - 
+        name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - 
+        name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+          coverage: none
+          tools: composer:v2
+          extensions: curl,dom,gd,mbstring,posix,yaml,zip
+      - 
+        name: Install dockworker
+        run: composer install
+        shell: bash
+      -
+        name: Install test dependencies
+        run: npm install
+        shell: bash
+      - uses: FranzDiebold/github-env-vars-action@v2
+      - uses: unb-libraries/install-dockworker-composite-action@v2
+      -
+        name: Download docker-compose
+        uses: actions/download-artifact@v3
+        with:
+          name: docker-compose
+      -
+        name: Login to GHCR
+        run: echo $GH_CONTAINER_REGISTRY_TOKEN | docker login ghcr.io -u $GH_CONTAINER_REGISTRY_USER --password-stdin
+        env:
+          GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
+          GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_CLOUD_USER_NAME }}
+          password: ${{ secrets.DOCKER_CLOUD_ACCESS_TOKEN }}
+      -
+        name: Pull Required Docker Images
+        run: docker-compose pull --parallel --quiet
+      -
+        name: Start container
+        run: vendor/bin/dockworker deploy
+      - 
+        name: Run tests
+        run: vendor/bin/dockworker test:e2e --headless
+        shell: bash

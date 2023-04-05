@@ -2,12 +2,6 @@ name: Run unit tests
 
 on:
   workflow_call:
-    inputs:
-      type:
-        description: The type of tests to run
-        required: false
-        default: all
-        type: string
 
 jobs:
   test-unit:
@@ -32,7 +26,11 @@ jobs:
         name: Install dockworker
         run: composer install
         shell: bash
+      -
+        name: Install test dependencies
+        run: npm install
+        shell: bash
       - 
         name: Run tests
-        run: vendor/bin/dockworker test:${{ inputs.type }}
+        run: vendor/bin/dockworker test:unit
         shell: bash
