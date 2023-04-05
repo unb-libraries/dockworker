@@ -19,8 +19,8 @@ trait LogCheckerTrait
      *   line of the output that matched as an error indicates it is not
      *   actually an error.
      * @param array $matches
-     *   An optional empty array that will contain the line of output that
-     *   matched as an error if one is found.
+     *   An optional empty scalar variable that will contain be filled with the
+     *   line of output that matched as an error if one is found.
      * @param string $preg_operators
      *   The operators to use when matching. Defaults to 'i'.
      *
@@ -31,23 +31,29 @@ trait LogCheckerTrait
         string $output,
         string $error_strings,
         string $exception_strings = '',
-        array &$matches = [],
+        string &$matched_error = '',
         string $preg_operators = 'i'
     ): bool {
+        $error_matches = [];
         if (
             preg_match(
                 "/(.*($error_strings).*)/$preg_operators",
                 $output,
-                $matches
+                $error_matches
             )
         ) {
             if (!empty($exception_strings)) {
-                return !preg_match(
-                    "/(.*($exception_strings).*)/$preg_operators",
-                    $output
-                );
+                if (
+                    preg_match(
+                        "/(.*($exception_strings).*)/$preg_operators",
+                        $error_matches[0]
+                    )
+                ) {
+                    return false;
+                }
+                $matched_error = $error_matches[0];
+                return true;
             }
-            return true;
         }
         return false;
     }
