@@ -1,0 +1,33 @@
+name: Update docker-compose
+
+on:
+  workflow_call:
+
+jobs:
+  update-docker-compose:
+    name: Update Docker Compose
+    runs-on: ubuntu-latest
+    steps:
+      - uses: FranzDiebold/github-env-vars-action@v2
+      - uses: actions/checkout@v3
+      -
+        name: Retrieve Image Tag
+        uses: actions/download-artifact@v3
+        with:
+          name: build-image-tag
+          path: /tmp
+      -
+        name: Set Image Tag
+        run: cat /tmp/image_tag.env >> $GITHUB_ENV
+      -
+        name: Remove build section from docker-compose
+        run: docker run --rm --env "CI_REPOSITORY_NAME=$CI_REPOSITORY_NAME" -v "${PWD}":/workdir mikefarah/yq:3.3.4 yq delete --inplace docker-compose.yml "services[$CI_REPOSITORY_NAME].build"
+      -
+        name: Add new image section with built image
+        run: docker run --rm --env "CI_REPOSITORY_NAME=$CI_REPOSITORY_NAME" -v "${PWD}":/workdir mikefarah/yq:3.3.4 yq write --inplace docker-compose.yml "services[$CI_REPOSITORY_NAME].image" "ghcr.io/$CI_REPOSITORY_OWNER/$CI_REPOSITORY_NAME:$BUILD_IMAGE_TAG"
+      -
+        name: Upload docker-compose.yml
+        uses: actions/upload-artifact@v3
+        with:
+          name: docker-compose
+          path: ./docker-compose.yml
