@@ -47,6 +47,7 @@ jobs:
 
   build-push-images:
     uses: unb-libraries/dockworker/.github/workflows/build-push.yaml@6.x
+    needs: [ test-unit ]
     with:
       push-branches: ${{ inputs.push-branches }}
 
@@ -67,7 +68,7 @@ jobs:
 
   deploy-image-to-k8s:
     uses: unb-libraries/dockworker/.github/workflows/deploy.yaml@6.x
-    needs: [ build-push-images ]
+    needs: [ test-e2e ]
     with:
       branch-env-map: ${{ inputs.branch-env-map }}
       deploy-branches: ${{ inputs.deploy-branches }}
