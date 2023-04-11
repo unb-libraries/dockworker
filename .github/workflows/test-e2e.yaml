@@ -40,7 +40,7 @@ jobs:
         run: npm install
         shell: bash
       - uses: FranzDiebold/github-env-vars-action@v2
-      - uses: unb-libraries/install-dockworker-composite-action@v2
+      - uses: unb-libraries/install-dockworker-composite-action@2.x
       -
         name: Download docker-compose
         uses: actions/download-artifact@v3
