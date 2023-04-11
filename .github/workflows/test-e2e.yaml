@@ -23,24 +23,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
-      - 
-        name: Install PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.1
-          coverage: none
-          tools: composer:v2
-          extensions: curl,dom,gd,mbstring,posix,yaml,zip
-      - 
-        name: Install dockworker
-        run: composer install --ignore-platform-reqs
-        shell: bash
+      - uses: FranzDiebold/github-env-vars-action@v2
+      - uses: unb-libraries/install-dockworker-composite-action@2.x
       -
         name: Install test dependencies
         run: npm install
         shell: bash
-      - uses: FranzDiebold/github-env-vars-action@v2
-      - uses: unb-libraries/install-dockworker-composite-action@2.x
       -
         name: Download docker-compose
         uses: actions/download-artifact@v3
