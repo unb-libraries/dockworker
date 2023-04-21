@@ -3,115 +3,85 @@ name: Build Image and Push To Registry
 on:
   workflow_call:
     inputs:
+      image-name:
+        description: 'The full, repository namespaced image name to build (without the tag).'
+        required: true
+        type: string
       push-branches:
         description: 'A list of branches that should be pushed to the container registry. JSON list format.'
         required: true
         type: string
+    secrets:
+      GH_CONTAINER_REGISTRY_USER:
+        description: 'The user to use to login to the GitHub Container Registry.'
+        required: true
+      GH_CONTAINER_REGISTRY_TOKEN:
+        description: 'The token to use to login to the GitHub Container Registry.'
+        required: true
 
 jobs:
-  set-deployment-image-tag:
-    name: Set deployment image tags
-    runs-on: ubuntu-latest
-    steps:
-      - uses: FranzDiebold/github-env-vars-action@v2
-      -
-        name: Get current time
-        uses: josStorer/get-current-time@v2.0.2
-        id: current-time
-        with:
-          format: YYYYMMDDHHMMSS
-      -
-        name: Set Tag
-        env:
-          TIMESTAMP: "${{ steps.current-time.outputs.formattedTime }}"
-        run: echo "BUILD_IMAGE_TAG=$CI_SHA_SHORT-$TIMESTAMP" > /tmp/image_tag.env
-      -
-        name: Set Full Name
-        env:
-          TIMESTAMP: "${{ steps.current-time.outputs.formattedTime }}"
-        run: echo "BUILD_IMAGE_FULL_NAME=ghcr.io/$CI_REPOSITORY_OWNER_SLUG/$CI_REPOSITORY_NAME:$CI_SHA_SHORT-$TIMESTAMP" >> /tmp/image_tag.env
-      -
-        name: Set Full Branch Name
-        env:
-          TIMESTAMP: "${{ steps.current-time.outputs.formattedTime }}"
-        run: echo "BUILD_IMAGE_BRANCH_NAME=ghcr.io/$CI_REPOSITORY_OWNER_SLUG/$CI_REPOSITORY_NAME:$CI_REF_NAME" >> /tmp/image_tag.env
-      -
-        name: Display Tag
-        run: cat /tmp/image_tag.env
-      -
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-image-tag
-          path: /tmp/image_tag.env
-
   build-image:
     name: Build Image
-    needs: [set-deployment-image-tag]
     runs-on: ubuntu-latest
     steps:
       - uses: FranzDiebold/github-env-vars-action@v2
       - uses: actions/checkout@v3
       -
-        name: Retrieve Image Tag
-        uses: actions/download-artifact@v3
+        name: Get current time
+        uses: josStorer/get-current-time@v2
+        id: current-time
         with:
-          name: build-image-tag
-          path: /tmp
+          format: YYYYMMDDHHMMSS
       -
-        name: Set Image Tag
-        run: cat /tmp/image_tag.env >> $GITHUB_ENV
-      -
-        name: Build Docker Image
+        name: Set Hashed Tag
         env:
-          TIMESTAMP: "${{ github.event.repository.updated_at }}"
-        run: |
-          docker build \
-            --build-arg BUILD_DATE=$TIMESTAMP \
-            --build-arg VCS_REF=$CI_REF_NAME \
-            --build-arg VERSION=$BUILD_IMAGE_TAG \
-            --tag "$BUILD_IMAGE_FULL_NAME" \
-            .
+          TIMESTAMP: ${{ steps.current-time.outputs.formattedTime }}
+        run: echo "BUILD_IMAGE_TAG=$CI_SHA_SHORT-$TIMESTAMP" >> $GITHUB_ENV
       -
-        name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+        name: Set Hashed Image Full Name
+        env:
+          TIMESTAMP: ${{ steps.current-time.outputs.formattedTime }}
+          IMAGE_NAME: ${{ inputs.push-branches }}
+        run: echo "BUILD_IMAGE_FULL_NAME=$IMAGE_NAME:$CI_SHA_SHORT-$TIMESTAMP" >> $GITHUB_ENV
       -
-        name: Push Image to GHCR
-        run: docker push "$BUILD_IMAGE_FULL_NAME"
-
-  push-branch-tag-image-repository:
-    if:
-      contains(fromJSON(inputs.push-branches), github.ref_name)
-    name: Push Branch Tag to Repository
-    runs-on: ubuntu-latest
-    needs: [build-image]
-    steps:
-      - uses: FranzDiebold/github-env-vars-action@v2
-      -
-        name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      -
-        name: Retrieve Image Tag
-        uses: actions/download-artifact@v3
-        with:
-          name: build-image-tag
-          path: /tmp
+        name: Set Branched Image Full Name
+        env:
+          TIMESTAMP: ${{ steps.current-time.outputs.formattedTime }}
+          IMAGE_NAME: ${{ inputs.push-branches }}
+        run: echo "BUILD_IMAGE_BRANCH_NAME=$IMAGE_NAME:$CI_REF_NAME" >> $GITHUB_ENV
       -
         name: Set Image Tag
         run: cat /tmp/image_tag.env >> $GITHUB_ENV
       -
-        name: Pull Hash Tagged Image
-        run: docker pull "$BUILD_IMAGE_FULL_NAME"
+        name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
       -
-        name: Update Branch Tag
-        run: docker image tag "$BUILD_IMAGE_FULL_NAME" "$BUILD_IMAGE_BRANCH_NAME"
+        name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
+          password: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
+      - name: Determine Push Tags
+        uses: haya14busa/action-cond@v1
+        id: fetch-tags
+        with:
+          cond: ${{ contains(fromJSON(inputs.push-branches), github.ref_name) }}
+          if_true: "${{ env.BUILD_IMAGE_FULL_NAME }},${{ env.BUILD_IMAGE_BRANCH_NAME }}"
+          if_false: ${{ env.BUILD_IMAGE_FULL_NAME }}
       -
-        name: Push Branch Tag
-        run: docker push "$BUILD_IMAGE_BRANCH_NAME"
+        env:
+          TIMESTAMP: ${{ steps.current-time.outputs.time }}
+        uses: docker/build-push-action@v3
+        with:
+          pull: true
+          push: true
+          platforms: linux/amd64,linux/arm64/v8
+          context: .
+          file: ./Dockerfile
+          tags: ${{ steps.fetch-tags.outputs.value }}
+          build-args: |
+            BUILD_DATE=$TIMESTAMP
+            VCS_REF=${{ env.CI_REF_NAME }}
+            VERSION=${{ env.BUILD_IMAGE_TAG }}
