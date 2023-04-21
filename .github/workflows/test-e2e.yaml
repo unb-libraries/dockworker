@@ -54,5 +54,5 @@ jobs:
         run: vendor/bin/dockworker deploy
       - 
         name: Run tests
-        shell: script -q -e -c "bash {0}"
-        run: vendor/bin/dockworker test:e2e --headless
+        run: vendor/bin/dockworker test:e2e --headless --no-interaction
+        shell: bash
