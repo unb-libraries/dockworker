@@ -29,7 +29,7 @@ jobs:
 
   build-push-images:
     uses: unb-libraries/dockworker/.github/workflows/build-push.yaml@6.x
-    needs: [ test-unit ]
+    needs: [ notify-start ]
     with:
       image-name: ${{ inputs.image-name }}
       push-branches: ${{ inputs.push-branches }}
@@ -40,7 +40,7 @@ jobs:
   notify-conclusion:
     name: Notify of Conclusion
     uses: unb-libraries/dockworker/.github/workflows/notify-conclusion.yaml@6.x
-    needs: [ deploy-image-to-k8s ]
+    needs: [ build-push-images ]
     if: always()
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
