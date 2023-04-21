@@ -50,6 +50,9 @@ jobs:
     needs: [ test-unit ]
     with:
       push-branches: ${{ inputs.push-branches }}
+    secrets:
+      GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
+      GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
 
   # update-docker-compose:
   #   name: Update docker-compose
