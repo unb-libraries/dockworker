@@ -11,6 +11,10 @@ on:
         description: 'A list of branches that should be deployed to kubernetes cluster. JSON list format.'
         required: true
         type: string
+      image-name:
+        description: 'The full, repository namespaced image name to build (without the tag).'
+        required: true
+        type: string
       k8s-deployment-name:
         description: 'The name of the kubernetes deployment to update.'
         required: true
@@ -49,6 +53,7 @@ jobs:
     uses: unb-libraries/dockworker/.github/workflows/build-push.yaml@6.x
     needs: [ test-unit ]
     with:
+      image-name: ${{ inputs.image-name }}
       push-branches: ${{ inputs.push-branches }}
     secrets:
       GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
