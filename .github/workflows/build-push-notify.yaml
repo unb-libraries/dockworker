@@ -1,0 +1,46 @@
+name: Build Image and Push, with Notifying
+
+on:
+  workflow_call:
+    inputs:
+      image-name:
+        description: 'The full, repository namespaced image name to build (without the tag).'
+        required: true
+        type: string
+      push-branches:
+        description: 'A list of branches that should be pushed to the container registry. JSON list format.'
+        required: true
+        type: string
+    secrets:
+      SLACK_WEBHOOK_URL:
+        required: true
+      GH_CONTAINER_REGISTRY_USER:
+        required: true
+      GH_CONTAINER_REGISTRY_TOKEN:
+        required: true
+
+jobs:
+  notify-start:
+    name: Notify of Start
+    if: always()
+    uses: unb-libraries/dockworker/.github/workflows/notify-start.yaml@6.x
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  build-push-images:
+    uses: unb-libraries/dockworker/.github/workflows/build-push.yaml@6.x
+    needs: [ test-unit ]
+    with:
+      image-name: ${{ inputs.image-name }}
+      push-branches: ${{ inputs.push-branches }}
+    secrets:
+      GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
+      GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
+
+  notify-conclusion:
+    name: Notify of Conclusion
+    uses: unb-libraries/dockworker/.github/workflows/notify-conclusion.yaml@6.x
+    needs: [ deploy-image-to-k8s ]
+    if: always()
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
