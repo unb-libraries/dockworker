@@ -50,9 +50,6 @@ jobs:
           IMAGE_NAME: ${{ inputs.push-branches }}
         run: echo "BUILD_IMAGE_BRANCH_NAME=$IMAGE_NAME:$CI_REF_NAME" >> $GITHUB_ENV
       -
-        name: Set Image Tag
-        run: cat /tmp/image_tag.env >> $GITHUB_ENV
-      -
         name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v2
