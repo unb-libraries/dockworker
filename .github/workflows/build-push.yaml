@@ -41,13 +41,13 @@ jobs:
         name: Set Hashed Image Full Name
         env:
           TIMESTAMP: ${{ steps.current-time.outputs.formattedTime }}
-          IMAGE_NAME: ${{ inputs.push-branches }}
+          IMAGE_NAME: ${{ inputs.image-name }}
         run: echo "BUILD_IMAGE_FULL_NAME=$IMAGE_NAME:$CI_SHA_SHORT-$TIMESTAMP" >> $GITHUB_ENV
       -
         name: Set Branched Image Full Name
         env:
           TIMESTAMP: ${{ steps.current-time.outputs.formattedTime }}
-          IMAGE_NAME: ${{ inputs.push-branches }}
+          IMAGE_NAME: ${{ inputs.image-name }}
         run: echo "BUILD_IMAGE_BRANCH_NAME=$IMAGE_NAME:$CI_REF_NAME" >> $GITHUB_ENV
       -
         name: Set up Docker Buildx
