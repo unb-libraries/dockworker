@@ -36,7 +36,9 @@ jobs:
         name: Set Hashed Tag
         env:
           TIMESTAMP: ${{ steps.current-time.outputs.formattedTime }}
-        run: echo "BUILD_IMAGE_TAG=$CI_SHA_SHORT-$TIMESTAMP" >> $GITHUB_ENV
+        run: |
+          echo "BUILD_IMAGE_TAG=$CI_SHA_SHORT-$TIMESTAMP" >> $GITHUB_ENV &&
+          echo "BUILD_IMAGE_TAG=$CI_SHA_SHORT-$TIMESTAMP" > /tmp/image_tag.env
       -
         name: Set Hashed Image Full Name
         env:
@@ -82,3 +84,8 @@ jobs:
             BUILD_DATE=$TIMESTAMP
             VCS_REF=${{ env.CI_REF_NAME }}
             VERSION=${{ env.BUILD_IMAGE_TAG }}
+      -
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-image-tag
+          path: /tmp/image_tag.env
