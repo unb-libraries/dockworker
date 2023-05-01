@@ -43,7 +43,6 @@ jobs:
 
   build-push-images:
     uses: unb-libraries/dockworker/.github/workflows/build-push.yaml@6.x
-    needs: [ test-unit ]
     with:
       image-name: ${{ inputs.image-name }}
       push-branches: ${{ inputs.push-branches }}
