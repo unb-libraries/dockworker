@@ -69,9 +69,7 @@ trait StackOverflowTeamsClientTrait
                     $team_slug
                 ),
                 '',
-                'Dockworker authenticates to StackOverflow Teams using a Personal Access Token (PAT). This
-                    allows all Dockworker actions to be performed as your GitHub user. Personal access tokens are an
-                    alternative to using a traditional user/password authentication.',
+                'Dockworker authenticates to StackOverflow Teams using a Personal Access Token (PAT). This allows all Dockworker actions to be performed as your GitHub user. Personal access tokens are an alternative to using a traditional user/password authentication.',
                 [
                     [
                         'label' => 'HOWTO',
