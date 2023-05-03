@@ -44,7 +44,9 @@ jobs:
         env:
           TIMESTAMP: ${{ steps.current-time.outputs.formattedTime }}
           IMAGE_NAME: ${{ inputs.image-name }}
-        run: echo "BUILD_IMAGE_FULL_NAME=$IMAGE_NAME:$CI_SHA_SHORT-$TIMESTAMP" >> $GITHUB_ENV
+        run: |
+          echo "BUILD_IMAGE_FULL_NAME=$IMAGE_NAME:$CI_SHA_SHORT-$TIMESTAMP" >> $GITHUB_ENV &&
+          echo "BUILD_IMAGE_FULL_NAME=$IMAGE_NAME:$CI_SHA_SHORT-$TIMESTAMP" >> /tmp/image_tag.env
       -
         name: Set Branched Image Full Name
         env:
