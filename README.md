@@ -1,6 +1,6 @@
 # DockWorker
 ## Build, Develop, Deploy... Better
-Dockworker provides web application developers, site builders and operational engineers a single technical entrypoint with a consistent, unified workflow regardless of the framework.
+Dockworker provides developers, site builders and operational engineers a single technical entrypoint with a consistent, unified workflow regardless of the framework.
 
 Dockworker was borne out of the desire to improve developer experience by spinning-up local development via a *single command on any workstation*. Since then, it has evolved into a tool that streamlines many elements of our web product lifecycles.
 
