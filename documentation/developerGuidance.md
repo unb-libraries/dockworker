@@ -28,7 +28,7 @@ This leaves us with a design wart. Since commands cannot inherit other commands,
 Command arguments should be validated with ```validate``` hooks where possible.
 
 ### Command IO
-Commands wishing user IO should implement the ```DockworkerIOTrait```. It creates an instance of the ```DockworkerIO``` class at ```$this->dockworkerIO``` in a pre-init hook. ```DockworkerIO``` is a ```ConsoleIO```, which in turn is a ```SymfonyStyle```. It therefore has access to all the Robo and Symfony styling methods.
+Commands wishing user IO should implement the ```DockworkerIOTrait```. It creates an instance of the ```DockworkerIO``` class at ```$this->dockworkerIO``` in a init hook. ```DockworkerIO``` is a ```ConsoleIO```, which in turn is a ```SymfonyStyle```. It therefore has access to all the Robo and Symfony styling methods.
 
 ## Annotations
 ### Annotation Style

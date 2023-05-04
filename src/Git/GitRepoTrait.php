@@ -25,7 +25,7 @@ trait GitRepoTrait
     /**
      * Sets up the lean repository git repo.
      *
-     * @hook pre-init
+     * @hook init
      *
      * @throws \Dockworker\DockworkerException
      */

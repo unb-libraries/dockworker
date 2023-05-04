@@ -29,7 +29,7 @@ trait CommandRuntimeTrackerTrait
     /**
      * Sets the command runtime start.
      *
-     * @hook pre-init
+     * @hook init
      */
     public function initCommandStartTime(): void
     {

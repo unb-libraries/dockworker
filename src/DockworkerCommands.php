@@ -2,6 +2,7 @@
 
 namespace Dockworker;
 
+use Consolidation\AnnotatedCommand\AnnotationData;
 use Dockworker\Core\RoboConfigTrait;
 use Dockworker\RepoFinder;
 use Dockworker\System\FileSystemOperationsTrait;
@@ -14,6 +15,7 @@ use Robo\Contract\ConfigAwareInterface;
 use Robo\Contract\IOAwareInterface;
 use Robo\Robo;
 use Robo\Tasks;
+use Symfony\Component\Console\Input\InputInterface;
 
 /**
  * Defines a base abstract class for all Dockworker commands.
@@ -106,11 +108,9 @@ abstract class DockworkerCommands extends Tasks implements
     protected string $userName;
 
     /**
-     * DockworkerCommands constructor.
-     *
-     * @throws \Dockworker\DockworkerException
+     * @hook pre-init
      */
-    public function __construct()
+    public function initOptions(InputInterface $input, AnnotationData $annotationData)
     {
         $this->applicationRoot = RepoFinder::findRepoRoot();
         $this->configFile = $this->getPathFromPathElements(

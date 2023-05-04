@@ -12,7 +12,7 @@ trait DockworkerIOTrait
     /**
      * Registers IO.
      *
-     * @hook pre-init
+     * @hook init
      */
     public function initDockworkerIO(): void
     {
