@@ -9,7 +9,7 @@ on:
         type: string
       build-themes:
         description: 'Whether or not to build application themes using dockworker before building the image.'
-        required: true
+        required: false
         type: boolean
         default: false
       deploy-branches:
