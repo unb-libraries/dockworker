@@ -3,6 +3,11 @@ name: Build Image and Push, with Notifying
 on:
   workflow_call:
     inputs:
+      build-themes:
+        description: 'Whether or not to build application themes using dockworker before building the image.'
+        required: true
+        type: boolean
+        default: false
       image-name:
         description: 'The full, repository namespaced image name to build (without the tag).'
         required: true
@@ -31,6 +36,7 @@ jobs:
     uses: unb-libraries/dockworker/.github/workflows/build-push.yaml@6.x
     needs: [ notify-start ]
     with:
+      build-themes: ${{ inputs.build-themes }}
       image-name: ${{ inputs.image-name }}
       push-branches: ${{ inputs.push-branches }}
     secrets:

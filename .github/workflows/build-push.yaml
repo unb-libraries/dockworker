@@ -3,6 +3,11 @@ name: Build Image and Push To Registry
 on:
   workflow_call:
     inputs:
+      build-themes:
+        description: 'Whether or not to build application themes using dockworker before building the image.'
+        required: true
+        type: boolean
+        default: false
       image-name:
         description: 'The full, repository namespaced image name to build (without the tag).'
         required: true
@@ -53,6 +58,31 @@ jobs:
           TIMESTAMP: ${{ steps.current-time.outputs.formattedTime }}
           IMAGE_NAME: ${{ inputs.image-name }}
         run: echo "BUILD_IMAGE_BRANCH_NAME=$IMAGE_NAME:$CI_REF_NAME" >> $GITHUB_ENV
+      -
+        name: Install PHP
+        uses: shivammathur/setup-php@v2
+        if: inputs.build-themes == true
+        with:
+          php-version: 8.1
+          coverage: none
+          tools: composer:v2
+          extensions: curl,dom,gd,mbstring,posix,yaml,zip
+      -
+        name: Install dockworker
+        if: inputs.build-themes == true
+        run: composer install --prefer-dist --no-progress --no-suggest
+        shell: bash
+      - name: Install Dart Sass
+        if: inputs.build-themes == true
+        run: |
+          wget https://github.com/sass/dart-sass/releases/download/1.62.1/dart-sass-1.62.1-linux-x64.tar.gz
+          tar -xzf dart-sass-1.62.1-linux-x64.tar.gz && rm dart-sass-1.62.1-linux-x64.tar.gz
+          mv dart-sass /tmp/
+      -
+        name: Build Themes
+        if: inputs.build-themes == true
+        shell: 'script -q -e -c "bash {0}"'
+        run: SASS_PATH=/tmp/dart-sass/sass vendor/bin/dockworker theme:build-all
       -
         name: Set up Docker Buildx
         id: buildx

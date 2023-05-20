@@ -7,6 +7,11 @@ on:
         description: 'A mapping of branches-to-k8s-namespaces. JSON dictionary format.'
         required: true
         type: string
+      build-themes:
+        description: 'Whether or not to build application themes using dockworker before building the image.'
+        required: true
+        type: boolean
+        default: false
       deploy-branches:
         description: 'A list of branches that should be deployed to kubernetes cluster. JSON list format.'
         required: true
@@ -44,6 +49,7 @@ jobs:
   build-push-images:
     uses: unb-libraries/dockworker/.github/workflows/build-push.yaml@6.x
     with:
+      build-themes: ${{ inputs.build-themes }}
       image-name: ${{ inputs.image-name }}
       push-branches: ${{ inputs.push-branches }}
     secrets:
