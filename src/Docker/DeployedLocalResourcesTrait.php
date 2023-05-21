@@ -84,7 +84,8 @@ trait DeployedLocalResourcesTrait
                 ),
                 [],
                 $this->getContainerExecEntryPointFromLocalContainer($name),
-                $this->getContainerCopyEntryPointFromLocalContainer()
+                $this->getContainerCopyEntryPointFromLocalContainer(),
+                $this->getContainerLogsCommandFromLocalContainer($name)
             );
         }
         return null;
@@ -151,4 +152,24 @@ trait DeployedLocalResourcesTrait
             '-q',
         ];
     }
+
+    /**
+     * Gets the logs command for a local container.
+     *
+     * @param string $pod_name
+     *   The name of the container.
+     *
+     * @return string[]
+     *   The logs commandt for the container.
+     */
+    private function getContainerLogsCommandFromLocalContainer(
+        string $pod_name
+    ): array {
+        return [
+            $this->cliTools['docker'],
+            'logs',
+            $pod_name,
+        ];
+    }
+
 }

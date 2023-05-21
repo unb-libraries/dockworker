@@ -30,6 +30,13 @@ class DockerContainer
     protected array $containerExecEntryPoint;
 
     /**
+     * The CLI logs command for the container.
+     *
+     * @var string[]
+     */
+    protected array $containerLogsCommand;
+
+    /**
      * The file copy entry point for the container.
      *
      * @var string[]
@@ -90,6 +97,8 @@ class DockerContainer
      *   The CLI execution entry point for the container.
      * @param array $copy_entry_point
      *   The file copy entry point for the container.
+     * @param array $logs_command
+     *   The command to retrieve logs for the container.
      */
     private function __construct(
         string $name,
@@ -99,7 +108,8 @@ class DockerContainer
         DateTimeImmutable $creation_timestamp,
         array $controlled_by,
         array $exec_entry_point,
-        array $copy_entry_point
+        array $copy_entry_point,
+        array $logs_command
     ) {
         $this->containerName = $name;
         $this->containerNamespace = $namespace;
@@ -109,6 +119,7 @@ class DockerContainer
         $this->containerControlledBy = $controlled_by;
         $this->containerExecEntryPoint = $exec_entry_point;
         $this->containerCopyEntryPoint = $copy_entry_point;
+        $this->containerLogsCommand = $logs_command;
     }
 
     /**
@@ -130,6 +141,8 @@ class DockerContainer
      *   The CLI execution entry point for the container.
      * @param array $copy_entry_point
      *   The file copy entry point for the container.
+     * @param array $logs_command
+     *   The command to retrieve logs for the container.
      *
      * @return DockerContainer
      *   The new DockerContainer object.
@@ -142,7 +155,8 @@ class DockerContainer
         DateTimeImmutable $creation_timestamp,
         array $controlled_by,
         array $exec_entry_point,
-        array $copy_entry_point
+        array $copy_entry_point,
+        array $logs_command
     ): DockerContainer {
         return new static(
             $name,
@@ -152,7 +166,8 @@ class DockerContainer
             $creation_timestamp,
             $controlled_by,
             $exec_entry_point,
-            $copy_entry_point
+            $copy_entry_point,
+            $logs_command
         );
     }
 
@@ -190,6 +205,22 @@ class DockerContainer
             $cmd->mustRun();
         }
         return $cmd;
+    }
+
+    /**
+     * Retrieves logs from the container.
+     */
+    public function logs(): string {
+        $cmd = new CliCommand(
+            $this->containerLogsCommand,
+            'Retrieving logs from container',
+            null,
+            [],
+            null,
+            null
+        );
+        $cmd->mustRun();
+        return $cmd->getOutput();
     }
 
     /**

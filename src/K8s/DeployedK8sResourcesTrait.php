@@ -243,7 +243,8 @@ trait DeployedK8sResourcesTrait
             ),
             $parents,
             $this->getContainerExecEntryPointFromK8sPod($pod_name, $env),
-            $this->getContainerCopyEntryPointFromK8sPod($env)
+            $this->getContainerCopyEntryPointFromK8sPod($env),
+            $this->getContainerLogsCommandFromK8sPod($pod_name, $env)
         );
     }
 
@@ -322,4 +323,23 @@ trait DeployedK8sResourcesTrait
             "--namespace=$env",
         ];
     }
+    /**
+     * Gets the logs command for a Kubernetes pod.
+     *
+     * @return string[]
+     *   The logs command for the pod.
+     */
+
+     private function getContainerLogsCommandFromK8sPod(
+        string $pod_name,
+        string $env
+    ): array {
+        return [
+            $this->cliTools['kubectl'],
+            'logs',
+            "--namespace=$env",
+            $pod_name,
+        ];
+    }
+
 }
