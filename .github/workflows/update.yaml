@@ -41,5 +41,6 @@ jobs:
 
             [1]: https://github.com/unb-libraries/dockworker/.github/workflows/update.yaml
           labels: |
-            automated pr
+            automated
+            updates
           draft: false
