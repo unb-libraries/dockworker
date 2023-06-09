@@ -35,7 +35,7 @@ trait JiraProjectKeysTrait
     {
         $this->jiraProjectKeys = $this->getConfigItem(
             Robo::config(),
-            'dockworker.application.workflows.jira.project_keys'
+            'dockworker.workflows.jira.project_keys'
         );
     }
 
