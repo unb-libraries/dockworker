@@ -6,8 +6,8 @@ dockworker:
       slug: test-dockworker
       short_slug: test
       uuid: 9999
-    workflows:
-      vcs:
-        type: github
-        owner: unb-libraries
-        name: test-dockworker
+  workflows:
+    vcs:
+      type: github
+      owner: unb-libraries
+      name: test-dockworker
