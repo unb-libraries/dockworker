@@ -35,21 +35,32 @@ trait DeployedLocalResourcesTrait
      * @param ConfigInterface $config
      *   The configuration object.
      */
-    private function discoverDeployedLocalContainers(ConfigInterface $config): void
+    private function discoverDeployedLocalContainers(ConfigInterface $config, $env): void
     {
         foreach (
             $this->getConfigItem(
                 $config,
-                'dockworker.application.workflows.local.deployments'
-            ) as $service
+                'dockworker.endpoints.deployments'
+            ) as $id => $deployment
         ) {
-            if (!empty($service['name'])) {
-                $container = $this->getContainerObjectFromLocalContainer($service['name']);
-                if (!empty($container)) {
-                    $this->deployedDockerContainers[] = $container;
-                }
+            $container = $this->getContainerObjectFromLocalContainer($id);
+            if (!empty($container)) {
+              $this->deployedDockerContainers[] = [
+                'names' => $this->getDeployedContainerTargetNames($deployment, $id),
+                'container' => $container,
+              ];
             }
         }
+    }
+
+    private function getLocalContainerTargetNames($service, $id) {
+      $names = [
+        $id
+      ];
+      if (!empty($service['name'])) {
+        $names[] = $service['name'];
+      }
+      return $names;
     }
 
     /**
@@ -69,6 +80,7 @@ trait DeployedLocalResourcesTrait
             !empty($container_details[0]['State']['Status'])
             && $container_details[0]['State']['Status'] != 'exited'
         ) {
+            $container_id = $container_details[0]['Id'];
             return DockerContainer::create(
                 $name,
                 'local',
@@ -83,9 +95,9 @@ trait DeployedLocalResourcesTrait
                     )
                 ),
                 [],
-                $this->getContainerExecEntryPointFromLocalContainer($name),
+                $this->getContainerExecEntryPointFromLocalContainer($container_id),
                 $this->getContainerCopyEntryPointFromLocalContainer(),
-                $this->getContainerLogsCommandFromLocalContainer($name)
+                $this->getContainerLogsCommandFromLocalContainer($container_id)
             );
         }
         return null;
@@ -103,10 +115,22 @@ trait DeployedLocalResourcesTrait
     private function getLocalContainerDetails(string $name): array
     {
         try {
+            $id_cmd = $this->dockerComposeRun(
+                [
+                    'ps',
+                    '-q',
+                    $name,
+                ],
+                'Discover local container ID',
+                null,
+                [],
+                false
+            );
+            $container_id = trim($id_cmd->getOutput());
             $cmd = $this->dockerRun(
                 [
                     'inspect',
-                    $name,
+                    $container_id,
                 ],
                 'Discover local container details',
                 null,
@@ -128,13 +152,13 @@ trait DeployedLocalResourcesTrait
      *   The exec entry point for the container.
      */
     private function getContainerExecEntryPointFromLocalContainer(
-        string $pod_name
+        string $container_id
     ): array {
         return [
             $this->cliTools['docker'],
             'exec',
             '-it',
-            $pod_name,
+            $container_id,
         ];
     }
 
@@ -163,12 +187,12 @@ trait DeployedLocalResourcesTrait
      *   The logs commandt for the container.
      */
     private function getContainerLogsCommandFromLocalContainer(
-        string $pod_name
+        string $container_id
     ): array {
         return [
             $this->cliTools['docker'],
             'logs',
-            $pod_name,
+            $container_id,
         ];
     }
 

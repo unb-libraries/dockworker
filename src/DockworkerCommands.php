@@ -155,7 +155,7 @@ abstract class DockworkerCommands extends Tasks implements
         if (
             $this->getConfigItem(
                 $config,
-                'dockworker.application.workflows.vcs.type'
+                'dockworker.workflows.vcs.type'
             ) != 'github'
         ) {
             throw new DockworkerException(sprintf(
@@ -169,12 +169,12 @@ abstract class DockworkerCommands extends Tasks implements
             $this->setPropertyFromConfigKey(
                 $config,
                 'applicationGitHubRepoOwner',
-                'dockworker.application.workflows.vcs.owner'
+                'dockworker.workflows.vcs.owner'
             );
             $this->setPropertyFromConfigKey(
                 $config,
                 'applicationGitHubRepoName',
-                'dockworker.application.workflows.vcs.name'
+                'dockworker.workflows.vcs.name'
             );
         }
     }

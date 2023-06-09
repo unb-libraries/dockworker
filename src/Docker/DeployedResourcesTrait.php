@@ -80,7 +80,7 @@ trait DeployedResourcesTrait
                         $discovery['name']
                     )
                 );
-                $this->{$discovery['method']}($config);
+                $this->{$discovery['method']}($config, $env);
                 $checklist->completePreviousItem();
             }
             $io->newLine();
@@ -107,12 +107,13 @@ trait DeployedResourcesTrait
         DockworkerIO $io,
         string $env,
         bool $pick = false,
-        bool $exit_on_empty = true
+        bool $exit_on_empty = true,
+        string $name = 'default'
     ): DockerContainer|null {
         $containers = $this->getDeployedContainers($env);
         if (!empty($containers)) {
             if (!$pick) {
-                return array_shift($containers);
+                return $this->getDeployedContainerByName($env, $name);
             } else {
                 // @TODO: Implement a way to pick a container.
             }
@@ -129,6 +130,21 @@ trait DeployedResourcesTrait
         return null;
     }
 
+  protected function getDeployedContainerByName(
+    string $env = 'local',
+    string $name = 'default',
+  ): DockerContainer|null {
+    $containers = $this->getDeployedContainers($env);
+    if (!empty($containers)) {
+      foreach ($containers as $container) {
+        if (in_array($name, $container['names'])) {
+          return $container['container'];
+        }
+      }
+    }
+    return null;
+  }
+
     /**
      * Retrieves a list of currently deployed container objects.
      *
@@ -143,8 +159,30 @@ trait DeployedResourcesTrait
         return array_filter(
             $this->deployedDockerContainers,
             function ($obj) use ($env) {
-                return $obj->getContainerNamespace() == $env;
+                return $obj['container']->getContainerNamespace() == $env;
             }
         );
+    }
+
+    protected function getExistingContainerNames() {
+      $names = [];
+      foreach ($this->deployedDockerContainers as $container) {
+        $names = array_merge($names, $container['names']);
+      }
+      sort($names);
+      return $names;
+    }
+
+    private function getDeployedContainerTargetNames($deployment, $id) {
+      $names = [
+        $id
+      ];
+      if (!empty($deployment['name']) && $deployment['name'] != $id) {
+        $names[] = $deployment['name'];
+      }
+      if (!empty($deployment['default']) && $deployment['default']) {
+        $names[] = 'default';
+      }
+      return $names;
     }
 }

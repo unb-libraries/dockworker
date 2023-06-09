@@ -35,19 +35,21 @@ trait DeployedK8sResourcesTrait
      * @param ConfigInterface $config
      *   The configuration object.
      */
-    private function discoverDeployedK8sContainers(ConfigInterface $config): void
+    private function discoverDeployedK8sContainers(ConfigInterface $config, $env): void
     {
-        foreach (
-            $this->getConfigItem(
-                $config,
-                'dockworker.application.workflows.k8s.deployments'
-            ) as $service
-        ) {
-            if (!empty($service['namespaces']) && !empty($service['name'])) {
-                foreach ($service['namespaces'] as $namespace) {
-                    $this->setDeployedK8sPods($service['name'], $namespace);
-                }
+        $endpoints = $this->getConfigItem(
+            $config,
+            'dockworker.endpoints'
+        );
+        if (!empty($endpoints['env']) && !empty($endpoints['deployments'])) {
+          foreach ($endpoints['env'] as $namespace) {
+            if ($env != $namespace) {
+              continue;
             }
+            foreach ($endpoints['deployments'] as $id => $deployment) {
+              $this->setDeployedK8sPods($id, $deployment, $namespace);
+            }
+          }
         }
     }
 
@@ -58,20 +60,25 @@ trait DeployedK8sResourcesTrait
      *   believe we have many core use cases for the OldReplicaSets.
      */
     private function setDeployedK8sPods(
-        string $deployment_name,
+        string $id,
+        array $deployment,
         string $env
     ): void {
-        $replica_sets = $this->getDeployedK8sDeploymentReplicaSets($deployment_name, $env);
+        $replica_sets = $this->getDeployedK8sDeploymentReplicaSets($id, $env);
         if (!empty($replica_sets)) {
             foreach ($replica_sets as $replica_set) {
                 $pods = $this->getDeployedK8sDeploymentPods($replica_set, $env);
                 if (!empty($pods)) {
                     foreach ($pods as $pod_name) {
-                        $this->deployedDockerContainers[] = $this->getContainerObjectFromK8sPod(
+                        $container = $this->getContainerObjectFromK8sPod(
                             $pod_name,
                             $env,
                             [$replica_set]
                         );
+                        $this->deployedDockerContainers[] = [
+                          'names' => $this->getDeployedContainerTargetNames($deployment, $id),
+                          'container' => $container,
+                      ];
                     }
                 }
             }
