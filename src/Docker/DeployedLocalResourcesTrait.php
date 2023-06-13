@@ -103,6 +103,14 @@ trait DeployedLocalResourcesTrait
         return null;
     }
 
+    private function getLocalContainerId($name) {
+      $container_details = $this->getLocalContainerDetails($name);
+      if (!empty($container_details[0]['Id'])) {
+        return $container_details[0]['Id'];
+      }
+      return '';
+    }
+
     /**
      * Gets the details of a local container.
      *
