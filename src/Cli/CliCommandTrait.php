@@ -85,7 +85,7 @@ trait CliCommandTrait
             null,
             null
         );
-        if ($io !== null && $use_tty && !empty(getenv("CI"))) {
+        if ($io !== null && $use_tty && empty(getenv("CI"))) {
             $cmd->runTty($io);
         } else {
             $cmd->mustRun();
