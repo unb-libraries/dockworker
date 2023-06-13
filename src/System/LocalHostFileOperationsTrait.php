@@ -96,7 +96,7 @@ trait LocalHostFileOperationsTrait
                 'bash',
                 '-c',
                 sprintf(
-                    '%s -e "/%s/d" %s',
+                    '%s -e "/127.0.0.1       %s/d" %s',
                     $this->getSedInlineInvocation(),
                     $hostname,
                     $this->localHostFilePath
