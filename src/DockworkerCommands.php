@@ -87,6 +87,13 @@ abstract class DockworkerCommands extends Tasks implements
     protected string $configFile;
 
     /**
+     * Is TTY output supported on the current terminal?
+     *
+     * @var bool
+     */
+    protected bool $ttySupported = true;
+
+    /**
      * The current user's operating system home directory.
      *
      * @var string
@@ -126,7 +133,13 @@ abstract class DockworkerCommands extends Tasks implements
         $this->userName = get_current_user();
         $this->userGid = posix_getgid();
         $this->userHomeDir = $_SERVER['HOME'];
+        $this->ttySupported = !$this->outputSupportsTty();
         $this->setCoreProperties();
+    }
+
+    private function outputSupportsTty(): bool
+    {
+        return empty(getenv("CI"));
     }
 
     /**
