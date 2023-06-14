@@ -31,7 +31,7 @@ trait DockerComposeTrait
         );
         if ($cmd->getExitCode() !== 0) {
             $this->dockworkerIO->error('Failed to build the docker image.');
-            exit (1);
+            exit(1);
         }
     }
 
@@ -50,7 +50,7 @@ trait DockerComposeTrait
         );
         if ($cmd->getExitCode() !== 0) {
             $this->dockworkerIO->error('Failed to start the docker container.');
-            exit (1);
+            exit(1);
         }
     }
 

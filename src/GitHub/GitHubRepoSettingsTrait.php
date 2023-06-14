@@ -10,6 +10,7 @@ use Dockworker\GitHub\GitHubClientTrait;
 trait GitHubRepoSettingsTrait
 {
     use GitHubClientTrait;
+
     protected array $gitHubRepositoryTopics = [];
 
     protected function addGitHubRepositoryTopics(array $topics): void
@@ -52,5 +53,4 @@ trait GitHubRepoSettingsTrait
             $description
         );
     }
-
 }

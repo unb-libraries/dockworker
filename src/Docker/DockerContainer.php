@@ -210,7 +210,8 @@ class DockerContainer
     /**
      * Retrieves logs from the container.
      */
-    public function logs(): string {
+    public function logs(): string
+    {
         $cmd = new CliCommand(
             $this->containerLogsCommand,
             'Retrieving logs from container',

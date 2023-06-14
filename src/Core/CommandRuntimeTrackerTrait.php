@@ -12,11 +12,11 @@ trait CommandRuntimeTrackerTrait
 {
     use DockworkerIOTrait;
 
-  /**
-   * The timestamp the command was started.
-   *
-   * @var string
-   */
+    /**
+     * The timestamp the command was started.
+     *
+     * @var string
+     */
     protected string $commandStartTime;
 
     /**

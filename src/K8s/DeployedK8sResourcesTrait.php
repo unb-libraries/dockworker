@@ -5,6 +5,8 @@ namespace Dockworker\K8s;
 use Consolidation\Config\ConfigInterface;
 use DateTimeImmutable;
 use DateTimeInterface;
+use Dockworker\Cli\KubectlCliTrait;
+use Dockworker\Core\RoboConfigTrait;
 use Dockworker\Docker\DeployedResourcesTrait;
 use Dockworker\Docker\DockerContainer;
 
@@ -17,6 +19,8 @@ use Dockworker\Docker\DockerContainer;
 trait DeployedK8sResourcesTrait
 {
     use DeployedResourcesTrait;
+    use KubectlCliTrait;
+    use RoboConfigTrait;
 
     /**
      * Enables the discovery of deployed kubernetes pods.
@@ -42,14 +46,14 @@ trait DeployedK8sResourcesTrait
             'dockworker.endpoints'
         );
         if (!empty($endpoints['env']) && !empty($endpoints['deployments'])) {
-          foreach ($endpoints['env'] as $namespace) {
-            if ($env != $namespace) {
-              continue;
+            foreach ($endpoints['env'] as $namespace) {
+                if ($env != $namespace) {
+                    continue;
+                }
+                foreach ($endpoints['deployments'] as $id => $deployment) {
+                    $this->setDeployedK8sPods($id, $deployment, $namespace);
+                }
             }
-            foreach ($endpoints['deployments'] as $id => $deployment) {
-              $this->setDeployedK8sPods($id, $deployment, $namespace);
-            }
-          }
         }
     }
 
@@ -78,7 +82,7 @@ trait DeployedK8sResourcesTrait
                         $this->deployedDockerContainers[] = [
                           'names' => $this->getDeployedContainerTargetNames($deployment, $id),
                           'container' => $container,
-                      ];
+                        ];
                     }
                 }
             }
@@ -337,16 +341,15 @@ trait DeployedK8sResourcesTrait
      *   The logs command for the pod.
      */
 
-     private function getContainerLogsCommandFromK8sPod(
+    private function getContainerLogsCommandFromK8sPod(
         string $pod_name,
         string $env
     ): array {
         return [
-            $this->cliTools['kubectl'],
-            'logs',
-            "--namespace=$env",
-            $pod_name,
+           $this->cliTools['kubectl'],
+           'logs',
+           "--namespace=$env",
+           $pod_name,
         ];
     }
-
 }

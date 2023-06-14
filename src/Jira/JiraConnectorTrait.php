@@ -8,6 +8,7 @@ use JiraRestApi\Configuration\ArrayConfiguration;
 use JiraRestApi\Issue\IssueField;
 use JiraRestApi\Issue\IssueSearchResult;
 use JiraRestApi\Issue\IssueService;
+use JiraRestApi\JiraException;
 use JiraRestApi\Project\ProjectService;
 
 /**
@@ -16,6 +17,7 @@ use JiraRestApi\Project\ProjectService;
 trait JiraConnectorTrait
 {
     use DockworkerPersistentDataStorageTrait;
+    use JiraProjectKeysTrait;
 
     /**
      * The config to use.

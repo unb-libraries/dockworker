@@ -35,7 +35,6 @@ abstract class DockworkerCommands extends Tasks implements
     use RoboConfigTrait;
 
     protected const DOCKWORKER_CONFIG_FILE = '.dockworker/dockworker.yml';
-    protected const ERROR_CONFIG_ELEMENT_UNSET = 'Error! A required configuration element [%s] does not exist in %s.';
 
     /**
      * The application's GitHub repository owner.

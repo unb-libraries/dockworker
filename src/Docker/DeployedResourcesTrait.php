@@ -130,20 +130,20 @@ trait DeployedResourcesTrait
         return null;
     }
 
-  protected function getDeployedContainerByName(
-    string $env = 'local',
-    string $name = 'default',
-  ): DockerContainer|null {
-    $containers = $this->getDeployedContainers($env);
-    if (!empty($containers)) {
-      foreach ($containers as $container) {
-        if (in_array($name, $container['names'])) {
-          return $container['container'];
+    protected function getDeployedContainerByName(
+        string $env = 'local',
+        string $name = 'default',
+    ): DockerContainer|null {
+        $containers = $this->getDeployedContainers($env);
+        if (!empty($containers)) {
+            foreach ($containers as $container) {
+                if (in_array($name, $container['names'])) {
+                    return $container['container'];
+                }
+            }
         }
-      }
+        return null;
     }
-    return null;
-  }
 
     /**
      * Retrieves a list of currently deployed container objects.
@@ -164,25 +164,27 @@ trait DeployedResourcesTrait
         );
     }
 
-    protected function getExistingContainerNames() {
-      $names = [];
-      foreach ($this->deployedDockerContainers as $container) {
-        $names = array_merge($names, $container['names']);
-      }
-      sort($names);
-      return $names;
+    protected function getExistingContainerNames()
+    {
+        $names = [];
+        foreach ($this->deployedDockerContainers as $container) {
+            $names = array_merge($names, $container['names']);
+        }
+        sort($names);
+        return $names;
     }
 
-    private function getDeployedContainerTargetNames($deployment, $id) {
-      $names = [
+    private function getDeployedContainerTargetNames($deployment, $id)
+    {
+        $names = [
         $id
-      ];
-      if (!empty($deployment['name']) && $deployment['name'] != $id) {
-        $names[] = $deployment['name'];
-      }
-      if (!empty($deployment['default']) && $deployment['default']) {
-        $names[] = 'default';
-      }
-      return $names;
+        ];
+        if (!empty($deployment['name']) && $deployment['name'] != $id) {
+            $names[] = $deployment['name'];
+        }
+        if (!empty($deployment['default']) && $deployment['default']) {
+            $names[] = 'default';
+        }
+        return $names;
     }
 }

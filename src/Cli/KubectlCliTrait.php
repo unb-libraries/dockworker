@@ -44,7 +44,7 @@ trait KubectlCliTrait
         bool $use_tty = true
     ): CliCommand {
         $cmd = $this->kubeCtlCli($command, $description, $timeout)
-          ->setWorkingDirectory($this->applicationRoot);
+            ->setWorkingDirectory($this->applicationRoot);
         if ($use_tty) {
             $cmd->runTty($this->dockworkerIO);
         } else {

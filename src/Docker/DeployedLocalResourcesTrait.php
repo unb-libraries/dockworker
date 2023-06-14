@@ -6,6 +6,7 @@ use Consolidation\Config\ConfigInterface;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Dockworker\Cli\DockerCliTrait;
+use Dockworker\Core\RoboConfigTrait;
 use Dockworker\Docker\DeployedResourcesTrait;
 use Dockworker\Docker\DockerContainer;
 use Exception;
@@ -17,6 +18,7 @@ trait DeployedLocalResourcesTrait
 {
     use DeployedResourcesTrait;
     use DockerCliTrait;
+    use RoboConfigTrait;
 
     /**
      * Registers the local docker container discovery method.
@@ -35,8 +37,10 @@ trait DeployedLocalResourcesTrait
      * @param ConfigInterface $config
      *   The configuration object.
      */
-    private function discoverDeployedLocalContainers(ConfigInterface $config, $env): void
-    {
+    private function discoverDeployedLocalContainers(
+        ConfigInterface $config,
+        string $env
+    ): void {
         foreach (
             $this->getConfigItem(
                 $config,
@@ -45,22 +49,25 @@ trait DeployedLocalResourcesTrait
         ) {
             $container = $this->getContainerObjectFromLocalContainer($id);
             if (!empty($container)) {
-              $this->deployedDockerContainers[] = [
-                'names' => $this->getDeployedContainerTargetNames($deployment, $id),
-                'container' => $container,
-              ];
+                $this->deployedDockerContainers[] = [
+                    'names' => $this->getDeployedContainerTargetNames($deployment, $id),
+                    'container' => $container,
+                ];
             }
         }
     }
 
-    private function getLocalContainerTargetNames($service, $id) {
-      $names = [
-        $id
-      ];
-      if (!empty($service['name'])) {
-        $names[] = $service['name'];
-      }
-      return $names;
+    private function getLocalContainerTargetNames(
+        string $service,
+        string $id
+    ): array {
+        $names = [
+            $id
+        ];
+        if (!empty($service['name'])) {
+            $names[] = $service['name'];
+        }
+        return $names;
     }
 
     /**
@@ -103,12 +110,13 @@ trait DeployedLocalResourcesTrait
         return null;
     }
 
-    private function getLocalContainerId($name) {
-      $container_details = $this->getLocalContainerDetails($name);
-      if (!empty($container_details[0]['Id'])) {
-        return $container_details[0]['Id'];
-      }
-      return '';
+    private function getLocalContainerId($name)
+    {
+        $container_details = $this->getLocalContainerDetails($name);
+        if (!empty($container_details[0]['Id'])) {
+            return $container_details[0]['Id'];
+        }
+        return '';
     }
 
     /**
@@ -203,5 +211,4 @@ trait DeployedLocalResourcesTrait
             $container_id,
         ];
     }
-
 }

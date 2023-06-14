@@ -10,18 +10,18 @@ use Dockworker\DockworkerException;
  */
 trait RoboConfigTrait
 {
-  /**
-   * Sets a property from a config element.
-   *
-   * @param ConfigInterface $config
-   *   The configuration object.
-   * @param string $property
-   *  The property to set.
-   * @param string $config_key
-   *  The namespace to obtain the configuration value from.
-   *
-   * @throws \Dockworker\DockworkerException
-   */
+    /**
+     * Sets a property from a config element.
+     *
+     * @param ConfigInterface $config
+     *   The configuration object.
+     * @param string $property
+     *  The property to set.
+     * @param string $config_key
+     *  The namespace to obtain the configuration value from.
+     *
+     * @throws \Dockworker\DockworkerException
+     */
     protected function setPropertyFromConfigKey(
         ConfigInterface $config,
         string $property,
@@ -31,7 +31,7 @@ trait RoboConfigTrait
         if ($config_value == null) {
             throw new DockworkerException(
                 sprintf(
-                    self::ERROR_CONFIG_ELEMENT_UNSET,
+                    'Error! A required configuration element [%s] does not exist in %s.',
                     $config_key,
                     $this->configFile
                 )

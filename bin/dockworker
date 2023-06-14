@@ -19,4 +19,3 @@ $runner
 
 $statusCode = $runner->execute($_SERVER['argv'], 'Dockworker', '6');
 exit($statusCode);
-

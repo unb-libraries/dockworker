@@ -23,21 +23,21 @@ trait DockerCliTrait
         $this->registerCliToolFromYaml($file_path, $io);
     }
 
-  /**
-   * Executes a docker command.
-   *
-   * @param array $command
-   *   The full CLI command to execute.
-   * @param string $description
-   *   A description of the command.
-   * @param ?float $timeout
-   *   The timeout in seconds or null to disable
-   * @param bool $use_tty
-   *   Whether to use a TTY for the command. Defaults to TRUE.
-   *
-   * @return \Dockworker\Cli\CliCommand
-   *   The executed command object.
-   */
+    /**
+     * Executes a docker command.
+     *
+     * @param array $command
+     *   The full CLI command to execute.
+     * @param string $description
+     *   A description of the command.
+     * @param ?float $timeout
+     *   The timeout in seconds or null to disable
+     * @param bool $use_tty
+     *   Whether to use a TTY for the command. Defaults to TRUE.
+     *
+     * @return \Dockworker\Cli\CliCommand
+     *   The executed command object.
+     */
     protected function dockerRun(
         array $command,
         string $description,
@@ -45,7 +45,7 @@ trait DockerCliTrait
         bool $use_tty = true
     ): CliCommand {
         $cmd = $this->dockerCli($command, $description, $timeout)
-          ->setWorkingDirectory($this->applicationRoot);
+            ->setWorkingDirectory($this->applicationRoot);
         if ($use_tty) {
             $cmd->runTty($this->dockworkerIO);
         } else {
@@ -54,18 +54,18 @@ trait DockerCliTrait
         return $cmd;
     }
 
-  /**
-   * Constructs a docker command object.
-   *
-   * @param array $command
-   *   The full CLI command to execute.
-   * @param string $description
-   *   A description of the command.
-   * @param ?float $timeout
-   *   The timeout in seconds or null to disable
-   *
-   * @return \Dockworker\Cli\CliCommand
-   */
+    /**
+     * Constructs a docker command object.
+     *
+     * @param array $command
+     *   The full CLI command to execute.
+     * @param string $description
+     *   A description of the command.
+     * @param ?float $timeout
+     *   The timeout in seconds or null to disable
+     *
+     * @return \Dockworker\Cli\CliCommand
+     */
     protected function dockerCli(
         array $command,
         string $description,
@@ -82,22 +82,22 @@ trait DockerCliTrait
         );
     }
 
-  /**
-   * Runs a 'docker compose' command.
-   *
-   * @param array $command
-   *   The full CLI command to execute.
-   * @param string $description
-   *   A description of the command.
-   * @param ?float $timeout
-   *   The timeout in seconds or null to disable
-   * @param string[] $profiles
-   *   The docker compose profiles to target with this command.
-   * @param bool $use_tty
-   *   Whether to use a TTY for the command. Defaults to TRUE.
-   *
-   * @return \Dockworker\Cli\CliCommand
-   */
+    /**
+     * Runs a 'docker compose' command.
+     *
+     * @param array $command
+     *   The full CLI command to execute.
+     * @param string $description
+     *   A description of the command.
+     * @param ?float $timeout
+     *   The timeout in seconds or null to disable
+     * @param string[] $profiles
+     *   The docker compose profiles to target with this command.
+     * @param bool $use_tty
+     *   Whether to use a TTY for the command. Defaults to TRUE.
+     *
+     * @return \Dockworker\Cli\CliCommand
+     */
     protected function dockerComposeRun(
         array $command,
         string $description = '',
@@ -115,20 +115,20 @@ trait DockerCliTrait
         return $cmd;
     }
 
-  /**
-   * Constructs a 'docker compose' command object.
-   *
-   * @param array $command
-   *   The full CLI command to execute.
-   * @param string $description
-   *   A description of the command.
-   * @param ?float $timeout
-   *   The timeout in seconds or null to disable
-   * @param string[] $profiles
-   *   The docker compose profiles to target with this command.
-   *
-   * @return \Dockworker\Cli\CliCommand
-   */
+    /**
+     * Constructs a 'docker compose' command object.
+     *
+     * @param array $command
+     *   The full CLI command to execute.
+     * @param string $description
+     *   A description of the command.
+     * @param ?float $timeout
+     *   The timeout in seconds or null to disable
+     * @param string[] $profiles
+     *   The docker compose profiles to target with this command.
+     *
+     * @return \Dockworker\Cli\CliCommand
+     */
     protected function dockerComposeCli(
         array $command,
         string $description = '',

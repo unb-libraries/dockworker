@@ -158,7 +158,7 @@ class StackOverflowTeamsClient extends GuzzleClient
             $article->article_type
         );
         if ($response->getStatusCode() != 200) {
-            throw new Exception(
+            throw new \Exception(
                 sprintf(
                     'Error updating article %s in StackOverflow Teams API. Status code: %s',
                     $id,
@@ -203,7 +203,7 @@ class StackOverflowTeamsClient extends GuzzleClient
         $id_string = implode(';', $ids);
         $response = $this->stackGetRequest("articles/$id_string");
         if ($response->getStatusCode() != 200) {
-            throw new Exception(
+            throw new \Exception(
                 sprintf(
                     'Error retrieving article %s from StackOverflow Teams API. Status code: %s',
                     $id_string,
