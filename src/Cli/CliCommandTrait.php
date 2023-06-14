@@ -6,6 +6,9 @@ use Dockworker\IO\DockworkerIO;
 
 /**
  * Provides methods to interact with the local CLI.
+ *
+ * @INTERNAL This trait is intended only to be used by Dockworker commands. It
+ * references user properties which are not in its own scope.
  */
 trait CliCommandTrait
 {
@@ -51,7 +54,7 @@ trait CliCommandTrait
      * @param array $command
      *   The command to execute.
      * @param \Dockworker\IO\DockworkerIO|null $io
-     *   The IO to use for input and output. Null for no io, tty.
+     *   The IO to use for input and output. Null for no io.
      * @param string|null $cwd
      *   The working directory to use for the command.
      * @param string $title
@@ -77,6 +80,7 @@ trait CliCommandTrait
                 $io->say($message);
             }
         }
+        $tty = $use_tty && $this->ttySupported;
         $cmd = new CliCommand(
             $command,
             $message,
@@ -85,10 +89,14 @@ trait CliCommandTrait
             null,
             null
         );
-        if ($io !== null && $use_tty && empty(getenv("CI"))) {
+        // If null $io is passed, this supercedes the tty setting.
+        if ($tty && $io !== null) {
             $cmd->runTty($io);
         } else {
             $cmd->mustRun();
+            if ($io !== null) {
+                $io->block($cmd->getOutput());
+            }
         }
         return $cmd;
     }
