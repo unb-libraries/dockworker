@@ -95,7 +95,7 @@ trait CliCommandTrait
         } else {
             $cmd->run();
             if ($io !== null) {
-                $io->block($cmd->getOutput());
+                $io->write($cmd->getOutput());
             }
         }
         return $cmd;
