@@ -81,7 +81,7 @@ trait DockerComposeTrait
         $this->dockerComposeRun(
             [
                 'logs',
-                $this->applicationName,
+                $this->applicationSlug,
             ],
             'Display logs for the docker compose application.'
         );
