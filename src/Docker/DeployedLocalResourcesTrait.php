@@ -159,10 +159,10 @@ trait DeployedLocalResourcesTrait
     }
 
     /**
-     * Gets the exec entry point for a local container.
+     * Gets the exec entry point for a local docker container.
      *
-     * @param string $pod_name
-     *   The name of the container.
+     * @param string $container_id
+     *   The ID of the container.
      *
      * @return string[]
      *   The exec entry point for the container.
@@ -196,11 +196,11 @@ trait DeployedLocalResourcesTrait
     /**
      * Gets the logs command for a local container.
      *
-     * @param string $pod_name
-     *   The name of the container.
+     * @param string $container_id
+     *   The id of the container.
      *
      * @return string[]
-     *   The logs commandt for the container.
+     *   The logs command for the container.
      */
     private function getContainerLogsCommandFromLocalContainer(
         string $container_id

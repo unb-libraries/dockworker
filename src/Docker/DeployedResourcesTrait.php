@@ -164,7 +164,7 @@ trait DeployedResourcesTrait
         );
     }
 
-    protected function getExistingContainerNames()
+    protected function getExistingContainerNames(): array
     {
         $names = [];
         foreach ($this->deployedDockerContainers as $container) {
@@ -174,10 +174,10 @@ trait DeployedResourcesTrait
         return $names;
     }
 
-    private function getDeployedContainerTargetNames($deployment, $id)
+    private function getDeployedContainerTargetNames($deployment, $id): array
     {
         $names = [
-        $id
+            $id
         ];
         if (!empty($deployment['name']) && $deployment['name'] != $id) {
             $names[] = $deployment['name'];

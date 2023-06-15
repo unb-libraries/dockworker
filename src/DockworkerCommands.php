@@ -116,7 +116,7 @@ abstract class DockworkerCommands extends Tasks implements
     /**
      * @hook pre-init
      */
-    public function initOptions()
+    public function initOptions(): void
     {
         $this->applicationRoot = RepoFinder::findRepoRoot();
         $this->configFile = $this->getPathFromPathElements(
