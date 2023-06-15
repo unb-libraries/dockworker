@@ -93,7 +93,7 @@ trait CliCommandTrait
         if ($tty && $io !== null) {
             $cmd->runTty($io);
         } else {
-            $cmd->mustRun();
+            $cmd->run();
             if ($io !== null) {
                 $io->block($cmd->getOutput());
             }
