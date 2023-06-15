@@ -10,23 +10,23 @@ use Twig\Loader\FilesystemLoader;
  */
 trait TwigTrait
 {
-  /**
-   * Renders a file from a Twig template.
-   *
-   * @param string $template_name
-   *   The file name of the template to render.
-   * @param array $template_paths
-   *   The paths to search for templates.
-   * @param array $variables
-   *   The variables to pass to the template.
-   *
-   * @return string
-   *   The rendered Twig template.
-   *
-   * @throws \Twig\Error\LoaderError
-   * @throws \Twig\Error\RuntimeError
-   * @throws \Twig\Error\SyntaxError
-   */
+    /**
+     * Renders a file from a Twig template.
+     *
+     * @param string $template_name
+     *   The file name of the template to render.
+     * @param array $template_paths
+     *   The paths to search for templates.
+     * @param array $variables
+     *   The variables to pass to the template.
+     *
+     * @return string
+     *   The rendered Twig template.
+     *
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     */
     protected function renderTwig(
         string $template_name,
         array $template_paths,

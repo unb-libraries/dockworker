@@ -80,8 +80,8 @@ trait DeployedK8sResourcesTrait
                             [$replica_set]
                         );
                         $this->deployedDockerContainers[] = [
-                          'names' => $this->getDeployedContainerTargetNames($deployment, $id),
-                          'container' => $container,
+                            'names' => $this->getDeployedContainerTargetNames($deployment, $id),
+                            'container' => $container,
                         ];
                     }
                 }
@@ -334,22 +334,22 @@ trait DeployedK8sResourcesTrait
             "--namespace=$env",
         ];
     }
+
     /**
      * Gets the logs command for a Kubernetes pod.
      *
      * @return string[]
      *   The logs command for the pod.
      */
-
     private function getContainerLogsCommandFromK8sPod(
         string $pod_name,
         string $env
     ): array {
         return [
-           $this->cliTools['kubectl'],
-           'logs',
-           "--namespace=$env",
-           $pod_name,
+            $this->cliTools['kubectl'],
+            'logs',
+            "--namespace=$env",
+            $pod_name,
         ];
     }
 }

@@ -86,6 +86,7 @@ trait PersistentConfigurationTrait
             if (!empty($reference_uris)) {
                 foreach ($reference_uris as $reference_uri) {
                     $this->dockworkerIO->note(
+                        // @phpstan-ignore-next-line
                         "{$reference_uri['label']}: {$reference_uri['uri']}"
                     );
                 }

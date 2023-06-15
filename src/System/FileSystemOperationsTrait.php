@@ -13,7 +13,7 @@ trait FileSystemOperationsTrait
     /**
      * Initializes and retrieves a directory path from its path elements.
      *
-     * @param array $path_elements
+     * @param string[] $path_elements
      *   The path elements to use to initialize the directory.
      * @param string $permissions
      *   The octal permissions to assign to the path, if it is created.
@@ -27,6 +27,7 @@ trait FileSystemOperationsTrait
     ): string {
         $path_string = $this->getPathFromPathElements($path_elements);
         if (!file_exists($path_string)) {
+            // @phpstan-ignore-next-line
             mkdir($path_string, $permissions, true);
         }
         return $path_string;
@@ -35,7 +36,7 @@ trait FileSystemOperationsTrait
     /**
      * Retrieves an absolute path from an array of path elements.
      *
-     * @param array $path_elements
+     * @param string[] $path_elements
      *   The path elements to use to construct the path.
      *
      * @return string
@@ -46,14 +47,14 @@ trait FileSystemOperationsTrait
         return implode('/', $path_elements);
     }
 
-  /**
-   * Throws an exception if a file does not exist.
-   *
-   * @param string $path
-   *   The path to the file.
-   *
-   * @throws \Dockworker\DockworkerException
-   */
+    /**
+     * Throws an exception if a file does not exist.
+     *
+     * @param string $path
+     *   The path to the file.
+     *
+     * @throws \Dockworker\DockworkerException
+     */
     protected function exceptIfFileDoesNotExist(string $path): void
     {
         if (!file_exists($path)) {
@@ -62,8 +63,11 @@ trait FileSystemOperationsTrait
     }
 
     /**
+     * Sets the group ownership of a tree to the current user.
+     *
      * @param string $path
-     * @return void
+     *  The path to the tree.
+     *
      * @throws \Dockworker\DockworkerException
      */
     protected function setTreeGroupOwnershipToCurrentUser(string $path): void
@@ -78,8 +82,11 @@ trait FileSystemOperationsTrait
     }
 
     /**
+     * Sets the group ownership of a file to the current user.
+     *
      * @param string $path
-     * @return void
+     *   The path to the file.
+     *
      * @throws \Dockworker\DockworkerException
      */
     protected function setFileGroupOwnershipToCurrentUser(string $path): void

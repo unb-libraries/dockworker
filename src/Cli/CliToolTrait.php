@@ -8,7 +8,7 @@ use Dockworker\Storage\DockworkerPersistentDataStorageTrait;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Provides methods to check CLI tools for existence and functionality.
+ * Provides methods to check CLI tools for  functionality.
  */
 trait CliToolTrait
 {
@@ -206,7 +206,7 @@ trait CliToolTrait
     }
 
     /**
-     * Generates a warning message for an unconfigured CLI tool.
+     * Generates a warning message for a detected unconfigured CLI tool.
      *
      * @param string $name
      *   The name of the tool.

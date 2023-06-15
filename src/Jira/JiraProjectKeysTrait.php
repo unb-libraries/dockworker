@@ -39,6 +39,12 @@ trait JiraProjectKeysTrait
         );
     }
 
+    /**
+     * Returns the first Jira project key for this application.
+     *
+     * @return string[]
+     *   The Jira project keys.
+     */
     protected function getFirstJiraProjectKey(): string
     {
         return $this->jiraProjectKeys[0];

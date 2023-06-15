@@ -16,6 +16,7 @@ use Robo\Contract\IOAwareInterface;
 use Robo\Robo;
 use Robo\Tasks;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Process\Process;
 
 /**
  * Defines a base abstract class for all Dockworker commands.
@@ -130,15 +131,18 @@ abstract class DockworkerCommands extends Tasks implements
             $this->config
         );
         $this->userName = get_current_user();
-        $this->userGid = posix_getgid();
+        $this->userGid = (string) posix_getgid();
         $this->userHomeDir = $_SERVER['HOME'];
         $this->ttySupported = !$this->outputSupportsTty();
         $this->setCoreProperties();
     }
 
+    /**
+     * Determines if the current terminal supports TTY output.
+     */
     private function outputSupportsTty(): bool
     {
-        return empty(getenv("CI"));
+        return empty(getenv("CI")) && Process::isTtySupported();
     }
 
     /**

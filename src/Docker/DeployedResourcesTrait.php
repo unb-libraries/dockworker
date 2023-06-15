@@ -164,6 +164,12 @@ trait DeployedResourcesTrait
         );
     }
 
+    /**
+     * Retrieves a list of currently deployed container names.
+     *
+     * @return string[]
+     *   The container names.
+     */
     protected function getExistingContainerNames(): array
     {
         $names = [];
@@ -174,6 +180,17 @@ trait DeployedResourcesTrait
         return $names;
     }
 
+    /**
+     * Retrieves a list of currently deployed container target names.
+     *
+     * @param string $deployment
+     *   The environment to retrieve the container names from.
+     * @param string $id
+     *   The container ID.
+     *
+     * @return string[]
+     *   The target names.
+     */
     private function getDeployedContainerTargetNames($deployment, $id): array
     {
         $names = [

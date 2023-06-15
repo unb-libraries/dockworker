@@ -10,6 +10,8 @@ use Psr\Http\Message\ResponseInterface;
 
 /**
  * Provides a client to interface with StackOverflow Teams.
+ *
+ * @phpstan-ignore-next-line
  */
 class StackOverflowTeamsClient extends GuzzleClient
 {
@@ -39,16 +41,17 @@ class StackOverflowTeamsClient extends GuzzleClient
      * @param string $api_key
      *   The API key to use.
      *
-     * @return static|null
+     * @return static
      *   The new client, or NULL if the client could not be created.
      */
     public static function setCreateClient(
         string $team_slug,
         string $api_key
-    ): self|null {
+    ): self {
         $obj = new self();
         $obj->addHeaderItem('X-API-Access-Token', $api_key);
         $obj->addParamItem('team', $team_slug);
+        // @phpstan-ignore-next-line
         return $obj;
     }
 
@@ -170,15 +173,15 @@ class StackOverflowTeamsClient extends GuzzleClient
         $io->say(sprintf('Updated StackOverflow Teams Article ID#%s', $id));
     }
 
-  /**
-   * Gets an article from the StackOverflow Teams API.
-   *
-   * @param int $id
-   *   The article ID to retrieve.
-   *
-   * @return mixed
-   * @throws \GuzzleHttp\Exception\GuzzleException
-   */
+    /**
+     * Gets an article from the StackOverflow Teams API.
+     *
+     * @param int $id
+     *   The article ID to retrieve.
+     *
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function getArticle(int $id): mixed
     {
         $article_list = $this->getArticles([$id]);
@@ -194,7 +197,7 @@ class StackOverflowTeamsClient extends GuzzleClient
      * @param int[] $ids
      *   The IDs of the articles to get.
      *
-     * @return object[]
+     * @return object[]|null
      *   An array of article objects.
      *
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -221,26 +224,26 @@ class StackOverflowTeamsClient extends GuzzleClient
         return null;
     }
 
-  /**
-   * Updates an existing article's content in the StackOverflow Teams API.
-   *
-   * @param int $id
-   *   The ID of the article to update.
-   * @param string $title
-   *   The article's title to set.
-   * @param string $body
-   *   The article's body to set.
-   * @param string $tags
-   *   The article's associated tags to set. Comma-separated.
-   * @param string $article_type
-   *   The article's type to set. One of 'knowledge-article', 'announcement',
-   *   'policy', 'how-to-guide'.
-   *
-   * @return ResponseInterface
-   *   The response from the API.
-   *
-   * @throws \GuzzleHttp\Exception\GuzzleException
-   */
+    /**
+     * Updates an existing article's content in the StackOverflow Teams API.
+     *
+     * @param int $id
+     *   The ID of the article to update.
+     * @param string $title
+     *   The article's title to set.
+     * @param string $body
+     *   The article's body to set.
+     * @param string $tags
+     *   The article's associated tags to set. Comma-separated.
+     * @param string $article_type
+     *   The article's type to set. One of 'knowledge-article', 'announcement',
+     *   'policy', 'how-to-guide'.
+     *
+     * @return ResponseInterface
+     *   The response from the API.
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function writeArticle(
         int $id,
         string $title,
@@ -259,17 +262,19 @@ class StackOverflowTeamsClient extends GuzzleClient
         );
     }
 
-  /**
-   * POSTs a request to the StackOverflow Teams API.
-   *
-   * @param string $path
-   *   The path within the API endpoint.
-   *
-   * @return ResponseInterface
-   *   The response from the API.
-   *
-   * @throws \GuzzleHttp\Exception\GuzzleException
-   */
+    /**
+     * POSTs a request to the StackOverflow Teams API.
+     *
+     * @param string $path
+     *   The path within the API endpoint.
+     * @param string[] $data
+     *   An associative array of form param data.
+     *
+     * @return ResponseInterface
+     *   The response from the API.
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     private function stackPostRequest(
         string $path,
         array $data

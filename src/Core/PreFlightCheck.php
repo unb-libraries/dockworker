@@ -7,6 +7,8 @@ use Dockworker\IO\DockworkerIO;
 
 /**
  * Provides methods to execute Preflight checks within Dockworker.
+ *
+ * @phpstan-consistent-constructor
  */
 class PreFlightCheck
 {
@@ -27,7 +29,7 @@ class PreFlightCheck
     /**
      * A message to display if the command fails.
      *
-     * @var array|string
+     * @var string[]|string
      */
     private array|string $failMessage;
 
@@ -75,16 +77,16 @@ class PreFlightCheck
      *   The command object to use in the check.
      * @param string $test_method
      *   The method within the command to execute.
-     * @param array $test_method_args
+     * @param string[] $test_method_args
      *   The arguments to pass to the test method.
      * @param string $output_method
      *   The method within the command that retrieves $test_method's output.
      *   If empty, the output from $test_method is ignored and not tested.
-     * @param array $output_method_args
+     * @param string[] $output_method_args
      *   The arguments to pass to the output retrieval method.
      * @param string $expected_output
      *   A string expected to appear within the $output_method's return.
-     * @param array|string $fail_message
+     * @param string[]|string $fail_message
      *   A message to display if the command fails.
      */
     private function __construct(
@@ -116,16 +118,16 @@ class PreFlightCheck
      *   The command object to use in the check.
      * @param string $test_method
      *   The method within the command to execute.
-     * @param array $test_method_args
+     * @param string[] $test_method_args
      *   The arguments to pass to the test method.
      * @param string $output_method
      *   The method within the command that retrieves $test_method's output.
      *   If empty, the output from $test_method is ignored and not tested.
-     * @param array $output_method_args
+     * @param string[] $output_method_args
      *   The arguments to pass to the output retrieval method.
      * @param string $expected_output
      *   A string expected to appear within the $output_method's return.
-     * @param array|string $fail_message
+     * @param string[]|string $fail_message
      *   A message to display if the command fails.
      */
     public static function create(

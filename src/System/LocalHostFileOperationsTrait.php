@@ -19,18 +19,18 @@ trait LocalHostFileOperationsTrait
     use OperatingSystemConfigurationTrait;
     use RoboConfigTrait;
 
-  /**
-   * The path to the local OS host file.
-   *
-   * @var string
-   */
+    /**
+     * The path to the local OS host file.
+     *
+     * @var string
+     */
     protected string $localHostFilePath = '/etc/hosts';
 
-  /**
-   * Adds this application's information into the local development computer's hostfile. Requires sudo.
-   *
-   * @throws \Dockworker\DockworkerException
-   */
+    /**
+     * Adds this application's information into the local development computer's hostfile. Requires sudo.
+     *
+     * @throws \Dockworker\DockworkerException
+     */
     protected function setLocalHostFileEntries(): void
     {
         $this->dockworkerIO->section("[local] Configuring HostFile");
@@ -40,16 +40,16 @@ trait LocalHostFileOperationsTrait
         }
     }
 
-  /**
-   * Removes this application's information from the local development system's hostfile. Requires sudo.
-   *
-   * @throws \Dockworker\DockworkerException
-   */
+    /**
+     * Removes this application's information from the local development system's hostfile. Requires sudo.
+     *
+     * @throws \Dockworker\DockworkerException
+     */
     protected function unSetLocalHostFileEntries(): void
     {
         $this->dockworkerIO->section("Reverting Local PC Hostfile");
         foreach ($this->getLocalApplicationHostNames() as $hostname) {
-              $this->removeLocalHostFileEntry($hostname);
+            $this->removeLocalHostFileEntry($hostname);
         }
     }
 
@@ -107,12 +107,12 @@ trait LocalHostFileOperationsTrait
         );
     }
 
-  /**
-   * Gets a list of hostnames that this local deployment will use.
-   *
-   * @return string[]
-   *   An array of hostnames.
-   */
+    /**
+     * Gets a list of hostnames that this local deployment will use.
+     *
+     * @return string[]
+     *   An array of hostnames.
+     */
     protected function getLocalApplicationHostNames(): array
     {
         $hostnames = [

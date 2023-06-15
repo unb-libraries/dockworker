@@ -24,12 +24,12 @@ trait StackOverflowTeamsClientTrait
      */
     protected array $stackOverflowTeamsClients = [];
 
-  /**
-   * Sets a preflight check for the StackOverflow Teams API.
-   *
-   * @param \Dockworker\StackOverflow\StackOverflowTeamsClient $client
-   *   The client to check connectivity for.
-   */
+    /**
+     * Sets a preflight check for the StackOverflow Teams API.
+     *
+     * @param \Dockworker\StackOverflow\StackOverflowTeamsClient $client
+     *   The client to check connectivity for.
+     */
     public function setStackTeamsClientPreflightCheck(StackOverflowTeamsClient $client): void
     {
         $this->registerNewPreflightCheck(

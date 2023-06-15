@@ -52,9 +52,9 @@ class DockworkerIO extends ConsoleIO
     /**
      * Displays a table.
      *
-     * @param array $headers
+     * @param string[] $headers
      *   The table headers.
-     * @param array $rows
+     * @param string[] $rows
      *   The table rows.
      * @param string $title
      *   The title to display before the table.
@@ -88,9 +88,9 @@ class DockworkerIO extends ConsoleIO
     /**
      * Displays a table and prompts the user to select one of the rows.
      *
-     * @param array $headers
+     * @param string[] $headers
      *   The table headers.
-     * @param array $rows
+     * @param mixed[] $rows
      *   The table rows.
      * @param string $return_column_key
      *   The key of the row array whose value you wish to return.
@@ -120,7 +120,7 @@ class DockworkerIO extends ConsoleIO
     ): string {
         array_unshift($headers, 'ID');
         $this->addIdColumnToRows($rows);
-        $this->displayTable(
+        $this->setDisplayTable(
             $headers,
             $rows,
             $title,
@@ -131,7 +131,7 @@ class DockworkerIO extends ConsoleIO
         while (!isset($rows[$chosen_item - 1])) {
             $chosen_item = $this->ask(
                 $prompt,
-                $default == null ? null : $default + 1
+                $default == null ? '' : (string) $default + 1
             );
             if (!isset($rows[$chosen_item - 1])) {
                 $this->warning('Invalid ID selected.');
@@ -143,7 +143,7 @@ class DockworkerIO extends ConsoleIO
     /**
      * Adds an incrementing ID column to a table row.
      *
-     * @param array $rows
+     * @param mixed[] $rows
      *   The table rows.
      */
     private function addIdColumnToRows(array &$rows): void
@@ -160,7 +160,7 @@ class DockworkerIO extends ConsoleIO
      *
      * @param string $prompt
      *   The prompt to display to the user.
-     * @param array $allowed_values
+     * @param string[] $allowed_values
      *   The list of permitted values.
      * @param string|null $default_value
      *   The default value to use in the prompt.

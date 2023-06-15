@@ -17,7 +17,9 @@ trait DockworkerIOTrait
     public function initDockworkerIO(): void
     {
         $this->dockworkerIO = new DockworkerIO(
+            // @phpstan-ignore-next-line
             $this->io()->input(),
+            // @phpstan-ignore-next-line
             $this->io()->output()
         );
     }

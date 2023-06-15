@@ -8,6 +8,8 @@ use Symfony\Component\Process\Process;
 
 /**
  * Provides methods to execute and manage CLI commands within Dockworker.
+ *
+ * @phpstan-consistent-constructor
  */
 class CliCommand extends Process
 {
@@ -21,13 +23,13 @@ class CliCommand extends Process
     /**
      * Constructor.
      *
-     * @param array $command
+     * @param string[] $command
      *   The full CLI command to execute.
      * @param string $description
      *   A description of the command.
      * @param string|null $cwd
      *   The working directory or null to use the working dir of the current PHP process
-     * @param array|null $env
+     * @param string[]|null $env
      *   The environment variables or null to use the same environment as the current PHP process
      * @param mixed $input
      *   The input as stream resource, scalar or \Traversable, or null for no input
@@ -49,7 +51,7 @@ class CliCommand extends Process
     /**
      * Announces and runs a command, throwing an exception if the command fails.
      *
-     * @param array $command
+     * @param string[] $command
      *   The full CLI command to execute.
      * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
@@ -57,7 +59,7 @@ class CliCommand extends Process
      *   A description of the command.
      * @param string|null $cwd
      *   The working directory or null to use the working dir of the current PHP process
-     * @param array|null $env
+     * @param string[]|null $env
      *   The environment variables or null to use the same environment as the current PHP process
      * @param mixed $input
      *   The input as stream resource, scalar or \Traversable, or null for no input

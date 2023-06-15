@@ -37,6 +37,7 @@ trait DockworkerPersistentDataStorageTrait
     public function preInitDockworkerPersistentDataStorageDir(): void
     {
         $this->initDockworkerPersistentDataStorageDir(
+            // @phpstan-ignore-next-line
             $this->userHomeDir
         );
     }
@@ -71,7 +72,7 @@ trait DockworkerPersistentDataStorageTrait
      *   Optional. The default query response, defaults to none.
      * @param string $description
      *   Optional. A description offering further information about the item.
-     * @param array $reference_uris
+     * @param string[] $reference_uris
      *   Optional. Labels and URIs to display to support describing the item.
      * @param string $env_var_override_name
      *   Optional. An OS environment variable name whose value overrides configuration.

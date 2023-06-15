@@ -15,10 +15,10 @@ trait CliCommandTrait
     /**
      * Executes a set of CLI commands.
      *
-     * @param array $commands
+     * @param mixed[] $commands
      *   The commands to execute.
      * @param \Dockworker\IO\DockworkerIO|null $io
-     *   The IO to use for input and output. Null for no io, tty.
+     *   The IO to use for title input and output. Null for no io, tty.
      * @param string $title
      *   The title to display before executing the commands.
      */
@@ -51,7 +51,7 @@ trait CliCommandTrait
     /**
      * Executes a CLI command.
      *
-     * @param array $command
+     * @param string[] $command
      *   The command to execute.
      * @param \Dockworker\IO\DockworkerIO|null $io
      *   The IO to use for input and output. Null for no io.

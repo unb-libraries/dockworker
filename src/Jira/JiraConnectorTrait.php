@@ -27,42 +27,42 @@ trait JiraConnectorTrait
     protected ArrayConfiguration $jiraConfig;
 
     /**
-     * The jira server hostname.
+     * The Jira server hostname.
      *
      * @var string
      */
     protected string $jiraEndpointUri;
 
     /**
-     * The jira server user name to authenticate with.
+     * The Jira server user name to authenticate with.
      *
      * @var string
      */
     protected string $jiraUserName;
 
     /**
-     * The jira server user password to authenticate with.
+     * The Jira server user password to authenticate with.
      *
      * @var string
      */
     protected string $jiraUserPassword;
 
     /**
-     * The jira project service.
+     * The Jira project service.
      *
      * @var \JiraRestApi\Project\ProjectService
      */
     protected ProjectService $jiraProjectService;
 
     /**
-     * The jira issue service.
+     * The Jira issue service.
      *
      * @var \JiraRestApi\Issue\IssueService
      */
     protected IssueService $jiraIssueService;
 
     /**
-     * Displays a list of open JIRA issues.
+     * Displays a list of open Jira issues.
      *
      * @throws \Exception
      */
@@ -93,7 +93,7 @@ trait JiraConnectorTrait
     }
 
     /**
-     * Sets up the JIRA configuration.
+     * Sets up the Jira configuration.
      *
      * @throws \Exception
      */
@@ -107,7 +107,7 @@ trait JiraConnectorTrait
     }
 
     /**
-     * Sets the JIRA hostname.
+     * Sets the Jira hostname.
      *
      * @throws \Exception
      */
@@ -125,7 +125,7 @@ trait JiraConnectorTrait
     }
 
     /**
-     * Sets the JIRA username.
+     * Sets the Jira username.
      *
      * @throws \Exception
      */
@@ -143,9 +143,9 @@ trait JiraConnectorTrait
     }
 
     /**
-     * Sets the JIRA user password.
+     * Sets the Jira user password.
      *
-     * JIRA on-premises doesn't allow API keys to generate, so we need to
+     * Jira on-premises doesn't allow API keys to auth, so we need to
      * enter a password at run-time.
      *
      * @throws \Exception
@@ -180,7 +180,7 @@ trait JiraConnectorTrait
     }
 
     /**
-     * Sets the JIRA service object.
+     * Sets the Jira service object.
      *
      * @throws \Exception
      */
@@ -191,7 +191,7 @@ trait JiraConnectorTrait
     }
 
     /**
-     * Retrieves a list of JIRA issues matching a JQL query.
+     * Retrieves a list of Jira issues matching a JQL query.
      *
      * @param string $jql
      *   The JQL query to execute.
@@ -208,14 +208,14 @@ trait JiraConnectorTrait
     }
 
     /**
-     * Creates a new stub issue in JIRA.
+     * Creates a new stub issue in Jira.
      *
      * @throws \Exception
      */
     protected function createNewJiraStubIssue(): void
     {
         $this->initJiraConnection();
-        $this->dockworkerIO->section('Creating new JIRA issue');
+        $this->dockworkerIO->section('Creating new Jira issue');
         $project_key = $this->dockworkerIO->ask(
             'Enter the Issue\'s JIRA project key',
             $this->getFirstJiraProjectKey()

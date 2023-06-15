@@ -8,6 +8,8 @@ use Dockworker\IO\DockworkerIO;
 
 /**
  * Provides methods to execute commands in deployed docker containers.
+ *
+ * @phpstan-consistent-constructor
  */
 class DockerContainer
 {
@@ -91,13 +93,13 @@ class DockerContainer
      *   The state/status of the container.
      * @param DateTimeImmutable $creation_timestamp
      *   The time the container was created.
-     * @param array $controlled_by
+     * @param string[] $controlled_by
      *   The entities controlling the container.
-     * @param array $exec_entry_point
+     * @param string[] $exec_entry_point
      *   The CLI execution entry point for the container.
-     * @param array $copy_entry_point
+     * @param string[] $copy_entry_point
      *   The file copy entry point for the container.
-     * @param array $logs_command
+     * @param string[] $logs_command
      *   The command to retrieve logs for the container.
      */
     private function __construct(
@@ -135,13 +137,13 @@ class DockerContainer
      *   The state/status of the container.
      * @param DateTimeImmutable $creation_timestamp
      *   The time the container was created.
-     * @param array $controlled_by
+     * @param string[] $controlled_by
      *   The entities controlling the container.
-     * @param array $exec_entry_point
+     * @param string[] $exec_entry_point
      *   The CLI execution entry point for the container.
-     * @param array $copy_entry_point
+     * @param string[] $copy_entry_point
      *   The file copy entry point for the container.
-     * @param array $logs_command
+     * @param string[] $logs_command
      *   The command to retrieve logs for the container.
      *
      * @return DockerContainer
@@ -174,7 +176,7 @@ class DockerContainer
     /**
      * Runs a command in the container.
      *
-     * @param array $command
+     * @param string[] $command
      *   The command to run in the container.
      * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.

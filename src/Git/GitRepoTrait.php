@@ -18,7 +18,7 @@ trait GitRepoTrait
     /**
      * The application's git repository.
      *
-     * @var GitRepository;
+     * @var \CzProject\GitPhp\GitRepository
      */
     protected GitRepository $applicationRepository;
 
@@ -37,15 +37,15 @@ trait GitRepoTrait
         }
     }
 
-  /**
-   * Retrieves a git repository object from a repository path.
-   *
-   * @param string $path
-   *   The path to the git repository.
-   *
-   * @return GitRepository
-   *   The git repository object.
-   */
+    /**
+     * Retrieves a git repository object from a repository path.
+     *
+     * @param string $path
+     *   The path to the git repository.
+     *
+     * @return GitRepository
+     *   The git repository object.
+     */
     protected function getGitRepoFromPath(string $path): GitRepository
     {
         $git = new Git();
