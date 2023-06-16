@@ -30,6 +30,8 @@ trait KubectlCliTrait
     *   The full CLI command to execute.
     * @param string $description
     *   A description of the command.
+     * @param \Dockworker\IO\DockworkerIO|null $io
+     *   The IO object to use for the command.
     * @param ?float $timeout
     *   The timeout in seconds or null to disable
     * @param bool $use_tty
@@ -39,47 +41,22 @@ trait KubectlCliTrait
     */
     protected function kubeCtlRun(
         array $command,
-        string $description = '',
+        string $description,
+        ?DockworkerIO $io,
         ?float $timeout = null,
         bool $use_tty = true
-    ): CliCommand {
-        $cmd = $this->kubeCtlCli($command, $description, $timeout)
-            ->setWorkingDirectory($this->applicationRoot);
-        if ($use_tty) {
-            $cmd->runTty($this->dockworkerIO);
-        } else {
-            $cmd->mustRun();
-        }
-        return $cmd;
-    }
-
-    /**
-    * Constructs a kubectl command object.
-    *
-    * @param array $command
-    *   The full CLI command to execute.
-    * @param string $description
-    *   A description of the command.
-    * @param ?float $timeout
-    *   The timeout in seconds or null to disable
-    *
-    * @return \Dockworker\Cli\CliCommand
-    */
-    protected function kubeCtlCli(
-        array $command,
-        string $description = '',
-        ?float $timeout = null
     ): CliCommand {
         array_unshift(
             $command,
             $this->cliTools['kubectl']
         );
-        return new CliCommand(
+        return $this->executeCliCommand(
             $command,
+            $io,
+            $this->applicationRoot,
+            '',
             $description,
-            null,
-            [],
-            null,
+            $use_tty,
             $timeout
         );
     }

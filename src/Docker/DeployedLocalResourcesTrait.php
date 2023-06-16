@@ -139,6 +139,7 @@ trait DeployedLocalResourcesTrait
                 ],
                 'Discover local container ID',
                 null,
+                null,
                 [],
                 false
             );
@@ -149,6 +150,7 @@ trait DeployedLocalResourcesTrait
                     $container_id,
                 ],
                 'Discover local container details',
+                null,
                 null,
                 false
             );

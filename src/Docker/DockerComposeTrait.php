@@ -27,7 +27,8 @@ trait DockerComposeTrait
                 'build',
                 '--pull',
             ],
-            'Building the docker image.'
+            'Building the docker image.',
+            $this->dockworkerIO
         );
         if ($cmd->getExitCode() !== 0) {
             $this->dockworkerIO->error('Failed to build the docker image.');
@@ -46,7 +47,8 @@ trait DockerComposeTrait
                 'up',
                 '-d',
             ],
-            'Starting the local application.'
+            'Starting the local application.',
+            $this->dockworkerIO
         );
         if ($cmd->getExitCode() !== 0) {
             $this->dockworkerIO->error('Failed to start the docker container.');
@@ -68,7 +70,8 @@ trait DockerComposeTrait
                 'local',
                 '-v',
             ],
-            'Stopping the compose application and removing its data.'
+            'Stopping the compose application and removing its data.',
+            $this->dockworkerIO,
         );
     }
 
@@ -83,7 +86,8 @@ trait DockerComposeTrait
                 'logs',
                 $this->applicationSlug,
             ],
-            'Display logs for the docker compose application.'
+            'Display logs for the docker compose application.',
+            $this->dockworkerIO
         );
     }
 
@@ -106,7 +110,8 @@ trait DockerComposeTrait
                 $source_path,
                 $target_path,
             ],
-            'Copy file.'
+            'Copy file.',
+            $this->dockworkerIO
         );
     }
 }

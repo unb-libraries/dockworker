@@ -66,11 +66,12 @@ trait CliCommandTrait
      */
     protected function executeCliCommand(
         array $command,
-        DockworkerIO|null $io,
+        ?DockworkerIO $io,
         string|null $cwd,
         string $title = '',
         string $message = '',
-        bool $use_tty = true
+        bool $use_tty = true,
+        ?float $timeout = null
     ): CliCommand|null {
         if ($io !== null) {
             if (!empty($title)) {
@@ -89,6 +90,8 @@ trait CliCommandTrait
             null,
             null
         );
+        $cmd->setTimeout($timeout);
+
         // If null $io is passed, this supercedes the tty setting.
         if ($tty && $io !== null) {
             $cmd->runTty($io);

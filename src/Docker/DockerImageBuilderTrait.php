@@ -27,7 +27,9 @@ trait DockerImageBuilderTrait
     public function buildDockerImage(
         string $build_context,
         string $image_tag,
-        DockworkerIO $io
+        DockworkerIO $io,
+        ?float $timeout = null,
+        bool $use_tty = true
     ): void {
         $io->section("Building [$image_tag] from [$build_context/Dockerfile]");
         $this->dockerRun(
@@ -38,7 +40,10 @@ trait DockerImageBuilderTrait
                 '--pull',
                 $build_context,
             ],
-            'Builds the docker image.'
+            'Builds the docker image.',
+            $io,
+            $timeout,
+            $use_tty
         );
     }
 }

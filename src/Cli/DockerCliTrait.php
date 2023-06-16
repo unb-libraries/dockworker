@@ -2,6 +2,7 @@
 
 namespace Dockworker\Cli;
 
+use Dockworker\Cli\CliCommandTrait;
 use Dockworker\IO\DockworkerIO;
 
 /**
@@ -12,6 +13,7 @@ use Dockworker\IO\DockworkerIO;
  */
 trait DockerCliTrait
 {
+    use CliCommandTrait;
     use CliToolTrait;
 
     /**
@@ -30,6 +32,8 @@ trait DockerCliTrait
      *   The full CLI command to execute.
      * @param string $description
      *   A description of the command.
+     * @param \Dockworker\IO\DockworkerIO|null $io
+     *   The IO object to use for the command.
      * @param ?float $timeout
      *   The timeout in seconds or null to disable
      * @param bool $use_tty
@@ -41,43 +45,21 @@ trait DockerCliTrait
     protected function dockerRun(
         array $command,
         string $description,
+        ?DockworkerIO $io,
         ?float $timeout = null,
         bool $use_tty = true
     ): CliCommand {
-        $cmd = $this->dockerCli($command, $description, $timeout)
-            ->setWorkingDirectory($this->applicationRoot);
-        if ($use_tty) {
-            $cmd->runTty($this->dockworkerIO);
-        } else {
-            $cmd->mustRun();
-        }
-        return $cmd;
-    }
-
-    /**
-     * Constructs a docker command object.
-     *
-     * @param array $command
-     *   The full CLI command to execute.
-     * @param string $description
-     *   A description of the command.
-     * @param ?float $timeout
-     *   The timeout in seconds or null to disable
-     *
-     * @return \Dockworker\Cli\CliCommand
-     */
-    protected function dockerCli(
-        array $command,
-        string $description,
-        ?float $timeout = null
-    ): CliCommand {
-        array_unshift($command, $this->cliTools['docker']);
-        return new CliCommand(
+        array_unshift(
             $command,
+            $this->cliTools['docker']
+        );
+        return $this->executeCliCommand(
+            $command,
+            $io,
+            $this->applicationRoot,
+            '',
             $description,
-            null,
-            null,
-            null,
+            $use_tty,
             $timeout
         );
     }
@@ -89,6 +71,8 @@ trait DockerCliTrait
      *   The full CLI command to execute.
      * @param string $description
      *   A description of the command.
+     * @param \Dockworker\IO\DockworkerIO|null $io
+     *   The IO object to use for the command.
      * @param ?float $timeout
      *   The timeout in seconds or null to disable
      * @param string[] $profiles
@@ -100,59 +84,24 @@ trait DockerCliTrait
      */
     protected function dockerComposeRun(
         array $command,
-        string $description = '',
+        string $description,
+        ?DockworkerIO $io,
         ?float $timeout = null,
         array $profiles = [],
         bool $use_tty = true
-    ): CliCommand {
-        $cmd = $this->dockerComposeCli($command, $description, $timeout, $profiles)
-            ->setWorkingDirectory($this->applicationRoot);
-        if ($use_tty) {
-            $cmd->runTty($this->dockworkerIO);
-        } else {
-            $cmd->mustRun();
-        }
-        return $cmd;
-    }
-
-    /**
-     * Constructs a 'docker compose' command object.
-     *
-     * @param array $command
-     *   The full CLI command to execute.
-     * @param string $description
-     *   A description of the command.
-     * @param ?float $timeout
-     *   The timeout in seconds or null to disable
-     * @param string[] $profiles
-     *   The docker compose profiles to target with this command.
-     *
-     * @return \Dockworker\Cli\CliCommand
-     */
-    protected function dockerComposeCli(
-        array $command,
-        string $description = '',
-        ?float $timeout = null,
-        array $profiles = []
     ): CliCommand {
         array_unshift(
             $command,
             $this->cliTools['docker'],
             'compose'
         );
-        if (!empty($profiles)) {
-            $env = [
-                'COMPOSE_PROFILES' => implode(',', $profiles),
-            ];
-        } else {
-            $env = null;
-        }
-        return new CliCommand(
+        return $this->executeCliCommand(
             $command,
+            $io,
+            $this->applicationRoot,
+            '',
             $description,
-            null,
-            $env,
-            null,
+            $use_tty,
             $timeout
         );
     }

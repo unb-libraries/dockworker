@@ -133,7 +133,7 @@ abstract class DockworkerCommands extends Tasks implements
         $this->userName = get_current_user();
         $this->userGid = (string) posix_getgid();
         $this->userHomeDir = $_SERVER['HOME'];
-        $this->ttySupported = !$this->outputSupportsTty();
+        $this->ttySupported = $this->outputSupportsTty();
         $this->setCoreProperties();
     }
 

@@ -115,6 +115,7 @@ trait DeployedK8sResourcesTrait
             ],
             'Describe deployment in namespace',
             null,
+            null,
             false
         );
         $output = $cmd->getOutput();
@@ -181,6 +182,7 @@ trait DeployedK8sResourcesTrait
             ],
             'Get pods for replica set',
             null,
+            null,
             false
         );
         $output = $cmd->getOutput();
@@ -214,6 +216,7 @@ trait DeployedK8sResourcesTrait
                 'jsonpath={.metadata.labels.pod-template-hash}',
             ],
             'Get pod template hash for replica set',
+            null,
             null,
             false
         );
@@ -284,6 +287,7 @@ trait DeployedK8sResourcesTrait
                 'json',
             ],
             'Get pod details',
+            null,
             null,
             false
         );

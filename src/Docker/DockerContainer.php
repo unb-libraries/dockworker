@@ -4,6 +4,7 @@ namespace Dockworker\Docker;
 
 use DateTimeImmutable;
 use Dockworker\Cli\CliCommand;
+use Dockworker\Cli\CliCommandTrait;
 use Dockworker\IO\DockworkerIO;
 
 /**
@@ -13,6 +14,8 @@ use Dockworker\IO\DockworkerIO;
  */
 class DockerContainer
 {
+    use CliCommandTrait;
+
     /**
      * The entities controlling the container.
      *
@@ -193,20 +196,14 @@ class DockerContainer
             $this->containerExecEntryPoint,
             $command
         );
-        $cmd = new CliCommand(
+        return $this->executeCliCommand(
             $command,
-            'Running command in container',
+            $io,
             null,
-            [],
-            null,
-            null
+            '',
+            '',
+            $use_tty,
         );
-        if ($use_tty) {
-            $cmd->runTty($io);
-        } else {
-            $cmd->mustRun();
-        }
-        return $cmd;
     }
 
     /**
@@ -214,15 +211,11 @@ class DockerContainer
      */
     public function logs(): string
     {
-        $cmd = new CliCommand(
+        $cmd = $this->executeCliCommand(
             $this->containerLogsCommand,
-            'Retrieving logs from container',
             null,
-            [],
             null,
-            null
         );
-        $cmd->mustRun();
         return $cmd->getOutput();
     }
 
@@ -334,14 +327,13 @@ class DockerContainer
                 $target_uri,
             ]
         );
-        $cmd = new CliCommand(
+        $this->executeCliCommand(
             $command,
+            $io,
+            null,
+            '',
             "Copying $source_uri to $target_uri",
-            null,
-            [],
-            null,
-            null
+            true
         );
-        $cmd->runTty($io);
     }
 }
