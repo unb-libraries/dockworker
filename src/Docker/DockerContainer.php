@@ -191,7 +191,8 @@ class DockerContainer
         DockworkerIO $io,
         bool $use_tty = true,
     ): CliCommand {
-        $this->setTtyInContainerEntryPoint($use_tty);
+        $tty = $use_tty && CliCommand::isTtySupported();
+        $this->setTtyInContainerEntryPoint($tty);
         $command = array_merge(
             $this->containerExecEntryPoint,
             $command
@@ -202,7 +203,7 @@ class DockerContainer
             null,
             '',
             '',
-            $use_tty,
+            $tty,
         );
     }
 

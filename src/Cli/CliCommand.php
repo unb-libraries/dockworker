@@ -49,6 +49,14 @@ class CliCommand extends Process
     }
 
     /**
+     * Returns whether TTY is supported on the current operating system.
+     */
+    public static function isTtySupported(): bool
+    {
+        return empty(getenv("CI")) && parent::isTtySupported();
+    }
+
+    /**
      * Announces and runs a command, throwing an exception if the command fails.
      *
      * @param string[] $command

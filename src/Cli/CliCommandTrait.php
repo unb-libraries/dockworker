@@ -81,7 +81,7 @@ trait CliCommandTrait
                 $io->say($message);
             }
         }
-        $tty = $use_tty && $this->ttySupported;
+        $tty = $use_tty && CliCommand::isTtySupported();
         $cmd = new CliCommand(
             $command,
             $message,
