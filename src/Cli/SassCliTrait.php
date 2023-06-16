@@ -2,6 +2,7 @@
 
 namespace Dockworker\Cli;
 
+use Dockworker\Cli\CliCommandTrait;
 use Dockworker\IO\DockworkerIO;
 
 /**
@@ -13,6 +14,7 @@ use Dockworker\IO\DockworkerIO;
 trait SassCliTrait
 {
     use CliToolTrait;
+    use CliCommandTrait;
 
     /**
      * Registers dart sass as a required CLI tool.
@@ -30,60 +32,25 @@ trait SassCliTrait
      *   The full CLI command to execute.
      * @param string $description
      *   A description of the command.
-     * @param ?float $timeout
-     *   The timeout in seconds or null to disable
-     * @param bool $use_tty
-     *   Whether to use a TTY for the command. Defaults to TRUE.
      *
      * @return \Dockworker\Cli\CliCommand
      */
     protected function sassRun(
         array $command,
-        string $description = '',
-        ?float $timeout = null,
-        bool $use_tty = true
-    ): CliCommand {
-        $cmd = $this->sassCli($command, $description, $timeout)
-            ->setWorkingDirectory($this->applicationRoot);
-        if ($use_tty) {
-            $cmd->runTty(
-                $this->dockworkerIO,
-                false
-            );
-        } else {
-            $cmd->mustRun();
-        }
-        return $cmd;
-    }
-
-    /**
-     * Constructs a dart sass command object.
-     *
-     * @param array $command
-     *   The full CLI command to execute.
-     * @param string $description
-     *   A description of the command.
-     * @param ?float $timeout
-     *   The timeout in seconds or null to disable
-     *
-     * @return \Dockworker\Cli\CliCommand
-     */
-    protected function sassCli(
-        array $command,
-        string $description = '',
-        ?float $timeout = null
+        string $description,
+        DockworkerIO $io
     ): CliCommand {
         array_unshift(
             $command,
             $this->cliTools['sass']
         );
-        return new CliCommand(
+        return $this->executeCliCommand(
             $command,
+            $io,
+            null,
+            '',
             $description,
-            null,
-            [],
-            null,
-            $timeout
+            false
         );
     }
 }

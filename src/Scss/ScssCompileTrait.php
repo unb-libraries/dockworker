@@ -27,7 +27,6 @@ trait ScssCompileTrait
         string $target_path,
         DockworkerIO $io
     ): void {
-        $io->say("Compiling $source_path to $target_path...");
         $this->sassRun(
             [
                 '--style=compressed',
@@ -35,6 +34,7 @@ trait ScssCompileTrait
                 $target_path
             ],
             "Compiling $source_path to $target_path...",
+            $io
         );
     }
 }
