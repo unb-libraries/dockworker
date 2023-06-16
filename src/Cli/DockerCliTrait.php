@@ -32,8 +32,8 @@ trait DockerCliTrait
      *   The full CLI command to execute.
      * @param string $description
      *   A description of the command.
-     * @param \Dockworker\IO\DockworkerIO|null $io
-     *   The IO object to use for the command.
+     * @param ?\Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output. Null for no IO.
      * @param ?float $timeout
      *   The timeout in seconds or null to disable
      * @param bool $use_tty
@@ -71,8 +71,8 @@ trait DockerCliTrait
      *   The full CLI command to execute.
      * @param string $description
      *   A description of the command.
-     * @param \Dockworker\IO\DockworkerIO|null $io
-     *   The IO object to use for the command.
+     * @param ?\Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output. Null for no IO.
      * @param ?float $timeout
      *   The timeout in seconds or null to disable
      * @param string[] $profiles

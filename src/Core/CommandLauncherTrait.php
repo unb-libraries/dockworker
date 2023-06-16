@@ -24,7 +24,8 @@ trait CommandLauncherTrait
      *
      * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
-     * @param array $command
+     * @param string[] $command
+     *   The dockworker command and arguments to run.
      */
     public function setRunOtherCommand(
         DockworkerIO $io,
