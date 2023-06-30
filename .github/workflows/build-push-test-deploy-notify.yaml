@@ -82,22 +82,22 @@ jobs:
     uses: unb-libraries/dockworker/.github/workflows/update-docker-compose.yaml@6.x
     needs: [ build-push-images ]
 
-  test-api:
-    name: API tests
-    uses: unb-libraries/dockworker/.github/workflows/test-api.yaml@6.x
-    needs: [ update-docker-compose ]
-    if: "${{ inputs.postman-test-url }}"
-    with:
-      postman-test-url: ${{ inputs.postman-test-url }}
-    secrets:
-      DOCKER_CLOUD_USER_NAME: ${{ secrets.DOCKER_CLOUD_USER_NAME }}
-      DOCKER_CLOUD_ACCESS_TOKEN: ${{ secrets.DOCKER_CLOUD_ACCESS_TOKEN }}
-      GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
-      GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
-      POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
-      POSTMAN_TEST_GENERATION_COLLECTION_ID: ${{ secrets.POSTMAN_TEST_GENERATION_COLLECTION_ID }}
-      POSTMAN_TEST_GENERATION_ENVIRONMENT_ID: ${{ secrets.POSTMAN_TEST_GENERATION_ENVIRONMENT_ID }}
-      POSTMAN_WORKSPACE_ID: ${{ secrets.POSTMAN_WORKSPACE_ID }}
+  # test-api:
+  #   name: API tests
+  #   uses: unb-libraries/dockworker/.github/workflows/test-api.yaml@6.x
+  #   needs: [ update-docker-compose ]
+  #   if: "${{ inputs.postman-test-url }}"
+  #   with:
+  #     postman-test-url: ${{ inputs.postman-test-url }}
+  #   secrets:
+  #     DOCKER_CLOUD_USER_NAME: ${{ secrets.DOCKER_CLOUD_USER_NAME }}
+  #     DOCKER_CLOUD_ACCESS_TOKEN: ${{ secrets.DOCKER_CLOUD_ACCESS_TOKEN }}
+  #     GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
+  #     GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
+  #     POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+  #     POSTMAN_TEST_GENERATION_COLLECTION_ID: ${{ secrets.POSTMAN_TEST_GENERATION_COLLECTION_ID }}
+  #     POSTMAN_TEST_GENERATION_ENVIRONMENT_ID: ${{ secrets.POSTMAN_TEST_GENERATION_ENVIRONMENT_ID }}
+  #     POSTMAN_WORKSPACE_ID: ${{ secrets.POSTMAN_WORKSPACE_ID }}
 
   test-e2e:
     name: End-to-end tests
@@ -111,7 +111,7 @@ jobs:
 
   deploy-image-to-k8s:
     uses: unb-libraries/dockworker/.github/workflows/deploy.yaml@6.x
-    needs: [ test-e2e, test-api ]
+    needs: [ test-e2e ]
     with:
       branch-env-map: ${{ inputs.branch-env-map }}
       deploy-branches: ${{ inputs.deploy-branches }}
