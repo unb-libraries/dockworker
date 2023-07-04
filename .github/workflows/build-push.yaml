@@ -16,6 +16,11 @@ on:
         description: 'A list of branches that should be pushed to the container registry. JSON list format.'
         required: true
         type: string
+      platforms:
+        description: "A comma-separated list of platforms."
+        required: false
+        type: string
+        default: linux/amd64,linux/arm64/v8
     secrets:
       GH_CONTAINER_REGISTRY_USER:
         description: 'The user to use to login to the GitHub Container Registry.'
@@ -108,7 +113,7 @@ jobs:
         with:
           pull: true
           push: true
-          platforms: linux/amd64,linux/arm64/v8
+          platforms: ${{ inputs.platforms}}
           context: .
           file: ./Dockerfile
           tags: ${{ steps.fetch-tags.outputs.value }}

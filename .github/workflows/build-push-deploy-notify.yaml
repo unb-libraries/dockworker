@@ -28,6 +28,11 @@ on:
         description: 'A list of branches that should be pushed to the container registry. JSON list format.'
         required: true
         type: string
+      platforms:
+        description: "A comma-separated list of platforms."
+        required: false
+        type: string
+        default: linux/amd64,linux/arm64/v8
     secrets:
       KUBE_CONFIG:
         required: true
@@ -52,6 +57,7 @@ jobs:
       build-themes: ${{ inputs.build-themes }}
       image-name: ${{ inputs.image-name }}
       push-branches: ${{ inputs.push-branches }}
+      platforms: ${{ inputs.platforms }}
     secrets:
       GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
       GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
