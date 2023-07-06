@@ -16,6 +16,11 @@ on:
         description: 'A list of branches that should be pushed to the container registry. JSON list format.'
         required: true
         type: string
+      push-all-branches:
+        description: 'Whether or not to push all branches, ignoring the push-branches input.'
+        required: false
+        type: boolean
+        default: false
       platforms:
         description: "A comma-separated list of platforms."
         required: false
@@ -103,7 +108,7 @@ jobs:
         uses: haya14busa/action-cond@v1
         id: fetch-tags
         with:
-          cond: ${{ contains(fromJSON(inputs.push-branches), github.ref_name) }}
+          cond: ${{ contains(fromJSON(inputs.push-branches), github.ref_name) || inputs.push-all-branches == true }}
           if_true: "${{ env.BUILD_IMAGE_FULL_NAME }},${{ env.BUILD_IMAGE_BRANCH_NAME }}"
           if_false: ${{ env.BUILD_IMAGE_FULL_NAME }}
       -
