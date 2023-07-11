@@ -8,6 +8,11 @@ on:
         required: false
         type: boolean
         default: false
+      cleanup-old-images:
+        description: 'Whether or not to cleanup legacy hash-tagged images from the container registry.'
+        required: false
+        type: boolean
+        default: false
       image-name:
         description: 'The full, repository namespaced image name to build (without the tag).'
         required: true
@@ -126,6 +131,13 @@ jobs:
             BUILD_DATE=$TIMESTAMP
             VCS_REF=${{ env.CI_REF_NAME }}
             VERSION=${{ env.BUILD_IMAGE_TAG }}
+      - uses: actions/delete-package-versions@v4
+        if: inputs.cleanup-old-images == true
+        with:
+          package-name: ${{ inputs.image-name }}
+          package-type: 'container'
+          min-versions-to-keep: 5
+          ignore-versions: '^(dev|prod)$'
       -
         uses: actions/upload-artifact@v3
         with:
