@@ -45,13 +45,14 @@ on:
 
 jobs:
   notify-start:
-    name: Notify of Start
+    name: Notify Start
     if: always()
     uses: unb-libraries/dockworker/.github/workflows/notify-start.yaml@6.x
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   build-push-images:
+    name: Build/Push Images
     uses: unb-libraries/dockworker/.github/workflows/build-push.yaml@6.x
     with:
       build-themes: ${{ inputs.build-themes }}
@@ -63,6 +64,7 @@ jobs:
       GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
 
   deploy-image-to-k8s:
+    name: Deploy New Image
     uses: unb-libraries/dockworker/.github/workflows/deploy.yaml@6.x
     needs: [ build-push-images ]
     with:
@@ -72,14 +74,15 @@ jobs:
     secrets:
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
 
-  test-logs:
+  test-new-deployment-logs:
+    name: Check New Deployment Logs
     uses: unb-libraries/dockworker/.github/workflows/test-logs.yaml@6.x
     needs: [ deploy-image-to-k8s ]
 
   notify-conclusion:
-    name: Notify of Conclusion
+    name: Notify Conclusion
     uses: unb-libraries/dockworker/.github/workflows/notify-conclusion.yaml@6.x
-    needs: [ test-logs ]
+    needs: [ test-new-deployment-logs ]
     if: always()
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
