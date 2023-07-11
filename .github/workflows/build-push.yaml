@@ -79,6 +79,11 @@ jobs:
           IMAGE_NAME: ${{ inputs.image-name }}
         run: echo "GHCR_PACKAGE_NAME=$IMAGE_NAME" | sed "s|ghcr.io/$CI_REPOSITORY_OWNER/||" >> $GITHUB_ENV
       -
+        name: Set Push Branch List
+        env:
+          PUSH_BRANCHES: ${{ inputs.push-branches }}
+        run: echo "$PUSH_BRANCHES" | jq --raw-output '. | join(",")' | sed 's/^/PUSH_BRANCH_LIST=/' >> $GITHUB_ENV
+      -
         name: Install PHP
         uses: shivammathur/setup-php@v2
         if: inputs.build-themes == true
@@ -145,7 +150,7 @@ jobs:
           cut-off: A week ago UTC
           account-type: org
           org-name: ${{ env.CI_REPOSITORY_OWNER }}
-          skip-tags: dev, prod
+          skip-tags: ${{ env.PUSH_BRANCH_LIST }}
           keep-at-least: 3
           untagged-only: false
           token: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
