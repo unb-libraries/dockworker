@@ -138,9 +138,10 @@ jobs:
             VCS_REF=${{ env.CI_REF_NAME }}
             VERSION=${{ env.BUILD_IMAGE_TAG }}
       - name: Delete images older than a week, keeping at least 3
+        if: inputs.cleanup-old-images == true
         uses: snok/container-retention-policy@v2
         with:
-          image-names: ${{ env.IMAGE_NAME }}
+          image-names: ${{ env.GHCR_PACKAGE_NAME }}
           cut-off: A week ago UTC
           account-type: org
           org-name: ${{ env.CI_REPOSITORY_OWNER }}}
