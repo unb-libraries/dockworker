@@ -124,8 +124,9 @@ jobs:
       -
         env:
           TIMESTAMP: ${{ steps.current-time.outputs.time }}
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
+          provenance: false
           pull: true
           push: true
           platforms: ${{ inputs.platforms}}
@@ -136,13 +137,17 @@ jobs:
             BUILD_DATE=$TIMESTAMP
             VCS_REF=${{ env.CI_REF_NAME }}
             VERSION=${{ env.BUILD_IMAGE_TAG }}
-      - uses: actions/delete-package-versions@v4
-        if: inputs.cleanup-old-images == true
+      - name: Delete images older than a week, keeping at least 3
+        uses: snok/container-retention-policy@v2
         with:
-          package-name: ${{ env.GHCR_PACKAGE_NAME }}
-          package-type: 'container'
-          min-versions-to-keep: 5
-          ignore-versions: '^(dev|prod)$'
+          image-names: ${{ env.IMAGE_NAME }}
+          cut-off: A week ago UTC
+          account-type: org
+          org-name: ${{ env.CI_REPOSITORY_OWNER }}}
+          skip-tags: dev, prod
+          keep-at-least: 3
+          untagged-only: false
+          token: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
       -
         uses: actions/upload-artifact@v3
         with:
