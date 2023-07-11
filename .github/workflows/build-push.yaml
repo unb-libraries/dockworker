@@ -144,7 +144,7 @@ jobs:
           image-names: ${{ env.GHCR_PACKAGE_NAME }}
           cut-off: A week ago UTC
           account-type: org
-          org-name: ${{ env.CI_REPOSITORY_OWNER }}}
+          org-name: ${{ env.CI_REPOSITORY_OWNER }}
           skip-tags: dev, prod
           keep-at-least: 3
           untagged-only: false
