@@ -68,3 +68,17 @@ jobs:
         env:
           DEPLOYMENT_NAME: ${{ inputs.k8s-deployment-name }}
           DEPLOYMENT_NAMESPACE: ${{ env.DEPLOYMENT_NAMESPACE }}
+      -
+        name: Write deployment logs
+        run: |
+          kubectl logs "deployment/$DEPLOYMENT_NAME" --namespace="$DEPLOYMENT_NAMESPACE" > /tmp/deployment_logs.txt
+        env:
+          DEPLOYMENT_NAME: ${{ inputs.k8s-deployment-name }}
+          DEPLOYMENT_NAMESPACE: ${{ env.DEPLOYMENT_NAMESPACE }}
+      -
+        name: Archive Deployment Logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: deployment-logs
+          path: /tmp/deployment_logs.txt
+          retention-days: 7
