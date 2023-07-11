@@ -38,25 +38,19 @@ class LogCheckCommands extends DockworkerCommands
         }
         [$errors_pattern, $exceptions_pattern] = $this->getAllLogErrorStrings();
         $logs = file_get_contents($file_path);
-        $matched_error = '';
+        $matched_errors = [];
         if (
                 $this->logsHaveErrors(
                     $logs,
                     $errors_pattern,
                     $exceptions_pattern,
-                    $matched_error
+                    $matched_errors
                 )
-            ) {
-                $this->dockworkerIO->error(
-                    sprintf(
-                        'Errors detected in logs. [%s] found in output.',
-                        trim($matched_error)
-                    )
-                );
+        ) {
+                $this->reportErrorsInLogs($this->dockworkerIO, $matched_errors);
                 exit(1);
-            }
-            else {
-                $this->dockworkerIO->writeln('No errors detected in logs.');
-            }
+        } else {
+            $this->dockworkerIO->writeln('No errors detected in logs.');
+        }
     }
 }
