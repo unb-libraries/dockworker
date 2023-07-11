@@ -72,10 +72,14 @@ jobs:
     secrets:
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
 
+  test-logs:
+    uses: unb-libraries/dockworker/.github/workflows/test-logs.yaml@6.x
+    needs: [ deploy-image-to-k8s ]
+
   notify-conclusion:
     name: Notify of Conclusion
     uses: unb-libraries/dockworker/.github/workflows/notify-conclusion.yaml@6.x
-    needs: [ deploy-image-to-k8s ]
+    needs: [ test-logs ]
     if: always()
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
