@@ -43,17 +43,23 @@ trait LogCheckerTrait
             )
         ) {
             if (!empty($exception_strings)) {
-                if (
-                    preg_match(
-                        "/(.*($exception_strings).*)/$preg_operators",
-                        $error_matches[0]
-                    )
-                ) {
+                $unique_error_matches = array_unique($error_matches);
+                foreach ($unique_error_matches as $key => $error_match) {
+                    if (
+                        preg_match(
+                            "/(.*($exception_strings).*)/$preg_operators",
+                            $error_match
+                        )
+                    ) {
+                        unset($unique_error_matches[$key]);
+                    }
+                }
+                if (empty($unique_error_matches)) {
                     return false;
                 }
-                $matched_error = $error_matches[0];
-                return true;
             }
+            $matched_error = implode("\n", $error_matches);
+            return true;
         }
         return false;
     }

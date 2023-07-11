@@ -2,6 +2,8 @@
 
 namespace Dockworker\Logs;
 
+use Consolidation\AnnotatedCommand\Events\CustomEventAwareTrait;
+
 /**
  * Provides methods to assemble error string collections for log parsing.
  *
@@ -10,6 +12,8 @@ namespace Dockworker\Logs;
  */
 trait LogErrorStringsTrait
 {
+    use CustomEventAwareTrait;
+
     /**
      * Gets the error strings to check for in logs.
      *
