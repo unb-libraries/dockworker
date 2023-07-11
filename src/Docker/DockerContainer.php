@@ -221,6 +221,25 @@ class DockerContainer
     }
 
     /**
+     * Determines if a file exists in the container.
+     *
+     * @param string $file_path
+     *   The path to the file to test.
+     */
+    public function fileExists(string $file_path): bool
+    {
+        $cmd = $this->executeCliCommand(
+            array_merge(
+                $this->containerExecEntryPoint,
+                ['test', '-f', $file_path]
+            ),
+            null,
+            null,
+        );
+        return $cmd->isSuccessful();
+    }
+
+    /**
      * Sets the appropriate TTY flag in the container entry point.
      *
      * @param bool $use_tty
