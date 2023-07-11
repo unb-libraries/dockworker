@@ -77,7 +77,7 @@ jobs:
         name: Set Package Name
         env:
           IMAGE_NAME: ${{ inputs.image-name }}
-        run: echo "GHCR_PACKAGE_NAME=$IMAGE_NAME" | sed "s|ghcr.io/$CI_REPOSITORY_OWNER/||" >> $GITHUB_ENV
+        run: echo "GHCR_PACKAGE_NAME=$IMAGE_NAME" | sed "s|ghcr.io/||" >> $GITHUB_ENV
       -
         name: Install PHP
         uses: shivammathur/setup-php@v2
