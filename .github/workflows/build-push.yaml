@@ -74,6 +74,11 @@ jobs:
           IMAGE_NAME: ${{ inputs.image-name }}
         run: echo "BUILD_IMAGE_BRANCH_NAME=$IMAGE_NAME:$CI_REF_NAME" >> $GITHUB_ENV
       -
+        name: Set Package Name
+        env:
+          IMAGE_NAME: ${{ inputs.image-name }}
+        run: echo "GHCR_PACKAGE_NAME=$IMAGE_NAME" | sed "s|ghcr.io/$CI_REPOSITORY_OWNER/||" >> $GITHUB_ENV
+      -
         name: Install PHP
         uses: shivammathur/setup-php@v2
         if: inputs.build-themes == true
@@ -134,7 +139,7 @@ jobs:
       - uses: actions/delete-package-versions@v4
         if: inputs.cleanup-old-images == true
         with:
-          package-name: ${{ inputs.image-name }}
+          package-name: ${{ env.GHCR_PACKAGE_NAME }}
           package-type: 'container'
           min-versions-to-keep: 5
           ignore-versions: '^(dev|prod)$'
