@@ -11,7 +11,7 @@ on:
 
 jobs:
   test-logs:
-    name: Build Image
+    name: Check Deployment Logs for Errors
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
