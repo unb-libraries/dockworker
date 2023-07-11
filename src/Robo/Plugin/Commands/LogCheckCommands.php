@@ -25,8 +25,17 @@ class LogCheckCommands extends DockworkerCommands
      * @command logs:check-file
      * @hidden
      */
-    public function setupGitHooks(string $file_path): void
+    public function checkLogFileForErrors(string $file_path): void
     {
+        if (!is_readable($file_path)) {
+            $this->dockworkerIO->error(
+                sprintf(
+                    'Log file [%s] is not readable.',
+                    $file_path
+                )
+            );
+            exit(1);
+        }
         [$errors_pattern, $exceptions_pattern] = $this->getAllLogErrorStrings();
         $logs = file_get_contents($file_path);
         $matched_error = '';
