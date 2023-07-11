@@ -12,8 +12,6 @@ use Consolidation\AnnotatedCommand\Events\CustomEventAwareTrait;
  */
 trait LogErrorStringsTrait
 {
-    use CustomEventAwareTrait;
-
     /**
      * Gets the error strings to check for in logs.
      *

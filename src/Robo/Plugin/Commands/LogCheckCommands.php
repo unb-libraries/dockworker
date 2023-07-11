@@ -2,6 +2,8 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Consolidation\AnnotatedCommand\Events\CustomEventAwareInterface;
+use Consolidation\AnnotatedCommand\Events\CustomEventAwareTrait;
 use Dockworker\DockworkerCommands;
 use Dockworker\IO\DockworkerIOTrait;
 use Dockworker\Logs\LogCheckerTrait;
@@ -10,8 +12,9 @@ use Dockworker\Logs\LogErrorStringsTrait;
 /**
  * Provides commands to check a log file for errors.
  */
-class LogCheckCommands extends DockworkerCommands
+class LogCheckCommands extends DockworkerCommands implements CustomEventAwareInterface
 {
+    use CustomEventAwareTrait;
     use DockworkerIOTrait;
     use LogCheckerTrait;
     use LogErrorStringsTrait;

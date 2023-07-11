@@ -46,18 +46,17 @@ trait LogCheckerTrait
         ) {
             if (!empty($exception_strings)) {
                 // The 0 keyed value in preg_match_all returns an array of values that matched in the logs.
-                $unique_matches = array_unique($error_matches[0]);
-                foreach ($unique_matches as $key => $unique_match) {
+                foreach ($error_matches[0] as $key => $match) {
                     if (
                         preg_match(
                             "/(.*($exception_strings).*)/$preg_operators",
-                            $unique_match
+                            $match
                         )
                     ) {
-                        unset($unique_matches[$key]);
+                        unset($error_matches[0][$key]);
                     }
                 }
-                if (empty($unique_matches)) {
+                if (empty($error_matches[0])) {
                     return false;
                 }
             }
