@@ -8,6 +8,11 @@ on:
         required: false
         type: string
         default: 'deployment-logs'
+      log-file-name:
+        description: 'The name of the filename in the artifact that contains the logs to test.'
+        required: false
+        type: string
+        default: 'deployment_logs.txt'
 
 jobs:
   test-logs:
@@ -32,8 +37,10 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ${{ inputs.log-artifact-name }}
-          path: /tmp/logs.txt
+          path: /tmp/logs
       -
         name: Check Logs for Errors
-        run: vendor/bin/dockworker logs:check-file /tmp/logs.txt
+        env:
+          LOG_FILE_NAME: ${{ inputs.log-file-name }}
+        run: vendor/bin/dockworker logs:check-file "/tmp/logs/$LOG_FILE_NAME"
         shell: bash
