@@ -66,8 +66,66 @@ trait LogCheckerTrait
         return false;
     }
 
-    protected function reportErrorsInLogs(DockworkerIO $io, $matches)
+    /**
+     * Gets the error strings to check for in logs.
+     *
+     * Calls the custom event handler dockworker-logs-errors-exceptions.
+     * Implementing functions should return an array of two arrays, the first
+     * containing error strings, and the second containing exception strings.
+     *
+     * Implementations wishing to describe the error strings in code should
+     * define an associative array with the key being the description and the
+     * value being the error string. Then, the array can be cast to a
+     * non-associative array using array_values().
+     *
+     * @return string[]
+     *   An array of error strings and exception strings.
+     */
+    public function getAllLogErrorStrings(): array
     {
+        $errors = [
+                'error',
+                'fail',
+                'fatal',
+                'unable',
+                'unavailable',
+                'unrecognized',
+                'unresolved',
+                'unsuccessful',
+                'unsupported',
+        ];
+        $exceptions = [];
+
+        $handlers = $this->getCustomEventHandlers('dockworker-logs-errors-exceptions');
+        foreach ($handlers as $handler) {
+            [$new_errors, $new_exceptions] = $handler();
+            $errors = array_merge(
+                $errors,
+                $new_errors
+            );
+            $exceptions = array_merge(
+                $exceptions,
+                $new_exceptions
+            );
+        }
+        return [
+            implode('|', $errors),
+            implode('|', $exceptions),
+        ];
+    }
+
+    /**
+     * Reports errors found in logs.
+     *
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output.
+     * @param string[] $matches
+     *   An array of strings that matched as errors.
+     */
+    protected function reportErrorsInLogs(
+        DockworkerIO $io,
+        array $matches
+    ): void {
         $io->error('Errors Found in Logs!');
         $io->listing($matches);
     }

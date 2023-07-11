@@ -7,7 +7,6 @@ use Consolidation\AnnotatedCommand\Events\CustomEventAwareTrait;
 use Dockworker\DockworkerCommands;
 use Dockworker\IO\DockworkerIOTrait;
 use Dockworker\Logs\LogCheckerTrait;
-use Dockworker\Logs\LogErrorStringsTrait;
 
 /**
  * Provides commands to check a log file for errors.
@@ -17,7 +16,6 @@ class LogCheckCommands extends DockworkerCommands implements CustomEventAwareInt
     use CustomEventAwareTrait;
     use DockworkerIOTrait;
     use LogCheckerTrait;
-    use LogErrorStringsTrait;
 
     /**
      * Checks a log file for errors.
