@@ -4,6 +4,7 @@ namespace Dockworker\Core;
 
 use Consolidation\Config\ConfigInterface;
 use Dockworker\DockworkerException;
+use Robo\Robo;
 
 /**
  * Provides methods to access configuration elements.
@@ -59,5 +60,20 @@ trait RoboConfigTrait
         mixed $default_value = null
     ): mixed {
         return $config->get($key, $default_value);
+    }
+
+    public function getRequiredConfigurationItem($namespace): mixed {
+        $config = Robo::config();
+        $config_value = $config->get($namespace);
+        if (empty($config_value)) {
+            throw new DockworkerException(
+                sprintf(
+                    'Error! A required configuration element [%s] does not exist in %s.',
+                    $namespace,
+                    $this->configFile
+                )
+            );
+        }
+        return $config_value;
     }
 }
