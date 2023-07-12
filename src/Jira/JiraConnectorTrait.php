@@ -70,7 +70,14 @@ trait JiraConnectorTrait
     {
         $this->initJiraConnection();
         $headers = ['ID', 'Summary', 'Last Updated'];
-        foreach ($this->jiraProjectKeys as $project_key) {
+        if (empty($this->jiraProjectKeys)) {
+            $project_keys = $this->jiraGlobalProjectKeys;
+        }
+        else {
+            $project_keys = $this->jiraProjectKeys;
+        }
+        foreach ($project_keys as $project_key) {
+            $this->dockworkerIO->section("Project : $project_key");
             $rows = [];
             $jql = "project in ($project_key) and status not in (Resolved, closed)";
             $result = $this->getIssuesJql($jql);
