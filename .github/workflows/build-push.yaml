@@ -21,6 +21,7 @@ on:
         description: 'A list of branches whose container images should be protected from deletion. CSV format.'
         required: false
         type: string
+        default: ''
       push-branches:
         description: 'A list of branches that should be pushed to the container registry. JSON list format.'
         required: true
