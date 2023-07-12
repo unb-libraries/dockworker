@@ -152,7 +152,7 @@ jobs:
           org-name: ${{ env.CI_REPOSITORY_OWNER }}
           skip-tags: ${{ env.PUSH_BRANCH_LIST }}
           keep-at-least: 3
-          untagged-only: false
+          untagged-only: true
           token: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
       -
         uses: actions/upload-artifact@v3
