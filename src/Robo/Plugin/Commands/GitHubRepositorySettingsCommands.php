@@ -105,7 +105,7 @@ class GitHubRepositorySettingsCommands extends DockworkerCommands implements Cus
         $data = Yaml::parseFile($file_path);
         $topics = $data['github']['repository']['topics'];
 
-        foreach (Robo::Config()->get('dockworker.application.topics') as $topic) {
+        foreach (Robo::Config()->get('dockworker.application.topics', []) as $topic) {
             $topics[] = $topic;
         }
 
