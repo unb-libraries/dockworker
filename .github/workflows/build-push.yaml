@@ -17,6 +17,10 @@ on:
         description: 'The full, repository namespaced image name to build (without the tag).'
         required: true
         type: string
+      protected-tags:
+        description: 'A list of branches whose container images should be protected from deletion. CSV format.'
+        required: false
+        type: string
       push-branches:
         description: 'A list of branches that should be pushed to the container registry. JSON list format.'
         required: true
@@ -31,6 +35,7 @@ on:
         required: false
         type: string
         default: linux/amd64,linux/arm64/v8
+
     secrets:
       GH_CONTAINER_REGISTRY_USER:
         description: 'The user to use to login to the GitHub Container Registry.'
@@ -121,11 +126,18 @@ jobs:
           password: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
       - name: Determine Push Tags
         uses: haya14busa/action-cond@v1
-        id: fetch-tags
+        id: fetch-push-tags
         with:
           cond: ${{ contains(fromJSON(inputs.push-branches), github.ref_name) || inputs.push-all-branches == true }}
           if_true: "${{ env.BUILD_IMAGE_FULL_NAME }},${{ env.BUILD_IMAGE_BRANCH_NAME }}"
           if_false: ${{ env.BUILD_IMAGE_FULL_NAME }}
+      - name: Determine Protected Tags
+        uses: haya14busa/action-cond@v1
+        id: fetch-protected-tags
+        with:
+          cond: ${{ inputs.protected-tags }} != ''
+          if_true: "${{ inputs.protected-tags }},${{ env.PUSH_BRANCH_LIST }}"
+          if_false: ${{ env.PUSH_BRANCH_LIST }}
       -
         env:
           TIMESTAMP: ${{ steps.current-time.outputs.time }}
@@ -137,7 +149,7 @@ jobs:
           platforms: ${{ inputs.platforms}}
           context: .
           file: ./Dockerfile
-          tags: ${{ steps.fetch-tags.outputs.value }}
+          tags: ${{ steps.fetch-push-tags.outputs.value }}
           build-args: |
             BUILD_DATE=$TIMESTAMP
             VCS_REF=${{ env.CI_REF_NAME }}
@@ -150,9 +162,9 @@ jobs:
           cut-off: A week ago UTC
           account-type: org
           org-name: ${{ env.CI_REPOSITORY_OWNER }}
-          skip-tags: ${{ env.PUSH_BRANCH_LIST }}
+          skip-tags: ${{ steps.fetch-protected-tags.outputs.value }}
           keep-at-least: 3
-          untagged-only: true
+          untagged-only: false
           token: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
       -
         uses: actions/upload-artifact@v3
