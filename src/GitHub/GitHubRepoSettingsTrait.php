@@ -69,7 +69,7 @@ trait GitHubRepoSettingsTrait
         $this->gitHubClient->api('repo')->replaceTopics(
             $owner,
             $name,
-            $this->gitHubRepositoryTopics
+            array_unique($this->gitHubRepositoryTopics)
         );
     }
 
