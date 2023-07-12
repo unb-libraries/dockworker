@@ -18,7 +18,7 @@ on:
         required: true
         type: string
       protected-tags:
-        description: 'A list of branches whose container images should be protected from deletion. CSV format.'
+        description: 'A list of tags whose container images should be protected from deletion in cleanup. This is in addition to push-branches, which are always protected. CSV format.'
         required: false
         type: string
         default: ''
