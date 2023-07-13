@@ -136,7 +136,7 @@ jobs:
         uses: haya14busa/action-cond@v1
         id: fetch-protected-tags
         with:
-          cond: inputs.protected-tags != ''
+          cond: ${{ inputs.protected-tags != '' }}
           if_true: "${{ inputs.protected-tags }},${{ env.PUSH_BRANCH_LIST }}"
           if_false: ${{ env.PUSH_BRANCH_LIST }}
       -
