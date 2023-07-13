@@ -140,6 +140,11 @@ jobs:
           if_true: "${{ inputs.protected-tags }},${{ env.PUSH_BRANCH_LIST }}"
           if_false: ${{ env.PUSH_BRANCH_LIST }}
       -
+        name: Set Protected Tags List
+        env:
+          PROTECTED_TAGS: ${{ steps.fetch-protected-tags.outputs.value }}
+        run: echo "PROTECTED_TAG_LIST=$PROTECTED_TAGS" | sed 's/,$//g' >> $GITHUB_ENV
+      -
         env:
           TIMESTAMP: ${{ steps.current-time.outputs.time }}
         uses: docker/build-push-action@v4
@@ -163,7 +168,7 @@ jobs:
           cut-off: A week ago UTC
           account-type: org
           org-name: ${{ env.CI_REPOSITORY_OWNER }}
-          skip-tags: ${{ steps.fetch-protected-tags.outputs.value }}
+          skip-tags: ${{ env.PROTECTED_TAG_LIST }}
           keep-at-least: 3
           untagged-only: false
           token: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
