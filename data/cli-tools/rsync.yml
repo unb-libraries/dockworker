@@ -1,0 +1,17 @@
+tool:
+  name: rsync
+  description: RSync is a utility for efficiently transferring and synchronizing files between a computer and a storage drive and across networked computers.
+  default_path: /usr/bin/rsync
+  reference_uris:
+    -
+      label: Further Information
+      uri: https://linux.die.net/man/1/rsync
+  env_override: RSYNC_PATH
+  healthcheck:
+    command:
+      - '--version'
+    label: 'Checking Rsync version'
+    timeout: 3
+    output-contains: '3.'
+    fail-message:
+      - 'The rsync binary must installed, and be at least version 3.0'
