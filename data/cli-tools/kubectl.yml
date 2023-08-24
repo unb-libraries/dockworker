@@ -12,10 +12,10 @@ tool:
   env_override: KUBECTL_PATH
   healthcheck:
     command:
-      - api-resources
+      - api-versions
     label: 'Initializing connection to the kubernetes API'
     timeout: 10
-    output-contains: ComponentStatus
+    output-contains: apps/v1
     fail-message:
       - 'Unable to connect to the kubernetes API. Common reasons for this error:'
       - ' * A VPN is required to connect to the API, but it is not connected'
