@@ -25,7 +25,7 @@ class CommitMessageValidateCommands extends DockworkerCommands
     protected const ERROR_INVALID_COMMIT_MESSAGE = 'Invalid commit message!';
     protected const ERROR_MISSING_JIRA_INFO = 'JIRA project and issue missing from git commit\'s subject line.';
     protected const WARN_MISSING_JIRA_INFO = 'You have not specified a JIRA project and issue in your subject line.';
-    protected const ASK_MISSING_JIRA_INFO_ACTION = 'Would you like to (l) list open issues, (c) create a stub issue, (i) ignore the warning, or (a) abort the commit?';
+    protected const ASK_MISSING_JIRA_INFO_ACTION = 'Would you like to (c) create a new stub issue, (l) list open issues, (i) ignore the warning, or (a) abort the commit?';
 
     /**
      * Validates a git commit message for this application.
@@ -84,7 +84,7 @@ class CommitMessageValidateCommands extends DockworkerCommands
             if (!$this->getValidateProjectPrefix($valid_keys)) {
                 $this->dockworkerIO->warning(self::WARN_MISSING_JIRA_INFO);
                 $this->showSampleCommitMessage();
-                $action = $this->dockworkerIO->ask(self::ASK_MISSING_JIRA_INFO_ACTION, 'l');
+                $action = $this->dockworkerIO->ask(self::ASK_MISSING_JIRA_INFO_ACTION, 'c');
                 switch ($action) {
                     case 'i':
                         break;

@@ -237,7 +237,8 @@ trait JiraConnectorTrait
             $issue_field = new IssueField();
             $issue_field->setProjectKey($project_key)
                 ->setSummary($issue_summary)
-                ->setIssueTypeAsString($issue_type);
+                ->setIssueTypeAsString($issue_type)
+                ->setAssigneeNameAsString($this->jiraUserName);
             $ret = $this->jiraIssueService->create($issue_field);
             $this->dockworkerIO->say('Issue created: ' . $ret->key);
         } catch (JiraException $e) {
