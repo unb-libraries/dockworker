@@ -188,7 +188,7 @@ class DockerContainer
      */
     public function run(
         array $command,
-        DockworkerIO $io,
+        ?DockworkerIO $io,
         bool $use_tty = true,
     ): CliCommand {
         $tty = $use_tty && CliCommand::isTtySupported();
