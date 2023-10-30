@@ -1,0 +1,20 @@
+tool:
+  name: ngrok
+  description: ngrok is a versatile tool that creates a secure tunnel from a public endpoint to a locally running network service. Essentially, it exposes a local server behind a NAT or firewall to the internet, making it accessible over a generated URL.
+  default_path: /usr/local/bin/ngrok
+  reference_uris:
+    -
+      label: Further Information
+      uri: https://ngrok.com/docs
+    -
+      label: Installation
+      uri: https://ngrok.com/docs/getting-started/?os=linux
+  env_override: NGROK_PATH
+  healthcheck:
+    command:
+      - 'version'
+    label: 'Checking ngrok version'
+    timeout: 3
+    output-contains: '3.'
+    fail-message:
+      - 'The ngrok binary must installed, and be at least version 3.0'
