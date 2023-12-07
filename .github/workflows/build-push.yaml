@@ -172,6 +172,7 @@ jobs:
           keep-at-least: 3
           untagged-only: false
           token: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
+          token-type: github-token
       -
         uses: actions/upload-artifact@v3
         with:
