@@ -31,9 +31,11 @@ trait GitRepoTrait
      */
     public function initGitRepo(): void
     {
-        $this->applicationRepository = $this->getGitRepoFromPath($this->applicationRoot);
-        if (empty($this->applicationRepository)) {
-            throw new DockworkerException('Could not initialize the git repository.');
+        if (isset($this->applicationRoot)) {
+            $this->applicationRepository = $this->getGitRepoFromPath($this->applicationRoot);
+            if (empty($this->applicationRepository)) {
+                throw new DockworkerException('Could not initialize the git repository.');
+            }
         }
     }
 
