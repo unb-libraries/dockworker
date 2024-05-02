@@ -56,38 +56,23 @@ trait DockerComposeTrait
         }
     }
 
-
     /**
      * Deletes any persistent data from this application's stopped local deployment.
      */
-    protected function stopRemoveComposeApplicationData(): void
+    protected function stopRemoveComposeApplicationData(bool $volumes = true): void
     {
         $this->dockworkerIO->section("[local] Removing existing application data");
+        $compose_down_cmd = [
+            'down',
+            '--rmi',
+            'local',
+        ];
+        if ($volumes) {
+            $compose_down_cmd[] = '-v';
+        }
         $this->dockerComposeRun(
-            [
-                'down',
-                '--rmi',
-                'local',
-                '-v',
-            ],
+            $compose_down_cmd,
             'Stopping the compose application and removing its data.',
-            $this->dockworkerIO,
-        );
-    }
-
-    /**
-     * Stops this application's local deployment.
-     */
-    protected function stopComposeApplication(): void
-    {
-        $this->dockworkerIO->section("[local] Stopping application, preserving data.");
-        $this->dockerComposeRun(
-            [
-                'down',
-                'local',
-                '-v',
-            ],
-            'Stopping the compose application and keep its data.',
             $this->dockworkerIO,
         );
     }
