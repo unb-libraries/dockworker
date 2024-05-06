@@ -4,12 +4,12 @@ namespace Dockworker\Jira;
 
 use Dockworker\Storage\DockworkerPersistentDataStorageTrait;
 use Exception;
-use JiraRestApi\Configuration\ArrayConfiguration;
-use JiraRestApi\Issue\IssueField;
-use JiraRestApi\Issue\IssueSearchResult;
-use JiraRestApi\Issue\IssueService;
-use JiraRestApi\JiraException;
-use JiraRestApi\Project\ProjectService;
+use JiraCloud\Configuration\ArrayConfiguration;
+use JiraCloud\Issue\IssueField;
+use JiraCloud\Issue\IssueSearchResult;
+use JiraCloud\Issue\IssueService;
+use JiraCloud\JiraException;
+use JiraCloud\Project\ProjectService;
 
 /**
  * Trait for interacting with a Jira instance.
@@ -22,7 +22,7 @@ trait JiraConnectorTrait
     /**
      * The config to use.
      *
-     * @var \JiraRestApi\Configuration\ArrayConfiguration
+     * @var \JiraCloud\Configuration\ArrayConfiguration
      */
     protected ArrayConfiguration $jiraConfig;
 
@@ -41,23 +41,23 @@ trait JiraConnectorTrait
     protected string $jiraUserName;
 
     /**
-     * The Jira server user password to authenticate with.
+     * The Jira key to authenticate with.
      *
      * @var string
      */
-    protected string $jiraUserPassword;
+    protected string $jiraAccessToken;
 
     /**
      * The Jira project service.
      *
-     * @var \JiraRestApi\Project\ProjectService
+     * @var \JiraCloud\Project\ProjectService
      */
     protected ProjectService $jiraProjectService;
 
     /**
      * The Jira issue service.
      *
-     * @var \JiraRestApi\Issue\IssueService
+     * @var \JiraCloud\Issue\IssueService
      */
     protected IssueService $jiraIssueService;
 
@@ -108,7 +108,7 @@ trait JiraConnectorTrait
     {
         $this->setJiraUri();
         $this->setJiraUser();
-        $this->setJiraPass();
+        $this->setJiraAccessToken();
         $this->setJiraConfig();
         $this->setJiraServices();
     }
@@ -122,12 +122,12 @@ trait JiraConnectorTrait
     {
         $this->jiraEndpointUri = $this->getSetDockworkerPersistentDataConfigurationItem(
             'jira',
-            'uri',
+            'cloud-uri',
             "Enter the URI of the Jira endpoint",
-            'https://jira.lib.unb.ca',
+            'https://unb-libraries.atlassian.net',
             '',
             [],
-            'DOCKWORKER_JIRA_URI'
+            'DOCKWORKER_JIRA_CLOUD_URI'
         );
     }
 
@@ -140,33 +140,33 @@ trait JiraConnectorTrait
     {
         $this->jiraUserName = $this->getSetDockworkerPersistentDataConfigurationItem(
             'jira',
-            'username',
+            'cloud-username',
             "Enter the username to use at $this->jiraEndpointUri",
             '',
             '',
             [],
-            'DOCKWORKER_JIRA_USER_NAME'
+            'DOCKWORKER_JIRA_CLOUD_USER'
         );
     }
 
     /**
-     * Sets the Jira user password.
-     *
-     * Jira on-premises doesn't allow API keys to auth, so we need to
-     * enter a password at run-time.
-     *
-     * @throws \Exception
+     * Sets the Jira user acess token.
      */
-    protected function setJiraPass(): void
+    protected function setJiraAccessToken(): void
     {
-        $this->jiraUserPassword = $this->getSetDockworkerPersistentDataConfigurationItem(
+        $this->jiraUserAccessToken = $this->getSetDockworkerPersistentDataConfigurationItem(
             'jira',
-            'password',
-            "Enter $this->jiraUserName's JIRA password at $this->jiraEndpointUri",
+            'cloud-token',
+            "Enter $this->jiraUserName's access token for $this->jiraEndpointUri",
             '',
             '',
-            [],
-            'DOCKWORKER_JIRA_USER_PASSWORD'
+            [
+                [
+                    'label' => 'HOWTO',
+                    'uri' => 'https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/',
+                ]
+            ],
+            'DOCKWORKER_JIRA_CLOUD_TOKEN'
         );
     }
 
@@ -181,7 +181,7 @@ trait JiraConnectorTrait
             [
                 'jiraHost' => $this->jiraEndpointUri,
                 'jiraUser' => $this->jiraUserName,
-                'jiraPassword' => $this->jiraUserPassword,
+                'personalAccessToken' => $this->jiraUserAccessToken,
             ]
         );
     }
@@ -203,7 +203,7 @@ trait JiraConnectorTrait
      * @param string $jql
      *   The JQL query to execute.
      *
-     * @return \JiraRestApi\Issue\IssueSearchResult|null
+     * @return \JiraCloud\Issue\IssueSearchResult|null
      */
     protected function getIssuesJql(string $jql): IssueSearchResult|null
     {
