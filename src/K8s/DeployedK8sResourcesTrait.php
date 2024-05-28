@@ -187,7 +187,7 @@ trait DeployedK8sResourcesTrait
         );
         $output = $cmd->getOutput();
         if (!empty($output)) {
-            return (explode("\n", $output));
+            return (explode(" ", $output));
         }
         return [];
     }
