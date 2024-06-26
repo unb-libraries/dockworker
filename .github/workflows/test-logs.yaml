@@ -44,3 +44,9 @@ jobs:
           LOG_FILE_NAME: ${{ inputs.log-file-name }}
         run: vendor/bin/dockworker logs:check-file "/tmp/logs/$LOG_FILE_NAME"
         shell: bash
+      -
+        name: Display Full Logs
+        env:
+          LOG_FILE_NAME: ${{ inputs.log-file-name }}
+        run: cat "/tmp/logs/$LOG_FILE_NAME"
+        shell: bash
