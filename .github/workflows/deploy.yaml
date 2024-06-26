@@ -71,7 +71,7 @@ jobs:
       -
         name: Write deployment logs
         run: |
-          kubectl logs "deployment/$DEPLOYMENT_NAME" --namespace="$DEPLOYMENT_NAMESPACE" > /tmp/deployment_logs.txt
+          sleep 60; kubectl logs "deployment/$DEPLOYMENT_NAME" --namespace="$DEPLOYMENT_NAMESPACE" > /tmp/deployment_logs.txt
         env:
           DEPLOYMENT_NAME: ${{ inputs.k8s-deployment-name }}
           DEPLOYMENT_NAMESPACE: ${{ env.DEPLOYMENT_NAMESPACE }}
