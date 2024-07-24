@@ -18,6 +18,9 @@ trait DockerComposeTrait
 
     /**
      * Builds this application's docker images.
+     *
+     * @param string $service
+     *   Optional. The service to build. Defaults to all services.
      */
     protected function buildComposeApplication(string $service = ''): void
     {
@@ -42,6 +45,9 @@ trait DockerComposeTrait
 
     /**
      * Starts the local docker compose application.
+     *
+     * @param string $service
+     *   Optional. The service to start. Defaults to all services.
      */
     protected function startComposeApplication(string $service = ''): void
     {
@@ -66,6 +72,9 @@ trait DockerComposeTrait
 
     /**
      * Stops the local docker compose application.
+     *
+     * @param string $service
+     *   Optional. The service to stop. Defaults to all services.
      */
     protected function stopComposeApplication(string $service = ''): void
     {
@@ -88,7 +97,44 @@ trait DockerComposeTrait
     }
 
     /**
+     * Checks the compose application status.
+     *
+     * @param string $service
+     *   The service to build. Defaults to all services.
+     *
+     * @return bool
+     *   TRUE if the service is running, FALSE otherwise.
+     */
+    protected function composeServiceIsRunning($service): bool
+    {
+        $compose_ps_cmd = [
+            'ps',
+            '-q',
+            $service,
+        ];
+        $cmd = $this->dockerComposeRun(
+            $compose_ps_cmd,
+            'Stopping the local application.',
+            $this->dockworkerIO
+        );
+        $output = $cmd->getOutput();
+
+        if (strpos($output, 'no such service') !== false) {
+            return false;
+        }
+        if (empty($output)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Deletes any persistent data from this application's stopped local deployment.
+     * 
+     * @param bool $volumes
+     *   Optional. Whether to remove volumes. Defaults to TRUE.
+     * @param string $service
+     *   Optional. The service to remove data for. Defaults to all services.
      */
     protected function stopRemoveComposeApplicationData(bool $volumes = true, string $service = ''): void
     {
@@ -112,7 +158,10 @@ trait DockerComposeTrait
     }
 
     /**
-     * Deletes any persistent data from this application's stopped local deployment.
+     * Displays the logs from this application's local deployment.
+     *
+     * @param string $service
+     *  Optional. The service to display th e logs for. Defaults to all services.
      */
     protected function showComposeApplicationLogs(string $service = ''): void
     {
