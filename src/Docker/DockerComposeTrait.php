@@ -26,23 +26,30 @@ trait DockerComposeTrait
      */
     protected function buildComposeApplication(string $service = ''): void
     {
-        $this->dockworkerIO->section("[local] Building Application");
         $compose_build_cmd = [
             'build',
             '--pull',
         ];
         if (!empty($service)) {
             $compose_build_cmd[] = $service;
+
+            $section_title = "[local] Building $service";
+            $run_text = "Building the $service docker image.";
+            $fail_text = "Failed to build the $service docker image.";
         }
-        $cmd = $this->dockerComposeRun(
+        else {
+            $section_title = "[local] Building Application";
+            $run_text = "Building the application docker image(s).";
+            $fail_text = "Failed to build the application docker image(s).";
+        }
+        $this->runComposeApplicationCommand(
             $compose_build_cmd,
-            'Building the docker image.',
-            $this->dockworkerIO
+            $this->dockworkerIO,
+            $section_title,
+            $run_text,
+            $fail_text,
+            true
         );
-        if ($cmd->getExitCode() !== 0) {
-            $this->dockworkerIO->error('Failed to build the docker image.');
-            exit(1);
-        }
     }
 
     /**
@@ -53,23 +60,30 @@ trait DockerComposeTrait
      */
     protected function startComposeApplication(string $service = ''): void
     {
-        $this->dockworkerIO->section("[local] Starting Application");
         $compose_up_cmd = [
             'up',
             '-d',
         ];
         if (!empty($service)) {
             $compose_up_cmd[] = $service;
+
+            $section_title = "[local] Starting $service";
+            $run_text = "Starting the $service docker container.";
+            $fail_text = "Failed to start the $service docker container.";
         }
-        $cmd = $this->dockerComposeRun(
+        else {
+            $section_title = "[local] Starting Application";
+            $run_text = "Starting the application.";
+            $fail_text = "Failed to start the application.";
+        }
+        $this->runComposeApplicationCommand(
             $compose_up_cmd,
-            'Starting the local application.',
-            $this->dockworkerIO
+            $this->dockworkerIO,
+            $section_title,
+            $run_text,
+            $fail_text,
+            true
         );
-        if ($cmd->getExitCode() !== 0) {
-            $this->dockworkerIO->error('Failed to start the docker container.');
-            exit(1);
-        }
     }
 
     /**
@@ -80,22 +94,29 @@ trait DockerComposeTrait
      */
     protected function stopComposeApplication(string $service = ''): void
     {
-        $this->dockworkerIO->section("[local] Stopping Application");
         $compose_stop_cmd = [
             'stop',
         ];
         if (!empty($service)) {
             $compose_stop_cmd[] = $service;
+
+            $section_title = "[local] Stopping $service";
+            $run_text = "Stopping the $service docker container.";
+            $fail_text = "Failed to stop the $service docker container.";
         }
-        $cmd = $this->dockerComposeRun(
+        else {
+            $section_title = "[local] Stopping Application";
+            $run_text = "Stopping the application.";
+            $fail_text = "Failed to stop the application.";
+        }
+        $this->runComposeApplicationCommand(
             $compose_stop_cmd,
-            'Stopping the local application.',
-            $this->dockworkerIO
+            $this->dockworkerIO,
+            $section_title,
+            $run_text,
+            $fail_text,
+            true
         );
-        if ($cmd->getExitCode() !== 0) {
-            $this->dockworkerIO->error('Failed to stop the docker container.');
-            exit(1);
-        }
     }
 
     /**
@@ -143,22 +164,34 @@ trait DockerComposeTrait
      */
     protected function stopRemoveComposeApplicationData(bool $volumes = true, string $service = ''): void
     {
-        $this->dockworkerIO->section("[local] Removing existing application data");
         $compose_down_cmd = [
             'down',
             '--rmi',
             'local',
         ];
+
         if (!empty($service)) {
             $compose_down_cmd[] = $service;
+
+            $section_title = "[local] Removing $service data";
+            $run_text = "Stopping the $service docker container and removing its data.";
+            $fail_text = "Failed to stop the $service docker container and remove its data.";
+        }
+        else {
+            $section_title = "[local] Removing existing application data";
+            $run_text = "Stopping the application and removing its data.";
+            $fail_text = "Failed to stop the application and remove its data.";
         }
         if ($volumes) {
             $compose_down_cmd[] = '-v';
         }
-        $this->dockerComposeRun(
+        $this->runComposeApplicationCommand(
             $compose_down_cmd,
-            'Stopping the compose application and removing its data.',
             $this->dockworkerIO,
+            $section_title,
+            $run_text,
+            $fail_text,
+            true
         );
     }
 
@@ -170,17 +203,28 @@ trait DockerComposeTrait
      */
     protected function showComposeApplicationLogs(string $service = ''): void
     {
-        $this->dockworkerIO->section("[local] Displaying application logs");
         $compose_logs_cmd = [
             'logs',
         ];
         if (!empty($service)) {
             $compose_logs_cmd[] = $service;
+
+            $section_title = "[local] Displaying $service logs";
+            $run_text = "Displaying logs for the $service docker container.";
+            $fail_text = "Failed to display logs for the $service docker container.";
         }
-        $this->dockerComposeRun(
+        else {
+            $section_title = "[local] Displaying application logs";
+            $run_text = "Displaying logs for the application.";
+            $fail_text = "Failed to display logs for the application.";
+        }
+        $this->runComposeApplicationCommand(
             $compose_logs_cmd,
-            'Display logs for the docker compose application.',
-            $this->dockworkerIO
+            $this->dockworkerIO,
+            $section_title,
+            $run_text,
+            $fail_text,
+            true
         );
     }
 
