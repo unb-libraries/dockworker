@@ -19,14 +19,18 @@ trait DockerComposeTrait
     /**
      * Builds this application's docker images.
      */
-    protected function buildComposeApplication(): void
+    protected function buildComposeApplication(string $service = ''): void
     {
         $this->dockworkerIO->section("[local] Building Application");
+        $compose_build_cmd = [
+            'build',
+            '--pull',
+        ];
+        if (!empty($service)) {
+            $compose_build_cmd[] = $service;
+        }
         $cmd = $this->dockerComposeRun(
-            [
-                'build',
-                '--pull',
-            ],
+            $compose_build_cmd,
             'Building the docker image.',
             $this->dockworkerIO
         );
@@ -39,14 +43,18 @@ trait DockerComposeTrait
     /**
      * Starts the local docker compose application.
      */
-    protected function startComposeApplication(): void
+    protected function startComposeApplication(string $service = ''): void
     {
         $this->dockworkerIO->section("[local] Starting Application");
+        $compose_up_cmd = [
+            'up',
+            '-d',
+        ];
+        if (!empty($service)) {
+            $compose_up_cmd[] = $service;
+        }
         $cmd = $this->dockerComposeRun(
-            [
-                'up',
-                '-d',
-            ],
+            $compose_up_cmd,
             'Starting the local application.',
             $this->dockworkerIO
         );
@@ -57,9 +65,32 @@ trait DockerComposeTrait
     }
 
     /**
+     * Stops the local docker compose application.
+     */
+    protected function stopComposeApplication(string $service = ''): void
+    {
+        $this->dockworkerIO->section("[local] Stopping Application");
+        $compose_stop_cmd = [
+            'stop',
+        ];
+        if (!empty($service)) {
+            $compose_stop_cmd[] = $service;
+        }
+        $cmd = $this->dockerComposeRun(
+            $compose_stop_cmd,
+            'Stopping the local application.',
+            $this->dockworkerIO
+        );
+        if ($cmd->getExitCode() !== 0) {
+            $this->dockworkerIO->error('Failed to stop the docker container.');
+            exit(1);
+        }
+    }
+
+    /**
      * Deletes any persistent data from this application's stopped local deployment.
      */
-    protected function stopRemoveComposeApplicationData(bool $volumes = true): void
+    protected function stopRemoveComposeApplicationData(bool $volumes = true, string $service = ''): void
     {
         $this->dockworkerIO->section("[local] Removing existing application data");
         $compose_down_cmd = [
@@ -67,6 +98,9 @@ trait DockerComposeTrait
             '--rmi',
             'local',
         ];
+        if (!empty($service)) {
+            $compose_down_cmd[] = $service;
+        }
         if ($volumes) {
             $compose_down_cmd[] = '-v';
         }
@@ -80,14 +114,17 @@ trait DockerComposeTrait
     /**
      * Deletes any persistent data from this application's stopped local deployment.
      */
-    protected function showComposeApplicationLogs(): void
+    protected function showComposeApplicationLogs(string $service = ''): void
     {
         $this->dockworkerIO->section("[local] Displaying application logs");
+        $compose_logs_cmd = [
+            'logs',
+        ];
+        if (!empty($service)) {
+            $compose_logs_cmd[] = $service;
+        }
         $this->dockerComposeRun(
-            [
-                'logs',
-                $this->applicationSlug,
-            ],
+            $compose_logs_cmd,
             'Display logs for the docker compose application.',
             $this->dockworkerIO
         );
