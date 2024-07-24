@@ -2,7 +2,9 @@
 
 namespace Dockworker\Docker;
 
+use Dockworker\Cli\CliCommand;
 use Dockworker\Cli\DockerCliTrait;
+use Dockworker\IO\DockworkerIO;
 use Dockworker\IO\DockworkerIOTrait;
 
 /**
@@ -112,13 +114,16 @@ trait DockerComposeTrait
             '-q',
             $service,
         ];
-        $cmd = $this->dockerComposeRun(
+        $cmd = $this->runComposeApplicationCommand(
             $compose_ps_cmd,
-            'Stopping the local application.',
-            $this->dockworkerIO
+            $this->dockworkerIO,
+            "[local] Checking if $service is running",
+            "Checking if $service is running.",
+            "Failed to check if $service is running.",
+            false
         );
-        $output = $cmd->getOutput();
 
+        $output = $cmd->getOutput();
         if (strpos($output, 'no such service') !== false) {
             return false;
         }
@@ -130,7 +135,7 @@ trait DockerComposeTrait
 
     /**
      * Deletes any persistent data from this application's stopped local deployment.
-     * 
+     *
      * @param bool $volumes
      *   Optional. Whether to remove volumes. Defaults to TRUE.
      * @param string $service
@@ -201,5 +206,43 @@ trait DockerComposeTrait
             'Copy file.',
             $this->dockworkerIO
         );
+    }
+
+    /**
+     * Runs a local docker compose command.
+     *
+     * @param array $run_cmd
+     *   The compose command to execute.
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO object to use for the command.
+     * @param string $section_title
+     *   The title to display.
+     * @param string $run_text
+     *   The text to display when running the command.
+     * @param string $fail_text
+     *   The text to display when the command fails.
+     */
+    protected function runComposeApplicationCommand(
+        array $run_cmd,
+        DockworkerIO $io,
+        string $section_title,
+        string $run_text,
+        string $fail_text,
+        bool $use_tty = true
+    ): CliCommand {
+        $this->dockworkerIO->section($section_title);
+        $cmd = $this->dockerComposeRun(
+            $run_cmd,
+            $run_text,
+            $io,
+            null,
+            [],
+            $use_tty
+        );
+        if ($cmd->getExitCode() !== 0) {
+            $this->dockworkerIO->error($fail_text);
+            exit(1);
+        }
+        return $cmd;
     }
 }
