@@ -38,8 +38,9 @@ class GitHubRepositorySettingsCommands extends DockworkerCommands implements Cus
         try {
             $description = Robo::Config()->get('dockworker.application.description');
             $description = preg_replace('/\s+/', ' ', $description);
+            $ellipsis = '...';
             if (strlen($description) > 350) {
-                $description = substr($description, 0, 350) . '...';
+                $description = substr($description, 0, 350 - strlen($ellipsis)) . $ellipsis;
             }
             $uri = Robo::Config()->get('dockworker.application.uri');
             $this->dockworkerIO->block($description);
