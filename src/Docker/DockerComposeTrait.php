@@ -161,10 +161,13 @@ trait DockerComposeTrait
      *   Optional. Whether to remove volumes. Defaults to TRUE.
      * @param string $service
      *   Optional. The service to remove data for. Defaults to all services.
+     * @param string $profile
+     *   Optional. The profile to remove data for. Defaults to all profiled and unprofiled services.
      */
-    protected function stopRemoveComposeApplicationData(bool $volumes = true, string $service = ''): void
+    protected function stopRemoveComposeApplicationData(bool $volumes = true, string $service = '', string $profile = '*'): void
     {
         $compose_down_cmd = [
+            "--profile='$profile'",
             'down',
             '--rmi',
             'local',
