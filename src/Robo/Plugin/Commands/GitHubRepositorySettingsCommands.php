@@ -37,6 +37,7 @@ class GitHubRepositorySettingsCommands extends DockworkerCommands implements Cus
         $this->dockworkerIO->title("Setting GitHub Repository Description");
         try {
             $description = Robo::Config()->get('dockworker.application.description');
+            $description = preg_replace('/\s+/', ' ', $description);
             $uri = Robo::Config()->get('dockworker.application.uri');
             $this->dockworkerIO->block($description);
             $this->dockworkerIO->block($uri);
