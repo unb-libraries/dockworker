@@ -48,7 +48,7 @@ jobs:
           password: ${{ secrets.DOCKER_CLOUD_ACCESS_TOKEN }}
       -
         name: Pull Required Docker Images
-        run: docker-compose pull --parallel --quiet
+        run: docker compose pull --parallel --quiet
       -
         name: Start container
         run: vendor/bin/dockworker deploy
