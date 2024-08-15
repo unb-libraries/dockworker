@@ -12,6 +12,7 @@ use Dockworker\IO\DockworkerIO;
  */
 trait KubectlCliTrait
 {
+    use CliCommandTrait
     use CliToolTrait;
 
     /**
