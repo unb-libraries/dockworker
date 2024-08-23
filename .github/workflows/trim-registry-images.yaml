@@ -75,11 +75,17 @@ jobs:
         env:
           GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
           GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
+      - name: Extract the repository owneronly from image-name
+        id: extract-repo-owner
+        run: echo "REPOSITORY_OWNER_COMPONENT=$(echo ${{ inputs.image-name }} | cut -d '/' -f 1)" >> $GITHUB_ENV
+      - name: Extract the repository name only from image-name
+        id: extract-repo-name
+        run: echo "REPOSITORY_NAME_COMPONENT=$(echo ${{ inputs.image-name }} | cut -d '/' -f 2)" >> $GITHUB_ENV
       - uses: snok/container-retention-policy@v3.0.0
         with:
-          account: ${{ env.CI_REPOSITORY_OWNER }}
+          account: ${{ env.REPOSITORY_OWNER_COMPONENT }}
           cut-off: ${{ inputs.cut-off }}
-          image-names: ${{ env.CI_REPOSITORY_NAME }}
+          image-names: ${{ env.REPOSITORY_NAME_COMPONENT }}
           keep-n-most-recent: ${{ inputs.keep-n-most-recent }}
           skip-shas: ${{ steps.set-hashes-to-skip.outputs.hashes-to-skip }}
           tag-selection: untagged
