@@ -20,7 +20,7 @@ on:
         description: 'The cut-off date for images to be deleted. Images older than this date will be deleted. UTC format.'
         type: string
         required: false
-        default: 'cut-off: A month ago UTC'
+        default: '4w'
       keep-at-least:
         description: 'The minimum number of images to keep.'
         type: string
