@@ -88,5 +88,5 @@ jobs:
           keep-n-most-recent: ${{ inputs.keep-at-least }}
           skip-shas: ${{ steps.set-hashes-to-skip.outputs.hashes-to-skip }}
           tag-selection: untagged
-          token: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           dry-run: true
