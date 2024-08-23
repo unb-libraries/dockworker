@@ -83,7 +83,6 @@ jobs:
       - uses: snok/container-retention-policy@v3.0.0
         with:
           account: ${{ env.CI_REPOSITORY_OWNER }}
-          account-type: ${{ inputs.account-type }}
           cut-off: ${{ inputs.cut-off }}
           image-names: ${{ inputs.image-name }}
           keep-at-least: ${{ inputs.keep-at-least }}
