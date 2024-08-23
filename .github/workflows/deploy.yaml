@@ -29,7 +29,7 @@ jobs:
       - uses: FranzDiebold/github-env-vars-action@v2
       -
         name: Retrieve Built Image Tag
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-image-tag
           path: /tmp
@@ -77,7 +77,7 @@ jobs:
           DEPLOYMENT_NAMESPACE: ${{ env.DEPLOYMENT_NAMESPACE }}
       -
         name: Archive Deployment Logs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: deployment-logs
           path: /tmp/deployment_logs.txt
