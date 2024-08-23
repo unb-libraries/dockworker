@@ -6,7 +6,7 @@ if [ "$#" -ne 2 ]; then
   exit 1
 fi
 
-echo $GH_CONTAINER_REGISTRY_TOKEN | skopeo login ghcr.io --username $GH_CONTAINER_REGISTRY_USER --password-stdin
+echo $GH_CONTAINER_REGISTRY_TOKEN | skopeo login ghcr.io --username $GH_CONTAINER_REGISTRY_USER --password-stdin > /dev/null 2>&1 &
 ALL_TAGS=$(skopeo list-tags docker://$1 | jq -r '.Tags[]')
 MATCHING_TAGS=()
 
@@ -23,7 +23,7 @@ done
 
 HASHES_TO_SKIP=()
 if [ ! ${#MATCHING_TAGS[@]} -eq 0 ]; then
-    echo $GH_CONTAINER_REGISTRY_TOKEN | docker login ghcr.io --username $GH_CONTAINER_REGISTRY_USER --password-stdin
+    echo $GH_CONTAINER_REGISTRY_TOKEN | docker login ghcr.io --username $GH_CONTAINER_REGISTRY_USER --password-stdin > /dev/null 2>&1 &
     for tag in ${MATCHING_TAGS[@]}
     do
         HASHES_TO_SKIP+=($(docker manifest inspect $1:$tag | jq -r '.manifests[] | .digest'))
