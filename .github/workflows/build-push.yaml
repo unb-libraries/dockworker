@@ -151,6 +151,8 @@ jobs:
 
   trim-registry-images:
     name: Trim the registry images.
+    runs-on: ubuntu-latest
+    needs: [ build-image ]
     uses: unb-libraries/dockworker/.github/workflows/trim-registry-images.yaml@6.x
     with:
       image-name: ${{ inputs.image-name }}
@@ -160,4 +162,5 @@ jobs:
       push-branches: ${{ inputs.push-branches }}
       protected-tags: ${{ inputs.protected-tags }}
     secrets:
+      GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
       GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}

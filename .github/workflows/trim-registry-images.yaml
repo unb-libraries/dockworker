@@ -32,6 +32,9 @@ on:
         required: false
         default: ''
     secrets:
+      GH_CONTAINER_REGISTRY_USER:
+        description: 'The user to use to login to the GitHub Container Registry.'
+        required: true
       GH_CONTAINER_REGISTRY_TOKEN:
         required: true
 
@@ -74,6 +77,7 @@ jobs:
         id: set-hashes-to-skip
         run: ./determineHashesToSkip.sh "${{ inputs.image-name }}" "${{ env.PROTECTED_TAG_LIST }}" >> $GITHUB_OUTPUT
         env:
+          GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
           GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
       - uses: snok/container-retention-policy@v3.0.0
         with:
