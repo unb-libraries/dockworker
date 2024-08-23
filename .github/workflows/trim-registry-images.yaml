@@ -43,6 +43,7 @@ jobs:
     name: Trims the registry images
     runs-on: ubuntu-latest
     steps:
+      - uses: FranzDiebold/github-env-vars-action@v2
       -
         name: Convert Push Branch JSON to CSV
         env:
