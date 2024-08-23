@@ -154,8 +154,6 @@ jobs:
     needs: [ build-image ]
     with:
       image-name: ${{ inputs.image-name }}
-      account-type: org
-      cut-off: A month ago UTC
       keep-at-least: "5"
       push-branches: ${{ inputs.push-branches }}
       protected-tags: ${{ inputs.protected-tags }}
