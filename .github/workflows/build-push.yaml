@@ -132,6 +132,18 @@ jobs:
           cond: ${{ contains(fromJSON(inputs.push-branches), github.ref_name) || inputs.push-all-branches == true }}
           if_true: "${{ env.BUILD_IMAGE_FULL_NAME }},${{ env.BUILD_IMAGE_BRANCH_NAME }}"
           if_false: ${{ env.BUILD_IMAGE_FULL_NAME }}
+      - name: Determine Protected Tags
+        uses: haya14busa/action-cond@v1
+        id: fetch-protected-tags
+        with:
+          cond: ${{ inputs.protected-tags != '' }}
+          if_true: "${{ inputs.protected-tags }},${{ env.PUSH_BRANCH_LIST }}"
+          if_false: ${{ env.PUSH_BRANCH_LIST }}
+      -
+        name: Set Protected Tags List
+        env:
+          PROTECTED_TAGS: ${{ steps.fetch-protected-tags.outputs.value }}
+        run: echo "PROTECTED_TAG_LIST=$PROTECTED_TAGS" | sed 's/,$//g' >> $GITHUB_ENV
       -
         env:
           TIMESTAMP: ${{ steps.current-time.outputs.time }}
@@ -148,30 +160,19 @@ jobs:
             BUILD_DATE=$TIMESTAMP
             VCS_REF=${{ env.CI_REF_NAME }}
             VERSION=${{ env.BUILD_IMAGE_TAG }}
-      -
-        name: Determine Protected Tags
-        uses: haya14busa/action-cond@v1
-        id: fetch-protected-tags
+      - name: Delete images older than a week, keeping at least 3
+        if: inputs.cleanup-old-images == true
+        uses: snok/container-retention-policy@v2
         with:
-          cond: ${{ inputs.protected-tags != '' }}
-          if_true: "${{ inputs.protected-tags }},${{ env.PUSH_BRANCH_LIST }}"
-          if_false: ${{ env.PUSH_BRANCH_LIST }}
-      -
-        name: Set Protected Tags List
-        env:
-          PROTECTED_TAGS: ${{ steps.fetch-protected-tags.outputs.value }}
-        run: echo "PROTECTED_TAG_LIST=$PROTECTED_TAGS" | sed 's/,$//g' >> $GITHUB_ENV
-      -
-        name: Trim the registry images.
-        uses: unb-libraries/dockworker/.github/workflows/trim-registry-images.yaml@6.x
-        with:
-          image-name: ${{ inputs.image-name }}
+          image-names: ${{ env.GHCR_PACKAGE_NAME }}
+          cut-off: A week ago UTC
           account-type: org
-          cut-off: A month ago UTC
-          keep-at-least: "5"
-          protected-tags: ${{ env.PROTECTED_TAG_LIST }}
-        secrets:
-          GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
+          org-name: ${{ env.CI_REPOSITORY_OWNER }}
+          skip-tags: ${{ env.PROTECTED_TAG_LIST }}
+          keep-at-least: 3
+          untagged-only: false
+          token: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
+          token-type: github-token
       -
         uses: actions/upload-artifact@v3
         with:
