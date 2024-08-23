@@ -154,7 +154,7 @@ jobs:
     needs: [ build-image ]
     with:
       image-name: ${{ inputs.image-name }}
-      keep-at-least: "5"
+      keep-n-most-recent: '5'
       push-branches: ${{ inputs.push-branches }}
       protected-tags: ${{ inputs.protected-tags }}
     secrets:
