@@ -81,7 +81,7 @@ jobs:
           GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
       - uses: snok/container-retention-policy@v3.0.0
         with:
-          org-name: ${{ env.CI_REPOSITORY_OWNER }}
+          account: ${{ env.CI_REPOSITORY_OWNER }}
           account-type: ${{ inputs.account-type }}
           cut-off: ${{ inputs.cut-off }}
           image-names: ${{ inputs.image-name }}
