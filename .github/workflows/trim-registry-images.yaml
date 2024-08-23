@@ -85,10 +85,8 @@ jobs:
           account: ${{ env.CI_REPOSITORY_OWNER }}
           cut-off: ${{ inputs.cut-off }}
           image-names: ${{ inputs.image-name }}
-          keep-at-least: ${{ inputs.keep-at-least }}
-          org-name: ${{ env.CI_REPOSITORY_OWNER }}
+          keep-n-most-recent: ${{ inputs.keep-at-least }}
           skip-shas: ${{ steps.set-hashes-to-skip.outputs.hashes-to-skip }}
           tag-selection: untagged
           token: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
-          token-type: github-token
           dry-run: true
