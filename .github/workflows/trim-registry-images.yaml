@@ -1,0 +1,71 @@
+name: Trim registry images
+
+on:
+  workflow_call:
+    inputs:
+      image-name:
+        description: "The full, repository namespaced image name to build (without the tag)."
+        required: true
+        type: string
+      push-branches:
+        description: 'A list of branches that should be pushed to the container registry. JSON list format.'
+        required: true
+        type: string
+      account-type:
+        description: "The type of account to use for the container registry. Either 'org' or 'user'."
+        required: false
+        type: string
+        default: "org"
+      cut-off:
+        description: "The cut-off date for images to be deleted. Images older than this date will be deleted. UTC format."
+        type: string
+        required: false
+        default: "cut-off: A month ago UTC"
+      keep-at-least:
+        description: "The minimum number of images to keep."
+        type: string
+        required: false
+        default: "5"
+      protected-tags:
+        description: "A list of tags whose container images should be protected from deletion in cleanup. CSV format. Asterix wildcard operators supported."
+        type: string
+        required: false
+        default: "dev,prod"
+    secrets:
+      GH_CONTAINER_REGISTRY_TOKEN:
+        required: true
+
+jobs:
+  trim-registry-images:
+    name: Trims the registry images
+    runs-on: ubuntu-latest
+    steps:
+      - 
+        name: Install Skopeo
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y skopeo
+        shell: bash
+      -
+        name: Download Hash Listing Script
+        run: |
+          curl -L https://raw.githubusercontent.com/unb-libraries/dockworker/6.x/data/scripts/determineHashesToSkip.sh -o determineHashesToSkip.sh
+          chmod +x determineHashesToSkip.sh
+      -
+        name: Set Hashes to Skip
+        id: set-hashes-to-skip
+        run: ./determineHashesToSkip.sh "${{ inputs.image-name }}" "${{ inputs.protected-tags }}" >> $GITHUB_OUTPUT
+        env:
+          GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
+      - uses: snok/container-retention-policy@v3.0.0
+        with:
+          account-type: ${{ inputs.account-type }}
+          cut-off: ${{ inputs.cut-off }}
+          image-names: ${{ inputs.image-name }}
+          keep-at-least: ${{ inputs.keep-at-least }}
+          org-name: ${{ env.CI_REPOSITORY_OWNER }}
+          skip-shas: ${{ steps.set-hashes-to-skip.outputs.hashes-to-skip }}
+          tag-selection: untagged
+          token: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
+          token-type: github-token
+          dry-run: true
