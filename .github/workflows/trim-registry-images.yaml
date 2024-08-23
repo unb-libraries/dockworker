@@ -1,4 +1,4 @@
-name: Trim registry images
+name: Trim unused registry images
 
 on:
   workflow_call:
@@ -35,7 +35,7 @@ on:
 
 jobs:
   trim-registry-images:
-    name: Trims the registry images
+    name: Trim Registry
     runs-on: ubuntu-latest
     steps:
       - uses: FranzDiebold/github-env-vars-action@v2
