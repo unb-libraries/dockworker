@@ -18,7 +18,7 @@ on:
         required: true
         type: string
       protected-tags:
-        description: 'A list of tags whose container images should be protected from deletion in cleanup. This is in addition to push-branches, which are always protected. CSV format.'
+        description: 'A list of tags whose container images should be protected from deletion in cleanup. This is in addition to push-branches, which are always protected. CSV format. Wildcards via asterix are supported.'
         required: false
         type: string
         default: ''
@@ -85,11 +85,6 @@ jobs:
           IMAGE_NAME: ${{ inputs.image-name }}
         run: echo "GHCR_PACKAGE_NAME=$IMAGE_NAME" | sed "s|ghcr.io/$CI_REPOSITORY_OWNER/||" >> $GITHUB_ENV
       -
-        name: Set Push Branch List
-        env:
-          PUSH_BRANCHES: ${{ inputs.push-branches }}
-        run: echo "$PUSH_BRANCHES" | jq --raw-output '. | join(",")' | sed 's/^/PUSH_BRANCH_LIST=/' >> $GITHUB_ENV
-      -
         name: Install PHP
         uses: shivammathur/setup-php@v2
         if: inputs.build-themes == true
@@ -132,18 +127,6 @@ jobs:
           cond: ${{ contains(fromJSON(inputs.push-branches), github.ref_name) || inputs.push-all-branches == true }}
           if_true: "${{ env.BUILD_IMAGE_FULL_NAME }},${{ env.BUILD_IMAGE_BRANCH_NAME }}"
           if_false: ${{ env.BUILD_IMAGE_FULL_NAME }}
-      - name: Determine Protected Tags
-        uses: haya14busa/action-cond@v1
-        id: fetch-protected-tags
-        with:
-          cond: ${{ inputs.protected-tags != '' }}
-          if_true: "${{ inputs.protected-tags }},${{ env.PUSH_BRANCH_LIST }}"
-          if_false: ${{ env.PUSH_BRANCH_LIST }}
-      -
-        name: Set Protected Tags List
-        env:
-          PROTECTED_TAGS: ${{ steps.fetch-protected-tags.outputs.value }}
-        run: echo "PROTECTED_TAG_LIST=$PROTECTED_TAGS" | sed 's/,$//g' >> $GITHUB_ENV
       -
         env:
           TIMESTAMP: ${{ steps.current-time.outputs.time }}
@@ -160,21 +143,21 @@ jobs:
             BUILD_DATE=$TIMESTAMP
             VCS_REF=${{ env.CI_REF_NAME }}
             VERSION=${{ env.BUILD_IMAGE_TAG }}
-      - name: Delete images older than a week, keeping at least 3
-        if: inputs.cleanup-old-images == true
-        uses: snok/container-retention-policy@v2
-        with:
-          image-names: ${{ env.GHCR_PACKAGE_NAME }}
-          cut-off: A week ago UTC
-          account-type: org
-          org-name: ${{ env.CI_REPOSITORY_OWNER }}
-          skip-tags: ${{ env.PROTECTED_TAG_LIST }}
-          keep-at-least: 3
-          untagged-only: false
-          token: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
-          token-type: github-token
       -
         uses: actions/upload-artifact@v3
         with:
           name: build-image-tag
           path: /tmp/image_tag.env
+
+  trim-registry-images:
+    name: Trim the registry images.
+    uses: unb-libraries/dockworker/.github/workflows/trim-registry-images.yaml@6.x
+    with:
+      image-name: ${{ inputs.image-name }}
+      account-type: org
+      cut-off: A month ago UTC
+      keep-at-least: "5"
+      push-branches: ${{ inputs.push-branches }}
+      protected-tags: ${{ inputs.protected-tags }}
+    secrets:
+      GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
