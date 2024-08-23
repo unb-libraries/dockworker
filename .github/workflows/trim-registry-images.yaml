@@ -79,7 +79,7 @@ jobs:
         with:
           account: ${{ env.CI_REPOSITORY_OWNER }}
           cut-off: ${{ inputs.cut-off }}
-          image-names: ${{ inputs.image-name }}
+          image-names: ${{ env.CI_REPOSITORY_NAME }}
           keep-n-most-recent: ${{ inputs.keep-n-most-recent }}
           skip-shas: ${{ steps.set-hashes-to-skip.outputs.hashes-to-skip }}
           tag-selection: untagged
