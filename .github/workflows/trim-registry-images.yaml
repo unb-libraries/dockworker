@@ -84,4 +84,3 @@ jobs:
           skip-shas: ${{ steps.set-hashes-to-skip.outputs.hashes-to-skip }}
           tag-selection: untagged
           token: ${{ secrets.GITHUB_TOKEN }}
-          dry-run: true
