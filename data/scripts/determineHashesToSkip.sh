@@ -24,9 +24,16 @@ done
 HASHES_TO_SKIP=()
 if [ ! ${#MATCHING_TAGS[@]} -eq 0 ]; then
     echo $GH_CONTAINER_REGISTRY_TOKEN | docker login ghcr.io --username $GH_CONTAINER_REGISTRY_USER --password-stdin > /dev/null 2>&1 &
-    for tag in ${MATCHING_TAGS[@]}
+    for TAG in ${MATCHING_TAGS[@]}
     do
-        HASHES_TO_SKIP+=($(docker manifest inspect $1:$tag | jq -r '.manifests[] | .digest'))
+        MAINFEST_METADATA=$(docker manifest inspect $1:$TAG)
+        if [[ $MAINFEST_METADATA == *"manifest"* ]]; then
+            # Multiarch.
+            HASHES_TO_SKIP+=($(echo "$MAINFEST_METADATA" | jq -r '.manifests[] | .digest'))
+        else
+            # Single arch.
+            HASHES_TO_SKIP+=($(echo "$MAINFEST_METADATA" | jq -r '.config.digest'))
+        fi
     done
 fi
 
