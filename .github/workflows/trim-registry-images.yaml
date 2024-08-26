@@ -68,6 +68,13 @@ jobs:
           curl -L https://raw.githubusercontent.com/unb-libraries/dockworker/6.x/data/scripts/determineHashesToSkip.sh -o determineHashesToSkip.sh
           chmod +x determineHashesToSkip.sh
       -
+        name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
+          password: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
+      -
         name: Set Hashes to Skip
         id: set-hashes-to-skip
         run: ./determineHashesToSkip.sh "${{ inputs.image-name }}" "${{ env.PROTECTED_TAG_LIST }}" >> $GITHUB_OUTPUT
