@@ -27,7 +27,7 @@ if [ ! ${#MATCHING_TAGS[@]} -eq 0 ]; then
     for TAG in ${MATCHING_TAGS[@]}
     do
         MAINFEST_METADATA=$(docker manifest inspect $1:$TAG)
-        if [[ $MAINFEST_METADATA == *"manifest"* ]]; then
+        if [[ $MAINFEST_METADATA == *"manifests"* ]]; then
             # Multiarch.
             HASHES_TO_SKIP+=($(echo "$MAINFEST_METADATA" | jq -r '.manifests[] | .digest'))
         else
