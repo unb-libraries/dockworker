@@ -94,4 +94,4 @@ jobs:
           image-names: ${{ env.REPOSITORY_NAME_COMPONENT }}
           keep-n-most-recent: ${{ inputs.keep-n-most-recent }}
           skip-shas: ${{ steps.set-hashes-to-skip.outputs.hashes-to-skip }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
