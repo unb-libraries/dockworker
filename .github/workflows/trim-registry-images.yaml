@@ -95,3 +95,4 @@ jobs:
           keep-n-most-recent: ${{ inputs.keep-n-most-recent }}
           skip-shas: ${{ steps.set-hashes-to-skip.outputs.hashes-to-skip }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          rust-log: container_retention_policy=DEBUG
