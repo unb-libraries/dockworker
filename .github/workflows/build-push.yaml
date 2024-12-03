@@ -152,6 +152,7 @@ jobs:
   trim-registry-images:
     uses: unb-libraries/dockworker/.github/workflows/trim-registry-images.yaml@6.x
     needs: [ build-image ]
+    if: inputs.cleanup-old-images == true
     with:
       image-name: ${{ inputs.image-name }}
       keep-n-most-recent: '5'
