@@ -152,7 +152,7 @@ jobs:
   trim-registry-images:
     uses: unb-libraries/dockworker/.github/workflows/trim-registry-images.yaml@6.x
     needs: [ build-image ]
-    if: ${{ inputs.cleanup-old-images == true }} && ${{ env.CI_EVENT_NAME == 'push' }}
+    if: ${{ inputs.cleanup-old-images == true }} && ${{ github.event_name == 'push' }}
     with:
       image-name: ${{ inputs.image-name }}
       keep-n-most-recent: '5'
