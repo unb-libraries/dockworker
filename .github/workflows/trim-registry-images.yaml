@@ -40,7 +40,7 @@ on:
 
 jobs:
   trim-registry-images:
-    if: ${{ inputs.cleanup-old-images == true && && github.event_name == 'push' && contains(fromJSON(inputs.push-branches), github.ref_name) }}
+    if: ${{ inputs.cleanup-old-images == true && github.event_name == 'push' && contains(fromJSON(inputs.push-branches), github.ref_name) }}
     name: Trim Registry
     runs-on: ubuntu-latest
     steps:
