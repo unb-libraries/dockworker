@@ -37,7 +37,6 @@ jobs:
   trim-registry-images:
     name: Trim Registry
     runs-on: ubuntu-latest
-    if: ${{ contains(fromJSON(inputs.push-branches), github.ref_name) || contains(fromJSON(inputs.protected-tags), github.ref_name) }}
     steps:
       -
         name: Convert Push Branch JSON to CSV
