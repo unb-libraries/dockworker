@@ -11,6 +11,11 @@ on:
         description: 'A list of branches that are pushed to the container registry. JSON list format.'
         required: true
         type: string
+      cleanup-old-images:
+        description: 'Whether or not to cleanup legacy hash-tagged images from the container registry.'
+        required: false
+        type: boolean
+        default: true
       cut-off:
         description: 'The cut-off date for images to be deleted. Images older than this date will be deleted. UTC format.'
         type: string
@@ -35,6 +40,7 @@ on:
 
 jobs:
   trim-registry-images:
+    if: ${{ inputs.cleanup-old-images == true && && github.event_name == 'push' && contains(fromJSON(inputs.push-branches), github.ref_name) }}
     name: Trim Registry
     runs-on: ubuntu-latest
     steps:
