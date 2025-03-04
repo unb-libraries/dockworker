@@ -148,6 +148,11 @@ jobs:
         with:
           name: build-image-tag
           path: /tmp/image_tag.env
+      - name: Debug Inputs
+        run: |
+          echo "cleanup-old-images=${{ inputs.cleanup-old-images }}"
+          echo "push-branches=${{ inputs.push-branches }}"
+          echo "github.ref_name=${{ github.ref_name }}"
 
   trim-registry-images:
     uses: unb-libraries/dockworker/.github/workflows/trim-registry-images.yaml@6.x
