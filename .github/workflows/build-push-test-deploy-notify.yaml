@@ -33,6 +33,10 @@ on:
         required: false
         type: string
         default: linux/amd64,linux/arm64/v8
+      test:
+        description: "A comma-separated list of tests to execute"
+        required: false
+        type: string
       # postman-test-url:
       #   description: 'URL of the API against which to run Postman tests.'
       #   type: string
@@ -70,6 +74,7 @@ jobs:
   test-unit:
     name: Unit tests
     uses: unb-libraries/dockworker/.github/workflows/test-unit.yaml@6.x
+    if: contains(inputs.test, 'unit')
 
   build-push-images:
     uses: unb-libraries/dockworker/.github/workflows/build-push.yaml@6.x
@@ -108,6 +113,7 @@ jobs:
   test-e2e:
     name: End-to-end tests
     uses: unb-libraries/dockworker/.github/workflows/test-e2e.yaml@6.x
+    if: contains(inputs.test, 'e2e')
     needs: [ update-docker-compose ]
     secrets:
       DOCKER_CLOUD_USER_NAME: ${{ secrets.DOCKER_CLOUD_USER_NAME }}
