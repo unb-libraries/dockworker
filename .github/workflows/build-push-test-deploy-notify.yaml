@@ -33,10 +33,10 @@ on:
         required: false
         type: string
         default: linux/amd64,linux/arm64/v8
-      postman-test-url:
-        description: 'URL of the API against which to run Postman tests.'
-        type: string
-        required: false
+      # postman-test-url:
+      #   description: 'URL of the API against which to run Postman tests.'
+      #   type: string
+      #   required: false
     secrets:
       KUBE_CONFIG:
         required: true
@@ -50,14 +50,14 @@ on:
         required: true
       GH_CONTAINER_REGISTRY_TOKEN:
         required: true
-      POSTMAN_API_KEY:
-        required: true
-      POSTMAN_TEST_GENERATION_COLLECTION_ID:
-        required: true
-      POSTMAN_TEST_GENERATION_ENVIRONMENT_ID:
-        required: true
-      POSTMAN_WORKSPACE_ID:
-        required: true
+      # POSTMAN_API_KEY:
+      #   required: true
+      # POSTMAN_TEST_GENERATION_COLLECTION_ID:
+      #   required: true
+      # POSTMAN_TEST_GENERATION_ENVIRONMENT_ID:
+      #   required: true
+      # POSTMAN_WORKSPACE_ID:
+      #   required: true
 
 jobs:
   notify-start:
