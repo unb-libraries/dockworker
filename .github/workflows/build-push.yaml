@@ -8,20 +8,10 @@ on:
         required: false
         type: boolean
         default: false
-      cleanup-old-images:
-        description: 'Whether or not to cleanup legacy hash-tagged images from the container registry.'
-        required: false
-        type: boolean
-        default: true
       image-name:
         description: 'The full, repository namespaced image name to build (without the tag).'
         required: true
         type: string
-      protected-tags:
-        description: 'A list of tags whose container images should be protected from deletion in cleanup. This is in addition to push-branches, which are always protected. CSV format. Wildcards via asterix are supported.'
-        required: false
-        type: string
-        default: ''
       push-branches:
         description: 'A list of branches that should be pushed to the container registry. JSON list format.'
         required: true
@@ -153,16 +143,3 @@ jobs:
           echo "cleanup-old-images=${{ inputs.cleanup-old-images }}"
           echo "push-branches=${{ inputs.push-branches }}"
           echo "github.ref_name=${{ github.ref_name }}"
-
-  trim-registry-images:
-    uses: unb-libraries/dockworker/.github/workflows/trim-registry-images.yaml@6.x
-    needs: [ build-image ]
-    with:
-      image-name: ${{ inputs.image-name }}
-      cleanup-old-images: ${{ inputs.cleanup-old-images }}
-      keep-n-most-recent: '5'
-      push-branches: ${{ inputs.push-branches }}
-      protected-tags: ${{ inputs.protected-tags }}
-    secrets:
-      GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
-      GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
