@@ -22,7 +22,7 @@ on:
         type: boolean
         default: false
       platforms:
-        description: "A comma-separated list of platforms."
+        description: "A comma-separated list of platforms to build images for. See https://docs.docker.com/engine/reference/commandline/buildx_build/#platform for supported values."
         required: false
         type: string
         default: linux/amd64,linux/arm64/v8
