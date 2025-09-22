@@ -12,11 +12,6 @@ on:
         required: false
         type: boolean
         default: false
-      cleanup-old-images:
-        description: 'Whether or not to cleanup legacy hash-tagged images from the container registry.'
-        required: false
-        type: boolean
-        default: true
       deploy-branches:
         description: 'A list of branches that should be deployed to kubernetes cluster. JSON list format.'
         required: true
@@ -86,7 +81,6 @@ jobs:
     needs: [ test-unit ]
     with:
       build-themes: ${{ inputs.build-themes }}
-      cleanup-old-images: ${{ inputs.cleanup-old-images }}
       image-name: ${{ inputs.image-name }}
       push-branches: ${{ inputs.push-branches }}
       platforms: ${{ inputs.platforms }}

@@ -140,6 +140,5 @@ jobs:
           path: /tmp/image_tag.env
       - name: Debug Inputs
         run: |
-          echo "cleanup-old-images=${{ inputs.cleanup-old-images }}"
           echo "push-branches=${{ inputs.push-branches }}"
           echo "github.ref_name=${{ github.ref_name }}"

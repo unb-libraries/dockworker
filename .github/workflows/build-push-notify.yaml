@@ -8,11 +8,6 @@ on:
         required: false
         type: boolean
         default: false
-      cleanup-old-images:
-        description: 'Whether or not to cleanup legacy hash-tagged images from the container registry.'
-        required: false
-        type: boolean
-        default: true
       image-name:
         description: 'The full, repository namespaced image name to build (without the tag).'
         required: true
@@ -47,7 +42,6 @@ jobs:
     needs: [ notify-start ]
     with:
       build-themes: ${{ inputs.build-themes }}
-      cleanup-old-images: ${{ inputs.cleanup-old-images }}
       image-name: ${{ inputs.image-name }}
       push-branches: ${{ inputs.push-branches }}
       platforms: ${{ inputs.platforms }}
