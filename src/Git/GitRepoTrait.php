@@ -16,6 +16,30 @@ use Dockworker\DockworkerException;
 trait GitRepoTrait
 {
     /**
+     * The application's git repository.
+     *
+     * @var \CzProject\GitPhp\GitRepository
+     */
+    protected GitRepository $applicationRepository;
+
+    /**
+     * Sets up the lean repository git repo.
+     *
+     * @hook init
+     *
+     * @throws \Dockworker\DockworkerException
+     */
+    public function initGitRepo(): void
+    {
+        if (isset($this->applicationRoot)) {
+            $this->applicationRepository = $this->getGitRepoFromPath($this->applicationRoot);
+            if (empty($this->applicationRepository)) {
+                throw new DockworkerException('Could not initialize the git repository.');
+            }
+        }
+    }
+
+    /**
      * Retrieves a git repository object from a repository path.
      *
      * @param string $path
@@ -91,6 +115,44 @@ trait GitRepoTrait
             }
         }
         return $staged_changes;
+    }
+
+    /**
+     * Retrieves files staged for commit in the current application repository.
+     *
+     * @param string $file_mask
+     *   An optional regex pattern for files to include in the list.
+     *
+     * @return array
+     * @throws \CzProject\GitPhp\GitException
+     */
+    protected function getApplicationGitRepoStagedFiles(
+        string $file_mask = ''
+    ): array {
+        return $this->getGitRepoStagedFiles(
+            $this->applicationRepository,
+            $file_mask
+        );
+    }
+
+    /**
+     * Retrieves changed files in the current application repository.
+     *
+     * @param string $file_mask
+     *   An optional regex pattern for files to include in the list.
+     *
+     * @return array
+     *   The changed files.
+     *
+     * @throws \CzProject\GitPhp\GitException
+     */
+    protected function getApplicationGitRepoChangedFiles(
+        string $file_mask = ''
+    ): array {
+        return array_keys($this->getGitRepoChanges(
+            $this->applicationRepository,
+            $file_mask
+        ));
     }
 
     /**
