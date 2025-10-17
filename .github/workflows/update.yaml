@@ -28,8 +28,10 @@ jobs:
         id: composer_diff
         uses: IonBazan/composer-diff-action@v1
         with:
-          base: "${{ github.event.pull_request.base.sha }}:build/composer.lock"
-          head: "application-updates:build/composer.lock"
+          base: "HEAD:build/composer.lock"
+          head: "build/composer.lock"
+          no-dev: true
+          direct: true
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
