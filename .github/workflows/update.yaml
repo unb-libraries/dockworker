@@ -29,8 +29,7 @@ jobs:
         uses: IonBazan/composer-diff-action@v1
         with:
           base: "HEAD:build/composer.lock"
-          head: "build/composer.lock"
-          no-dev: true
+          target: "build/composer.lock"
           direct: true
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
