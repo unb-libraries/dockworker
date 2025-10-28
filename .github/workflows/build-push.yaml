@@ -26,6 +26,11 @@ on:
         required: false
         type: string
         default: linux/amd64,linux/arm64/v8
+      docker-build-record-retention-days:
+        description: 'Number of days to retain Docker build records.'
+        required: false
+        type: number
+        default: 3
 
     secrets:
       GH_CONTAINER_REGISTRY_USER:
@@ -120,7 +125,7 @@ jobs:
       -
         env:
           TIMESTAMP: ${{ steps.current-time.outputs.time }}
-          DOCKER_BUILD_RECORD_RETENTION_DAYS: 3
+          DOCKER_BUILD_RECORD_RETENTION_DAYS: ${{ inputs.docker-build-record-retention-days }}
         uses: docker/build-push-action@v6
         with:
           provenance: false

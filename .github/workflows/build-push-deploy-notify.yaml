@@ -33,6 +33,11 @@ on:
         required: false
         type: string
         default: linux/amd64,linux/arm64/v8
+      docker-build-record-retention-days:
+        description: 'Number of days to retain Docker build records.'
+        required: false
+        type: number
+        default: 3
     secrets:
       KUBE_CONFIG:
         required: true
@@ -59,6 +64,7 @@ jobs:
       image-name: ${{ inputs.image-name }}
       push-branches: ${{ inputs.push-branches }}
       platforms: ${{ inputs.platforms }}
+      docker-build-record-retention-days: ${{ inputs.docker-build-record-retention-days }}
     secrets:
       GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
       GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
