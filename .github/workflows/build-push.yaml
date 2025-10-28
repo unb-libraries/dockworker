@@ -120,6 +120,7 @@ jobs:
       -
         env:
           TIMESTAMP: ${{ steps.current-time.outputs.time }}
+          DOCKER_BUILD_RECORD_RETENTION_DAYS: 3
         uses: docker/build-push-action@v6
         with:
           provenance: false
