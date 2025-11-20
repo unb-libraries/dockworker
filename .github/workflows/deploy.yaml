@@ -41,7 +41,7 @@ jobs:
         run: echo '${{ inputs.branch-env-map }}' > /tmp/deployment_namespaces.json
       -
         name: Set Deployment Namespace
-        run: echo "DEPLOYMENT_NAMESPACE=$(jq -r '.${{ github.ref_name }}' /tmp/deployment_namespaces.json)" >> $GITHUB_ENV
+        run: echo "DEPLOYMENT_NAMESPACE=$(jq -r '.[\"${{ github.ref_name }}\"]' /tmp/deployment_namespaces.json)" >> $GITHUB_ENV
       - uses: azure/setup-kubectl@v4
         name: Install Kubectl
         with:
