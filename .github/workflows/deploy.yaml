@@ -72,6 +72,7 @@ jobs:
           DEPLOYMENT_NAMESPACE: ${{ env.DEPLOYMENT_NAMESPACE }}
       -
         name: Scale Deployment to Original Replicas and Reset TTL clock
+         # In the case where a deployment wasn't scaled down YET, the scaling command essentially a no-op but the TTL clock is reset.
         if: steps.check-downscaler.outputs.original-replicas != ''
         run: |
           kubectl annotate deployment "$DEPLOYMENT_NAME" deployment-time="$(date -u +%Y-%m-%dT%H:%M:%SZ)" --namespace="$DEPLOYMENT_NAMESPACE" --overwrite
