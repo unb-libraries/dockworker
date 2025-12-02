@@ -45,7 +45,7 @@ jobs:
       - uses: azure/setup-kubectl@v4
         name: Install Kubectl
         with:
-          version: 'v1.28.0'
+          version: 'v1.31.0'
         id: install-kubectl
       - uses: azure/k8s-set-context@v4
         name: Set Kubectl Context
