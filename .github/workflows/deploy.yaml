@@ -62,9 +62,19 @@ jobs:
           DEPLOYMENT_NAME: ${{ inputs.k8s-deployment-name }}
           DEPLOYMENT_NAMESPACE: ${{ env.DEPLOYMENT_NAMESPACE }}
       -
-        name: Scale Dev Deployment to 1 Replica
-        if: env.DEPLOYMENT_NAMESPACE == 'dev'
+        name: Check Downscaler Annotation
+        id: check-downscaler
         run: |
+          DOWNSCALE_REPLICAS=$(kubectl get deployment "$DEPLOYMENT_NAME" --namespace="$DEPLOYMENT_NAMESPACE" -o jsonpath='{.metadata.annotations.downscaler/downscale-replicas}' || echo "")
+          echo "downscale-replicas=${DOWNSCALE_REPLICAS}" >> $GITHUB_OUTPUT
+        env:
+          DEPLOYMENT_NAME: ${{ inputs.k8s-deployment-name }}
+          DEPLOYMENT_NAMESPACE: ${{ env.DEPLOYMENT_NAMESPACE }}
+      -
+        name: Scale Deployment to 1 Replica and Reset TTL clock
+        if: steps.check-downscaler.outputs.downscale-replicas == '0'
+        run: |
+          kubectl annotate deployment "$DEPLOYMENT_NAME" deployment-time="$(date -u +%Y-%m-%dT%H:%M:%SZ)" --namespace="$DEPLOYMENT_NAMESPACE" --overwrite
           kubectl scale deployment "$DEPLOYMENT_NAME" --replicas=1 --namespace="$DEPLOYMENT_NAMESPACE"
         env:
           DEPLOYMENT_NAME: ${{ inputs.k8s-deployment-name }}
