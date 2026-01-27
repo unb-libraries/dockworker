@@ -39,8 +39,8 @@ class CliCommand extends Process
     public function __construct(
         array $command,
         string $description = '',
-        string $cwd = null,
-        array $env = null,
+        ?string $cwd = null,
+        ?array $env = null,
         mixed $input = null,
         ?float $timeout = null
     ) {
@@ -80,8 +80,8 @@ class CliCommand extends Process
         array $command,
         DockworkerIO $io,
         string $description = '',
-        string $cwd = null,
-        array $env = null,
+        ?string $cwd = null,
+        ?array $env = null,
         mixed $input = null,
         ?float $timeout = null
     ): void {
