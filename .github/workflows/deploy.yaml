@@ -12,7 +12,7 @@ on:
         required: true
         type: string
       k8s-deployment-name:
-        description: 'The name of the kubernetes deployment to update.'
+        description: 'The name(s) of the kubernetes deployment(s) to update. Supports CSV for multiple deployments (e.g., "deploy1,deploy2").'
         required: true
         type: string
     secrets:
@@ -54,48 +54,70 @@ jobs:
           kubeconfig: ${{ secrets.KUBE_CONFIG }}
         id: setcontext-kubectl
       -
-        name: Update Image In Kubernetes Deployment
+        name: Deploy Image to Kubernetes
         run: |
-          kubectl set image "deployment/$DEPLOYMENT_NAME" "$DEPLOYMENT_NAME=$DEPLOYMENT_IMAGE" --namespace="$DEPLOYMENT_NAMESPACE"
+          FAILED_DEPLOYMENTS=""
+          IFS=',' read -ra DEPLOYMENTS <<< "$DEPLOYMENT_NAMES"
+          for DEPLOY_NAME in "${DEPLOYMENTS[@]}"; do
+            DEPLOY_NAME=$(echo "$DEPLOY_NAME" | xargs)
+            [ -z "$DEPLOY_NAME" ] && continue
+
+            echo "::group::Deploying $DEPLOY_NAME"
+            if ! (
+              set -e
+              kubectl set image "deployment/$DEPLOY_NAME" "$DEPLOY_NAME=$DEPLOYMENT_IMAGE" \
+                --namespace="$DEPLOYMENT_NAMESPACE"
+
+              ORIGINAL_REPLICAS=$(kubectl get deployment "$DEPLOY_NAME" \
+                --namespace="$DEPLOYMENT_NAMESPACE" \
+                -o jsonpath='{.metadata.annotations.downscaler/original-replicas}' || echo "")
+              if [ -n "$ORIGINAL_REPLICAS" ]; then
+                # In the case where a deployment wasn't scaled down YET, the scaling command is essentially a no-op but the TTL clock is reset.
+                kubectl annotate deployment "$DEPLOY_NAME" \
+                  deployment-time="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+                  --namespace="$DEPLOYMENT_NAMESPACE" --overwrite
+                kubectl scale deployment "$DEPLOY_NAME" \
+                  --replicas=$ORIGINAL_REPLICAS --namespace="$DEPLOYMENT_NAMESPACE"
+              fi
+
+              kubectl rollout status deployment "$DEPLOY_NAME" \
+                --namespace="$DEPLOYMENT_NAMESPACE"
+            ); then
+              echo "::error::Deployment of $DEPLOY_NAME failed!"
+              FAILED_DEPLOYMENTS="$FAILED_DEPLOYMENTS $DEPLOY_NAME"
+            fi
+            echo "::endgroup::"
+          done
+
+          if [ -n "$FAILED_DEPLOYMENTS" ]; then
+            echo "::error::The following deployments failed:$FAILED_DEPLOYMENTS"
+            exit 1
+          fi
         env:
           DEPLOYMENT_IMAGE: ${{ env.BUILD_IMAGE_FULL_NAME }}
-          DEPLOYMENT_NAME: ${{ inputs.k8s-deployment-name }}
-          DEPLOYMENT_NAMESPACE: ${{ env.DEPLOYMENT_NAMESPACE }}
-      -
-        name: Check if Downscaler is In-Use
-        id: check-downscaler
-        run: |
-          ORIGINAL_REPLICAS=$(kubectl get deployment "$DEPLOYMENT_NAME" --namespace="$DEPLOYMENT_NAMESPACE" -o jsonpath='{.metadata.annotations.downscaler/original-replicas}' || echo "")
-          echo "original-replicas=${ORIGINAL_REPLICAS}" >> $GITHUB_OUTPUT
-        env:
-          DEPLOYMENT_NAME: ${{ inputs.k8s-deployment-name }}
-          DEPLOYMENT_NAMESPACE: ${{ env.DEPLOYMENT_NAMESPACE }}
-      -
-        name: Scale Deployment to Original Replicas and Reset TTL clock
-         # In the case where a deployment wasn't scaled down YET, the scaling command essentially a no-op but the TTL clock is reset.
-        if: steps.check-downscaler.outputs.original-replicas != ''
-        run: |
-          kubectl annotate deployment "$DEPLOYMENT_NAME" deployment-time="$(date -u +%Y-%m-%dT%H:%M:%SZ)" --namespace="$DEPLOYMENT_NAMESPACE" --overwrite
-          kubectl scale deployment "$DEPLOYMENT_NAME" --replicas=${{ steps.check-downscaler.outputs.original-replicas }} --namespace="$DEPLOYMENT_NAMESPACE"
-        env:
-          DEPLOYMENT_NAME: ${{ inputs.k8s-deployment-name }}
-          DEPLOYMENT_NAMESPACE: ${{ env.DEPLOYMENT_NAMESPACE }}
-      -
-        name: Wait For Deployment To Finish
-        run: |
-          kubectl rollout status deployment "$DEPLOYMENT_NAME" --namespace="$DEPLOYMENT_NAMESPACE"
-        env:
-          DEPLOYMENT_NAME: ${{ inputs.k8s-deployment-name }}
+          DEPLOYMENT_NAMES: ${{ inputs.k8s-deployment-name }}
           DEPLOYMENT_NAMESPACE: ${{ env.DEPLOYMENT_NAMESPACE }}
       -
         name: Write deployment logs
+        if: always()
         run: |
-          sleep 60; kubectl logs "deployment/$DEPLOYMENT_NAME" --namespace="$DEPLOYMENT_NAMESPACE" > /tmp/deployment_logs.txt
+          sleep 60
+          IFS=',' read -ra DEPLOYMENTS <<< "$DEPLOYMENT_NAMES"
+          for DEPLOY_NAME in "${DEPLOYMENTS[@]}"; do
+            DEPLOY_NAME=$(echo "$DEPLOY_NAME" | xargs)
+            [ -z "$DEPLOY_NAME" ] && continue
+            if [ ${#DEPLOYMENTS[@]} -gt 1 ]; then
+              echo "=== Logs for deployment/$DEPLOY_NAME ===" >> /tmp/deployment_logs.txt
+            fi
+            kubectl logs "deployment/$DEPLOY_NAME" \
+              --namespace="$DEPLOYMENT_NAMESPACE" >> /tmp/deployment_logs.txt 2>&1
+          done
         env:
-          DEPLOYMENT_NAME: ${{ inputs.k8s-deployment-name }}
+          DEPLOYMENT_NAMES: ${{ inputs.k8s-deployment-name }}
           DEPLOYMENT_NAMESPACE: ${{ env.DEPLOYMENT_NAMESPACE }}
       -
         name: Archive Deployment Logs
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: deployment-logs
