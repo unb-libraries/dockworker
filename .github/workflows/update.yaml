@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: unb-libraries/install-dockworker-composite-action@v3
+      - uses: unb-libraries/install-dockworker-composite-action@v2
       - name: Remove Dockworker-Installed git Hooks
         run: rm -f .git/hooks/commit-msg .git/hooks/pre-commit
       - name: Update Application and Dependencies
