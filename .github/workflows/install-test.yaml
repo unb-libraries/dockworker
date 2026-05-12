@@ -7,6 +7,16 @@ on:
         description: 'The test command to execute in dockworker'
         required: true
         type: string
+      php-version:
+        description: 'PHP version for setup-php. Defaults to 8.1 for backward compatibility.'
+        required: false
+        type: string
+        default: '8.1'
+      composer-version:
+        description: 'Composer tools version pin. Defaults to 2.8.4 for backward compatibility.'
+        required: false
+        type: string
+        default: '2.8.4'
     secrets:
       SLACK_WEBHOOK_URL:
         required: true
@@ -32,9 +42,9 @@ jobs:
         name: Install PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.1
+          php-version: ${{ inputs.php-version }}
           coverage: none
-          tools: composer:v2
+          tools: composer:${{ inputs.composer-version }}
           extensions: curl,dom,gd,mbstring,posix,yaml,zip
       -
         name: Install dockworker

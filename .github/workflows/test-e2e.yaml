@@ -2,6 +2,17 @@ name: Run end-to-end tests
 
 on:
   workflow_call:
+    inputs:
+      php-version:
+        description: 'PHP version for setup-php. Defaults to 8.1 for backward compatibility.'
+        required: false
+        type: string
+        default: '8.1'
+      composer-version:
+        description: 'Composer tools version pin. Defaults to 2.8.4 for backward compatibility.'
+        required: false
+        type: string
+        default: '2.8.4'
     secrets:
       DOCKER_CLOUD_USER_NAME:
         required: true
@@ -25,6 +36,9 @@ jobs:
           node-version: 16.x
       - uses: FranzDiebold/github-env-vars-action@v2
       - uses: unb-libraries/install-dockworker-composite-action@2.x
+        with:
+          php-version: ${{ inputs.php-version }}
+          composer-version: ${{ inputs.composer-version }}
       -
         name: Install test dependencies
         run: npm install

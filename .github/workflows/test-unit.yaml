@@ -2,6 +2,17 @@ name: Run unit tests
 
 on:
   workflow_call:
+    inputs:
+      php-version:
+        description: 'PHP version for setup-php. Defaults to 8.1 for backward compatibility.'
+        required: false
+        type: string
+        default: '8.1'
+      composer-version:
+        description: 'Composer tools version pin. Defaults to 2.8.4 for backward compatibility.'
+        required: false
+        type: string
+        default: '2.8.4'
 
 jobs:
   test-unit:
@@ -9,18 +20,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - 
+      -
         name: Install NodeJS
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
-      - 
+      -
         name: Install PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.1
+          php-version: ${{ inputs.php-version }}
           coverage: none
-          tools: composer:v2
+          tools: composer:${{ inputs.composer-version }}
           extensions: curl,dom,gd,mbstring,posix,yaml,zip
       - 
         name: Install dockworker

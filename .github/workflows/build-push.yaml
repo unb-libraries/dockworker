@@ -31,6 +31,16 @@ on:
         required: false
         type: number
         default: 3
+      php-version:
+        description: 'PHP version for setup-php (used when build-themes is true). Defaults to 8.1 for backward compatibility.'
+        required: false
+        type: string
+        default: '8.1'
+      composer-version:
+        description: 'Composer tools version pin (used when build-themes is true). Defaults to 2.8.4 for backward compatibility.'
+        required: false
+        type: string
+        default: '2.8.4'
 
     secrets:
       GH_CONTAINER_REGISTRY_USER:
@@ -84,9 +94,9 @@ jobs:
         uses: shivammathur/setup-php@v2
         if: inputs.build-themes == true
         with:
-          php-version: 8.1
+          php-version: ${{ inputs.php-version }}
           coverage: none
-          tools: composer:v2
+          tools: composer:${{ inputs.composer-version }}
           extensions: curl,dom,gd,mbstring,posix,yaml,zip
       -
         name: Install dockworker
