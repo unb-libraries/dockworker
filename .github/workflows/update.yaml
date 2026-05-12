@@ -7,6 +7,11 @@ on:
         description: 'A list of relative paths to add in the PR. Paths should follow git pathspec syntax'
         required: true
         type: string
+      php-version:
+        description: 'PHP version for setup-php. Defaults to 8.1 for backward compatibility.'
+        required: false
+        type: string
+        default: '8.1'
     secrets:
       PAT_TOKEN:
         description: 'The token to use for creating the pull request'
@@ -19,6 +24,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: unb-libraries/install-dockworker-composite-action@v2
+        with:
+          php-version: ${{ inputs.php-version }}
       - name: Remove Dockworker-Installed git Hooks
         run: rm -f .git/hooks/commit-msg .git/hooks/pre-commit
       - name: Update Application and Dependencies
