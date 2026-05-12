@@ -26,6 +26,16 @@ on:
         required: false
         type: number
         default: 3
+      php-version:
+        description: 'PHP version for setup-php in sub-workflows. Defaults to 8.1 for backward compatibility.'
+        required: false
+        type: string
+        default: '8.1'
+      composer-version:
+        description: 'Composer tools version pin in sub-workflows. Defaults to 2.8.4 for backward compatibility.'
+        required: false
+        type: string
+        default: '2.8.4'
     secrets:
       SLACK_WEBHOOK_URL:
         required: true
@@ -51,6 +61,8 @@ jobs:
       push-branches: ${{ inputs.push-branches }}
       platforms: ${{ inputs.platforms }}
       docker-build-record-retention-days: ${{ inputs.docker-build-record-retention-days }}
+      php-version: ${{ inputs.php-version }}
+      composer-version: ${{ inputs.composer-version }}
     secrets:
       GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
       GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}

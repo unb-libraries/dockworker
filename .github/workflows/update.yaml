@@ -12,6 +12,11 @@ on:
         required: false
         type: string
         default: '8.1'
+      composer-version:
+        description: 'Composer tools version pin. Defaults to 2.8.4 for backward compatibility.'
+        required: false
+        type: string
+        default: '2.8.4'
     secrets:
       PAT_TOKEN:
         description: 'The token to use for creating the pull request'
@@ -26,6 +31,7 @@ jobs:
       - uses: unb-libraries/install-dockworker-composite-action@v2
         with:
           php-version: ${{ inputs.php-version }}
+          composer-version: ${{ inputs.composer-version }}
       - name: Remove Dockworker-Installed git Hooks
         run: rm -f .git/hooks/commit-msg .git/hooks/pre-commit
       - name: Update Application and Dependencies
