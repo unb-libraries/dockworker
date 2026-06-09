@@ -39,10 +39,13 @@ class LogCheckCommands extends DockworkerCommands implements CustomEventAwareInt
         }
         [$errors_pattern, $exceptions_pattern] = $this->getAllLogErrorStrings();
         $logs = file_get_contents($file_path);
+        ['scan' => $scan, 'warnings' => $warnings] = $this->partitionLogLines(
+            explode("\n", $logs)
+        );
         $matched_errors = [];
         if (
                 $this->logsHaveErrors(
-                    $logs,
+                    $scan,
                     $errors_pattern,
                     $exceptions_pattern,
                     $matched_errors
@@ -50,8 +53,8 @@ class LogCheckCommands extends DockworkerCommands implements CustomEventAwareInt
         ) {
                 $this->reportErrorsInLogs($this->dockworkerIO, $matched_errors);
                 exit(1);
-        } else {
-            $this->dockworkerIO->writeln('No errors detected in logs.');
         }
+        $this->reportWarningsInLogs($this->dockworkerIO, $warnings);
+        $this->dockworkerIO->writeln('No errors detected in logs.');
     }
 }
