@@ -14,7 +14,7 @@ trait GitHubRepoSettingsTrait
     /**
      * The GitHub repository topics.
      *
-     * @var <string></string>
+     * @var string[]
      */
     protected array $gitHubRepositoryTopics = [];
 

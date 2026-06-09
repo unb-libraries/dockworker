@@ -137,7 +137,7 @@ trait GitCommitMessageValidatorTrait
     /**
      * Validates if the commit message is structured to reference a JIRA issue.
      *
-     * @param array $project_keys
+     * @param string[] $project_keys
      *   An array of Jira project prefixes acceptable for this message.
      *
      * @return bool

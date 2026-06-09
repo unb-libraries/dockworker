@@ -95,7 +95,7 @@ trait FileSystemOperationsTrait
         chgrp($path, posix_getgid());
     }
 
-    public static function bytesToHumanString($bytes): string
+    public static function bytesToHumanString(int $bytes): string
     {
         $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
         $bytes = max($bytes, 0);

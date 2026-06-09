@@ -62,7 +62,7 @@ trait RoboConfigTrait
         return $config->get($key, $default_value);
     }
 
-    public function getRequiredConfigurationItem($namespace): mixed {
+    public function getRequiredConfigurationItem(string $namespace): mixed {
         $config = Robo::config();
         $config_value = $config->get($namespace);
         if (empty($config_value)) {

@@ -7,6 +7,10 @@ namespace Dockworker\Formatter;
  */
 Class JiraFormatter extends PlainTextFormatter
 {
+    /**
+     * @param string[] $headers
+     * @param string[][] $rows
+     */
     public static function generateTable(array $headers, array $rows): string
     {
         $table_code = '';

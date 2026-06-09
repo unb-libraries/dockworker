@@ -66,7 +66,7 @@ trait GitHubClientTrait
     /**
      * Configures and sets up the GitHub client, registering any credentials.
      */
-    protected function setGitHubClient($owner): void
+    protected function setGitHubClient(string $owner): void
     {
         $client_credentials_valid = false;
         $namespace = 'github';
@@ -127,7 +127,7 @@ trait GitHubClientTrait
     /**
      * Tests the GitHub client's connectivity to the GitHub API.
      */
-    public function setTestGitHubClientConnectivity($owner): void
+    public function setTestGitHubClientConnectivity(string $owner): void
     {
         $this->gitHubClient->api('user')->repositories($owner);
     }

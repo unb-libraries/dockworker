@@ -20,7 +20,7 @@ trait LogCheckerTrait
      *   An optional pipe-delimited list of strings that, if they exist in the
      *   line of the output that matched as an error indicates it is not
      *   actually an error.
-     * @param array $matched_errors
+     * @param string[] $matched_errors
      *   An optional empty array variable that will contain be filled with the
      *   line of output that matched as an error if one is found.
      * @param string $preg_operators
