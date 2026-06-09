@@ -32,10 +32,10 @@ on:
         type: number
         default: 3
       php-version:
-        description: 'PHP version for setup-php (used when build-themes is true). Defaults to 8.1 for backward compatibility.'
+        description: 'PHP version for setup-php (used when build-themes is true). Defaults to 8.3 for backward compatibility.'
         required: false
         type: string
-        default: '8.1'
+        default: '8.3'
       composer-version:
         description: 'Composer tools version pin (used when build-themes is true). Defaults to 2.8.4 for backward compatibility.'
         required: false

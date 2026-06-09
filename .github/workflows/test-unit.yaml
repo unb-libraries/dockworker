@@ -4,10 +4,10 @@ on:
   workflow_call:
     inputs:
       php-version:
-        description: 'PHP version for setup-php. Defaults to 8.1 for backward compatibility.'
+        description: 'PHP version for setup-php. Defaults to 8.3 for backward compatibility.'
         required: false
         type: string
-        default: '8.1'
+        default: '8.3'
       composer-version:
         description: 'Composer tools version pin. Defaults to 2.8.4 for backward compatibility.'
         required: false

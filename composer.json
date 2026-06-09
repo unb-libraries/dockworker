@@ -27,7 +27,7 @@
     "lesstif/jira-cloud-restapi": "^1",
     "knplabs/github-api": "^3",
     "nyholm/psr7": "^1.5",
-    "php": "^8.1",
+    "php": "^8.3",
     "symfony/http-client": "^6.2",
     "twig/twig": "^3"
   },
