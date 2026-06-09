@@ -5,7 +5,6 @@ namespace Dockworker\Git;
 use CzProject\GitPhp\Git;
 use CzProject\GitPhp\GitException;
 use CzProject\GitPhp\GitRepository;
-use Dockworker\DockworkerException;
 
 /**
  * Provides methods to interact with a local git repo.
@@ -27,15 +26,12 @@ trait GitRepoTrait
      *
      * @hook init
      *
-     * @throws \Dockworker\DockworkerException
+     * @throws \CzProject\GitPhp\GitException
      */
     public function initGitRepo(): void
     {
         if (isset($this->applicationRoot)) {
             $this->applicationRepository = $this->getGitRepoFromPath($this->applicationRoot);
-            if (empty($this->applicationRepository)) {
-                throw new DockworkerException('Could not initialize the git repository.');
-            }
         }
     }
 
