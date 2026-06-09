@@ -87,6 +87,42 @@ trait DockerComposeTrait
     }
 
     /**
+     * Recreates specific local docker compose services in place.
+     *
+     * Forces recreation of the named services (re-running their entrypoint)
+     * without touching their dependencies. Useful for re-running a container's
+     * startup sequence against changed data or a freshly-built image while
+     * leaving the rest of the stack (e.g. the database) running.
+     *
+     * @param string[] $services
+     *   The services to recreate.
+     */
+    protected function recreateComposeServices(array $services): void
+    {
+        if (empty($services)) {
+            return;
+        }
+        $compose_up_cmd = [
+            'up',
+            '-d',
+            '--force-recreate',
+            '--no-deps',
+        ];
+        foreach ($services as $service) {
+            $compose_up_cmd[] = $service;
+        }
+        $service_list = implode(', ', $services);
+        $this->runComposeApplicationCommand(
+            $compose_up_cmd,
+            $this->dockworkerIO,
+            "[local] Recreating $service_list",
+            "Recreating the $service_list docker container(s).",
+            "Failed to recreate the $service_list docker container(s).",
+            true
+        );
+    }
+
+    /**
      * Stops the local docker compose application.
      *
      * @param string $service
