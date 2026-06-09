@@ -45,7 +45,7 @@ trait JiraConnectorTrait
      *
      * @var string
      */
-    protected string $jiraAccessToken;
+    protected string $jiraUserAccessToken;
 
     /**
      * The Jira project service.
