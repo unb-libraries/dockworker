@@ -47,7 +47,7 @@ trait PersistentConfigurationTrait
      *   Optional. The default query response, defaults to none.
      * @param string $description
      *   Optional. A description offering further information about the item.
-     * @param string[] $reference_uris
+     * @param array<int, array<string, string>> $reference_uris
      *   Optional. Labels and URIs to display to support describing the item.
      * @param string $env_var_override_name
      *   Optional. An OS environment variable name whose value overrides configuration.
@@ -86,7 +86,6 @@ trait PersistentConfigurationTrait
             if (!empty($reference_uris)) {
                 foreach ($reference_uris as $reference_uri) {
                     $this->dockworkerIO->note(
-                        // @phpstan-ignore-next-line
                         "{$reference_uri['label']}: {$reference_uri['uri']}"
                     );
                 }

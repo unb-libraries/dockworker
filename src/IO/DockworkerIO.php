@@ -54,7 +54,7 @@ class DockworkerIO extends ConsoleIO
      *
      * @param string[] $headers
      *   The table headers.
-     * @param string[] $rows
+     * @param string[][] $rows
      *   The table rows.
      * @param string $title
      *   The title to display before the table.

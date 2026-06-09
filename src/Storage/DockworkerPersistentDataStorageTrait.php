@@ -72,12 +72,11 @@ trait DockworkerPersistentDataStorageTrait
      *   Optional. The default query response, defaults to none.
      * @param string $description
      *   Optional. A description offering further information about the item.
-     * @param string[] $reference_uris
+     * @param array<int, array<string, string>> $reference_uris
      *   Optional. An array of associative arrays containing 'label', 'uri' to aid in describing the item.
      * @param string $env_var_override_name
      *   Optional. An OS environment variable name whose value overrides configuration.
      *
-     * @TODO Docblock is wrong.
      * @return mixed
      *   The value of the configuration item.
      */
