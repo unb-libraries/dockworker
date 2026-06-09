@@ -66,7 +66,7 @@ trait GitHubRepoSettingsTrait
      */
     protected function writeGitHubRepositoryTopics($owner, $name): void
     {
-        $this->gitHubClient->api('repo')->replaceTopics(
+        $this->gitHubClient->repo()->replaceTopics(
             $owner,
             $name,
             array_unique($this->gitHubRepositoryTopics)
@@ -85,7 +85,7 @@ trait GitHubRepoSettingsTrait
      */
     protected function writeGitHubRepositoryDescription($owner, $name, array $description): void
     {
-        $this->gitHubClient->api('repo')->update(
+        $this->gitHubClient->repo()->update(
             $owner,
             $name,
             $description

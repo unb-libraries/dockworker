@@ -30,7 +30,7 @@ trait GitHubClientTrait
         string $owner,
         string $name
     ): void {
-        $this->gitHubClient->api('repo')->show(
+        $this->gitHubClient->repo()->show(
             $owner,
             $name
         );
@@ -129,6 +129,6 @@ trait GitHubClientTrait
      */
     public function setTestGitHubClientConnectivity(string $owner): void
     {
-        $this->gitHubClient->api('user')->repositories($owner);
+        $this->gitHubClient->user()->repositories($owner);
     }
 }
