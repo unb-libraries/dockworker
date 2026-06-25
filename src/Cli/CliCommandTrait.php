@@ -63,6 +63,10 @@ trait CliCommandTrait
      *   The message to display before executing the command.
      * @param bool $use_tty
      *   Whether to use a TTY for the command. Defaults to TRUE.
+     * @param (callable(string, string): void)|null $output_callback
+     *   An optional callback receiving ($type, $buffer) for each output chunk,
+     *   in arrival order across stdout and stderr. Honored only on the buffered
+     *   (non-TTY) path.
      */
     protected function executeCliCommand(
         array $command,
@@ -71,7 +75,8 @@ trait CliCommandTrait
         string $title = '',
         string $message = '',
         bool $use_tty = true,
-        ?float $timeout = null
+        ?float $timeout = null,
+        ?callable $output_callback = null
     ): CliCommand|null {
         if ($io !== null) {
             if (!empty($title)) {
@@ -97,7 +102,7 @@ trait CliCommandTrait
             $cmd->runTty($io);
         } else {
             $cmd->setTty(false);
-            $cmd->run();
+            $cmd->run($output_callback);
             if ($io !== null) {
                 $io->write($cmd->getOutput());
                 $io->write($cmd->getErrorOutput());

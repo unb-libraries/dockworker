@@ -17,6 +17,27 @@ class DockerContainer
     use CliCommandTrait;
 
     /**
+     * Stream selector: return both stdout and stderr, interleaved.
+     *
+     * @var string
+     */
+    public const LOGS_ALL = 'all';
+
+    /**
+     * Stream selector: return stderr only.
+     *
+     * @var string
+     */
+    public const LOGS_STDERR = 'stderr';
+
+    /**
+     * Stream selector: return stdout only.
+     *
+     * @var string
+     */
+    public const LOGS_STDOUT = 'stdout';
+
+    /**
      * The entities controlling the container.
      *
      * For local containers, this will only be docker compose. For kubernetes
@@ -209,15 +230,46 @@ class DockerContainer
 
     /**
      * Retrieves logs from the container.
+     *
+     * @param string $streams
+     *   Which stream(s) to return: self::LOGS_ALL (default), self::LOGS_STDOUT,
+     *   or self::LOGS_STDERR. For a local Docker container these map to the
+     *   container's distinct stdout/stderr streams; LOGS_ALL interleaves them in
+     *   arrival order. Interleaving is chunk-level (matching native 'docker logs'
+     *   terminal output), not strictly chronological. Note that 'kubectl logs'
+     *   pre-merges both streams onto stdout, so stream separation is not possible
+     *   for Kubernetes-deployed containers.
+     *
+     * @return string
+     *   The requested container logs.
      */
-    public function logs(): string
+    public function logs(string $streams = self::LOGS_ALL): string
     {
+        if ($streams === self::LOGS_ALL) {
+            $combined = '';
+            $this->executeCliCommand(
+                $this->containerLogsCommand,
+                null,
+                null,
+                '',
+                '',
+                false,
+                null,
+                function (string $type, string $buffer) use (&$combined): void {
+                    $combined .= $buffer;
+                },
+            );
+            return $combined;
+        }
+
         $cmd = $this->executeCliCommand(
             $this->containerLogsCommand,
             null,
             null,
         );
-        return $cmd->getOutput();
+        return $streams === self::LOGS_STDERR
+            ? $cmd->getErrorOutput()
+            : $cmd->getOutput();
     }
 
     /**
