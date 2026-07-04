@@ -1,0 +1,20 @@
+tool:
+  name: gh
+  description: The GitHub CLI (gh) allows dockworker to trigger deployment workflows via the GitHub API.
+  default_path: /usr/bin/gh
+  reference_uris:
+    -
+      label: Further Information
+      uri: https://cli.github.com/
+    -
+      label: Installation
+      uri: https://github.com/cli/cli#installation
+  env_override: GH_PATH
+  healthcheck:
+    command:
+      - '--version'
+    label: 'Checking the GitHub CLI (gh) version'
+    timeout: 5
+    output-contains: 'gh version'
+    fail-message:
+      - 'The gh (GitHub CLI) binary must be installed. See https://cli.github.com/'
