@@ -12,12 +12,16 @@ on:
         description: 'The full, repository namespaced image name to build (without the tag).'
         required: true
         type: string
+      # DEPRECATED (remove in 7.x): retained only for backward compatibility with @6.x
+      # callers. Ignored — every branch is now tagged by its (sanitized) branch name.
       push-branches:
-        description: 'A list of branches that should be pushed to the container registry. JSON list format.'
-        required: true
+        description: 'DEPRECATED and ignored. All branches are now tagged by branch name automatically; remove this from your workflow call.'
+        required: false
         type: string
+        default: '[]'
+      # DEPRECATED (remove in 7.x): see push-branches.
       push-all-branches:
-        description: 'Whether or not to push all branches, ignoring the push-branches input.'
+        description: 'DEPRECATED and ignored. All branches are now tagged by branch name automatically.'
         required: false
         type: boolean
         default: false
@@ -81,9 +85,15 @@ jobs:
       -
         name: Set Branched Image Full Name
         env:
-          TIMESTAMP: ${{ steps.current-time.outputs.formattedTime }}
           IMAGE_NAME: ${{ inputs.image-name }}
-        run: echo "BUILD_IMAGE_BRANCH_NAME=$IMAGE_NAME:$CI_REF_NAME" >> $GITHUB_ENV
+        run: |
+          # Sanitize the branch name into a valid Docker tag: replace any character outside
+          # [A-Za-z0-9_.-] with '-', strip leading '.'/'-', cap at 128 chars. Preserves case
+          # and dots so e.g. '11.x' stays '11.x' while 'feature/x' becomes 'feature-x'.
+          SAFE_REF="$(printf '%s' "$CI_REF_NAME" | sed -E 's/[^A-Za-z0-9_.-]+/-/g; s/^[.-]+//' | cut -c1-128)"
+          if [ -n "$SAFE_REF" ]; then
+            echo "BUILD_IMAGE_BRANCH_NAME=$IMAGE_NAME:$SAFE_REF" >> "$GITHUB_ENV"
+          fi
       -
         name: Set Package Name
         env:
@@ -126,12 +136,53 @@ jobs:
           username: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
           password: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
       - name: Determine Push Tags
-        uses: haya14busa/action-cond@v1
         id: fetch-push-tags
-        with:
-          cond: ${{ contains(fromJSON(inputs.push-branches), github.ref_name) || inputs.push-all-branches == true }}
-          if_true: "${{ env.BUILD_IMAGE_FULL_NAME }},${{ env.BUILD_IMAGE_BRANCH_NAME }}"
-          if_false: ${{ env.BUILD_IMAGE_FULL_NAME }}
+        env:
+          HASH_NAME: ${{ env.BUILD_IMAGE_FULL_NAME }}
+          BRANCH_NAME: ${{ env.BUILD_IMAGE_BRANCH_NAME }}
+          PUSH_BRANCHES: ${{ inputs.push-branches }}
+          PUSH_ALL_BRANCHES: ${{ inputs.push-all-branches }}
+          EVENT_NAME: ${{ github.event_name }}
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          # The unique hash-time image is always pushed.
+          tags="$HASH_NAME"
+
+          # Branch tag only on real branch pushes / manual dispatch (event allowlist; never
+          # PR or pull_request_target refs), and only when the sanitized branch name is non-empty.
+          if { [ "$EVENT_NAME" = "push" ] || [ "$EVENT_NAME" = "workflow_dispatch" ]; } \
+             && [ "$REF_TYPE" = "branch" ] && [ -n "$BRANCH_NAME" ]; then
+            tags="$HASH_NAME,$BRANCH_NAME"
+
+            # Deprecation signalling for push-branches / push-all-branches (both ignored now).
+            configured=false
+            if [ "$PUSH_ALL_BRANCHES" = "true" ]; then
+              configured=true
+            elif [ -n "$PUSH_BRANCHES" ] && [ "$PUSH_BRANCHES" != "[]" ]; then
+              configured=true
+            fi
+
+            would_push_old=false
+            if [ "$PUSH_ALL_BRANCHES" = "true" ]; then
+              would_push_old=true
+            elif printf '%s' "${PUSH_BRANCHES:-[]}" \
+                 | jq -e --arg b "$REF_NAME" 'if type=="array" then any(.[]; . == $b) else false end' >/dev/null 2>&1; then
+              would_push_old=true
+            fi
+
+            if [ "$configured" = "true" ]; then
+              if [ "$would_push_old" = "false" ]; then
+                echo "::warning title=push-branches deprecated::Branch '$REF_NAME' is now always tagged as '$REF_NAME'. push-branches/push-all-branches previously would have suppressed this and are deprecated/ignored - remove them from your workflow call."
+              else
+                echo "::notice title=push-branches deprecated::push-branches/push-all-branches are deprecated and no longer needed; all branches are tagged automatically. Remove them from your workflow call."
+              fi
+            fi
+          fi
+
+          echo "tags=$tags" >> "$GITHUB_OUTPUT"
+          echo "Resolved push tags: $tags"
       -
         env:
           TIMESTAMP: ${{ steps.current-time.outputs.time }}
@@ -144,7 +195,7 @@ jobs:
           platforms: ${{ inputs.platforms}}
           context: .
           file: ./Dockerfile
-          tags: ${{ steps.fetch-push-tags.outputs.value }}
+          tags: ${{ steps.fetch-push-tags.outputs.tags }}
           build-args: |
             BUILD_DATE=$TIMESTAMP
             VCS_REF=${{ env.CI_REF_NAME }}
@@ -154,7 +205,3 @@ jobs:
         with:
           name: build-image-tag
           path: /tmp/image_tag.env
-      - name: Debug Inputs
-        run: |
-          echo "push-branches=${{ inputs.push-branches }}"
-          echo "github.ref_name=${{ github.ref_name }}"

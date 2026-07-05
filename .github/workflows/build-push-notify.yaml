@@ -12,10 +12,13 @@ on:
         description: 'The full, repository namespaced image name to build (without the tag).'
         required: true
         type: string
+      # DEPRECATED (remove in 7.x): retained for backward compatibility; ignored and
+      # forwarded to build-push, which now tags every branch by name automatically.
       push-branches:
-        description: 'A list of branches that should be pushed to the container registry. JSON list format.'
-        required: true
+        description: 'DEPRECATED and ignored. All branches are now tagged by branch name automatically; remove this from your workflow call.'
+        required: false
         type: string
+        default: '[]'
       platforms:
         description: "A comma-separated list of platforms."
         required: false
