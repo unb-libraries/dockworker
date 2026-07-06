@@ -44,15 +44,18 @@ jobs:
           AUTHOR=$(jq -r '.commit.author.name // ""' <<<"$COMMIT_JSON")
           [ -z "$AUTHOR" ] && AUTHOR="$ACTOR"
           SHORT_SHA=${SHA:0:7}
+          RUN_URL="${GITHUB_SERVER_URL}/${REPO}/actions/runs/${RUN_ID}"
+          COMMIT_URL="${GITHUB_SERVER_URL}/${REPO}/commit/${SHA}"
           case "$CONCLUSION" in
             success) COLOR="good";    EMOJI=":rocket:" ;;
             failure) COLOR="danger";  EMOJI=":boom:" ;;
             *)       COLOR="warning"; EMOJI=":boom:" ;;
           esac
-          TEXT=$(printf '%s %s - %s %s (%s)\n%s %s\n%s' \
-            "$REPO" "$REF_NAME" "$CONCLUSION" "$EMOJI" "$WORKFLOW" "$SHORT_SHA" "$MESSAGE" "$AUTHOR")
+          # Slack mrkdwn <url|text> links: workflow name -> this run, short SHA -> the commit.
+          TEXT=$(printf '%s %s - %s %s (<%s|%s>)\n<%s|%s> %s\n%s' \
+            "$REPO" "$REF_NAME" "$CONCLUSION" "$EMOJI" "$RUN_URL" "$WORKFLOW" "$COMMIT_URL" "$SHORT_SHA" "$MESSAGE" "$AUTHOR")
           PAYLOAD=$(jq -cn --arg color "$COLOR" --arg text "$TEXT" \
-            '{attachments: [{color: $color, text: $text}]}')
+            '{attachments: [{color: $color, text: $text, mrkdwn_in: ["text"]}]}')
           echo "json=$PAYLOAD" >> "$GITHUB_OUTPUT"
       - uses: slackapi/slack-github-action@v3
         with:

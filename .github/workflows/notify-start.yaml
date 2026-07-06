@@ -22,16 +22,20 @@ jobs:
           WORKFLOW: ${{ github.workflow }}
           SHA: ${{ github.sha }}
           ACTOR: ${{ github.actor }}
+          RUN_ID: ${{ github.run_id }}
         run: |
           COMMIT_JSON=$(gh api "repos/${REPO}/commits/${SHA}" 2>/dev/null || echo '{}')
           MESSAGE=$(jq -r '.commit.message // ""' <<<"$COMMIT_JSON")
           AUTHOR=$(jq -r '.commit.author.name // ""' <<<"$COMMIT_JSON")
           [ -z "$AUTHOR" ] && AUTHOR="$ACTOR"
           SHORT_SHA=${SHA:0:7}
-          TEXT=$(printf '%s %s - Build Started :deployparrot: (%s)\n%s %s\n%s' \
-            "$REPO" "$REF_NAME" "$WORKFLOW" "$SHORT_SHA" "$MESSAGE" "$AUTHOR")
+          RUN_URL="${GITHUB_SERVER_URL}/${REPO}/actions/runs/${RUN_ID}"
+          COMMIT_URL="${GITHUB_SERVER_URL}/${REPO}/commit/${SHA}"
+          # Slack mrkdwn <url|text> links: workflow name -> this run, short SHA -> the commit.
+          TEXT=$(printf '%s %s - Build Started :deployparrot: (<%s|%s>)\n<%s|%s> %s\n%s' \
+            "$REPO" "$REF_NAME" "$RUN_URL" "$WORKFLOW" "$COMMIT_URL" "$SHORT_SHA" "$MESSAGE" "$AUTHOR")
           PAYLOAD=$(jq -cn --arg text "$TEXT" \
-            '{attachments: [{color: "warning", text: $text}]}')
+            '{attachments: [{color: "warning", text: $text, mrkdwn_in: ["text"]}]}')
           echo "json=$PAYLOAD" >> "$GITHUB_OUTPUT"
       - uses: slackapi/slack-github-action@v3
         with:
