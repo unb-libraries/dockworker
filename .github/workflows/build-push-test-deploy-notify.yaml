@@ -46,15 +46,15 @@ on:
         required: false
         type: string
       php-version:
-        description: 'PHP version for setup-php in sub-workflows. Defaults to 8.3 for backward compatibility.'
+        description: 'PHP version for setup-php in sub-workflows. Defaults to 8.4; override to 8.3 for older toolchains.'
         required: false
         type: string
-        default: '8.3'
+        default: '8.4'
       composer-version:
-        description: 'Composer tools version pin in sub-workflows. Defaults to 2.8.4 for backward compatibility.'
+        description: 'Composer tools version pin in sub-workflows. Defaults to 2.10.2.'
         required: false
         type: string
-        default: '2.8.4'
+        default: '2.10.2'
       # postman-test-url:
       #   description: 'URL of the API against which to run Postman tests.'
       #   type: string
