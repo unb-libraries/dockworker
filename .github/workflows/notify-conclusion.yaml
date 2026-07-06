@@ -11,9 +11,9 @@ jobs:
     name: Notify of Conclusion
     runs-on: ubuntu-latest
     permissions:
+      actions: read
       contents: read
     steps:
-      - uses: technote-space/workflow-conclusion-action@v3
       - name: Build Slack payload
         id: payload
         env:
@@ -23,8 +23,22 @@ jobs:
           WORKFLOW: ${{ github.workflow }}
           SHA: ${{ github.sha }}
           ACTOR: ${{ github.actor }}
-          CONCLUSION: ${{ env.WORKFLOW_CONCLUSION }}
+          RUN_ID: ${{ github.run_id }}
         run: |
+          # Aggregate this run's job results (replaces technote-space/workflow-conclusion-action,
+          # which is stuck on Node 16). A reusable workflow can't see sibling job results directly,
+          # so query the run's jobs via the API. On lookup failure, fall back to "unknown" (renders
+          # as a warning) rather than falsely reporting success.
+          CONCLUSIONS=$(gh api "repos/${REPO}/actions/runs/${RUN_ID}/jobs" --paginate --jq '.jobs[].conclusion' 2>/dev/null || true)
+          if [ -z "$CONCLUSIONS" ]; then
+            CONCLUSION="unknown"
+          elif grep -qE '^(failure|timed_out)$' <<<"$CONCLUSIONS"; then
+            CONCLUSION="failure"
+          elif grep -q '^cancelled$' <<<"$CONCLUSIONS"; then
+            CONCLUSION="cancelled"
+          else
+            CONCLUSION="success"
+          fi
           COMMIT_JSON=$(gh api "repos/${REPO}/commits/${SHA}" 2>/dev/null || echo '{}')
           MESSAGE=$(jq -r '.commit.message // ""' <<<"$COMMIT_JSON")
           AUTHOR=$(jq -r '.commit.author.name // ""' <<<"$COMMIT_JSON")
