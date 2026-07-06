@@ -47,7 +47,7 @@ jobs:
         with:
           version: 'v1.31.0'
         id: install-kubectl
-      - uses: azure/k8s-set-context@v4
+      - uses: azure/k8s-set-context@v5
         name: Set Kubectl Context
         with:
           method: kubeconfig
