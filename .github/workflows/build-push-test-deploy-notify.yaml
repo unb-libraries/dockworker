@@ -172,7 +172,7 @@ jobs:
         with:
           image-name: ${{ inputs.image-name }}
           token: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
-          dry-run: true
+          max-delete: 1500
 
   notify-conclusion:
     name: Notify of Conclusion
