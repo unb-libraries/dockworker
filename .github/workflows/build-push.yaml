@@ -185,7 +185,6 @@ jobs:
           echo "Resolved push tags: $tags"
       -
         env:
-          TIMESTAMP: ${{ steps.current-time.outputs.time }}
           DOCKER_BUILD_RECORD_RETENTION_DAYS: ${{ inputs.docker-build-record-retention-days }}
         uses: docker/build-push-action@v7
         with:
@@ -197,7 +196,7 @@ jobs:
           file: ./Dockerfile
           tags: ${{ steps.fetch-push-tags.outputs.tags }}
           build-args: |
-            BUILD_DATE=$TIMESTAMP
+            BUILD_DATE=${{ steps.current-time.outputs.time }}
             VCS_REF=${{ env.CI_REF_NAME }}
             VERSION=${{ env.BUILD_IMAGE_TAG }}
       -
