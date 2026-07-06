@@ -158,6 +158,22 @@ jobs:
     secrets:
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
 
+  prune-old-images:
+    name: Prune Old Images
+    needs: [ deploy-image-to-k8s ]
+    if: ${{ success() && contains(fromJSON(inputs.deploy-branches), github.ref_name) }}
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    concurrency:
+      group: prune-${{ inputs.image-name }}
+      cancel-in-progress: false
+    steps:
+      - uses: unb-libraries/container-image-pruner@v1
+        with:
+          image-name: ${{ inputs.image-name }}
+          token: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
+          dry-run: true
+
   notify-conclusion:
     name: Notify of Conclusion
     uses: unb-libraries/dockworker/.github/workflows/notify-conclusion.yaml@6.x
