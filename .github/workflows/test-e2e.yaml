@@ -56,7 +56,7 @@ jobs:
           GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
       -
         name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKER_CLOUD_USER_NAME }}
           password: ${{ secrets.DOCKER_CLOUD_ACCESS_TOKEN }}
