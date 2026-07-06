@@ -34,7 +34,7 @@ jobs:
         shell: bash
       -
         name: Retrieve The Log Artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ inputs.log-artifact-name }}
           path: /tmp/logs

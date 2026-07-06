@@ -29,7 +29,7 @@ jobs:
       - uses: FranzDiebold/github-env-vars-action@v2
       -
         name: Retrieve Built Image Tag
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-image-tag
           path: /tmp
