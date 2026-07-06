@@ -10,18 +10,32 @@ jobs:
   slack-start:
     name: Notify of Start
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: FranzDiebold/github-env-vars-action@v2
-      - uses: 8398a7/action-slack@v3
-        with:
-          status: custom
-          fields: workflow,commit,repo,author,action,message
-          custom_payload: |
-            {
-              attachments: [{
-                color: 'warning',
-                text: `${process.env.AS_REPO} ${process.env.CI_REF_NAME} - Build Started :deployparrot: (${process.env.AS_WORKFLOW})\n${process.env.AS_COMMIT} ${process.env.AS_MESSAGE}\n${process.env.AS_AUTHOR}`,
-              }]
-            }
+      - name: Build Slack payload
+        id: payload
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          REF_NAME: ${{ github.ref_name }}
+          WORKFLOW: ${{ github.workflow }}
+          SHA: ${{ github.sha }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          COMMIT_JSON=$(gh api "repos/${REPO}/commits/${SHA}" 2>/dev/null || echo '{}')
+          MESSAGE=$(jq -r '.commit.message // ""' <<<"$COMMIT_JSON")
+          AUTHOR=$(jq -r '.commit.author.name // ""' <<<"$COMMIT_JSON")
+          [ -z "$AUTHOR" ] && AUTHOR="$ACTOR"
+          SHORT_SHA=${SHA:0:7}
+          TEXT=$(printf '%s %s - Build Started :deployparrot: (%s)\n%s %s\n%s' \
+            "$REPO" "$REF_NAME" "$WORKFLOW" "$SHORT_SHA" "$MESSAGE" "$AUTHOR")
+          PAYLOAD=$(jq -cn --arg text "$TEXT" \
+            '{attachments: [{color: "warning", text: $text}]}')
+          echo "json=$PAYLOAD" >> "$GITHUB_OUTPUT"
+      - uses: slackapi/slack-github-action@v3
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          errors: false          # best-effort: must never block builds that gate on this job
+          payload: ${{ steps.payload.outputs.json }}
