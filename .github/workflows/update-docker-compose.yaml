@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: FranzDiebold/github-env-vars-action@v2
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       -
         name: Retrieve Image Tag
         uses: actions/download-artifact@v4
