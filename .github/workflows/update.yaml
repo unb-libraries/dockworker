@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: unb-libraries/install-dockworker-composite-action@v2
+      - uses: unb-libraries/install-dockworker-composite-action@v4
         with:
           php-version: ${{ inputs.php-version }}
           composer-version: ${{ inputs.composer-version }}

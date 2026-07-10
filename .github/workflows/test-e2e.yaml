@@ -35,7 +35,7 @@ jobs:
         with:
           node-version: 16.x
       - uses: FranzDiebold/github-env-vars-action@v2
-      - uses: unb-libraries/install-dockworker-composite-action@2.x
+      - uses: unb-libraries/install-dockworker-composite-action@v4
         with:
           php-version: ${{ inputs.php-version }}
           composer-version: ${{ inputs.composer-version }}
