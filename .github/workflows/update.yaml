@@ -4,9 +4,10 @@ on:
   workflow_call:
     inputs:
       add-paths:
-        description: 'A list of relative paths to add in the PR. Paths should follow git pathspec syntax'
-        required: true
+        description: 'Optional override for the paths to stage in the PR (git pathspec syntax). When empty, the paths are derived from dockworker.update.targets by the update command.'
+        required: false
         type: string
+        default: ''
       php-version:
         description: 'PHP version for setup-php. Defaults to 8.4; override to 8.3 for older toolchains.'
         required: false
@@ -35,14 +36,16 @@ jobs:
       - name: Remove Dockworker-Installed git Hooks
         run: rm -f .git/hooks/commit-msg .git/hooks/pre-commit
       - name: Update Application and Dependencies
+        id: update
         shell: 'script -q -e -c "bash {0}"'
         run: vendor/bin/dockworker update
       - name: Generate composer diff
         id: composer_diff
+        if: steps.update.outputs.primary-lock != ''
         uses: IonBazan/composer-diff-action@v1
         with:
-          base: "HEAD:build/composer.lock"
-          target: "build/composer.lock"
+          base: "HEAD:${{ steps.update.outputs.primary-lock }}"
+          target: "${{ steps.update.outputs.primary-lock }}"
           direct: true
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
@@ -53,7 +56,7 @@ jobs:
           author: UNB Libraries CodeBot <libsystems@unb.ca>
           signoff: false
           branch: application-updates
-          add-paths: ${{ inputs.add-paths }}
+          add-paths: ${{ inputs.add-paths != '' && inputs.add-paths || steps.update.outputs.add-paths }}
           delete-branch: true
           title: 'Application Updates'
           body: |
