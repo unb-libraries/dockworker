@@ -109,7 +109,7 @@ jobs:
       - name: Extract the repository name only from image-name
         id: extract-repo-name
         run: echo "REPOSITORY_NAME_COMPONENT=$(echo ${{ inputs.image-name }} | cut -d '/' -f 3)" >> $GITHUB_ENV
-      - uses: snok/container-retention-policy@v3.0.0
+      - uses: snok/container-retention-policy@v3.1.0
         with:
           account: ${{ env.REPOSITORY_OWNER_COMPONENT }}
           cut-off: ${{ inputs.cut-off }}
