@@ -4,15 +4,28 @@
 include __DIR__ . '/../src/RepoFinder.php';
 
 use Dockworker\RepoFinder;
+use Robo\ClassDiscovery\RelativeNamespaceDiscovery;
 use Robo\Runner;
 
 $repo_root = RepoFinder::findRepoRoot();
 $autoloaderPath = "$repo_root/vendor/autoload.php";
 
 $classLoader = require $autoloaderPath;
-$runner = new Runner();
+
+// Discover command classes up front and hand them to the Runner as an explicit
+// class list. This mirrors what setRelativePluginNamespace() would do
+// internally, but because $roboClass is an array the Runner never falls back to
+// looking for a RoboFile.php. That suppresses the spurious "Requested RoboFile
+// is invalid" / "Robo is not initialized here" warnings Robo otherwise
+// accumulates and flushes whenever a command exits non-zero.
+$discovery = new RelativeNamespaceDiscovery($classLoader);
+$discovery
+  ->setRelativeNamespace('Robo\Plugin\Commands')
+  ->setSearchPattern('/.*Commands?\.php$/');
+$commandClasses = $discovery->getClasses();
+
+$runner = new Runner($commandClasses);
 $runner
-  ->setRelativePluginNamespace('Robo\Plugin')
   ->setSelfUpdateRepository('unb-libraries\dockworker')
   ->setEnvConfigPrefix('DOCKWORKER')
   ->setClassLoader($classLoader);
