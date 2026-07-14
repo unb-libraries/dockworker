@@ -80,7 +80,6 @@ trait MothballTrait
      */
     protected function setMothballFiles(string $env): void
     {
-
     }
 
     /**
@@ -109,5 +108,4 @@ trait MothballTrait
             )
         );
     }
-
 }

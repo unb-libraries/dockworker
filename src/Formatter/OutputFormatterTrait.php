@@ -7,10 +7,10 @@ namespace Dockworker\Formatter;
  */
 trait OutputFormatterTrait
 {
-
     protected $outputFormatter;
 
-    public function setOutputFormatter(string $formatter) {
+    public function setOutputFormatter(string $formatter)
+    {
         // Check if the formatter is valid.
         $output_formatters = [
             'plain' => new PlainTextFormatter(),

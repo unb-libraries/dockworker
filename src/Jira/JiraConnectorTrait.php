@@ -72,8 +72,7 @@ trait JiraConnectorTrait
         $headers = ['ID', 'Summary', 'Last Updated'];
         if (empty($this->jiraProjectKeys)) {
             $project_keys = $this->jiraGlobalProjectKeys;
-        }
-        else {
+        } else {
             $project_keys = $this->jiraProjectKeys;
         }
         foreach ($project_keys as $project_key) {

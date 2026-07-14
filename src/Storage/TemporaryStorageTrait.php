@@ -7,15 +7,18 @@ namespace Dockworker\Storage;
  */
 trait TemporaryStorageTrait
 {
-
-    public static function createTemporaryLocalStorage(string $identifier = ''): string {
+    public static function createTemporaryLocalStorage(string $identifier = ''): string
+    {
         $tmp_prefix = "dockworker-$identifier";
-        $tempfile=tempnam(sys_get_temp_dir(), $tmp_prefix);
+        $tempfile = tempnam(sys_get_temp_dir(), $tmp_prefix);
         // tempnam creates file on disk
-        if (file_exists($tempfile)) { unlink($tempfile); }
+        if (file_exists($tempfile)) {
+            unlink($tempfile);
+        }
         mkdir($tempfile);
-        if (is_dir($tempfile)) { return $tempfile; }
+        if (is_dir($tempfile)) {
+            return $tempfile;
+        }
         return '';
     }
-
 }

@@ -5,7 +5,7 @@ namespace Dockworker\Formatter;
 /**
  * Provides methods to generate JIRAML.
  */
-Class JiraFormatter extends PlainTextFormatter
+class JiraFormatter extends PlainTextFormatter
 {
     /**
      * @param string[] $headers

@@ -5,7 +5,8 @@ namespace Dockworker\Formatter;
 /**
  * Provides methods to generate textual representations of data.
  */
-class PlainTextFormatter {
+class PlainTextFormatter
+{
     /**
      * @param string[] $headers
      * @param string[][] $rows

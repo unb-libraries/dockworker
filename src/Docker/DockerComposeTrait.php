@@ -36,8 +36,7 @@ trait DockerComposeTrait
             $section_title = "[local] Building $service";
             $run_text = "Building the $service docker image.";
             $fail_text = "Failed to build the $service docker image.";
-        }
-        else {
+        } else {
             $section_title = "[local] Building Application";
             $run_text = "Building the application docker image(s).";
             $fail_text = "Failed to build the application docker image(s).";
@@ -70,8 +69,7 @@ trait DockerComposeTrait
             $section_title = "[local] Starting $service";
             $run_text = "Starting the $service docker container.";
             $fail_text = "Failed to start the $service docker container.";
-        }
-        else {
+        } else {
             $section_title = "[local] Starting Application";
             $run_text = "Starting the application.";
             $fail_text = "Failed to start the application.";
@@ -139,8 +137,7 @@ trait DockerComposeTrait
             $section_title = "[local] Stopping $service";
             $run_text = "Stopping the $service docker container.";
             $fail_text = "Failed to stop the $service docker container.";
-        }
-        else {
+        } else {
             $section_title = "[local] Stopping Application";
             $run_text = "Stopping the application.";
             $fail_text = "Failed to stop the application.";
@@ -215,8 +212,7 @@ trait DockerComposeTrait
             $section_title = "[local] Removing $service data";
             $run_text = "Stopping the $service docker container and removing its data.";
             $fail_text = "Failed to stop the $service docker container and remove its data.";
-        }
-        else {
+        } else {
             $section_title = "[local] Removing existing application data";
             $run_text = "Stopping the application and removing its data.";
             $fail_text = "Failed to stop the application and remove its data.";
@@ -251,8 +247,7 @@ trait DockerComposeTrait
             $section_title = "[local] Displaying $service logs";
             $run_text = "Displaying logs for the $service docker container.";
             $fail_text = "Failed to display logs for the $service docker container.";
-        }
-        else {
+        } else {
             $section_title = "[local] Displaying application logs";
             $run_text = "Displaying logs for the application.";
             $fail_text = "Failed to display logs for the application.";
