@@ -80,7 +80,7 @@ trait GitHubRepoSettingsTrait
      *   The GitHub repository owner.
      * @param string $name
      *   The GitHub repository name.
-     * @param array<string, mixed> $description
+     * @param string[] $description
      *   The GitHub repository description.
      */
     protected function writeGitHubRepositoryDescription($owner, $name, array $description): void
