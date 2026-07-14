@@ -10,7 +10,7 @@ use Dockworker\IO\DockworkerIO;
  *
  * @phpstan-consistent-constructor
  */
-class PreFlightCheck
+final class PreFlightCheck
 {
     /**
      * The command object to use in the check.

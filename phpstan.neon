@@ -2,3 +2,8 @@ parameters:
   level: 6
   paths:
     - src
+  ignoreErrors:
+    # Dockworker is a trait library: these traits are consumed by downstream
+    # packages (dockworker-*), not within this package's own src, so PHPStan 2.x
+    # reports them as "used zero times". They are analysed where they are used.
+    - identifier: trait.unused

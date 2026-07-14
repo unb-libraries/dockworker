@@ -12,7 +12,7 @@ use Dockworker\IO\DockworkerIO;
  *
  * @phpstan-consistent-constructor
  */
-class DockerContainer
+final class DockerContainer
 {
     use CliCommandTrait;
 
