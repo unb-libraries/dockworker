@@ -18,6 +18,16 @@ on:
         required: false
         type: string
         default: '2.10.2'
+      git-author:
+        description: 'Author identity ("Name <email>") for the update PR commit.'
+        required: false
+        type: string
+        default: 'UNB Libraries CodeBot <libsystems@unb.ca>'
+      git-committer:
+        description: 'Committer identity ("Name <email>") for the update PR commit.'
+        required: false
+        type: string
+        default: 'UNB Libraries CodeBot <libsystems@unb.ca>'
     secrets:
       PAT_TOKEN:
         description: 'The token to use for creating the pull request'
@@ -52,8 +62,8 @@ jobs:
         with:
           token: ${{ secrets.PAT_TOKEN }}
           commit-message: Update Application and Dependencies
-          committer: UNB Libraries CodeBot <libsystems@unb.ca>
-          author: UNB Libraries CodeBot <libsystems@unb.ca>
+          committer: ${{ inputs.git-committer }}
+          author: ${{ inputs.git-author }}
           signoff: false
           branch: application-updates
           add-paths: ${{ inputs.add-paths != '' && inputs.add-paths || steps.update.outputs.add-paths }}
