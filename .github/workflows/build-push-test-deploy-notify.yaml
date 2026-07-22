@@ -55,6 +55,11 @@ on:
         required: false
         type: string
         default: '2.10.2'
+      checkout-fetch-depth:
+        description: 'fetch-depth for the build-push source checkout. Default 1 (shallow, unchanged). Set 0 for full history when the build needs it (e.g. git-based last-updated dates).'
+        required: false
+        type: number
+        default: 1
       # postman-test-url:
       #   description: 'URL of the API against which to run Postman tests.'
       #   type: string
@@ -108,6 +113,7 @@ jobs:
       docker-build-record-retention-days: ${{ inputs.docker-build-record-retention-days }}
       php-version: ${{ inputs.php-version }}
       composer-version: ${{ inputs.composer-version }}
+      checkout-fetch-depth: ${{ inputs.checkout-fetch-depth }}
     secrets:
       GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
       GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}

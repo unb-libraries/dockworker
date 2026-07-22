@@ -51,6 +51,16 @@ on:
         required: false
         type: string
         default: '2.10.2'
+      checkout-fetch-depth:
+        description: 'fetch-depth for the build-push source checkout. Default 1 (shallow, unchanged). Set 0 for full history when the build needs it (e.g. git-based last-updated dates).'
+        required: false
+        type: number
+        default: 1
+      run-log-check:
+        description: 'Run the post-deploy container log error check (requires a composer.json requiring unb-libraries/dockworker). Default true (unchanged). Set false for apps without the PHP dockworker harness (e.g. static sites).'
+        required: false
+        type: boolean
+        default: true
     secrets:
       KUBE_CONFIG:
         required: true
@@ -80,6 +90,7 @@ jobs:
       docker-build-record-retention-days: ${{ inputs.docker-build-record-retention-days }}
       php-version: ${{ inputs.php-version }}
       composer-version: ${{ inputs.composer-version }}
+      checkout-fetch-depth: ${{ inputs.checkout-fetch-depth }}
     secrets:
       GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
       GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
@@ -97,6 +108,7 @@ jobs:
 
   test-new-deployment-logs:
     name: Check New Deployment Logs
+    if: ${{ inputs.run-log-check }}
     uses: unb-libraries/dockworker/.github/workflows/test-logs.yaml@6.x
     needs: [ deploy-image-to-k8s ]
     with:
@@ -122,7 +134,7 @@ jobs:
   notify-conclusion:
     name: Notify Conclusion
     uses: unb-libraries/dockworker/.github/workflows/notify-conclusion.yaml@6.x
-    needs: [ test-new-deployment-logs ]
+    needs: [ deploy-image-to-k8s, test-new-deployment-logs ]
     if: always()
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

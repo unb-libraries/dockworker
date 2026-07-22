@@ -45,6 +45,11 @@ on:
         required: false
         type: string
         default: '2.10.2'
+      checkout-fetch-depth:
+        description: 'fetch-depth for the source checkout. Default 1 (shallow, unchanged). Set 0 for full history when the build needs it (e.g. git-based last-updated dates).'
+        required: false
+        type: number
+        default: 1
 
     secrets:
       GH_CONTAINER_REGISTRY_USER:
@@ -61,6 +66,8 @@ jobs:
     steps:
       - uses: FranzDiebold/github-env-vars-action@v2
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: ${{ inputs.checkout-fetch-depth }}
       -
         name: Get current time
         uses: josStorer/get-current-time@v2
