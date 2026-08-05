@@ -56,7 +56,11 @@ jobs:
         shell: bash
       -
         name: Display Full Logs
+        # Without this the step is skipped exactly when the check above fails,
+        # which is the only time the logs are actually needed. The fallback keeps
+        # a missing artifact from adding a second, misleading failure.
+        if: always()
         env:
           LOG_FILE_NAME: ${{ inputs.log-file-name }}
-        run: cat "/tmp/logs/$LOG_FILE_NAME"
+        run: cat "/tmp/logs/$LOG_FILE_NAME" || echo "No log file at /tmp/logs/$LOG_FILE_NAME"
         shell: bash
