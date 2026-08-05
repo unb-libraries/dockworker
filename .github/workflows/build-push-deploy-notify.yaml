@@ -103,6 +103,8 @@ jobs:
       branch-env-map: ${{ inputs.branch-env-map }}
       deploy-branches: ${{ inputs.deploy-branches }}
       k8s-deployment-name: ${{ inputs.k8s-deployment-name }}
+      # Nothing consumes the artifact when the check is off, so skip the settle wait too.
+      collect-logs: ${{ inputs.run-log-check }}
     secrets:
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
 

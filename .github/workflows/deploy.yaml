@@ -15,6 +15,11 @@ on:
         description: 'The name(s) of the kubernetes deployment(s) to update. Supports CSV for multiple deployments (e.g., "deploy1,deploy2").'
         required: true
         type: string
+      collect-logs:
+        description: 'Collect post-rollout container logs and upload them as the deployment-logs artifact. Default true (unchanged). Set false to skip the post-rollout settle wait and artifact upload, e.g. when no downstream job consumes the logs.'
+        required: false
+        type: boolean
+        default: true
     secrets:
       KUBE_CONFIG:
         required: true
@@ -99,7 +104,7 @@ jobs:
           DEPLOYMENT_NAMESPACE: ${{ env.DEPLOYMENT_NAMESPACE }}
       -
         name: Write deployment logs
-        if: always()
+        if: ${{ always() && inputs.collect-logs }}
         run: |
           sleep 60
           IFS=',' read -ra DEPLOYMENTS <<< "$DEPLOYMENT_NAMES"
@@ -117,7 +122,7 @@ jobs:
           DEPLOYMENT_NAMESPACE: ${{ env.DEPLOYMENT_NAMESPACE }}
       -
         name: Archive Deployment Logs
-        if: always()
+        if: ${{ always() && inputs.collect-logs }}
         uses: actions/upload-artifact@v7
         with:
           name: deployment-logs
