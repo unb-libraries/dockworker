@@ -50,6 +50,16 @@ on:
         required: false
         type: number
         default: 1
+      dockerfile:
+        description: 'Path to the Dockerfile, relative to the repository root. Default empty (unchanged), which lets buildx use "<build-context>/Dockerfile". Set this when the Dockerfile lives outside the build context or is not named Dockerfile.'
+        required: false
+        type: string
+        default: ''
+      build-context:
+        description: 'The Docker build context, relative to the repository root. Default "." (unchanged). Set this when the image is built from a subdirectory. Note that .dockerignore is read from inside the context directory, so a root .dockerignore does not apply to a subdirectory context.'
+        required: false
+        type: string
+        default: '.'
 
     secrets:
       GH_CONTAINER_REGISTRY_USER:
@@ -68,6 +78,31 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: ${{ inputs.checkout-fetch-depth }}
+      -
+        name: Validate Build Paths
+        env:
+          BUILD_CONTEXT: ${{ inputs.build-context }}
+          DOCKERFILE: ${{ inputs.dockerfile }}
+        run: |
+          set -euo pipefail
+          # Fail here rather than inside buildx, which would only surface the problem
+          # after setup-php, composer install, dart-sass and theme:build-all have run.
+          context="${BUILD_CONTEXT:-.}"
+          [ -n "$context" ] || context="."
+          # An empty dockerfile input is passed to the action as-is, so buildx applies
+          # its own "<context>/Dockerfile" default. Resolve it here only to validate.
+          resolved="${DOCKERFILE:-}"
+          [ -n "$resolved" ] || resolved="$context/Dockerfile"
+          if [ ! -d "$context" ]; then
+            echo "::error title=Invalid build-context::build-context '$context' is not a directory in this repository."
+            exit 1
+          fi
+          if [ ! -f "$resolved" ]; then
+            echo "::error title=Missing Dockerfile::No Dockerfile found at '$resolved'. Set the 'dockerfile' input if it lives elsewhere in the repository."
+            exit 1
+          fi
+          echo "Building '$resolved' with context '$context'"
+        shell: bash
       -
         name: Get current time
         uses: josStorer/get-current-time@v2
@@ -198,15 +233,20 @@ jobs:
           provenance: false
           pull: true
           push: true
-          platforms: ${{ inputs.platforms}}
-          context: .
-          file: ./Dockerfile
+          platforms: ${{ inputs.platforms }}
+          # `context` must never be empty: build-push-action then falls back to the remote
+          # git context, which silently discards workspace changes (e.g. built themes).
+          context: ${{ inputs.build-context || '.' }}
+          file: ${{ inputs.dockerfile }}
           tags: ${{ steps.fetch-push-tags.outputs.tags }}
           build-args: |
             BUILD_DATE=${{ steps.current-time.outputs.time }}
             VCS_REF=${{ env.CI_REF_NAME }}
             VERSION=${{ env.BUILD_IMAGE_TAG }}
       -
+        # CONTRACT: this artifact name and its flat KEY=VALUE format are consumed by
+        # deploy.yaml and update-docker-compose.yaml. See .github/workflows/README.md
+        # before changing either - multi-image support depends on keeping this emitted.
         uses: actions/upload-artifact@v7
         with:
           name: build-image-tag

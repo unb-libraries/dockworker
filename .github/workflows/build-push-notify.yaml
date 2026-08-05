@@ -44,6 +44,16 @@ on:
         required: false
         type: number
         default: 1
+      dockerfile:
+        description: 'Path to the Dockerfile, relative to the repository root. Default empty (unchanged), which lets buildx use "<build-context>/Dockerfile". Set this when the Dockerfile lives outside the build context or is not named Dockerfile.'
+        required: false
+        type: string
+        default: ''
+      build-context:
+        description: 'The Docker build context, relative to the repository root. Default "." (unchanged). Set this when the image is built from a subdirectory. Note that .dockerignore is read from inside the context directory, so a root .dockerignore does not apply to a subdirectory context.'
+        required: false
+        type: string
+        default: '.'
     secrets:
       SLACK_WEBHOOK_URL:
         required: true
@@ -72,6 +82,8 @@ jobs:
       php-version: ${{ inputs.php-version }}
       composer-version: ${{ inputs.composer-version }}
       checkout-fetch-depth: ${{ inputs.checkout-fetch-depth }}
+      dockerfile: ${{ inputs.dockerfile }}
+      build-context: ${{ inputs.build-context }}
     secrets:
       GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
       GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
