@@ -68,6 +68,9 @@ on:
       GH_CONTAINER_REGISTRY_TOKEN:
         description: 'The token to use to login to the GitHub Container Registry.'
         required: true
+      GH_NPM_TOKEN:
+        description: 'The token to use to read from GitHub NPM Package Registry'
+        required: false
 
 jobs:
   build-image:
@@ -226,6 +229,17 @@ jobs:
           echo "tags=$tags" >> "$GITHUB_OUTPUT"
           echo "Resolved push tags: $tags"
       -
+        name: Write npmrc build secret
+        env:
+          GH_NPM_TOKEN: ${{ secrets.GH_NPM_TOKEN }}
+        run: |
+          umask 077
+          if [ -n "$GH_NPM_TOKEN" ]; then
+            echo "//npm.pkg.github.com/:_authToken=$GH_NPM_TOKEN" > "$RUNNER_TEMP/npmrc"
+          else
+            : > "$RUNNER_TEMP/npmrc"
+          fi
+      -
         env:
           DOCKER_BUILD_RECORD_RETENTION_DAYS: ${{ inputs.docker-build-record-retention-days }}
         uses: docker/build-push-action@v7
@@ -239,6 +253,8 @@ jobs:
           context: ${{ inputs.build-context || '.' }}
           file: ${{ inputs.dockerfile }}
           tags: ${{ steps.fetch-push-tags.outputs.tags }}
+          secret-files: |
+            npmrc=${{ runner.temp }}/npmrc
           build-args: |
             BUILD_DATE=${{ steps.current-time.outputs.time }}
             VCS_REF=${{ env.CI_REF_NAME }}

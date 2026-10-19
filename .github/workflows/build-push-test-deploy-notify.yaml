@@ -87,6 +87,8 @@ on:
         required: true
       GH_CONTAINER_REGISTRY_TOKEN:
         required: true
+      GH_NPM_TOKEN:
+        required: false
       # POSTMAN_API_KEY:
       #   required: true
       # POSTMAN_TEST_GENERATION_COLLECTION_ID:
@@ -129,6 +131,7 @@ jobs:
     secrets:
       GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
       GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
+      GH_NPM_TOKEN: ${{ secrets.GH_NPM_TOKEN }}
 
   update-docker-compose:
     name: Update docker-compose
