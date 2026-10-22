@@ -36,6 +36,21 @@ on:
         required: false
         type: string
         default: linux/amd64,linux/arm64/v8
+      distribute:
+        description: 'Build each platform in its own job on a native runner, then merge them. Set false to build every platform in one job under emulation, as before.'
+        required: false
+        type: boolean
+        default: true
+      arm64-runner:
+        description: 'Runner label for linux/arm64 builds when distribute is true.'
+        required: false
+        type: string
+        default: ubuntu-24.04-arm
+      amd64-runner:
+        description: 'Runner label for linux/amd64 builds and emulated platforms.'
+        required: false
+        type: string
+        default: ubuntu-latest
       docker-build-record-retention-days:
         description: 'Number of days to retain Docker build records.'
         required: false
@@ -99,6 +114,9 @@ jobs:
       image-name: ${{ inputs.image-name }}
       push-branches: ${{ inputs.push-branches }}
       platforms: ${{ inputs.platforms }}
+      distribute: ${{ inputs.distribute }}
+      arm64-runner: ${{ inputs.arm64-runner }}
+      amd64-runner: ${{ inputs.amd64-runner }}
       docker-build-record-retention-days: ${{ inputs.docker-build-record-retention-days }}
       php-version: ${{ inputs.php-version }}
       composer-version: ${{ inputs.composer-version }}

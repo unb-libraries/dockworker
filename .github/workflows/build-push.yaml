@@ -60,6 +60,21 @@ on:
         required: false
         type: string
         default: '.'
+      distribute:
+        description: 'Build each platform in its own job on a native runner, then merge them into one multi-platform image. Set false to build every platform in a single job on amd64-runner (emulating non-amd64 platforms), as before.'
+        required: false
+        type: boolean
+        default: true
+      arm64-runner:
+        description: 'Runner label for linux/arm64 builds when distribute is true. GitHub-hosted ubuntu-24.04-arm runners are available to public and private repositories. Set ubuntu-latest to emulate arm64 instead.'
+        required: false
+        type: string
+        default: ubuntu-24.04-arm
+      amd64-runner:
+        description: 'Runner label for linux/amd64 builds, and for any platform without a native runner mapping (built under emulation).'
+        required: false
+        type: string
+        default: ubuntu-latest
 
     secrets:
       GH_CONTAINER_REGISTRY_USER:
@@ -73,39 +88,23 @@ on:
         required: false
 
 jobs:
-  build-image:
-    name: Build Image
+  # Computes the tags once (so every platform job and the merge share one timestamp) and plans
+  # one build job per platform. Must not reference secrets: job outputs that may contain a
+  # secret value are silently dropped by the runner.
+  prepare:
+    name: Prepare Build
     runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.fetch-push-tags.outputs.tags }}
+      image-tag: ${{ steps.hashed-tag.outputs.image-tag }}
+      image-full-name: ${{ steps.hashed-tag.outputs.image-full-name }}
+      vcs-ref: ${{ steps.hashed-tag.outputs.vcs-ref }}
+      build-date: ${{ steps.current-time.outputs.time }}
+      matrix: ${{ steps.plan-platforms.outputs.matrix }}
+      multi: ${{ steps.plan-platforms.outputs.multi }}
+      count: ${{ steps.plan-platforms.outputs.count }}
     steps:
       - uses: FranzDiebold/github-env-vars-action@v2
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: ${{ inputs.checkout-fetch-depth }}
-      -
-        name: Validate Build Paths
-        env:
-          BUILD_CONTEXT: ${{ inputs.build-context }}
-          DOCKERFILE: ${{ inputs.dockerfile }}
-        run: |
-          set -euo pipefail
-          # Fail here rather than inside buildx, which would only surface the problem
-          # after setup-php, composer install, dart-sass and theme:build-all have run.
-          context="${BUILD_CONTEXT:-.}"
-          [ -n "$context" ] || context="."
-          # An empty dockerfile input is passed to the action as-is, so buildx applies
-          # its own "<context>/Dockerfile" default. Resolve it here only to validate.
-          resolved="${DOCKERFILE:-}"
-          [ -n "$resolved" ] || resolved="$context/Dockerfile"
-          if [ ! -d "$context" ]; then
-            echo "::error title=Invalid build-context::build-context '$context' is not a directory in this repository."
-            exit 1
-          fi
-          if [ ! -f "$resolved" ]; then
-            echo "::error title=Missing Dockerfile::No Dockerfile found at '$resolved'. Set the 'dockerfile' input if it lives elsewhere in the repository."
-            exit 1
-          fi
-          echo "Building '$resolved' with context '$context'"
-        shell: bash
       -
         name: Get current time
         uses: josStorer/get-current-time@v2
@@ -114,19 +113,17 @@ jobs:
           format: YYYYMMDDHHMMSS
       -
         name: Set Hashed Tag
-        env:
-          TIMESTAMP: ${{ steps.current-time.outputs.formattedTime }}
-        run: |
-          echo "BUILD_IMAGE_TAG=$CI_SHA_SHORT-$TIMESTAMP" >> $GITHUB_ENV &&
-          echo "BUILD_IMAGE_TAG=$CI_SHA_SHORT-$TIMESTAMP" > /tmp/image_tag.env
-      -
-        name: Set Hashed Image Full Name
+        id: hashed-tag
         env:
           TIMESTAMP: ${{ steps.current-time.outputs.formattedTime }}
           IMAGE_NAME: ${{ inputs.image-name }}
         run: |
-          echo "BUILD_IMAGE_FULL_NAME=$IMAGE_NAME:$CI_SHA_SHORT-$TIMESTAMP" >> $GITHUB_ENV &&
-          echo "BUILD_IMAGE_FULL_NAME=$IMAGE_NAME:$CI_SHA_SHORT-$TIMESTAMP" >> /tmp/image_tag.env
+          echo "BUILD_IMAGE_FULL_NAME=$IMAGE_NAME:$CI_SHA_SHORT-$TIMESTAMP" >> "$GITHUB_ENV"
+          {
+            echo "image-tag=$CI_SHA_SHORT-$TIMESTAMP"
+            echo "image-full-name=$IMAGE_NAME:$CI_SHA_SHORT-$TIMESTAMP"
+            echo "vcs-ref=$CI_REF_NAME"
+          } >> "$GITHUB_OUTPUT"
       -
         name: Set Branched Image Full Name
         env:
@@ -139,47 +136,6 @@ jobs:
           if [ -n "$SAFE_REF" ]; then
             echo "BUILD_IMAGE_BRANCH_NAME=$IMAGE_NAME:$SAFE_REF" >> "$GITHUB_ENV"
           fi
-      -
-        name: Set Package Name
-        env:
-          IMAGE_NAME: ${{ inputs.image-name }}
-        run: echo "GHCR_PACKAGE_NAME=$IMAGE_NAME" | sed "s|ghcr.io/$CI_REPOSITORY_OWNER/||" >> $GITHUB_ENV
-      -
-        name: Install PHP
-        uses: shivammathur/setup-php@v2
-        if: inputs.build-themes == true
-        with:
-          php-version: ${{ inputs.php-version }}
-          coverage: none
-          tools: composer:${{ inputs.composer-version }}
-          extensions: curl,dom,gd,mbstring,posix,yaml,zip
-      -
-        name: Install dockworker
-        if: inputs.build-themes == true
-        run: composer install --prefer-dist --no-progress --no-suggest
-        shell: bash
-      - name: Install Dart Sass
-        if: inputs.build-themes == true
-        run: |
-          wget https://github.com/sass/dart-sass/releases/download/1.62.1/dart-sass-1.62.1-linux-x64.tar.gz
-          tar -xzf dart-sass-1.62.1-linux-x64.tar.gz && rm dart-sass-1.62.1-linux-x64.tar.gz
-          mv dart-sass /tmp/
-      -
-        name: Build Themes
-        if: inputs.build-themes == true
-        shell: 'script -q -e -c "bash {0}"'
-        run: SASS_PATH=/tmp/dart-sass/sass vendor/bin/dockworker theme:build-all
-      -
-        name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v4
-      -
-        name: Login to GitHub Container Registry
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
-          password: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
       - name: Determine Push Tags
         id: fetch-push-tags
         env:
@@ -229,6 +185,158 @@ jobs:
           echo "tags=$tags" >> "$GITHUB_OUTPUT"
           echo "Resolved push tags: $tags"
       -
+        name: Plan Platforms
+        id: plan-platforms
+        env:
+          PLATFORMS: ${{ inputs.platforms }}
+          DISTRIBUTE: ${{ inputs.distribute }}
+          ARM64_RUNNER: ${{ inputs.arm64-runner }}
+          AMD64_RUNNER: ${{ inputs.amd64-runner }}
+        run: |
+          set -euo pipefail
+          # One matrix entry per platform, on a native runner where one is mapped. linux/arm64
+          # gets the arm64 runner; everything else (including linux/arm/v7, which arm64 server
+          # CPUs often cannot execute natively) builds on the amd64 runner under emulation.
+          # With distribute=false, a single entry builds every platform in one job, as before.
+          # The build job declares a fixed digest_0..digest_3 output per entry, hence the cap.
+          max=4
+          matrix="$(jq -cn \
+            --arg platforms "$PLATFORMS" \
+            --argjson distribute "$DISTRIBUTE" \
+            --arg arm64 "$ARM64_RUNNER" \
+            --arg amd64 "$AMD64_RUNNER" '
+            [$platforms | split(",")[] | gsub("^\\s+|\\s+$"; "") | select(length > 0)]
+            | reduce .[] as $p ([]; if any(.[]; . == $p) then . else . + [$p] end)
+            | if length == 0 then []
+              elif $distribute then
+                to_entries | map({
+                  platform: .value,
+                  runner: (if (.value | startswith("linux/arm64")) then $arm64 else $amd64 end),
+                  index: .key
+                })
+              else
+                [{platform: join(","), runner: $amd64, index: 0}]
+              end
+            | {include: .}')"
+          count="$(jq '.include | length' <<<"$matrix")"
+          if [ "$count" -eq 0 ]; then
+            echo "::error title=No platforms::The platforms input '$PLATFORMS' contains no platforms."
+            exit 1
+          fi
+          if [ "$count" -gt "$max" ]; then
+            echo "::error title=Too many platforms::At most $max platforms can be distributed across runners; got $count. Reduce platforms or set distribute: false."
+            exit 1
+          fi
+          multi=false
+          [ "$count" -gt 1 ] && multi=true
+          {
+            echo "matrix=$matrix"
+            echo "count=$count"
+            echo "multi=$multi"
+          } >> "$GITHUB_OUTPUT"
+          jq -r '.include[] | "Planned \(.platform) on \(.runner)"' <<<"$matrix"
+
+  build-image:
+    name: Build Image (${{ matrix.platform }})
+    needs: prepare
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: true
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    # Each matrix job sets only its own digest_<index>; GitHub combines matrix job outputs.
+    outputs:
+      digest_0: ${{ steps.export-digest.outputs.digest_0 }}
+      digest_1: ${{ steps.export-digest.outputs.digest_1 }}
+      digest_2: ${{ steps.export-digest.outputs.digest_2 }}
+      digest_3: ${{ steps.export-digest.outputs.digest_3 }}
+    steps:
+      -
+        name: Check Prepared Tags
+        env:
+          TAGS: ${{ needs.prepare.outputs.tags }}
+          IMAGE_TAG: ${{ needs.prepare.outputs.image-tag }}
+          IMAGE_FULL_NAME: ${{ needs.prepare.outputs.image-full-name }}
+        run: |
+          for name in TAGS IMAGE_TAG IMAGE_FULL_NAME; do
+            if [ -z "${!name}" ]; then
+              echo "::error title=Missing prepared value::$name from the Prepare Build job is empty. GitHub drops job outputs that may contain a secret value; check that job's log for 'Skip output'."
+              exit 1
+            fi
+          done
+        shell: bash
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: ${{ inputs.checkout-fetch-depth }}
+      -
+        name: Validate Build Paths
+        env:
+          BUILD_CONTEXT: ${{ inputs.build-context }}
+          DOCKERFILE: ${{ inputs.dockerfile }}
+        run: |
+          set -euo pipefail
+          # Fail here rather than inside buildx, which would only surface the problem
+          # after setup-php, composer install, dart-sass and theme:build-all have run.
+          context="${BUILD_CONTEXT:-.}"
+          [ -n "$context" ] || context="."
+          # An empty dockerfile input is passed to the action as-is, so buildx applies
+          # its own "<context>/Dockerfile" default. Resolve it here only to validate.
+          resolved="${DOCKERFILE:-}"
+          [ -n "$resolved" ] || resolved="$context/Dockerfile"
+          if [ ! -d "$context" ]; then
+            echo "::error title=Invalid build-context::build-context '$context' is not a directory in this repository."
+            exit 1
+          fi
+          if [ ! -f "$resolved" ]; then
+            echo "::error title=Missing Dockerfile::No Dockerfile found at '$resolved'. Set the 'dockerfile' input if it lives elsewhere in the repository."
+            exit 1
+          fi
+          echo "Building '$resolved' with context '$context'"
+        shell: bash
+      -
+        name: Install PHP
+        uses: shivammathur/setup-php@v2
+        if: inputs.build-themes == true
+        with:
+          php-version: ${{ inputs.php-version }}
+          coverage: none
+          tools: composer:${{ inputs.composer-version }}
+          extensions: curl,dom,gd,mbstring,posix,yaml,zip
+      -
+        name: Install dockworker
+        if: inputs.build-themes == true
+        run: composer install --prefer-dist --no-progress --no-suggest
+        shell: bash
+      - name: Install Dart Sass
+        if: inputs.build-themes == true
+        env:
+          SASS_VERSION: 1.62.1
+        run: |
+          case "$RUNNER_ARCH" in
+            X64) sass_arch=x64 ;;
+            ARM64) sass_arch=arm64 ;;
+            *) echo "::error title=Unsupported runner::No Dart Sass build for runner architecture '$RUNNER_ARCH'."; exit 1 ;;
+          esac
+          tarball="dart-sass-$SASS_VERSION-linux-$sass_arch.tar.gz"
+          wget "https://github.com/sass/dart-sass/releases/download/$SASS_VERSION/$tarball"
+          tar -xzf "$tarball" && rm "$tarball"
+          mv dart-sass /tmp/
+      -
+        name: Build Themes
+        if: inputs.build-themes == true
+        shell: 'script -q -e -c "bash {0}"'
+        run: SASS_PATH=/tmp/dart-sass/sass vendor/bin/dockworker theme:build-all
+      -
+        name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v4
+      -
+        name: Login to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
+          password: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
+      -
         name: Write npmrc build secret
         env:
           GH_NPM_TOKEN: ${{ secrets.GH_NPM_TOKEN }}
@@ -240,29 +348,134 @@ jobs:
             : > "$RUNNER_TEMP/npmrc"
           fi
       -
+        # With several matrix jobs, each pushes its platform image untagged (by digest) and
+        # the merge job tags the combined image. With one, the tags are pushed directly.
+        id: build
         env:
           DOCKER_BUILD_RECORD_RETENTION_DAYS: ${{ inputs.docker-build-record-retention-days }}
         uses: docker/build-push-action@v7
         with:
           provenance: false
           pull: true
-          push: true
-          platforms: ${{ inputs.platforms }}
+          push: ${{ needs.prepare.outputs.multi != 'true' }}
+          platforms: ${{ matrix.platform }}
           # `context` must never be empty: build-push-action then falls back to the remote
           # git context, which silently discards workspace changes (e.g. built themes).
           context: ${{ inputs.build-context || '.' }}
           file: ${{ inputs.dockerfile }}
-          tags: ${{ steps.fetch-push-tags.outputs.tags }}
+          tags: ${{ needs.prepare.outputs.multi != 'true' && needs.prepare.outputs.tags || '' }}
+          outputs: ${{ needs.prepare.outputs.multi == 'true' && format('type=image,name={0},push-by-digest=true,name-canonical=true,push=true', inputs.image-name) || '' }}
           secret-files: |
             npmrc=${{ runner.temp }}/npmrc
           build-args: |
-            BUILD_DATE=${{ steps.current-time.outputs.time }}
-            VCS_REF=${{ env.CI_REF_NAME }}
-            VERSION=${{ env.BUILD_IMAGE_TAG }}
+            BUILD_DATE=${{ needs.prepare.outputs.build-date }}
+            VCS_REF=${{ needs.prepare.outputs.vcs-ref }}
+            VERSION=${{ needs.prepare.outputs.image-tag }}
+      -
+        name: Export Digest
+        id: export-digest
+        if: needs.prepare.outputs.multi == 'true'
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+          INDEX: ${{ matrix.index }}
+        run: |
+          if [ -z "$DIGEST" ]; then
+            echo "::error title=Missing digest::The build did not report an image digest."
+            exit 1
+          fi
+          echo "digest_$INDEX=$DIGEST" >> "$GITHUB_OUTPUT"
+      -
+        name: Write Image Tag File
+        if: needs.prepare.outputs.multi != 'true'
+        env:
+          IMAGE_TAG: ${{ needs.prepare.outputs.image-tag }}
+          IMAGE_FULL_NAME: ${{ needs.prepare.outputs.image-full-name }}
+        run: |
+          echo "BUILD_IMAGE_TAG=$IMAGE_TAG" > /tmp/image_tag.env
+          echo "BUILD_IMAGE_FULL_NAME=$IMAGE_FULL_NAME" >> /tmp/image_tag.env
       -
         # CONTRACT: this artifact name and its flat KEY=VALUE format are consumed by
         # deploy.yaml and update-docker-compose.yaml. See .github/workflows/README.md
         # before changing either - multi-image support depends on keeping this emitted.
+        # Uploaded by whichever job pushes the tags: here for one platform, else merge-image.
+        if: needs.prepare.outputs.multi != 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: build-image-tag
+          path: /tmp/image_tag.env
+
+  merge-image:
+    name: Merge Platform Images
+    needs: [ prepare, build-image ]
+    if: needs.prepare.outputs.multi == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Check Prepared Tags
+        env:
+          TAGS: ${{ needs.prepare.outputs.tags }}
+          IMAGE_TAG: ${{ needs.prepare.outputs.image-tag }}
+          IMAGE_FULL_NAME: ${{ needs.prepare.outputs.image-full-name }}
+        run: |
+          for name in TAGS IMAGE_TAG IMAGE_FULL_NAME; do
+            if [ -z "${!name}" ]; then
+              echo "::error title=Missing prepared value::$name from the Prepare Build job is empty. GitHub drops job outputs that may contain a secret value; check that job's log for 'Skip output'."
+              exit 1
+            fi
+          done
+        shell: bash
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+      -
+        name: Login to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
+          password: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
+      -
+        name: Create Multi-Platform Image
+        env:
+          BUILD_OUTPUTS: ${{ toJSON(needs.build-image.outputs) }}
+          EXPECTED_COUNT: ${{ needs.prepare.outputs.count }}
+          IMAGE_NAME: ${{ inputs.image-name }}
+          TAGS: ${{ needs.prepare.outputs.tags }}
+          IMAGE_FULL_NAME: ${{ needs.prepare.outputs.image-full-name }}
+        run: |
+          set -euo pipefail
+          mapfile -t digests < <(jq -r 'to_entries[] | select(.key | startswith("digest_")) | .value | select(length > 0)' <<<"$BUILD_OUTPUTS")
+          if [ "${#digests[@]}" -ne "$EXPECTED_COUNT" ]; then
+            echo "::error title=Missing platform digests::Expected $EXPECTED_COUNT platform digests, got ${#digests[@]}. If only some build jobs were re-run, re-run all jobs instead."
+            exit 1
+          fi
+
+          args=()
+          IFS=, read -ra tag_list <<<"$TAGS"
+          for tag in "${tag_list[@]}"; do
+            args+=(--tag "$tag")
+          done
+          for digest in "${digests[@]}"; do
+            args+=("$IMAGE_NAME@$digest")
+          done
+          docker buildx imagetools create "${args[@]}"
+
+          manifest_count="$(docker buildx imagetools inspect --raw "$IMAGE_FULL_NAME" | jq '.manifests | length')"
+          if [ "$manifest_count" -ne "$EXPECTED_COUNT" ]; then
+            echo "::error title=Incomplete image::$IMAGE_FULL_NAME lists $manifest_count platform manifests; expected $EXPECTED_COUNT."
+            exit 1
+          fi
+          docker buildx imagetools inspect "$IMAGE_FULL_NAME"
+      -
+        name: Write Image Tag File
+        env:
+          IMAGE_TAG: ${{ needs.prepare.outputs.image-tag }}
+          IMAGE_FULL_NAME: ${{ needs.prepare.outputs.image-full-name }}
+        run: |
+          echo "BUILD_IMAGE_TAG=$IMAGE_TAG" > /tmp/image_tag.env
+          echo "BUILD_IMAGE_FULL_NAME=$IMAGE_FULL_NAME" >> /tmp/image_tag.env
+      -
+        # CONTRACT: see the build-image-tag upload in build-image.
         uses: actions/upload-artifact@v7
         with:
           name: build-image-tag
