@@ -39,6 +39,11 @@ on:
         required: false
         type: string
         default: ubuntu-latest
+      compression:
+        description: 'Layer compression: "zstd" (default) or "gzip". zstd requires containerd 1.5+ / Docker 23+ wherever the image is pulled.'
+        required: false
+        type: string
+        default: zstd
       docker-build-record-retention-days:
         description: 'Number of days to retain Docker build records.'
         required: false
@@ -98,6 +103,7 @@ jobs:
       distribute: ${{ inputs.distribute }}
       arm64-runner: ${{ inputs.arm64-runner }}
       amd64-runner: ${{ inputs.amd64-runner }}
+      compression: ${{ inputs.compression }}
       docker-build-record-retention-days: ${{ inputs.docker-build-record-retention-days }}
       php-version: ${{ inputs.php-version }}
       composer-version: ${{ inputs.composer-version }}

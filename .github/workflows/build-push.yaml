@@ -75,6 +75,11 @@ on:
         required: false
         type: string
         default: ubuntu-latest
+      compression:
+        description: 'Layer compression for pushed images: "zstd" (default) or "gzip". zstd compresses and decompresses faster, but requires containerd 1.5+ / Docker 23+ wherever the image is pulled; use gzip for older runtimes.'
+        required: false
+        type: string
+        default: zstd
 
     secrets:
       GH_CONTAINER_REGISTRY_USER:
@@ -329,6 +334,9 @@ jobs:
         name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v4
+        with:
+          # The runner is discarded after the job; removing the builder only delays the merge.
+          cleanup: false
       -
         name: Login to GitHub Container Registry
         uses: docker/login-action@v4
@@ -348,8 +356,28 @@ jobs:
             : > "$RUNNER_TEMP/npmrc"
           fi
       -
-        # With several matrix jobs, each pushes its platform image untagged (by digest) and
-        # the merge job tags the combined image. With one, the tags are pushed directly.
+        name: Resolve Build Options
+        id: build-options
+        env:
+          MULTI: ${{ needs.prepare.outputs.multi }}
+          IMAGE_NAME: ${{ inputs.image-name }}
+          COMPRESSION: ${{ inputs.compression }}
+        run: |
+          set -euo pipefail
+          # With several matrix jobs, each pushes its platform image untagged (by digest) and
+          # the merge job tags the combined image. With one, the tags are pushed directly.
+          if [ "$MULTI" = "true" ]; then
+            output="type=image,name=$IMAGE_NAME,push-by-digest=true,name-canonical=true,push=true"
+          else
+            output="type=image,push=true"
+          fi
+          case "$COMPRESSION" in
+            gzip) ;;
+            zstd) output="$output,compression=zstd,oci-mediatypes=true" ;;
+            *) echo "::error title=Invalid compression::compression must be 'zstd' or 'gzip', got '$COMPRESSION'."; exit 1 ;;
+          esac
+          echo "output=$output" >> "$GITHUB_OUTPUT"
+      -
         id: build
         env:
           DOCKER_BUILD_RECORD_RETENTION_DAYS: ${{ inputs.docker-build-record-retention-days }}
@@ -357,14 +385,13 @@ jobs:
         with:
           provenance: false
           pull: true
-          push: ${{ needs.prepare.outputs.multi != 'true' }}
           platforms: ${{ matrix.platform }}
           # `context` must never be empty: build-push-action then falls back to the remote
           # git context, which silently discards workspace changes (e.g. built themes).
           context: ${{ inputs.build-context || '.' }}
           file: ${{ inputs.dockerfile }}
           tags: ${{ needs.prepare.outputs.multi != 'true' && needs.prepare.outputs.tags || '' }}
-          outputs: ${{ needs.prepare.outputs.multi == 'true' && format('type=image,name={0},push-by-digest=true,name-canonical=true,push=true', inputs.image-name) || '' }}
+          outputs: ${{ steps.build-options.outputs.output }}
           secret-files: |
             npmrc=${{ runner.temp }}/npmrc
           build-args: |
@@ -424,9 +451,8 @@ jobs:
             fi
           done
         shell: bash
-      -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+      # No setup-buildx here: imagetools only talks to the registry, and the runner's
+      # preinstalled buildx plugin is enough for that.
       -
         name: Login to GitHub Container Registry
         uses: docker/login-action@v4
