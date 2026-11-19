@@ -67,6 +67,9 @@ trait CliCommandTrait
      *   An optional callback receiving ($type, $buffer) for each output chunk,
      *   in arrival order across stdout and stderr. Honored only on the buffered
      *   (non-TTY) path.
+     * @param array<string, string> $env
+     *   Environment variables to set for the command, in addition to those
+     *   inherited from the current process.
      */
     protected function executeCliCommand(
         array $command,
@@ -76,7 +79,8 @@ trait CliCommandTrait
         string $message = '',
         bool $use_tty = true,
         ?float $timeout = null,
-        ?callable $output_callback = null
+        ?callable $output_callback = null,
+        array $env = []
     ): CliCommand|null {
         if ($io !== null) {
             if (!empty($title)) {
@@ -91,7 +95,7 @@ trait CliCommandTrait
             $command,
             $message,
             $cwd,
-            [],
+            $env,
             null,
             null
         );

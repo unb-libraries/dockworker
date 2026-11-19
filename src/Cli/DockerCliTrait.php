@@ -38,6 +38,11 @@ trait DockerCliTrait
      *   The timeout in seconds or null to disable
      * @param bool $use_tty
      *   Whether to use a TTY for the command. Defaults to TRUE.
+     * @param array<string, string> $env
+     *   Environment variables to set for the docker client, in addition to
+     *   those inherited from the current process. Pair with a name-only
+     *   '-e NAME' argument to pass a value into the container without it
+     *   appearing in the process list.
      *
      * @return \Dockworker\Cli\CliCommand
      *   The executed command object.
@@ -47,7 +52,8 @@ trait DockerCliTrait
         string $description,
         ?DockworkerIO $io,
         ?float $timeout = null,
-        bool $use_tty = true
+        bool $use_tty = true,
+        array $env = []
     ): CliCommand {
         array_unshift(
             $command,
@@ -60,7 +66,9 @@ trait DockerCliTrait
             '',
             $description,
             $use_tty,
-            $timeout
+            $timeout,
+            null,
+            $env
         );
     }
 
